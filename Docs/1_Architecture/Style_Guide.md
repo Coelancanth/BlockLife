@@ -314,3 +314,73 @@ var value = 1.5;
   * Consider omitting the default initial value for a type.
   * Consider using null-conditional operators or type initializers to make the code more compact.
   * Use safe cast when there is a possibility of the value being a different type, and use direct cast otherwise
+
+## Testing Conventions
+
+A consistent and readable testing style is as important as the implementation style. Our testing philosophy prioritizes clarity, expressiveness, and reliability.
+
+### Assertion Library: `FluentAssertions`
+
+All unit and integration tests **must** use the `FluentAssertions` library for assertions. It provides a more readable, expressive, and less error-prone way to state expectations compared to traditional `Assert` statements.
+
+For testing types from the `LanguageExt` library (e.g., `Fin<T>`, `Option<T>`), tests **must** also use the `FluentAssertions.LanguageExt` companion library.
+
+**Example (Good Practice):**
+```csharp
+// Asserting a simple value
+result.Should().Be(5, "because the calculation should yield 5");
+
+// Asserting a LanguageExt Fin<T> type
+handlerResult.Should().BeSuccess("because the command was valid");
+handlerResult.Should().BeSuccessWithValue(expectedDto);
+```
+
+**Example (Bad Practice - To Avoid):**
+```csharp
+// Do NOT use traditional Assert statements
+Assert.Equal(5, result);
+Assert.True(handlerResult.IsSucc);
+```
+
+### Handling Expected Exceptions
+
+When testing that a method correctly throws an exception under specific circumstances, tests **must not** use `try-catch` blocks. This is considered an anti-pattern as it makes the test's intent less clear and can swallow unexpected exceptions.
+
+Instead, tests **must** use the `Action` delegate and the `Should().Throw<TException>()` extension method from `FluentAssertions`.
+
+**Example (Good Practice):**
+```csharp
+[Fact]
+public void MyService_Constructor_Should_Throw_When_Dependency_Is_Null()
+{
+    // Arrange
+    ILogger nullLogger = null;
+
+    // Act
+    // Wrap the code that is expected to throw in an Action
+    Action act = () => new MyService(nullLogger);
+
+    // Assert
+    // This clearly states the expectation and fails if the wrong exception (or no exception) is thrown.
+    act.Should().Throw<ArgumentNullException>()
+       .WithParameterName("logger"); // Optionally assert on exception details
+}
+```
+
+**Example (Bad Practice - To Avoid):**
+```csharp
+[Fact]
+public void MyService_Constructor_Should_Throw_When_Dependency_Is_Null()
+{
+    // Do NOT use try-catch in tests
+    try
+    {
+        var service = new MyService(null);
+        Assert.Fail("Expected an exception but none was thrown.");
+    }
+    catch (ArgumentNullException)
+    {
+        // This passes, but it's verbose and less safe.
+    }
+}
+```

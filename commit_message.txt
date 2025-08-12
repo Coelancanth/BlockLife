@@ -1,0 +1,11 @@
+chore(build): harden build process and enable TreatWarningsAsErrors
+
+Enforces stricter build settings across the solution to improve code quality and prevent common errors.
+
+This change introduces the following improvements:
+- All three projects (`.Core`, `.Tests`, and the main Godot project) now have `<TreatWarningsAsErrors>` and `<EnforceCodeStyleInBuild>` enabled.
+- All pre-existing nullable reference type warnings (`CS8618`, `CS8602`, etc.) have been fixed by adding appropriate null checks and updating type annotations.
+- Corrected a structural misconfiguration in `BlockLife.csproj` that was causing type conflict errors (`CS0436`) by explicitly excluding the `src` directory from its compilation group.
+- Removed the `gdUnit4.analyzers` package to resolve a .NET SDK compiler version incompatibility (`CS9057`) that was causing the build to fail.
+
+The entire solution now builds cleanly with zero warnings and zero errors under these stricter rules.

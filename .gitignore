@@ -22,6 +22,8 @@ export_credentials.cfg
 data_*/
 mono_crash.*.json
 
+# GdUnit4 addon
+addons/gdUnit4/
 
 # .NET Core build artifacts
 [Bb]in/
@@ -44,3 +46,4 @@ x86/
 .idea/
 *.sln.iml
 
+commit_message.txt
