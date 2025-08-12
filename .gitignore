@@ -1,0 +1,46 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+.specstory/
+.idea/
+.vscode/
+# Godot 4+ specific ignores
+.godot/
+.nomedia
+
+# Godot-specific ignores
+.import/
+export.cfg
+export_credentials.cfg
+*.tmp
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash.*.json
+
+
+# .NET Core build artifacts
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / Rider specific
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Rider
+.idea/
+*.sln.iml
+
