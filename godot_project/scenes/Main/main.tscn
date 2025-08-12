@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://o8gakj4jxun8"]
+
+[ext_resource type="Script" uid="uid://q3qhlhq3w5wp" path="res://godot_project/scenes/Main/SceneRoot.cs" id="1_p2m25"]
+[ext_resource type="Script" uid="uid://ddhxrdp5mbe7l" path="res://godot_project/infrastructure/logging/LogSettingsController.cs" id="2_748ro"]
+
+[node name="main" type="Node"]
+script = ExtResource("1_p2m25")
+_logSettingsControllerPath = NodePath("LogSettingsController")
+
+[node name="LogSettingsController" type="Node" parent="."]
+script = ExtResource("2_748ro")
+DefaultLogLevel = 4
+category_Core = 4
+category_DependencyInjection = 4
+category_Input = 4
+category_GameState = 4
+category_AI = 4
+category_Physics = 4
+category_Rendering = 4
+metadata/_custom_type_script = "uid://ddhxrdp5mbe7l"
