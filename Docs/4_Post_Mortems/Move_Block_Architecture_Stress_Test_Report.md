@@ -56,6 +56,49 @@ The implementation plan mentions `ISystemStateService` for locking during animat
 - No way to prevent input during critical operations
 - Animation callbacks will fire after view disposal
 
+### 🔴 **CRITICAL: Async/Await on Godot Main Thread**
+**Severity: CRITICAL | Risk: Game Freezes & Frame Drops**
+
+The current design extensively uses async/await operations on Godot's main thread, which is **EXTREMELY DANGEROUS**:
+
+```csharp
+// From GridPresenter.cs - This will FREEZE the game
+private async Task HandleBlockMovedAsync(Guid blockId, Vector2Int fromPosition, Vector2Int toPosition)
+{
+    await View.BlockAnimator?.AnimateMoveAsync(blockId, fromPosition, toPosition);
+    await View.ShowSuccessFeedbackAsync(toPosition, "Block moved successfully");
+}
+```
+
+**Godot Threading Rules VIOLATED:**
+- **Main thread must NEVER be blocked** by async operations
+- All UI updates MUST happen on main thread synchronously
+- Long-running operations must use Godot's threading primitives (signals, CallDeferred)
+- `await` in `_Process()` or UI event handlers = guaranteed frame drops
+
+**What WILL Break in Production:**
+- **Game Freezes**: Any animation longer than 16ms freezes the entire game
+- **Input Lag**: Main thread blocked during animations = no input processing
+- **Frame Rate Death Spiral**: Multiple concurrent animations = compounding frame drops
+- **Godot Editor Crashes**: Async operations in editor can crash the entire IDE
+- **Platform-Specific Issues**: Mobile platforms aggressively kill blocked main threads
+
+**Current Violations Found:**
+1. `HandleBlockMovedAsync` - Main thread awaits animation completion
+2. `OnBlockPlacedNotification` - UI thread awaits async handlers
+3. `ShowSuccessFeedbackAsync` - Blocking main thread for feedback
+4. All notification handlers using `async Task` patterns
+
+**Correct Godot Pattern:**
+```csharp
+// WRONG - Blocks main thread
+await View.AnimateMoveAsync(blockId, fromPos, toPos);
+
+// RIGHT - Non-blocking with signals
+View.StartMoveAnimation(blockId, fromPos, toPos);
+// Animation completes via signal emission, not await
+```
+
 ### 🟡 **WARNING: Fin<T> Monad Overhead Without Benefits**
 **Severity: MEDIUM | Risk: Performance Degradation**
 
@@ -235,6 +278,7 @@ If you really want CQRS, do it properly:
 ## Severity Assessment
 
 🔴 **STOP**: Do not proceed to Phase 3-5 without addressing critical issues
+- **Async/await blocking main thread** - Will cause game freezes
 - Memory leak via static events
 - Missing system state management
 - No concurrency testing
@@ -260,6 +304,9 @@ This isn't a "gold standard"—it's **gold plating**. You've built a Formula 1 r
 ## Action Items
 
 ### Immediate (Before Continuing Phase 3-5)
+- [ ] **CRITICAL**: Remove all async/await from main thread operations
+- [ ] **CRITICAL**: Redesign animation system using Godot signals/CallDeferred
+- [ ] **CRITICAL**: Convert all UI operations to synchronous, signal-based patterns
 - [ ] Implement `ISystemStateService` for animation state management
 - [ ] Add Move Block event handlers to `GridPresenter.Dispose()` method
 - [ ] Create stress tests for concurrent operations

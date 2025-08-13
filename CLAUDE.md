@@ -73,7 +73,7 @@ dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && echo "✅ Ready
 
 ## Architecture Overview
 
-This project implements a rigorous 3-layer architecture with compiler-enforced boundaries:
+This project implements a rigorous 3-layer architecture with compiler-enforced boundaries and **production-ready patterns validated through stress testing**:
 
 ### Project Structure
 - **`BlockLife.Core.csproj`** (`src/` folder): Pure C# business logic, absolutely NO Godot dependencies
@@ -87,6 +87,7 @@ This project implements a rigorous 3-layer architecture with compiler-enforced b
 3. **Functional Programming**: Uses `LanguageExt.Fin<T>` and `Option<T>` for error handling and null safety
 4. **MVP with Humble Presenters**: Presenters coordinate between pure Model and Godot Views
 5. **Dependency Injection**: Uses Microsoft.Extensions.DependencyInjection throughout
+6. **🔥 CRITICAL: Single Source of Truth**: One entity = One implementation = One DI registration (learned from F1 stress test)
 
 ### Critical Patterns
 
@@ -100,6 +101,33 @@ All Views implement `IPresenterContainer<T>` and use `SceneRoot.Instance.CreateP
 
 **View Interfaces:** 
 Presenters depend on interfaces (e.g., `IGridView`) that expose capabilities, not concrete Godot nodes.
+
+**🔥 CRITICAL State Management Pattern:**
+```csharp
+// ✅ CORRECT - Single service implementing multiple interfaces
+services.AddSingleton<GridStateService>();
+services.AddSingleton<IGridStateService>(provider => provider.GetRequiredService<GridStateService>());
+services.AddSingleton<IBlockRepository>(provider => provider.GetRequiredService<GridStateService>());
+
+// ❌ WRONG - Dual state sources = race conditions
+services.AddSingleton<IGridStateService, GridStateService>();
+services.AddSingleton<IBlockRepository, InMemoryBlockRepository>();
+```
+
+**🔥 CRITICAL Notification Pattern:**
+Presenters MUST subscribe to domain notifications in `Initialize()` and unsubscribe in `Dispose()`:
+```csharp
+public override void Initialize()
+{
+    BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
+}
+
+public override void Dispose()
+{
+    BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
+    base.Dispose();
+}
+```
 
 ## File Organization
 
@@ -123,8 +151,19 @@ Presenters depend on interfaces (e.g., `IGridView`) that expose capabilities, no
 
 ## Development Guidelines
 
-### Comprehensive Development Workflow
+### 🔥 CRITICAL: Production-Ready Development Workflow
 **MANDATORY**: Follow the comprehensive TDD+VSA workflow documented in [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md) and use the [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md) for daily tasks.
+
+**⚠️ LESSONS LEARNED**: Architecture patterns alone don't guarantee production readiness. See [Architecture_Stress_Testing_Lessons_Learned.md](Docs/4_Post_Mortems/Architecture_Stress_Testing_Lessons_Learned.md) for critical insights from F1 stress testing experience.
+
+### 🛡️ **Pre-Commit Checklist** (Born from F1 Stress Test Experience)
+Before marking ANY feature complete:
+- [ ] **State Management**: Is there exactly one source of truth per entity?
+- [ ] **Notifications**: Are all published events actually subscribed to?
+- [ ] **Concurrency**: Can this code handle 100+ concurrent operations safely?
+- [ ] **Memory**: Are all subscriptions properly disposed?
+- [ ] **Performance**: Are there any N+1 query patterns?
+- [ ] **Async Safety**: No `.Wait()` or `.Result` on async operations in validation rules?
 
 ### Adding New Features (TDD + Vertical Slice Approach)
 **MUST follow this exact sequence:**
