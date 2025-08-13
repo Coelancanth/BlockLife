@@ -65,8 +65,10 @@ dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && echo "✅ Ready
 ### Autoload Configuration (CRITICAL)
 - **SceneRoot**: Configured as autoload singleton at `/root/SceneRoot`
 - **Location**: `godot_project/scenes/Main/SceneRoot.tscn` (NOT the .cs file!)
-- **Contains**: SceneRoot node with LogSettingsController as child
-- **Access Pattern**: Views use `GetNode<SceneRoot>("/root/SceneRoot")`
+- **Contains**: SceneRoot node with unified logging system
+- **Access Patterns**: 
+  - Presenters: `GetNode<SceneRoot>("/root/SceneRoot").PresenterFactory`
+  - Logging: `GetNode<SceneRoot>("/root/SceneRoot").Logger?.ForContext("SourceContext", "UI")`
 - **WARNING**: Never attach SceneRoot script to other scenes (causes duplicate instantiation)
 
 ## Architecture Overview
@@ -143,9 +145,18 @@ Presenters depend on interfaces (e.g., `IGridView`) that expose capabilities, no
 - Use `Option<T>` instead of nullable references  
 - Structured errors with `Error.New(code, message)`
 
+### Unified Logging System (NEW)
+- **Core Layer**: Uses `ILogger` from DI container
+- **View Layer**: Access via `GetNode<SceneRoot>("/root/SceneRoot").Logger?.ForContext("SourceContext", "UI")`
+- **Structured Logging**: Use proper parameters `logger.Information("Message with {Param}", value)`
+- **Categories**: "Commands", "Queries", "UI", "Core", "DI"
+- **NEVER use GD.Print()**: Always use structured logger for consistency
+- **LogSettings**: Simple boolean flags (`VerboseCommands`, `VerboseQueries`) instead of complex arrays
+
 ### Dependency Injection
 - All services registered in GameStrapper
 - Views get Presenters via PresenterFactory pattern
+- Logger exposed via SceneRoot.Logger for View access
 - NO static service locators in application code
 
 ### Key Dependencies

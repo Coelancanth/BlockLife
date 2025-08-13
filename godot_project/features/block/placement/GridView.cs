@@ -24,16 +24,17 @@ public partial class GridView : Control, IBlockManagementView
     
     public override void _Ready()
     {
-        GD.Print("GridView _Ready called");
+        var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+        logger?.Information("GridView _Ready called");
         
         // Validate required components
         if (VisualizationController == null)
         {
-            GD.PrintErr("VisualizationController is not assigned!");
+            logger?.Error("VisualizationController is not assigned!");
         }
         if (InteractionController == null)
         {
-            GD.PrintErr("InteractionController is not assigned!");
+            logger?.Error("InteractionController is not assigned!");
         }
         
         // Initialize presenter using the factory pattern
@@ -42,11 +43,11 @@ public partial class GridView : Control, IBlockManagementView
         {
             _presenter = sceneRoot.CreatePresenterFor<BlockManagementPresenter, IBlockManagementView>(this);
             _presenter?.Initialize();
-            GD.Print("GridView presenter created and initialized successfully");
+            logger?.Information("GridView presenter created and initialized successfully");
         }
         else
         {
-            GD.PrintErr("SceneRoot not found! Make sure SceneRoot is set as an autoload singleton.");
+            logger?.Error("SceneRoot not found! Make sure SceneRoot is set as an autoload singleton.");
         }
     }
     
@@ -68,7 +69,8 @@ public partial class GridView : Control, IBlockManagementView
         
         IsInitialized = true;
         
-        GD.Print($"GridView initialized with size {gridSize.X}x{gridSize.Y}");
+        var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+        logger?.Information("GridView initialized with size {GridWidth}x{GridHeight}", gridSize.X, gridSize.Y);
         await Task.CompletedTask;
     }
     
