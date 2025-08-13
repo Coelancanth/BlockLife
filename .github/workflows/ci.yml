@@ -1,49 +1,172 @@
-name: Quick CI - Basic Validation
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-    types: [ opened, synchronize ]
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  GODOT_VERSION: '4.4.1'
 
 jobs:
-  quick-validation:
-    name: 🚀 Quick Validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+  # Job 1: Run Core Unit Tests (Fast, No Godot Required)
+  unit-tests:
+    name: Unit Tests
+    runs-on: windows-latest
+    
     steps:
-    - name: 📥 Checkout repository
-      uses: actions/checkout@v4
-
-    - name: 🔧 Setup .NET 8
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
-
-    - name: 📦 Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
-    - name: 🔄 Restore dependencies
-      run: dotnet restore BlockLife.sln
-
-    - name: 🔨 Build solution
-      run: dotnet build BlockLife.sln --no-restore --configuration Debug
-
-    - name: 🏗️ Architecture Tests (MUST PASS)
-      run: dotnet test tests/BlockLife.Core.Tests.csproj --filter "FullyQualifiedName~Architecture" --no-build --configuration Debug --verbosity minimal
-      
-    - name: 🧪 Run All Tests
-      run: dotnet test tests/BlockLife.Core.Tests.csproj --no-build --configuration Debug --verbosity minimal
-
-    - name: ✅ Summary
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build Core Project
+      run: dotnet build src/BlockLife.Core.csproj --configuration Release --no-restore
+    
+    - name: Run Architecture Tests
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --filter "FullyQualifiedName~Architecture" --no-restore --verbosity normal
+    
+    - name: Run Unit Tests
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --filter "Category=Unit" --no-restore --verbosity normal
+    
+    - name: Run Property Tests
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --filter "FullyQualifiedName~PropertyTests" --no-restore --verbosity normal
+    
+    - name: Run All Core Tests
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
+    
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
       if: always()
+      with:
+        name: test-results
+        path: tests/TestResults/test-results.trx
+
+  # Job 2: Code Quality Checks
+  code-quality:
+    name: Code Quality
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Check formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+    
+    - name: Build with warnings as errors
+      run: dotnet build /p:TreatWarningsAsErrors=true
+
+  # Job 3: Integration Tests (Requires Godot - OPTIONAL)
+  # Uncomment this job when ready to run integration tests in CI
+  # integration-tests:
+  #   name: Integration Tests
+  #   runs-on: windows-latest
+  #   
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   
+  #   - name: Setup .NET
+  #     uses: actions/setup-dotnet@v4
+  #     with:
+  #       dotnet-version: ${{ env.DOTNET_VERSION }}
+  #   
+  #   - name: Setup Godot
+  #     uses: chickensoft-games/setup-godot@v2
+  #     with:
+  #       version: ${{ env.GODOT_VERSION }}
+  #       use-dotnet: true
+  #       include-templates: false
+  #   
+  #   - name: Restore dependencies
+  #     run: dotnet restore
+  #   
+  #   - name: Build Project
+  #     run: dotnet build --configuration Release --no-restore
+  #   
+  #   - name: Run Integration Tests
+  #     run: |
+  #       $env:GODOT_BIN = "${{ steps.setup-godot.outputs.godot-executable-path }}"
+  #       test\run_integration_tests.cmd
+  #   
+  #   - name: Upload Integration Test Results
+  #     uses: actions/upload-artifact@v4
+  #     if: always()
+  #     with:
+  #       name: integration-test-results
+  #       path: test/TestResults/
+
+  # Job 4: Build Verification
+  build:
+    name: Build Verification
+    runs-on: windows-latest
+    needs: [unit-tests, code-quality]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Full Solution Build
+      run: dotnet build BlockLife.sln --configuration Release
+    
+    - name: Publish Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          bin/
+          obj/
+          
+  # Job 5: Create Release (Only on main branch)
+  create-release:
+    name: Create Release
+    runs-on: windows-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get version from commit
+      id: version
       run: |
-        echo "✅ Quick validation complete"
-        echo "For comprehensive testing, see ci-comprehensive.yml workflow"
+        $version = "v0.1.${{ github.run_number }}"
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+    
+    - name: Create Tag
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git tag ${{ steps.version.outputs.VERSION }}
+        git push origin ${{ steps.version.outputs.VERSION }}
+    
+    # Optional: Create GitHub Release
+    # - name: Create Release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ steps.version.outputs.VERSION }}
+    #     release_name: Release ${{ steps.version.outputs.VERSION }}
+    #     draft: false
+    #     prerelease: false
+
+# Workflow Status Badge
+# Add this to your README.md:
+# ![CI](https://github.com/Coelancanth/BlockLife/workflows/CI%20Pipeline/badge.svg)

@@ -3,6 +3,10 @@
 .env
 .env.local
 
+# --- Local Settings ---
+# Machine-specific configuration
+test/local_settings.cmd
+
 # --- IDE Specific ---
 # VS Code extensions data
 .VSCodeCounter/
