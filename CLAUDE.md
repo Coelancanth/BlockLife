@@ -69,7 +69,48 @@ addons\gdUnit4\runtest.cmd
 
 # QUALITY GATE: Full validation pipeline
 dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && echo "✅ Ready for commit"
+
+# AUTOMATION: Enhanced quality pipeline with cognitive load reduction
+dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_metrics.py --update-docs && echo "✅ Ready for commit"
 ```
+
+## 🤖 Automation Scripts (Cognitive Load Reduction)
+
+BlockLife includes Python automation scripts to reduce manual maintenance and cognitive load:
+
+### 🧪 Test Metrics Automation
+```bash
+# Automatically update documentation with test statistics
+python scripts/collect_test_metrics.py --update-docs
+
+# Integrate with quality gates (recommended)
+dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_metrics.py --update-docs
+```
+
+### 🚨 Git Workflow Enforcement  
+```bash
+# Setup automatic Git workflow enforcement (HIGHLY RECOMMENDED)
+python scripts/enforce_git_workflow.py --setup-hooks
+
+# This prevents working on main branch and validates branch naming
+```
+
+### 🔄 Documentation Synchronization
+```bash
+# Keep all documentation tracking files synchronized
+python scripts/sync_documentation_status.py
+
+# Check for broken documentation links
+python scripts/sync_documentation_status.py --check-links
+```
+
+**Benefits:**
+- ✅ Eliminates manual test counting and documentation updates
+- ✅ Prevents Git workflow violations automatically
+- ✅ Maintains documentation consistency without manual effort
+- ✅ Reduces cognitive load for development tasks
+
+**See [scripts/README.md](scripts/README.md) for complete automation guide.**
 
 ### Godot Project
 - Main project file: `project.godot`

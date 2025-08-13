@@ -237,6 +237,141 @@ gh pr create --title "feat: implement inventory system" --body "Details..."
 - [ ] Documentation updated
 - [ ] Test coverage maintained
 
+## Commit Squashing Guidelines
+
+### **When to Squash Commits**
+
+**✅ SQUASH in these scenarios:**
+- **Feature completion**: Multiple work-in-progress commits for a single logical feature
+- **Documentation updates**: Multiple iterative documentation commits
+- **Bug fix iterations**: Several attempts/refinements to fix the same issue
+- **Cleanup commits**: Commits that fix typos, formatting, or minor issues from the same PR
+- **Large features**: When commit history shows development process rather than logical changes
+
+**❌ DON'T SQUASH when:**
+- **Logically distinct changes**: Each commit represents a complete, different change
+- **Architectural milestones**: Major structural changes that should be preserved in history
+- **Review-driven changes**: When individual commits aid in understanding the evolution
+- **Rollback potential**: When you might need to revert specific parts independently
+
+### **Squashing Methods**
+
+#### **Method 1: Interactive Rebase (Recommended)**
+```bash
+# Squash last N commits (replace N with number of commits)
+git rebase -i HEAD~N
+
+# In the editor that opens:
+# - Keep 'pick' for the first commit (the one to keep)
+# - Change 'pick' to 'squash' (or 's') for commits to squash
+# - Save and close
+
+# Then edit the commit message in the next editor
+```
+
+#### **Method 2: Soft Reset and Recommit**
+```bash
+# Reset to N commits ago, keeping changes staged
+git reset --soft HEAD~N
+
+# Create new commit with all changes
+git commit -m "feat: comprehensive commit message describing all changes"
+```
+
+#### **Method 3: GitHub PR Squash Merge**
+```bash
+# When merging PR on GitHub, select "Squash and merge"
+# Edit the commit message to be descriptive
+# This automatically squashes all commits in the PR
+```
+
+### **Squash Commit Message Guidelines**
+
+**Format**: `<type>: <comprehensive description>`
+
+**Examples of good squashed commit messages:**
+```bash
+feat: implement automation scripts for cognitive load reduction
+
+- Add test metrics collector for automatic documentation updates
+- Add Git workflow enforcer with pre-commit hooks
+- Add documentation status sync for consistency maintenance
+- Update workflow guides with automation integration
+- Includes Windows Unicode compatibility fixes
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+```bash
+docs: major documentation restructure with resilient action item tracking system
+
+- Reorganize all documentation into logical categories
+- Create centralized action item tracking system
+- Add implementation status tracker for project visibility
+- Update cross-references and navigation
+- Establish maintenance protocols for documentation consistency
+```
+
+### **Squashing Workflow Integration**
+
+#### **During Development:**
+1. **Work normally**: Make commits as needed during development
+2. **Before PR review**: Consider if squashing would improve clarity
+3. **After review feedback**: Squash if multiple "fix review comments" commits exist
+4. **Before merge**: Final opportunity to squash for clean history
+
+#### **Team Coordination:**
+- **Communicate intent**: Let reviewers know if you plan to squash
+- **Preserve review context**: Don't squash until after review approval
+- **Force push carefully**: Use `git push --force-with-lease` after squashing
+
+### **Decision Framework**
+
+**Ask yourself:**
+1. **"Does each commit tell a complete story?"** → If no, consider squashing
+2. **"Would a newcomer understand the changes better with fewer, more comprehensive commits?"** → If yes, squash
+3. **"Are there 'WIP', 'fix typo', or 'address review' type commits?"** → Definitely squash
+4. **"Does the commit history reflect the logical progression of the feature?"** → If no, squash
+
+**Project-specific preferences:**
+- **Feature branches**: Usually squashed into 1-3 logical commits
+- **Documentation changes**: Usually squashed into single commit
+- **Bug fixes**: Keep separate if fixing multiple unrelated issues
+- **Architecture changes**: Preserve major milestones, squash implementation details
+
+### **Example Scenarios**
+
+#### **Scenario 1: Feature Development**
+```bash
+# Before squashing (development commits):
+feat: add basic test metrics collector structure
+feat: implement dotnet test parsing
+fix: handle Windows Unicode encoding issues
+feat: add documentation update functionality
+docs: update CLAUDE.md with automation info
+fix: typo in script comments
+feat: add comprehensive error handling
+
+# After squashing (clean history):
+feat: implement test metrics automation for cognitive load reduction
+```
+
+#### **Scenario 2: Documentation Work**
+```bash
+# Before squashing:
+docs: start Git workflow guide
+docs: add branch naming conventions  
+docs: add commit message guidelines
+docs: add PR requirements
+docs: fix formatting issues
+docs: add squashing guidelines
+
+# After squashing:
+docs: create comprehensive Git workflow guide with squashing standards
+```
+
 ## Recovery from Mistakes
 
 ### **If You Accidentally Work on Main:**

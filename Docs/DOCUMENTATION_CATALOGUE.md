@@ -146,6 +146,18 @@ dotnet test --filter "FullyQualifiedName~Architecture"  # Architecture tests onl
 dotnet test --filter "Category=Unit"                    # Unit tests only
 ```
 
+### 🤖 Automated Quality Pipeline (Recommended)
+```bash
+# Enhanced pipeline with cognitive load reduction
+dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_metrics.py --update-docs
+
+# Setup Git workflow enforcement (one-time)
+python scripts/enforce_git_workflow.py --setup-hooks
+
+# Sync documentation status
+python scripts/sync_documentation_status.py
+```
+
 ### Godot Testing
 ```bash
 set GODOT_BIN=C:\path\to\godot.exe

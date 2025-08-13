@@ -35,6 +35,13 @@ git checkout -b feat/your-feature-name
 
 **FORBIDDEN:** Working directly on main branch. All changes MUST go through PR process.
 
+**🤖 AUTOMATION:** Setup Git workflow enforcement to prevent violations automatically:
+```bash
+# One-time setup (HIGHLY RECOMMENDED)
+python scripts/enforce_git_workflow.py --setup-hooks
+```
+This creates a pre-commit hook that automatically blocks commits to main and validates branch naming.
+
 **Reference:** [Git_Workflow_Guide.md](Git_Workflow_Guide.md) for complete workflow.
 
 ## 1. Feature Development Lifecycle
@@ -483,6 +490,14 @@ function Build-BlockLife {
         dotnet test --filter "Category=Unit" --no-build
         dotnet test --filter "Category=Property" --no-build
         dotnet test --filter "Category=Integration" --no-build
+        
+        # 🤖 AUTOMATION: Update documentation with test metrics
+        Write-Host "Updating documentation with test metrics..." -ForegroundColor Cyan
+        python scripts/collect_test_metrics.py --update-docs
+        
+        # 🤖 AUTOMATION: Sync documentation status
+        Write-Host "Synchronizing documentation status..." -ForegroundColor Cyan  
+        python scripts/sync_documentation_status.py
     }
     
     if ($OpenGodot) {
