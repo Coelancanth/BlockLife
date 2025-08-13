@@ -9,6 +9,7 @@ using BlockLife.Core.Tests.Utils;
 using FluentAssertions;
 using LanguageExt;
 using LanguageExt.Common;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -29,6 +30,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
         private readonly Mock<IPositionIsEmptyRule> _mockPositionEmptyRule;
         private readonly Mock<IGridStateService> _mockGridState;
         private readonly Mock<ISimulationManager> _mockSimulation;
+        private readonly Mock<IMediator> _mockMediator;
         private readonly Mock<ILogger<PlaceBlockCommandHandler>> _mockLogger;
         private readonly PlaceBlockCommandHandler _handler;
 
@@ -38,6 +40,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionEmptyRule = new Mock<IPositionIsEmptyRule>();
             _mockGridState = new Mock<IGridStateService>();
             _mockSimulation = new Mock<ISimulationManager>();
+            _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();
             
             _handler = new PlaceBlockCommandHandler(
@@ -45,6 +48,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 _mockPositionEmptyRule.Object,
                 _mockGridState.Object,
                 _mockSimulation.Object,
+                _mockMediator.Object,
                 _mockLogger.Object
             );
         }

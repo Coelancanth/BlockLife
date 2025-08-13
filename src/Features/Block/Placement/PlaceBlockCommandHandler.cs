@@ -1,5 +1,6 @@
 using BlockLife.Core.Application.Simulation;
 using BlockLife.Core.Features.Block.Placement.Effects;
+using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Features.Block.Placement.Rules;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
@@ -19,6 +20,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
     private readonly IPositionIsEmptyRule _positionEmptyRule;
     private readonly IGridStateService _gridState;
     private readonly ISimulationManager _simulation;
+    private readonly IMediator _mediator;
     private readonly ILogger<PlaceBlockCommandHandler> _logger;
     
     public PlaceBlockCommandHandler(
@@ -26,12 +28,14 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
         IPositionIsEmptyRule positionEmptyRule,
         IGridStateService gridState,
         ISimulationManager simulation,
+        IMediator mediator,
         ILogger<PlaceBlockCommandHandler> logger)
     {
         _positionValidRule = positionValidRule;
         _positionEmptyRule = positionEmptyRule;
         _gridState = gridState;
         _simulation = simulation;
+        _mediator = mediator;
         _logger = logger;
     }
     
@@ -39,14 +43,37 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
     {
         _logger.LogDebug("Handling PlaceBlockCommand for position {Position}", request.Position);
         
-        return await (
+        var result = await (
             from validPosition in _positionValidRule.Validate(request.Position)
             from emptyPosition in _positionEmptyRule.Validate(request.Position)
             from block in CreateBlock(request)
             from placed in PlaceBlockInGrid(block)
             from effectQueued in QueueEffect(block)
-            select Unit.Default
+            select block
         ).AsTask();
+        
+        if (result.IsSucc)
+        {
+            var block = result.Match(Succ: b => b, Fail: _ => throw new InvalidOperationException());
+            // Create and publish notification directly (following MoveBlock pattern)
+            var notification = new BlockPlacedNotification(
+                block.Id,
+                block.Position,
+                block.Type,
+                block.CreatedAt
+            );
+            
+            await _mediator.Publish(notification);
+            
+            _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
+            return FinSucc(Unit.Default);
+        }
+        else
+        {
+            var error = result.Match(Succ: _ => throw new InvalidOperationException(), Fail: e => e);
+            _logger.LogWarning("PlaceBlockCommand failed for position {Position}: {Error}", request.Position, error);
+            return FinFail<Unit>(error);
+        }
     }
     
     private Fin<Domain.Block.Block> CreateBlock(PlaceBlockCommand request) =>
@@ -69,4 +96,5 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             block.Type,
             block.CreatedAt
         ));
+    
 }

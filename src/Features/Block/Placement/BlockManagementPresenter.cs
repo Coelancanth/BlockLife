@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
+using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Presentation;
 using LanguageExt;
@@ -45,6 +46,10 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         _subscriptions.Add(View.Interaction.GridCellExited
             .Subscribe(OnGridCellExited));
         
+        // Subscribe to MediatR notifications via the bridge
+        BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
+        BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
+        
         // Initialize the view with default grid size
         _ = View.InitializeAsync(new Vector2Int(10, 10)); // TODO: Get from config
         
@@ -54,6 +59,10 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     public override void Dispose()
     {
         _logger.LogDebug("Disposing BlockManagementPresenter");
+        
+        // Unsubscribe from notification events
+        BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
+        BlockPlacementNotificationBridge.BlockRemovedEvent -= OnBlockRemovedNotification;
         
         _subscriptions.Dispose();
         _ = View.CleanupAsync();
@@ -113,12 +122,9 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         }
     }
     
-    // Notification Handlers
-    public async Task HandleBlockPlaced(BlockPlacedNotification notification)
+    // Event Handlers (called via notification bridge)
+    private async Task OnBlockPlacedNotification(BlockPlacedNotification notification)
     {
-        _logger.LogDebug("Handling BlockPlacedNotification for block {BlockId} at {Position}", 
-            notification.BlockId, notification.Position);
-        
         try
         {
             await View.Visualization.ShowBlockAsync(
@@ -129,22 +135,31 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error handling BlockPlacedNotification for block {BlockId}", notification.BlockId);
+            _logger.LogError(ex, "Error displaying block {BlockId} at {Position}", notification.BlockId, notification.Position);
         }
     }
     
-    public async Task HandleBlockRemoved(BlockRemovedNotification notification)
+    private async Task OnBlockRemovedNotification(BlockRemovedNotification notification)
     {
-        _logger.LogDebug("Handling BlockRemovedNotification for block {BlockId}", notification.BlockId);
-        
         try
         {
             await View.Visualization.HideBlockAsync(notification.BlockId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error handling BlockRemovedNotification for block {BlockId}", notification.BlockId);
+            _logger.LogError(ex, "Error removing block {BlockId}", notification.BlockId);
         }
+    }
+    
+    // Notification Handlers (kept for backward compatibility - now called via events)
+    public async Task HandleBlockPlaced(BlockPlacedNotification notification)
+    {
+        await OnBlockPlacedNotification(notification);
+    }
+    
+    public async Task HandleBlockRemoved(BlockRemovedNotification notification)
+    {
+        await OnBlockRemovedNotification(notification);
     }
     
     // Error Handling
