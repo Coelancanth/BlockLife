@@ -1,6 +1,7 @@
 using BlockLife.Core.Application.Simulation;
 using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Rules;
+using BlockLife.Core.Infrastructure.Extensions;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using MediatR;
@@ -66,16 +67,16 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
     
     private async Task<Fin<Unit>> ProcessQueuedEffects()
     {
-        try
-        {
-            await _simulation.ProcessQueuedEffectsAsync();
-            return FinSucc(Unit.Default);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to process queued effects");
-            return FinFail<Unit>(LanguageExt.Common.Error.New("PROCESS_EFFECTS_FAILED", ex.Message));
-        }
+        var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+        
+        return result.Match(
+            Succ: _ => result,
+            Fail: error =>
+            {
+                _logger.LogError("Failed to process queued effects: {Error}", error.Message);
+                return result;
+            }
+        );
     }
 }
 
@@ -132,15 +133,15 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
     
     private async Task<Fin<Unit>> ProcessQueuedEffectsForId()
     {
-        try
-        {
-            await _simulation.ProcessQueuedEffectsAsync();
-            return FinSucc(Unit.Default);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to process queued effects");
-            return FinFail<Unit>(LanguageExt.Common.Error.New("PROCESS_EFFECTS_FAILED", ex.Message));
-        }
+        var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+        
+        return result.Match(
+            Succ: _ => result,
+            Fail: error =>
+            {
+                _logger.LogError("Failed to process queued effects: {Error}", error.Message);
+                return result;
+            }
+        );
     }
 }

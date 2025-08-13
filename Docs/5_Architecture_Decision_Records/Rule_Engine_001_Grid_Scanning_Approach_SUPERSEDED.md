@@ -1,10 +1,24 @@
-# Complex Rule Engine Architecture for BlockLife
+# Complex Rule Engine Architecture for BlockLife - ⚠️ SUPERSEDED
+
+## ⚠️ SUPERSEDED BY ADR-008
+
+**Status**: ❌ **SUPERSEDED**  
+**Date Superseded**: 2025-08-13  
+**Superseded By**: [ADR-008: Anchor-Based Rule Engine Architecture](ADR-008_Anchor_Based_Rule_Engine_Architecture.md)  
+**Related Documents**: [Rule_Engine_002_Anchor_Based_Implementation_Guide.md](Rule_Engine_002_Anchor_Based_Implementation_Guide.md)  
+**Reason**: Performance analysis showed grid-scanning approach (O(n² × p)) is inadequate for real-time gameplay
+
+---
 
 ## Executive Summary
+
+**⚠️ This approach has been superseded by the anchor-based pattern matching system due to performance requirements.**
 
 After reassessing the complex rule requirements for BlockLife, I acknowledge that the initial lightweight recommendation was insufficient. The requirements for shape-based matching (T-5, T-4 patterns), adjacency rules, and chain reactions demand a more sophisticated architecture. However, **NRule is still not the optimal choice** for this project due to architectural constraints and specific game requirements.
 
 This document presents a **Custom Pattern-Matching Rule Engine** that maintains Clean Architecture principles while providing the flexibility and performance needed for complex rule evaluation.
+
+**⚠️ PERFORMANCE ISSUE**: This grid-scanning approach has O(n² × p) complexity, resulting in ~45ms evaluation time for 50x50 grids, which is unacceptable for real-time gameplay. See [ADR-008](ADR-008_Anchor_Based_Rule_Engine_Architecture.md) for the adopted anchor-based solution (0.3ms evaluation time).
 
 ## 1. Problem Analysis
 

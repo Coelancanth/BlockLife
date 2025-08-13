@@ -59,36 +59,6 @@ Key takeaway for the team about Clean Architecture in practice.
 
 ---
 
-## Recent Post-Mortems
-
-### 2025-01-13: Fin<T> Type Ambiguity
-
-**Summary**: LanguageExt.Fin<T> conflicted with System.Runtime.Intrinsics.Arm.AdvSimd.Arm64
-
-**Architectural Cause**: Violated Explicit Dependencies - implicit global using statements created hidden coupling to System namespaces.
-
-**Prevention**: 
-- Always use fully qualified names for functional types in public APIs
-- Consider type aliases: `using ValidationResult = LanguageExt.Fin<Unit>;`
-
-### 2025-01-13: DI Registration Presenter/View Coupling
-
-**Summary**: Presenters couldn't be resolved due to circular dependency on Views
-
-**Architectural Cause**: Violated Dependency Inversion - Presenter depending on concrete View instead of interface.
-
-**Prevention**:
-- Presenters MUST depend only on IView interfaces
-- Use factory pattern for bidirectional relationships
-- Register Views before Presenters in DI container
-
-### 2025-01-13: Inconsistent Error Creation
-
-**Summary**: Mixed Error.New(code, message) with Error.New(message) causing test failures
-
-**Architectural Cause**: Violated Single Responsibility - error creation logic scattered across handlers.
-
-**Prevention**:
-- Centralize error creation in domain-specific error factories
-- Use strongly-typed error codes enum
-- Example: `BlockErrors.InvalidPosition(x, y)` not `Error.New("BLOCK_001", $"Invalid position")`
+**Related:**
+- [Bug Post-Mortem Examples](000_Bug_Post_Mortem_Examples.md) - Common patterns and examples
+- [Comprehensive Development Workflow](../6_Guides/Comprehensive_Development_Workflow.md) - Process to prevent bugs

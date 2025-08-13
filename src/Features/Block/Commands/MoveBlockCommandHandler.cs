@@ -1,4 +1,5 @@
 using BlockLife.Core.Features.Block.Effects;
+using BlockLife.Core.Infrastructure.Extensions;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using LanguageExt.Common;
@@ -6,6 +7,7 @@ using MediatR;
 using Serilog;
 using System.Threading;
 using System.Threading.Tasks;
+using static LanguageExt.Prelude;
 
 namespace BlockLife.Core.Features.Block.Commands
 {
@@ -34,56 +36,74 @@ namespace BlockLife.Core.Features.Block.Commands
             _logger.Information("Processing MoveBlockCommand for BlockId: {BlockId} to Position: {ToPosition}", 
                 request.BlockId, request.ToPosition);
 
-            try
+            // Step 1: Get block
+            var blockResult = GetBlockById(request.BlockId);
+            if (blockResult.IsFail)
             {
-                // Get the block to move
-                var blockResult = _gridStateService.GetBlockById(request.BlockId);
-                if (blockResult.IsNone)
-                {
-                    _logger.Warning("Block not found: {BlockId}", request.BlockId);
-                    return Fin<LanguageExt.Unit>.Fail(Error.New("Block not found"));
-                }
-
-                var block = blockResult.Match(Some: b => b, None: () => throw new InvalidOperationException());
-                var fromPosition = block.Position;
-
-                // Validate the move
-                var validationResult = ValidateMove(fromPosition, request.ToPosition);
-                if (validationResult.IsFail)
-                {
-                    var error = validationResult.Match<Error?>(Succ: _ => null, Fail: e => e);
-                    _logger.Warning("Validation failed for MoveBlockCommand: {Error}", error?.Message ?? "Unknown validation error");
-                    return validationResult;
-                }
-
-                // Execute the move
-                var moveResult = _gridStateService.MoveBlock(request.BlockId, request.ToPosition);
-                if (moveResult.IsFail)
-                {
-                    var error = moveResult.Match<Error?>(Succ: _ => null, Fail: e => e);
-                    _logger.Error("Failed to move block {BlockId}: {Error}", request.BlockId, error?.Message ?? "Unknown move error");
-                    return Fin<LanguageExt.Unit>.Fail(error ?? Error.New("Move operation failed"));
-                }
-
-                // Publish notification on success
-                var notification = BlockMovedNotification.Create(
-                    request.BlockId,
-                    fromPosition,
-                    request.ToPosition
-                );
-
-                await _mediator.Publish(notification, cancellationToken);
-                
-                _logger.Information("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}", 
-                    request.BlockId, fromPosition, request.ToPosition);
-
-                return Fin<LanguageExt.Unit>.Succ(LanguageExt.Unit.Default);
+                var error = blockResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
+                _logger.Warning("Block not found for BlockId {BlockId}: {Error}", request.BlockId, error.Message);
+                return FinFail<LanguageExt.Unit>(error);
             }
-            catch (Exception ex)
+
+            var block = blockResult.Match(Succ: b => b, Fail: _ => throw new InvalidOperationException());
+            var fromPosition = block.Position;
+
+            // Step 2: Validate move
+            var validationResult = ValidateMove(fromPosition, request.ToPosition);
+            if (validationResult.IsFail)
             {
-                _logger.Error(ex, "Unexpected error during MoveBlockCommand handling");
-                return Fin<LanguageExt.Unit>.Fail(Error.New($"Unexpected error: {ex.Message}"));
+                var error = validationResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
+                _logger.Warning("Validation failed for MoveBlockCommand: {Error}", error.Message);
+                return FinFail<LanguageExt.Unit>(error);
             }
+
+            // Step 3: Execute move
+            var moveResult = ExecuteMove(request.BlockId, request.ToPosition);
+            if (moveResult.IsFail)
+            {
+                var error = moveResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
+                _logger.Error("Failed to move block {BlockId}: {Error}", request.BlockId, error.Message);
+                return FinFail<LanguageExt.Unit>(error);
+            }
+
+            // Step 4: Publish notification (functional style)
+            var publishResult = await PublishNotification(request.BlockId, fromPosition, request.ToPosition, cancellationToken);
+            if (publishResult.IsFail)
+            {
+                var error = publishResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
+                _logger.Warning("Failed to publish notification for BlockId {BlockId}: {Error}", request.BlockId, error.Message);
+                return FinFail<LanguageExt.Unit>(error);
+            }
+
+            _logger.Information("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}", 
+                request.BlockId, fromPosition, request.ToPosition);
+
+            return FinSucc(LanguageExt.Unit.Default);
+        }
+
+        private Fin<Domain.Block.Block> GetBlockById(System.Guid blockId)
+        {
+            var blockResult = _gridStateService.GetBlockById(blockId);
+            return blockResult.Match(
+                Some: block => FinSucc(block),
+                None: () => FinFail<Domain.Block.Block>(Error.New("Block not found"))
+            );
+        }
+
+        private Fin<LanguageExt.Unit> ExecuteMove(System.Guid blockId, Domain.Common.Vector2Int toPosition)
+        {
+            return _gridStateService.MoveBlock(blockId, toPosition).Map(_ => LanguageExt.Unit.Default);
+        }
+
+        private async Task<Fin<LanguageExt.Unit>> PublishNotification(
+            System.Guid blockId, 
+            Domain.Common.Vector2Int fromPosition, 
+            Domain.Common.Vector2Int toPosition, 
+            CancellationToken cancellationToken)
+        {
+            var notification = BlockMovedNotification.Create(blockId, fromPosition, toPosition);
+            return await _mediator.Publish(notification, cancellationToken)
+                .ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block moved notification");
         }
 
         private Fin<LanguageExt.Unit> ValidateMove(Domain.Common.Vector2Int fromPosition, Domain.Common.Vector2Int toPosition)

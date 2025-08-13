@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 📚 IMPORTANT: Documentation Navigation
-**FIRST STOP:** Always consult `Docs/DOCUMENTATION_CATALOGUE.md` for a complete index of all documentation. This catalogue helps you quickly locate:
+**FIRST STOP:** Always consult [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for a complete index of all documentation. This catalogue helps you quickly locate:
 - Implementation plans and their status
 - Bug post-mortems and lessons learned  
 - Architecture FAQ and decisions
@@ -18,10 +18,10 @@ environment is windows 10, use powershell.
 ## 🚀 Quick Start for New Features
 
 **Before implementing ANY feature:**
-1. **Check the catalogue**: `Docs/DOCUMENTATION_CATALOGUE.md` for navigation
-2. Check if implementation plan exists: `Docs/3_Implementation_Plan/[FeatureName]_Implementation_Plan.md`
-3. Read workflow guide: `Docs/5_Guide/Comprehensive_Development_Workflow.md`
-4. Use checklist: `Docs/5_Guide/Quick_Reference_Development_Checklist.md`
+1. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
+2. Check if implementation plan exists: `Docs/3_Implementation_Plans/[FeatureName]_Implementation_Plan.md`
+3. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+4. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
 5. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
 
 ## Build and Development Commands
@@ -122,7 +122,7 @@ Presenters depend on interfaces (e.g., `IGridView`) that expose capabilities, no
 ## Development Guidelines
 
 ### Comprehensive Development Workflow
-**MANDATORY**: Follow the comprehensive TDD+VSA workflow documented in `Docs/5_Guide/Comprehensive_Development_Workflow.md` and use the `Quick_Reference_Development_Checklist.md` for daily tasks.
+**MANDATORY**: Follow the comprehensive TDD+VSA workflow documented in [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md) and use the [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md) for daily tasks.
 
 ### Adding New Features (TDD + Vertical Slice Approach)
 **MUST follow this exact sequence:**
@@ -196,17 +196,17 @@ The architecture prioritizes long-term maintainability and testability over rapi
 ## Essential Documentation References
 
 ### 📚 **Primary Documents to Consult (In Order)**
-1. **`Docs/5_Guide/Comprehensive_Development_Workflow.md`** - Complete TDD+VSA process
-2. **`Docs/5_Guide/Quick_Reference_Development_Checklist.md`** - Daily workflow checklists
-3. **`Docs/1_Architecture/Architecture_Guide.md`** - Core architectural principles
+1. **[Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)** - Complete TDD+VSA process
+2. **[Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)** - Daily workflow checklists
+3. **[Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)** - Core architectural principles
 4. **`Docs/3_Implementation_Plan/`** - Feature-specific implementation plans
 
 ### 📋 **Implementation Plans by Feature**
-- **Vertical Slice Architecture**: `0_Vertical_Slice_Architecture_Plan.md` - Core VSA patterns
-- **Block Placement (F1)**: `1_F1_Block_Placement_Implementation_Plan.md` - Foundation feature
-- **Move Block**: `2_Move_Block_Feature_Implementation_Plan.md` ✅ **Phase 1 COMPLETED** (Reference Implementation)
-- **Animation System**: `3_Animation_System_Implementation_Plan.md` - Animation queuing and state
-- **Dotnet Templates**: `5_Dotnet_New_Templates_Implementation_Plan.md` - Project templates
+- **Vertical Slice Architecture**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [1_F1_Block_Placement_Implementation_Plan.md](Docs/3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
+- **Move Block**: [2_Move_Block_Feature_Implementation_Plan.md](Docs/3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Animation System**: [3_Animation_System_Implementation_Plan.md](Docs/3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation queuing and state
+- **Dotnet Templates**: [5_Dotnet_New_Templates_Implementation_Plan.md](Docs/3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
 ### 🎯 **Reference Implementation: Move Block Feature**
 The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for implementation:
@@ -219,8 +219,8 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For Implementation Planning (implementation-planner agent)
 **MUST consult these documents:**
-1. **First**: `Docs/3_Implementation_Plan/0_Vertical_Slice_Architecture_Plan.md`
-2. **Then**: `Docs/5_Guide/Comprehensive_Development_Workflow.md`
+1. **First**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md)
+2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 3. **Reference**: Move Block implementation in `src/Features/Block/Move/`
 4. **Follow**: TDD+VSA workflow exactly as demonstrated
 
@@ -234,8 +234,8 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For Code Review (code-review-expert agent)
 **MUST validate against:**
-1. **Workflow**: `Docs/5_Guide/Comprehensive_Development_Workflow.md`
-2. **Architecture**: `Docs/1_Architecture/Architecture_Guide.md`
+1. **Workflow**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+2. **Architecture**: [Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)
 3. **Reference**: Move Block implementation as gold standard
 4. **Tests**: `tests/Architecture/ArchitectureFitnessTests.cs`
 
@@ -251,8 +251,8 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For Documentation Updates (docs-updater agent)
 **MUST maintain these documents:**
-1. **Workflow Docs**: `Docs/5_Guide/Comprehensive_Development_Workflow.md`
-2. **Checklist**: `Docs/5_Guide/Quick_Reference_Development_Checklist.md`
+1. **Workflow Docs**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+2. **Checklist**: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
 3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plan/`
 4. **Architecture Docs**: Keep `Docs/1_Architecture/` current
 
@@ -265,9 +265,9 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 ### For General Development
 **Claude Code MUST:**
 1. **Check documentation** in this order:
-   - Relevant implementation plan in `Docs/3_Implementation_Plan/`
-   - `Docs/5_Guide/Comprehensive_Development_Workflow.md`
-   - `Docs/5_Guide/Quick_Reference_Development_Checklist.md`
+   - Relevant implementation plan in [3_Implementation_Plans/](Docs/3_Implementation_Plans/)
+   - [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+   - [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
 2. **Reference Move Block** implementation as the pattern to follow
 3. **Run tests** in this sequence:
    - Architecture tests first: `dotnet test --filter "FullyQualifiedName~Architecture"`
@@ -279,9 +279,16 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ## 🔍 Common Agent Queries - Quick Answers
 
+### "Why isn't my view updating after a command succeeds?"
+**This is a common notification pipeline issue!** Follow the systematic debugging guide:
+1. Check [Debugging_Notification_Pipeline.md](Docs/6_Guides/Debugging_Notification_Pipeline.md) for step-by-step diagnosis
+2. Verify command handler publishes via `await _mediator.Publish(notification)`
+3. Ensure notification handler bridges to presenter via static events
+4. Confirm presenter subscribes to events in `Initialize()` method
+
 ### "How should I implement a new feature?"
-1. Check `Docs/3_Implementation_Plan/` for existing plan
-2. Follow `Docs/5_Guide/Comprehensive_Development_Workflow.md`
+1. Check [3_Implementation_Plans/](Docs/3_Implementation_Plans/) for existing plan
+2. Follow [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 3. Copy pattern from `src/Features/Block/Move/` (reference implementation)
 4. Start with architecture tests, then TDD Red-Green-Refactor
 
@@ -289,7 +296,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - **Core Logic**: `src/Features/[Domain]/[Feature]/` (e.g., `src/Features/Block/Move/`)
 - **Tests**: `tests/BlockLife.Core.Tests/Features/[Domain]/[Feature]/`
 - **Godot Views**: `godot_project/features/[domain]/[feature]/`
-- **Documentation**: `Docs/3_Implementation_Plan/[Feature]_Implementation_Plan.md`
+- **Documentation**: `Docs/3_Implementation_Plans/[Feature]_Implementation_Plan.md`
 
 ### "How do I write tests?"
 1. **Architecture tests first**: Already exist in `tests/Architecture/ArchitectureFitnessTests.cs`
@@ -302,6 +309,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - **Handlers**: Return `Fin<T>` for error handling (see `MoveBlockCommandHandler.cs`)
 - **Notifications**: Immutable records for events (see `BlockMovedNotification.cs`)
 - **Services**: Always use interfaces (e.g., `IGridStateService`)
+- **Notification Bridges**: Use Static Event Bridge Pattern (see [Standard_Patterns.md](Docs/1_Architecture/Standard_Patterns.md))
 
 ### "How do I validate my implementation?"
 ```bash

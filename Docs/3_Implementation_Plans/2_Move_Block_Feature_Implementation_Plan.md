@@ -1,6 +1,6 @@
 # Implementation Plan: "Move Block" Feature
 
-**Status: 🔄 IN PROGRESS** | **Last Updated: 2025-08-13** | **Follows: Comprehensive Development Workflow**
+**Status: 🔄 IN PROGRESS - Phase 1-2 Complete (70%)** | **Next: Phase 3 Godot Integration** | **Last Updated: 2025-08-13**
 
 This document outlines the comprehensive, end-to-end implementation plan for the "Move Block" feature. As the first core gameplay mechanic, this vertical slice will serve as the reference implementation for the project's architecture, as defined in the **Project Architecture Guide (v3.1)**. It will establish the full CQRS flow, from user input to state mutation to visual feedback.
 
@@ -229,7 +229,7 @@ mkdir src/Features/Block/Move
 - [ ] Full TDD documentation trail maintained
 
 ### 🔄 **WORKFLOW COMPLIANCE CHECKLIST**
-- [ ] Follow `Docs/5_Guide/Comprehensive_Development_Workflow.md` exactly
+- [ ] Follow [Comprehensive_Development_Workflow.md](../6_Guides/Comprehensive_Development_Workflow.md) exactly
 - [ ] Use `Quick_Reference_Development_Checklist.md` for daily validation
 - [ ] Run architecture tests before any implementation
 - [ ] Maintain TDD Red-Green-Refactor discipline

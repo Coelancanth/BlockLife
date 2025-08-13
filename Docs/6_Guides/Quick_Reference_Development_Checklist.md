@@ -364,7 +364,7 @@ await mediator.Send(new BatchPlaceBlocksCommand(positions));
 - Architecture Guide: `Docs/1_Architecture/Architecture_Guide.md`
 - Test Guide: `Docs/1_Architecture/Test_Guide.md`
 - Style Guide: `Docs/1_Architecture/Style_Guide.md`
-- Implementation Plans: `Docs/3_Implementation_Plan/`
+- Implementation Plans: [3_Implementation_Plans/](../3_Implementation_Plans/)
 
 #### Common Issues
 - **"Cannot find presenter"**: Check DI registration in GameStrapper

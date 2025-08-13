@@ -77,4 +77,4 @@
 
 ---
 **Reference Implementation:** `src/Features/Block/Move/` (Gold Standard)
-**Workflow Guide:** `Docs/5_Guide/Comprehensive_Development_Workflow.md`
+**Workflow Guide:** [Comprehensive_Development_Workflow.md](../Docs/6_Guides/Comprehensive_Development_Workflow.md)

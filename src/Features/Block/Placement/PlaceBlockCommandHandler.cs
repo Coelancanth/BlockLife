@@ -2,6 +2,7 @@ using BlockLife.Core.Application.Simulation;
 using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Features.Block.Placement.Rules;
+using BlockLife.Core.Infrastructure.Extensions;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using MediatR;
@@ -52,28 +53,38 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             select block
         ).AsTask();
         
-        if (result.IsSucc)
-        {
-            var block = result.Match(Succ: b => b, Fail: _ => throw new InvalidOperationException());
-            // Create and publish notification directly (following MoveBlock pattern)
-            var notification = new BlockPlacedNotification(
-                block.Id,
-                block.Position,
-                block.Type,
-                block.CreatedAt
-            );
-            
-            await _mediator.Publish(notification);
-            
-            _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
-            return FinSucc(Unit.Default);
-        }
-        else
-        {
-            var error = result.Match(Succ: _ => throw new InvalidOperationException(), Fail: e => e);
-            _logger.LogWarning("PlaceBlockCommand failed for position {Position}: {Error}", request.Position, error);
-            return FinFail<Unit>(error);
-        }
+        return await result.Match(
+            Succ: async block =>
+            {
+                // Create and publish notification directly (following MoveBlock pattern)
+                var notification = new BlockPlacedNotification(
+                    block.Id,
+                    block.Position,
+                    block.Type,
+                    block.CreatedAt
+                );
+                
+                var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block placed notification");
+                
+                return publishResult.Match(
+                    Succ: _ =>
+                    {
+                        _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
+                        return FinSucc(Unit.Default);
+                    },
+                    Fail: error =>
+                    {
+                        _logger.LogWarning("PlaceBlockCommand notification failed for position {Position}: {Error}", request.Position, error.Message);
+                        return FinFail<Unit>(error);
+                    }
+                );
+            },
+            Fail: error =>
+            {
+                _logger.LogWarning("PlaceBlockCommand failed for position {Position}: {Error}", request.Position, error.Message);
+                return Task.FromResult(FinFail<Unit>(error));
+            }
+        );
     }
     
     private Fin<Domain.Block.Block> CreateBlock(PlaceBlockCommand request) =>
