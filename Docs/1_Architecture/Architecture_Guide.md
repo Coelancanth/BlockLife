@@ -229,10 +229,11 @@ This is the cornerstone principle for our presentation layer. While Presenters a
 #### CRITICAL CONSTRAINT: Presenters and MediatR Interfaces
 **Presenters MUST NOT implement `INotificationHandler<T>` or `IRequestHandler<T,R>` interfaces.** These interfaces cause MediatR to automatically register the implementing class during assembly scanning, requiring all constructor dependencies to be available in the DI container. Since Presenters require View dependencies (which are Godot-managed, not DI-managed), this creates an unresolvable dependency conflict.
 
-**Correct Pattern**: Presenters are created via `PresenterFactory` with their View dependency injected. Notifications should be handled through:
-- Separate infrastructure handlers that don't depend on views
-- Event aggregation patterns
-- Direct method calls from command results
+**Standard Solution**: Use the **Static Event Bridge Pattern** from [Standard Patterns](Standard_Patterns.md):
+- Infrastructure handlers (DI-managed) implement `INotificationHandler<T>`
+- Bridge handlers expose static events that presenters subscribe to
+- Presenters are created via `PresenterFactory` with their View dependency injected
+- **Reference Implementation**: `BlockPlacementNotificationBridge` and `BlockManagementPresenter`
 
 **Example Violation** (FORBIDDEN):
 ```csharp

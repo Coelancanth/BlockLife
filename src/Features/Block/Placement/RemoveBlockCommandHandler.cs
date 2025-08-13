@@ -1,6 +1,7 @@
 using BlockLife.Core.Application.Simulation;
 using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Rules;
+using BlockLife.Core.Infrastructure.Extensions;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using MediatR;
@@ -36,12 +37,21 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
     {
         _logger.LogDebug("Handling RemoveBlockCommand for position {Position}", request.Position);
         
-        return await (
+        var result = await (
             from block in _blockExistsRule.Validate(request.Position)
             from removed in RemoveBlockFromGrid(request.Position)
             from effectQueued in QueueEffect(block)
-            select Unit.Default
+            select block
         ).AsTask();
+        
+        return await result.Match(
+            Succ: async block =>
+            {
+                var processResult = await ProcessQueuedEffects();
+                return processResult.Map(_ => Unit.Default);
+            },
+            Fail: error => Task.FromResult(FinFail<Unit>(error))
+        );
     }
     
     private Fin<Unit> RemoveBlockFromGrid(Domain.Common.Vector2Int position) =>
@@ -54,6 +64,20 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
             block.Type,
             DateTime.UtcNow
         ));
+    
+    private async Task<Fin<Unit>> ProcessQueuedEffects()
+    {
+        var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+        
+        return result.Match(
+            Succ: _ => result,
+            Fail: error =>
+            {
+                _logger.LogError("Failed to process queued effects: {Error}", error.Message);
+                return result;
+            }
+        );
+    }
 }
 
 public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdCommand, Fin<Unit>>
@@ -79,12 +103,21 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
     {
         _logger.LogDebug("Handling RemoveBlockByIdCommand for block {BlockId}", request.BlockId);
         
-        return await (
+        var result = await (
             from block in _blockExistsRule.Validate(request.BlockId)
             from removed in RemoveBlockFromGrid(request.BlockId)
             from effectQueued in QueueEffect(block)
-            select Unit.Default
+            select block
         ).AsTask();
+        
+        return await result.Match(
+            Succ: async block =>
+            {
+                var processResult = await ProcessQueuedEffectsForId();
+                return processResult.Map(_ => Unit.Default);
+            },
+            Fail: error => Task.FromResult(FinFail<Unit>(error))
+        );
     }
     
     private Fin<Unit> RemoveBlockFromGrid(Guid blockId) =>
@@ -97,4 +130,18 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
             block.Type,
             DateTime.UtcNow
         ));
+    
+    private async Task<Fin<Unit>> ProcessQueuedEffectsForId()
+    {
+        var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+        
+        return result.Match(
+            Succ: _ => result,
+            Fail: error =>
+            {
+                _logger.LogError("Failed to process queued effects: {Error}", error.Message);
+                return result;
+            }
+        );
+    }
 }

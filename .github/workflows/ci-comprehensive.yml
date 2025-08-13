@@ -239,8 +239,8 @@ jobs:
         
         # Check for required documentation files
         required_docs=(
-          "Docs/5_Guide/Comprehensive_Development_Workflow.md"
-          "Docs/5_Guide/Quick_Reference_Development_Checklist.md"
+          "Docs/6_Guides/Comprehensive_Development_Workflow.md"
+          "Docs/6_Guides/Quick_Reference_Development_Checklist.md"
           "Docs/1_Architecture/Architecture_Guide.md"
           "CLAUDE.md"
         )
@@ -257,7 +257,7 @@ jobs:
     - name: 📋 Check Implementation Plans
       run: |
         echo "📋 Checking implementation plans"
-        ls -la Docs/3_Implementation_Plan/ || echo "❌ Implementation plans directory missing"
+        ls -la Docs/3_Implementation_Plans/ || echo "❌ Implementation plans directory missing"
 
   # Final Summary Job
   ci-summary:

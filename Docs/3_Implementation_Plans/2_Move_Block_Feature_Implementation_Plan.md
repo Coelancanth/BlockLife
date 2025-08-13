@@ -229,7 +229,7 @@ mkdir src/Features/Block/Move
 - [ ] Full TDD documentation trail maintained
 
 ### 🔄 **WORKFLOW COMPLIANCE CHECKLIST**
-- [ ] Follow `Docs/5_Guide/Comprehensive_Development_Workflow.md` exactly
+- [ ] Follow [Comprehensive_Development_Workflow.md](../6_Guides/Comprehensive_Development_Workflow.md) exactly
 - [ ] Use `Quick_Reference_Development_Checklist.md` for daily validation
 - [ ] Run architecture tests before any implementation
 - [ ] Maintain TDD Red-Green-Refactor discipline

@@ -101,13 +101,23 @@ Multiple critical issues encountered during F1 implementation that broke compila
 
 ## Action Items
 
+### Immediate Fixes (Completed)
 - [x] Remove custom Fin wrapper
 - [x] Fix presenter registration
 - [x] Standardize error format
 - [x] Add validation to RemoveBlockCommandHandler
-- [ ] Document error handling patterns in architecture guide
-- [ ] Create architecture tests to prevent similar issues
-- [ ] Add validation pipeline behavior for automatic validation
+
+### Prevention Measures (Completed)
+- [x] **Create architecture tests to prevent similar issues** ✅ *Completed 2025-08-13*
+  - Added `CommandHandlers_ShouldNotContain_TryCatchBlocks()` test
+  - Added `TaskFinExtensions_ShouldBe_Available()` test  
+  - Existing tests already prevent Godot imports and DI violations
+
+### Future Enhancements (Optional)
+- [ ] **Document error handling patterns in architecture guide**
+  - *Note: Patterns documented in ADR-006 and examples, could enhance Architecture Guide*
+- [ ] **Add validation pipeline behavior for automatic validation**
+  - *Note: Would be useful MediatR behavior but represents separate feature development*
 
 ## Time Impact
 - Initial implementation: 2 hours

@@ -7,37 +7,45 @@ using Microsoft.Extensions.Logging;
 namespace BlockLife.Core.Features.Block.Placement.Effects;
 
 /// <summary>
-/// Empty notification handlers to satisfy MediatR's requirement for at least one handler per notification.
-/// The actual view updates are handled by presenters that are created when views are instantiated.
+/// Notification handlers that receive MediatR notifications and forward them to presenters.
+/// This solves the architectural constraint where presenters cannot implement INotificationHandler directly.
 /// </summary>
-public class EmptyBlockPlacementHandlers : 
+public class BlockPlacementNotificationBridge : 
     INotificationHandler<BlockPlacedNotification>,
     INotificationHandler<BlockRemovedNotification>
 {
-    private readonly ILogger<EmptyBlockPlacementHandlers> _logger;
+    private readonly ILogger<BlockPlacementNotificationBridge> _logger;
+    
+    // Static event that presenters can subscribe to
+    public static event Func<BlockPlacedNotification, Task>? BlockPlacedEvent;
+    public static event Func<BlockRemovedNotification, Task>? BlockRemovedEvent;
 
-    public EmptyBlockPlacementHandlers(ILogger<EmptyBlockPlacementHandlers> logger)
+    public BlockPlacementNotificationBridge(ILogger<BlockPlacementNotificationBridge> logger)
     {
         _logger = logger;
     }
 
-    public Task Handle(BlockPlacedNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(BlockPlacedNotification notification, CancellationToken cancellationToken)
     {
-        // Log for debugging purposes
-        _logger.LogTrace("BlockPlacedNotification published for block {BlockId} at {Position}", 
-            notification.BlockId, notification.Position);
-        
-        // The actual handling is done by presenters that subscribe to these notifications
-        return Task.CompletedTask;
+        if (BlockPlacedEvent != null)
+        {
+            await BlockPlacedEvent(notification);
+        }
+        else
+        {
+            _logger.LogWarning("No subscribers for BlockPlaced event - no view will be updated!");
+        }
     }
 
-    public Task Handle(BlockRemovedNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(BlockRemovedNotification notification, CancellationToken cancellationToken)
     {
-        // Log for debugging purposes
-        _logger.LogTrace("BlockRemovedNotification published for block {BlockId}", 
-            notification.BlockId);
-        
-        // The actual handling is done by presenters that subscribe to these notifications
-        return Task.CompletedTask;
+        if (BlockRemovedEvent != null)
+        {
+            await BlockRemovedEvent(notification);
+        }
+        else
+        {
+            _logger.LogWarning("No subscribers for BlockRemoved event - no view will be updated!");
+        }
     }
 }

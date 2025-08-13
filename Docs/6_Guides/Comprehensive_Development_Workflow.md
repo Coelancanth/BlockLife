@@ -365,7 +365,10 @@ dotnet build /p:TreatWarningsAsErrors=true
 - [ ] Commands are immutable records
 - [ ] Handlers return Fin<T>
 - [ ] Error handling uses LanguageExt patterns
-- [ ] Logging added for debugging
+- [ ] **Notification pattern consistency**: All handlers use direct MediatR publishing
+- [ ] **No empty handlers**: All notification handlers provide actual functionality
+- [ ] **Static event bridges**: Proper MediatR-to-Presenter bridge pattern implemented
+- [ ] Logging added for debugging (especially notification publishing)
 - [ ] Documentation updated
 ```
 
@@ -395,6 +398,9 @@ Brief description of changes
 - [ ] Constructor injection used
 - [ ] Presenter has no mutable state
 - [ ] View interface exposes capabilities only
+- [ ] **Notification consistency**: Uses direct MediatR publishing pattern
+- [ ] **No empty handlers**: All handlers provide actual functionality
+- [ ] **Pipeline debugging**: Logging added for notification flow tracing
 ```
 
 #### Code Review Focus Areas
@@ -403,15 +409,22 @@ Brief description of changes
    - CQRS pattern properly implemented
    - MVP pattern correctly applied
 
-2. **Functional Programming**
+2. **Notification Pipeline Consistency**
+   - All command handlers use direct `await _mediator.Publish()` pattern
+   - No use of effect queues without processing mechanism
+   - Proper static event bridge handlers for Presenter connection
+   - No empty or no-op notification handlers
+
+3. **Functional Programming**
    - Proper use of Fin<T> and Option<T>
    - Immutability maintained
    - Pure functions where possible
 
-3. **Testing Coverage**
+4. **Testing Coverage**
    - All four pillars covered
    - Edge cases tested
    - Property tests for invariants
+   - Notification pipeline integration tested
 
 ## 3. Build & Deployment Pipeline
 

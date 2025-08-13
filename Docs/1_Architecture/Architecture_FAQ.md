@@ -149,6 +149,106 @@ public async Task Handle_WhenValid_ReturnsSuccess()
 
 ---
 
+## Notification Pipeline & Event Handling
+
+### Q: How do I properly implement notifications from command handlers?
+**A:** Always use the consistent MediatR publishing pattern. Do NOT use effect queues unless you have a processing mechanism:
+
+```csharp
+public async Task<Fin<Unit>> Handle(MyCommand command, CancellationToken cancellationToken)
+{
+    // ... validation and business logic ...
+    
+    // ALWAYS: Direct MediatR publishing
+    await _mediator.Publish(new MyNotification(command.Data), cancellationToken);
+    
+    return Unit.Default;
+}
+```
+
+**Never do this:**
+```csharp
+// DON'T: Effect queuing without processing
+_simulationManager.QueueEffect(new MyEffect(...)); // Will never be processed!
+```
+
+### Q: How do I connect MediatR notifications to Presenters?
+**A:** Use the static event bridge pattern since Presenters can't implement INotificationHandler directly:
+
+```csharp
+// 1. Create notification handler with static event in Core project
+public class MyNotificationHandler : INotificationHandler<MyNotification>
+{
+    public static event Action<MyNotification>? MyEventOccurred;
+    
+    public Task Handle(MyNotification notification, CancellationToken cancellationToken)
+    {
+        MyEventOccurred?.Invoke(notification);
+        return Task.CompletedTask;
+    }
+}
+
+// 2. In Presenter, subscribe to the static event
+public void Initialize()
+{
+    MyNotificationHandler.MyEventOccurred += OnMyEvent;
+}
+
+private void OnMyEvent(MyNotification notification)
+{
+    // Update view through interface
+    _view.UpdateDisplay(notification.Data);
+}
+
+// 3. Don't forget to unsubscribe to prevent memory leaks
+public void Dispose()
+{
+    MyNotificationHandler.MyEventOccurred -= OnMyEvent;
+}
+```
+
+### Q: Why aren't my notifications reaching the presenters?
+**A:** Check the notification pipeline in this order:
+1. **Command Handler**: Is `await _mediator.Publish(notification)` being called?
+2. **Handler Registration**: Is your notification handler registered in DI?
+3. **Static Event**: Is the static event being invoked in the handler?
+4. **Presenter Subscription**: Is the presenter subscribing to the static event?
+5. **Logging**: Add logging at each step to trace the flow.
+
+### Q: Should I create empty notification handlers?
+**A:** NO. Empty handlers indicate missing architectural pieces:
+
+```csharp
+// DON'T create empty handlers:
+public class EmptyHandler : INotificationHandler<SomeNotification>
+{
+    public Task Handle(SomeNotification notification, CancellationToken cancellationToken)
+    {
+        // Empty - this is an anti-pattern
+        return Task.CompletedTask;
+    }
+}
+```
+
+If you need a handler but have no immediate implementation, create a proper bridge handler with static events instead.
+
+### Q: When should I use effect queues vs direct MediatR publishing?
+**A:** Prefer direct MediatR publishing unless you have a specific need for queuing:
+
+**Use Direct MediatR Publishing (Recommended):**
+- For immediate UI updates
+- For standard command→notification flow
+- When you need guaranteed delivery
+
+**Use Effect Queues Only If:**
+- You have a proper processing mechanism in place
+- You need batching or timing control
+- You have complex orchestration requirements
+
+**Critical**: If using effect queues, ensure `ProcessQueuedEffectsAsync()` is called in your application lifecycle.
+
+---
+
 ## Common Patterns
 
 ### Q: How do I implement a new vertical slice?
