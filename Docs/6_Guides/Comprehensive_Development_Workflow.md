@@ -402,7 +402,11 @@ dotnet build /p:TreatWarningsAsErrors=true
 - [ ] **No empty handlers**: All notification handlers provide actual functionality
 - [ ] **Static event bridges**: Proper MediatR-to-Presenter bridge pattern implemented
 - [ ] Logging added for debugging (especially notification publishing)
-- [ ] Documentation updated
+- [ ] **Documentation updated** (See Documentation_Update_Workflow.md)
+  - [ ] Implementation plan phases marked complete
+  - [ ] Bug reports created for any fixes
+  - [ ] CLAUDE.md updated if patterns changed
+  - [ ] Test documentation includes context
 ```
 
 ### 2.2 Pull Request Process
