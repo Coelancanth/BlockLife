@@ -98,12 +98,18 @@ jobs:
         # Checkout base branch to count tests
         git checkout origin/${{ github.base_ref }}
         dotnet restore BlockLife.sln > /dev/null 2>&1
-        base_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-build 2>/dev/null | grep -c "Test:" || echo "0")
+        dotnet build tests/BlockLife.Core.Tests.csproj > /dev/null 2>&1
+        base_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-restore 2>/dev/null | grep -E "^\s+[A-Za-z].*Test" | wc -l || echo "0")
         
         # Checkout PR branch
         git checkout ${{ github.sha }}
         dotnet restore BlockLife.sln > /dev/null 2>&1
-        pr_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-build 2>/dev/null | grep -c "Test:" || echo "0")
+        dotnet build tests/BlockLife.Core.Tests.csproj > /dev/null 2>&1
+        pr_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-restore 2>/dev/null | grep -E "^\s+[A-Za-z].*Test" | wc -l || echo "0")
+        
+        # Ensure we have valid integers
+        base_test_count=${base_test_count:-0}
+        pr_test_count=${pr_test_count:-0}
         
         echo "Base branch tests: $base_test_count"
         echo "PR branch tests: $pr_test_count"
