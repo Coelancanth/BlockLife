@@ -5,11 +5,44 @@
 This document establishes a rigorous, test-driven development workflow that integrates Vertical Slice Architecture (VSA), Clean Architecture principles, and functional programming patterns. The workflow is designed to maintain architectural integrity while delivering features incrementally with high confidence.
 
 **Core Principles:**
+- **MANDATORY Git Branch Workflow** for ALL changes
 - Test-Driven Development (TDD) at every layer
 - Vertical Slice Architecture for feature isolation
 - Functional programming with LanguageExt for error handling
 - Strict architectural boundaries enforced by tests
 - Continuous quality gates throughout development
+
+## 0. 🚨 MANDATORY: Git Workflow Setup
+
+**BEFORE ANY DEVELOPMENT - CREATE FEATURE BRANCH:**
+
+```bash
+# Always start from updated main
+git checkout main
+git pull origin main
+
+# Create feature branch (REQUIRED)
+git checkout -b feat/your-feature-name
+```
+
+**Branch Types:**
+- `feat/` - New features
+- `fix/` - Bug fixes  
+- `docs/` - Documentation updates
+- `refactor/` - Code refactoring
+- `test/` - Adding tests
+- `chore/` - Maintenance
+
+**FORBIDDEN:** Working directly on main branch. All changes MUST go through PR process.
+
+**🤖 AUTOMATION:** Setup Git workflow enforcement to prevent violations automatically:
+```bash
+# One-time setup (HIGHLY RECOMMENDED)
+python scripts/enforce_git_workflow.py --setup-hooks
+```
+This creates a pre-commit hook that automatically blocks commits to main and validates branch naming.
+
+**Reference:** [Git_Workflow_Guide.md](Git_Workflow_Guide.md) for complete workflow.
 
 ## 1. Feature Development Lifecycle
 
@@ -457,6 +490,14 @@ function Build-BlockLife {
         dotnet test --filter "Category=Unit" --no-build
         dotnet test --filter "Category=Property" --no-build
         dotnet test --filter "Category=Integration" --no-build
+        
+        # 🤖 AUTOMATION: Update documentation with test metrics
+        Write-Host "Updating documentation with test metrics..." -ForegroundColor Cyan
+        python scripts/collect_test_metrics.py --update-docs
+        
+        # 🤖 AUTOMATION: Sync documentation status
+        Write-Host "Synchronizing documentation status..." -ForegroundColor Cyan  
+        python scripts/sync_documentation_status.py
     }
     
     if ($OpenGodot) {
@@ -936,17 +977,54 @@ function New-Hotfix {
 - **Code Review Participation**: 100%
 - **Retrospective Action Completion**: >80%
 
+## Final Step: Pull Request Creation
+
+**MANDATORY - ALL CHANGES MUST GO THROUGH PR PROCESS:**
+
+```bash
+# Push your feature branch
+git push -u origin feat/your-feature-name
+
+# Create pull request
+gh pr create --title "feat: descriptive title" --body "$(cat <<'EOF'
+## Description
+Brief description of changes
+
+## Testing
+- [ ] All tests pass
+- [ ] Manual testing completed
+- [ ] Architecture tests validate
+
+## Checklist
+- [ ] Documentation updated
+- [ ] No breaking changes
+- [ ] Follows TDD+VSA workflow
+EOF
+)"
+```
+
+**PR Requirements:**
+- Descriptive title and description
+- All tests passing
+- Code review approval
+- No direct merges to main
+
+**Reference**: [Git_Workflow_Guide.md](Git_Workflow_Guide.md) for complete PR process.
+
 ## Conclusion
 
-This workflow provides a comprehensive framework for developing BlockLife with confidence and quality. The combination of TDD, VSA, and Clean Architecture ensures that each feature is:
+This workflow provides a comprehensive framework for developing BlockLife with confidence and quality. The combination of **mandatory Git workflow**, TDD, VSA, and Clean Architecture ensures that each feature is:
 
-1. **Testable**: Through strict architectural boundaries
-2. **Maintainable**: Through functional programming and immutability
-3. **Extensible**: Through vertical slices and CQRS
-4. **Reliable**: Through comprehensive testing strategies
-5. **Performant**: Through continuous measurement and optimization
+1. **Reviewable**: Through proper Git branch workflow and PR process
+2. **Testable**: Through strict architectural boundaries
+3. **Maintainable**: Through functional programming and immutability
+4. **Extensible**: Through vertical slices and CQRS
+5. **Reliable**: Through comprehensive testing strategies
+6. **Performant**: Through continuous measurement and optimization
 
 Remember: The architecture serves the game, not the other way around. When in doubt, prioritize player experience while maintaining architectural integrity.
+
+**🚨 CRITICAL**: Never work directly on main branch. All changes must go through feature branch → PR → review → merge workflow.
 
 ---
 

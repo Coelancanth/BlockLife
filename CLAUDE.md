@@ -15,14 +15,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with Model-View-Presenter (MVP) pattern. The project uses CQRS with functional programming principles (LanguageExt.Core) and maintains a pure C# core separated from Godot-specific presentation code. Development 
 environment is windows 10, use powershell.
 
+## ⚠️ CRITICAL: Git Workflow Requirements
+
+**🚫 NEVER WORK DIRECTLY ON MAIN BRANCH - NO EXCEPTIONS**
+
+**MANDATORY Git Workflow for ALL Changes:**
+1. **Create feature branch FIRST**: `git checkout -b <type>/<description>`
+2. **Make changes on branch**: Never on main
+3. **Create Pull Request**: Always for review
+4. **Wait for approval**: Before merging
+5. **Follow guide**: [Git_Workflow_Guide.md](Docs/6_Guides/Git_Workflow_Guide.md)
+
+**Branch Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `hotfix/`
+
 ## 🚀 Quick Start for New Features
 
 **Before implementing ANY feature:**
-1. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
-2. Check if implementation plan exists: `Docs/3_Implementation_Plans/[FeatureName]_Implementation_Plan.md`
-3. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-4. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-5. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
+1. **🔥 CREATE BRANCH**: `git checkout -b feat/your-feature-name`
+2. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
+3. Check if implementation plan exists: `Docs/3_Implementation_Plans/[FeatureName]_Implementation_Plan.md`
+4. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+5. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
+6. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
 
 ## Build and Development Commands
 
@@ -55,7 +69,48 @@ addons\gdUnit4\runtest.cmd
 
 # QUALITY GATE: Full validation pipeline
 dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && echo "✅ Ready for commit"
+
+# AUTOMATION: Enhanced quality pipeline with cognitive load reduction
+dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_metrics.py --update-docs && echo "✅ Ready for commit"
 ```
+
+## 🤖 Automation Scripts (Cognitive Load Reduction)
+
+BlockLife includes Python automation scripts to reduce manual maintenance and cognitive load:
+
+### 🧪 Test Metrics Automation
+```bash
+# Automatically update documentation with test statistics
+python scripts/collect_test_metrics.py --update-docs
+
+# Integrate with quality gates (recommended)
+dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_metrics.py --update-docs
+```
+
+### 🚨 Git Workflow Enforcement  
+```bash
+# Setup automatic Git workflow enforcement (HIGHLY RECOMMENDED)
+python scripts/enforce_git_workflow.py --setup-hooks
+
+# This prevents working on main branch and validates branch naming
+```
+
+### 🔄 Documentation Synchronization
+```bash
+# Keep all documentation tracking files synchronized
+python scripts/sync_documentation_status.py
+
+# Check for broken documentation links
+python scripts/sync_documentation_status.py --check-links
+```
+
+**Benefits:**
+- ✅ Eliminates manual test counting and documentation updates
+- ✅ Prevents Git workflow violations automatically
+- ✅ Maintains documentation consistency without manual effort
+- ✅ Reduces cognitive load for development tasks
+
+**See [scripts/README.md](scripts/README.md) for complete automation guide.**
 
 ### Godot Project
 - Main project file: `project.godot`
@@ -249,14 +304,14 @@ The architecture prioritizes long-term maintainability and testability over rapi
 1. **[Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)** - Complete TDD+VSA process
 2. **[Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)** - Daily workflow checklists
 3. **[Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)** - Core architectural principles
-4. **`Docs/3_Implementation_Plan/`** - Feature-specific implementation plans
+4. **`Docs/3_Implementation_Plans/`** - Feature-specific implementation plans
 
 ### 📋 **Implementation Plans by Feature**
-- **Vertical Slice Architecture**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
-- **Block Placement (F1)**: [1_F1_Block_Placement_Implementation_Plan.md](Docs/3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
-- **Move Block**: [2_Move_Block_Feature_Implementation_Plan.md](Docs/3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
+- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
 - **Animation System**: [3_Animation_System_Implementation_Plan.md](Docs/3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation queuing and state
-- **Dotnet Templates**: [5_Dotnet_New_Templates_Implementation_Plan.md](Docs/3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
 ### 🎯 **Reference Implementation: Move Block Feature**
 The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for implementation:
@@ -269,7 +324,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For Implementation Planning (implementation-planner agent)
 **MUST consult these documents:**
-1. **First**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md)
+1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
 2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 3. **Reference**: Move Block implementation in `src/Features/Block/Move/`
 4. **Follow**: TDD+VSA workflow exactly as demonstrated
@@ -303,7 +358,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 **MUST maintain these documents:**
 1. **Workflow Docs**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 2. **Checklist**: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plan/`
+3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plans/`
 4. **Architecture Docs**: Keep `Docs/1_Architecture/` current
 
 **Update requirements:**
@@ -314,6 +369,16 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For General Development
 **Claude Code MUST:**
+
+**🚨 CRITICAL FIRST STEP - GIT WORKFLOW:**
+0. **NEVER work on main branch** - Always create feature branch first:
+   ```bash
+   git checkout -b <type>/<description>
+   ```
+   - **Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `hotfix/`
+   - **Must read**: [Git_Workflow_Guide.md](Docs/6_Guides/Git_Workflow_Guide.md)
+
+**DEVELOPMENT WORKFLOW:**
 1. **Check documentation** in this order:
    - Relevant implementation plan in [3_Implementation_Plans/](Docs/3_Implementation_Plans/)
    - [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
@@ -326,6 +391,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 4. **Use TodoWrite** tool to track workflow compliance
 5. **Follow TDD** Red-Green-Refactor cycle religiously
 6. **Validate** against 4-pillar testing strategy
+7. **Create Pull Request** for all changes - NO direct commits to main
 
 ## 🔍 Common Agent Queries - Quick Answers
 

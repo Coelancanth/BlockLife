@@ -229,6 +229,6 @@ See `BlockPlacementNotificationBridge` and `BlockManagementPresenter` for the re
 ---
 
 **Related Documents:**
-- [Bug Post-Mortem BPM-005: Block Placement Display Bug](../4_Bug_PostMortems/005_Block_Placement_Display_Bug.md)
+- [Bug Post-Mortem BPM-005: Block Placement Display Bug](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md)
 - [Architecture FAQ: Notification Pipeline](../1_Architecture/Architecture_FAQ.md#notification-pipeline--event-handling)
 - [Comprehensive Development Workflow](Comprehensive_Development_Workflow.md)

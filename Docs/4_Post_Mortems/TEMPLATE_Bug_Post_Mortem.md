@@ -60,5 +60,5 @@ Key takeaway for the team about Clean Architecture in practice.
 ---
 
 **Related:**
-- [Bug Post-Mortem Examples](000_Bug_Post_Mortem_Examples.md) - Common patterns and examples
+- [Bug Post-Mortem Examples](EXAMPLE_Bug_Post_Mortem.md) - Common patterns and examples
 - [Comprehensive Development Workflow](../6_Guides/Comprehensive_Development_Workflow.md) - Process to prevent bugs
