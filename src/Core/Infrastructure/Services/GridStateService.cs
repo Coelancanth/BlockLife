@@ -1,35 +1,49 @@
+using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
 using LanguageExt;
 using LanguageExt.Common;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unit = LanguageExt.Unit;
+using static LanguageExt.Prelude;
 
 namespace BlockLife.Core.Infrastructure.Services
 {
     /// <summary>
-    /// Thread-safe implementation of IGridStateService using concurrent collections.
-    /// Manages the authoritative state of the game grid.
+    /// Thread-safe implementation of IGridStateService and IBlockRepository using concurrent collections.
+    /// Serves as the single source of truth for block state management.
+    /// Consolidates dual state management to eliminate race conditions.
     /// </summary>
-    public sealed class GridStateService : IGridStateService
+    public sealed class GridStateService : IGridStateService, IBlockRepository
     {
         private readonly ConcurrentDictionary<Vector2Int, Domain.Block.Block> _blocksByPosition = new();
         private readonly ConcurrentDictionary<Guid, Domain.Block.Block> _blocksById = new();
         private readonly Vector2Int _gridDimensions;
+        private readonly ILogger<GridStateService>? _logger;
+
+        // Grid dimension constraints to prevent unbounded memory usage
+        private const int MaxGridWidth = 1000;
+        private const int MaxGridHeight = 1000;
 
         /// <summary>
         /// Initializes a new GridStateService with the specified dimensions.
         /// </summary>
-        /// <param name="width">Grid width</param>
-        /// <param name="height">Grid height</param>
-        public GridStateService(int width = 10, int height = 10)
+        /// <param name="width">Grid width (max 1000)</param>
+        /// <param name="height">Grid height (max 1000)</param>
+        /// <param name="logger">Logger for operations tracking</param>
+        public GridStateService(int width = 10, int height = 10, ILogger<GridStateService>? logger = null)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width), "Width must be positive");
             if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height), "Height must be positive");
+            if (width > MaxGridWidth) throw new ArgumentOutOfRangeException(nameof(width), $"Width cannot exceed {MaxGridWidth}");
+            if (height > MaxGridHeight) throw new ArgumentOutOfRangeException(nameof(height), $"Height cannot exceed {MaxGridHeight}");
             
             _gridDimensions = new Vector2Int(width, height);
+            _logger = logger;
         }
 
         public Fin<Unit> PlaceBlock(Domain.Block.Block block)
@@ -145,21 +159,21 @@ namespace BlockLife.Core.Infrastructure.Services
 
         public IReadOnlyCollection<Domain.Block.Block> GetAdjacentBlocks(Vector2Int position, bool includeOccupied = true)
         {
-            var adjacentPositions = position.GetOrthogonallyAdjacentPositions();
-            var result = new List<Domain.Block.Block>();
+            var adjacentPositions = position.GetOrthogonallyAdjacentPositions()
+                .Where(IsValidPosition)
+                .ToList();
 
-            foreach (var adjPosition in adjacentPositions)
-            {
-                if (!IsValidPosition(adjPosition)) continue;
+            if (!includeOccupied)
+                return new List<Domain.Block.Block>().AsReadOnly();
 
-                var blockOption = GetBlockAt(adjPosition);
-                if (includeOccupied && blockOption.IsSome)
-                {
-                    result.Add(blockOption.IfNone(() => throw new InvalidOperationException()));
-                }
-            }
+            // Optimized: Single LINQ query instead of N+1 dictionary lookups
+            // Uses the concurrent dictionary's thread-safe enumeration
+            var adjacentBlocks = _blocksByPosition
+                .Where(kvp => adjacentPositions.Contains(kvp.Key))
+                .Select(kvp => kvp.Value)
+                .ToList();
 
-            return result.AsReadOnly();
+            return adjacentBlocks.AsReadOnly();
         }
 
         public IReadOnlyCollection<Domain.Block.Block> GetBlocksByType(Domain.Block.BlockType blockType) =>
@@ -172,5 +186,97 @@ namespace BlockLife.Core.Infrastructure.Services
         }
 
         public Vector2Int GetGridDimensions() => _gridDimensions;
+
+        // IBlockRepository async methods implementation
+        // Consolidates state management to eliminate dual-repository race conditions
+        
+        public Task<Option<Domain.Block.Block>> GetByIdAsync(Guid id) =>
+            Task.FromResult(GetBlockById(id));
+        
+        public Task<Option<Domain.Block.Block>> GetAtPositionAsync(Vector2Int position) =>
+            Task.FromResult(GetBlockAt(position));
+        
+        public Task<IReadOnlyList<Domain.Block.Block>> GetAllAsync() =>
+            Task.FromResult(GetAllBlocks().ToList() as IReadOnlyList<Domain.Block.Block>);
+        
+        public Task<IReadOnlyList<Domain.Block.Block>> GetInRegionAsync(Vector2Int topLeft, Vector2Int bottomRight)
+        {
+            var blocksInRegion = _blocksById.Values
+                .Where(block => 
+                    block.Position.X >= topLeft.X && block.Position.X <= bottomRight.X &&
+                    block.Position.Y >= topLeft.Y && block.Position.Y <= bottomRight.Y)
+                .ToList();
+            
+            return Task.FromResult(blocksInRegion as IReadOnlyList<Domain.Block.Block>);
+        }
+        
+        public Task<Fin<Unit>> AddAsync(Domain.Block.Block block)
+        {
+            _logger?.LogDebug("Adding block {BlockId} at position {Position}", block.Id, block.Position);
+            var result = PlaceBlock(block);
+            if (result.IsSucc)
+                _logger?.LogDebug("Successfully added block {BlockId}", block.Id);
+            return Task.FromResult(result);
+        }
+        
+        public Task<Fin<Unit>> UpdateAsync(Domain.Block.Block block)
+        {
+            _logger?.LogDebug("Updating block {BlockId}", block.Id);
+            
+            if (!_blocksById.TryGetValue(block.Id, out var existingBlock))
+                return Task.FromResult(FinFail<Unit>(Error.New("BLOCK_NOT_FOUND", "Block not found")));
+            
+            // If position changed, validate new position and update atomically
+            if (existingBlock.Position != block.Position)
+            {
+                // Check new position is valid and empty
+                if (!IsValidPosition(block.Position))
+                    return Task.FromResult(FinFail<Unit>(Error.New("INVALID_POSITION", $"Position {block.Position} is outside grid bounds")));
+                    
+                if (!IsPositionEmpty(block.Position))
+                    return Task.FromResult(FinFail<Unit>(Error.New("POSITION_OCCUPIED", "New position is occupied")));
+                
+                // Atomic update: remove from old position, add to new
+                if (!_blocksByPosition.TryRemove(existingBlock.Position, out _))
+                    return Task.FromResult(FinFail<Unit>(Error.New("CONCURRENT_MODIFICATION", "Failed to remove from old position")));
+                
+                if (!_blocksByPosition.TryAdd(block.Position, block))
+                {
+                    // Rollback: restore old position
+                    _blocksByPosition.TryAdd(existingBlock.Position, existingBlock);
+                    return Task.FromResult(FinFail<Unit>(Error.New("CONCURRENT_MODIFICATION", "Failed to add to new position")));
+                }
+            }
+            
+            // Update in ID index
+            _blocksById.TryUpdate(block.Id, block, existingBlock);
+            
+            _logger?.LogDebug("Successfully updated block {BlockId}", block.Id);
+            return Task.FromResult(FinSucc(Unit.Default));
+        }
+        
+        public Task<Fin<Unit>> RemoveAsync(Guid id)
+        {
+            _logger?.LogDebug("Removing block {BlockId}", id);
+            var result = RemoveBlock(id);
+            if (result.IsSucc)
+                _logger?.LogDebug("Successfully removed block {BlockId}", id);
+            return Task.FromResult(result);
+        }
+        
+        public Task<Fin<Unit>> RemoveAtPositionAsync(Vector2Int position)
+        {
+            _logger?.LogDebug("Removing block at position {Position}", position);
+            var result = RemoveBlock(position);
+            if (result.IsSucc)
+                _logger?.LogDebug("Successfully removed block at position {Position}", position);
+            return Task.FromResult(result);
+        }
+        
+        public Task<bool> ExistsAtPositionAsync(Vector2Int position) =>
+            Task.FromResult(IsPositionOccupied(position));
+        
+        public Task<bool> ExistsAsync(Guid id) =>
+            Task.FromResult(_blocksById.ContainsKey(id));
     }
 }

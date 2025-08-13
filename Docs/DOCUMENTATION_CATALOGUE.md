@@ -66,6 +66,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
 - [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) - **MUST FOLLOW** TDD+VSA process
 - [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md) - Step-by-step checklists
+- [Pull_Request_Guide.md](6_Guides/Pull_Request_Guide.md) - **CRITICAL**: PR template compliance to prevent CI failures ⭐⭐⭐
 - [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) - **NEW**: Comprehensive feature implementation guide with examples
 - [Debugging_Notification_Pipeline.md](6_Guides/Debugging_Notification_Pipeline.md) - Systematic debugging for broken view updates
 
