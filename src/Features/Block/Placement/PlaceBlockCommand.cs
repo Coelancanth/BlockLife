@@ -11,5 +11,8 @@ public sealed record PlaceBlockCommand(
     Guid? RequestedId = null
 ) : IRequest<LanguageExt.Fin<LanguageExt.Unit>>
 {
-    public Guid BlockId => RequestedId ?? Guid.NewGuid();
+    // FIXED: Generate stable ID once and cache it
+    private readonly Lazy<Guid> _blockId = new(() => Guid.NewGuid());
+    
+    public Guid BlockId => RequestedId ?? _blockId.Value;
 }

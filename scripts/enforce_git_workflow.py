@@ -11,6 +11,7 @@ Features:
 - Checks for proper PR template usage
 - Provides clear error messages with corrective actions
 - Integrates with pre-commit hooks for automatic enforcement
+- Cleans up after PR merges to maintain clean git history
 
 Usage:
     # As pre-commit hook (recommended):
@@ -21,6 +22,9 @@ Usage:
     
     # Setup pre-commit hooks:
     python scripts/enforce_git_workflow.py --setup-hooks
+    
+    # Clean up after PR merge (prevents messy history):
+    python scripts/enforce_git_workflow.py --cleanup-after-merge
 """
 
 import subprocess
@@ -269,6 +273,115 @@ git checkout -b feat/your-feature-description
             logger.error(f"❌ Failed to setup pre-commit hooks: {e}")
             return False
     
+    def cleanup_after_merge(self) -> bool:
+        """
+        Clean up after PR merge to maintain clean git history
+        Returns True if successful
+        """
+        try:
+            current_branch = self.get_current_branch()
+            if not current_branch:
+                logger.error("❌ Could not determine current branch")
+                return False
+            
+            if current_branch != "main":
+                logger.info(f"📍 Currently on branch: {current_branch}")
+                logger.info("🔄 Switching to main branch...")
+                
+                # Switch to main
+                subprocess.run(
+                    ['git', 'checkout', 'main'],
+                    cwd=self.project_root,
+                    check=True,
+                    capture_output=True
+                )
+            
+            logger.info("🔄 Fetching latest changes from origin...")
+            
+            # Fetch latest from origin
+            subprocess.run(
+                ['git', 'fetch', 'origin'],
+                cwd=self.project_root,
+                check=True,
+                capture_output=True
+            )
+            
+            # Check if local main has diverged from origin/main
+            result = subprocess.run(
+                ['git', 'rev-list', '--count', 'main..origin/main'],
+                cwd=self.project_root,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            commits_behind = int(result.stdout.strip())
+            
+            result = subprocess.run(
+                ['git', 'rev-list', '--count', 'origin/main..main'],
+                cwd=self.project_root,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            commits_ahead = int(result.stdout.strip())
+            
+            if commits_ahead > 0:
+                logger.warning(f"⚠️  Local main is {commits_ahead} commits ahead of origin/main")
+                logger.warning("🧹 Performing clean reset to prevent messy merge history...")
+                
+                # Reset to clean origin state
+                subprocess.run(
+                    ['git', 'reset', '--hard', 'origin/main'],
+                    cwd=self.project_root,
+                    check=True,
+                    capture_output=True
+                )
+                logger.info("✅ Reset to clean origin/main state")
+            elif commits_behind > 0:
+                logger.info(f"📥 Local main is {commits_behind} commits behind, pulling changes...")
+                
+                # Simple pull since we're not ahead
+                subprocess.run(
+                    ['git', 'pull', 'origin', 'main'],
+                    cwd=self.project_root,
+                    check=True,
+                    capture_output=True
+                )
+                logger.info("✅ Successfully pulled latest changes")
+            else:
+                logger.info("✅ Local main is already up to date with origin/main")
+            
+            # Clean up remote references
+            logger.info("🧹 Cleaning up stale remote references...")
+            subprocess.run(
+                ['git', 'remote', 'prune', 'origin'],
+                cwd=self.project_root,
+                check=True,
+                capture_output=True
+            )
+            
+            # Show current status
+            logger.info("📊 Current git status:")
+            result = subprocess.run(
+                ['git', 'log', '--graph', '--oneline', '--decorate', '-5'],
+                cwd=self.project_root,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            print(result.stdout)
+            
+            logger.info("✅ Post-merge cleanup completed successfully!")
+            logger.info("💡 Your git history is now clean and ready for the next development phase")
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            logger.error(f"❌ Git operation failed: {e}")
+            return False
+        except Exception as e:
+            logger.error(f"❌ Post-merge cleanup failed: {e}")
+            return False
+
     def _create_pre_commit_hook_script(self) -> str:
         """Create the pre-commit hook script content"""
         return f'''#!/usr/bin/env python3
@@ -327,6 +440,11 @@ def main():
         help="Setup pre-commit hooks for automatic enforcement"
     )
     parser.add_argument(
+        "--cleanup-after-merge",
+        action="store_true",
+        help="Clean up after PR merge to maintain clean git history"
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Enable verbose logging"
@@ -347,6 +465,11 @@ def main():
     if args.setup_hooks:
         logger.info("🔧 Setting up Git workflow enforcement hooks...")
         success = enforcer.setup_pre_commit_hooks()
+        sys.exit(0 if success else 1)
+    
+    if args.cleanup_after_merge:
+        logger.info("🧹 Starting post-merge cleanup to maintain clean git history...")
+        success = enforcer.cleanup_after_merge()
         sys.exit(0 if success else 1)
     
     if args.validate_branch:

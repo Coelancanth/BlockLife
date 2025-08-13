@@ -73,6 +73,19 @@ gh pr create --title "descriptive title" --body "detailed description"
 - Address any review feedback
 - Merge only after approval and CI checks
 
+### **Step 7: Clean Up After Merge**
+```bash
+# CRITICAL: Clean up after successful PR merge
+git checkout main
+git pull origin main  # Get clean merged state
+
+# Delete local feature branch
+git branch -d <branch-name>
+
+# Clean up remote references
+git remote prune origin
+```
+
 ## Branch Naming Conventions
 
 ### **Pattern**: `<type>/<description>`
@@ -372,7 +385,68 @@ docs: add squashing guidelines
 docs: create comprehensive Git workflow guide with squashing standards
 ```
 
+## Maintaining Clean Git History
+
+### **🚨 CRITICAL: Prevent Messy Merge History**
+
+**Problem**: Divergent local and remote main branches create messy merge commits that pollute git history.
+
+**Solution**: Always sync with origin after PR merges:
+
+```bash
+# ✅ CORRECT: After PR is merged
+git checkout main
+git pull origin main    # Clean pull from merged state
+# OR if you have local changes:
+git fetch origin
+git reset --hard origin/main  # Clean reset to origin state
+```
+
+**Never do this after PR merge**:
+```bash
+# ❌ WRONG: This creates messy merge commits
+git pull  # If local main has diverged from origin
+```
+
+### **Clean History Examples**
+
+**✅ Good (Linear History)**:
+```
+* 90290a5 docs: enforce mandatory Git workflow (#7)
+* 7143a47 hotfix: resolve critical F1 vulnerabilities (#6)  
+* cc10cbe feat: unified structured logging system (#5)
+```
+
+**❌ Bad (Messy Merges)**:
+```
+*   c6c7e7c Resolve merge conflicts after PR merge
+|\  
+| * 90290a5 docs: enforce mandatory Git workflow (#7)
+* | 43d8f53 local changes during PR process
+|/  
+```
+
+### **Post-Merge Cleanup Checklist**
+- [ ] `git checkout main`
+- [ ] `git pull origin main` (or `git reset --hard origin/main`)
+- [ ] `git branch -d <feature-branch>`
+- [ ] `git remote prune origin`
+- [ ] Verify clean history: `git log --graph --oneline -5`
+
 ## Recovery from Mistakes
+
+### **If Your Git History is Messy:**
+```bash
+# Save any important local changes first
+git stash
+
+# Reset to clean origin state  
+git fetch origin
+git reset --hard origin/main
+
+# Restore local changes if needed
+git stash pop
+```
 
 ### **If You Accidentally Work on Main:**
 ```bash

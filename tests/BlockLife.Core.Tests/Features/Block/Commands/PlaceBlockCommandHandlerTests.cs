@@ -302,5 +302,126 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 )), Times.Once);
             }
         }
+
+        /// <summary>
+        /// REGRESSION TEST: Ensures BlockId remains stable across multiple property accesses.
+        /// 
+        /// BUG CONTEXT:
+        /// - Date: 2025-08-14
+        /// - Issue: PlaceBlockCommand.BlockId was generating new GUID on every access
+        /// - Symptom: "Block already exists" error despite successful placement
+        /// - Root Cause: Different GUIDs used for block creation vs effect queueing
+        /// - Fix: Use Lazy<Guid> to generate stable ID once and cache it
+        /// 
+        /// This test prevents regression by verifying that:
+        /// 1. BlockId property returns the same value on multiple accesses
+        /// 2. The ID is consistent throughout the command lifecycle
+        /// 3. All operations (placement, effects, notifications) use the same ID
+        /// </summary>
+        [Fact]
+        public void PlaceBlockCommand_BlockId_RemainsStableAcrossMultipleAccesses()
+        {
+            // Arrange
+            var position = new Vector2Int(5, 5);
+            var command = new PlaceBlockCommand(position, BlockType.Basic);
+
+            // Act - Access BlockId multiple times (simulating handler usage)
+            var firstAccess = command.BlockId;
+            var secondAccess = command.BlockId;
+            var thirdAccess = command.BlockId;
+
+            // Assert - All accesses return the same GUID
+            firstAccess.Should().Be(secondAccess, 
+                "BlockId should return the same value on multiple accesses");
+            secondAccess.Should().Be(thirdAccess, 
+                "BlockId should remain stable throughout command lifecycle");
+            
+            firstAccess.Should().NotBe(Guid.Empty, 
+                "BlockId should be a valid non-empty GUID");
+        }
+
+        /// <summary>
+        /// REGRESSION TEST: Ensures BlockId consistency in realistic handler scenario.
+        /// 
+        /// This test simulates the exact scenario that caused the original bug:
+        /// - Handler accesses BlockId for block creation
+        /// - Handler accesses BlockId again for effect queueing
+        /// - Both operations must use the same ID to prevent "already exists" error
+        /// </summary>
+        [Fact]
+        public async Task Handle_BlockIdConsistency_UsesStableIdThroughoutOperation()
+        {
+            // Arrange
+            var position = new Vector2Int(4, 3);
+            var command = new PlaceBlockCommand(position, BlockType.Basic);
+            
+            // Capture the expected BlockId that should be used throughout
+            var expectedBlockId = command.BlockId;
+            
+            _mockPositionValidRule
+                .Setup(x => x.Validate(position))
+                .Returns(FinSucc(Unit.Default));
+            
+            _mockPositionEmptyRule
+                .Setup(x => x.Validate(position))
+                .Returns(FinSucc(Unit.Default));
+            
+            _mockGridState
+                .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
+                .Returns(FinSucc(Unit.Default));
+            
+            _mockSimulation
+                .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
+                .Returns(FinSucc(Unit.Default));
+            
+            _mockSimulation
+                .Setup(x => x.ProcessQueuedEffectsAsync())
+                .Returns(Task.FromResult(FinSucc(Unit.Default)));
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert - Result should be successful
+            result.IsSucc.Should().BeTrue();
+            
+            // CRITICAL: Verify that the SAME BlockId was used for both operations
+            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b => 
+                b.Id == expectedBlockId && // Same ID used for block creation
+                b.Position == position &&
+                b.Type == BlockType.Basic
+            )), Times.Once, "Block creation should use the stable BlockId");
+
+            _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockPlacedEffect>(e => 
+                e.BlockId == expectedBlockId && // Same ID used for effect
+                e.Position == position &&
+                e.Type == BlockType.Basic
+            )), Times.Once, "Effect queueing should use the same stable BlockId");
+        }
+
+        /// <summary>
+        /// REGRESSION TEST: Ensures explicit RequestedId takes precedence and remains stable.
+        /// 
+        /// When a specific ID is provided, it should be used consistently instead of generating a new one.
+        /// </summary>
+        [Fact]
+        public void PlaceBlockCommand_WithRequestedId_UsesProvidedIdStably()
+        {
+            // Arrange
+            var expectedId = Guid.NewGuid();
+            var position = new Vector2Int(7, 8);
+            var command = new PlaceBlockCommand(position, BlockType.Work, expectedId);
+
+            // Act - Access BlockId multiple times
+            var firstAccess = command.BlockId;
+            var secondAccess = command.BlockId;
+
+            // Assert - Should use the provided ID consistently
+            firstAccess.Should().Be(expectedId, 
+                "BlockId should use the explicitly provided RequestedId");
+            secondAccess.Should().Be(expectedId, 
+                "BlockId should remain stable even with explicit RequestedId");
+            firstAccess.Should().Be(secondAccess, 
+                "Multiple accesses should return the same RequestedId");
+        }
     }
 }

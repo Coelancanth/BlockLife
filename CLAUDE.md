@@ -419,6 +419,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 2. **Unit tests (TDD)**: Write failing test → Implement → Pass → Refactor
 3. **Property tests**: Use FsCheck for mathematical invariants
 4. **Integration tests**: Use GdUnit4 for Godot-specific testing
+5. **🚨 CRITICAL: Bug-to-Test Protocol**: Every bug MUST become a regression test - see [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md) Section 9.1
 
 ### "What patterns should I follow?"
 - **Commands**: Immutable records with init setters (see `MoveBlockCommand.cs`)
@@ -434,6 +435,19 @@ dotnet test --filter "FullyQualifiedName~Architecture"  # Architecture complianc
 dotnet test --filter "Category=Unit"                    # Unit tests
 dotnet test tests/BlockLife.Core.Tests.csproj          # All tests
 ```
+
+### "I found a bug! What's the process?"
+**🚨 MANDATORY Bug-to-Test Protocol (NO EXCEPTIONS):**
+1. **Document**: Create bug report using [TEMPLATE_Bug_Report_And_Fix.md](Docs/4_Post_Mortems/TEMPLATE_Bug_Report_And_Fix.md)
+2. **Reproduce**: Verify bug exists and document exact reproduction steps
+3. **Test First**: Write failing regression test that would have caught this bug
+4. **Fix**: Implement minimal fix to make the test pass
+5. **Validate**: Ensure all tests pass and bug is actually resolved
+6. **Learn**: Document lessons learned and prevention strategies
+
+**Key Principle**: **Every bug becomes a permanent test** - this ensures issues never reoccur and tests serve as living documentation.
+
+**Reference Example**: See [BlockId_Stability_Bug_Report.md](Docs/4_Post_Mortems/BlockId_Stability_Bug_Report.md) for complete example.
 
 ### "How do I create a proper Pull Request?"
 **CRITICAL**: Always use the repository's PR template located at `.github/pull_request_template.md`

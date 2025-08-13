@@ -923,34 +923,116 @@ public void NewPattern_Should_FollowConvention()
 - Test framework upgrades
 - Documentation automation
 
-## 9. Emergency Procedures
+## 9. Emergency Procedures & Bug Response
 
-### 9.1 Production Bug Response
+### 9.1 **MANDATORY: Bug-to-Test Protocol** ⚠️
+
+**CRITICAL PRINCIPLE**: Every bug discovered must become a regression test to prevent recurrence.
+
+#### **Step-by-Step Bug Response Process:**
+
+```markdown
+## MANDATORY BUG RESPONSE WORKFLOW
+
+### Phase 1: Documentation & Reproduction
+1. **Document the Bug**:
+   - Date discovered
+   - Symptoms observed  
+   - Root cause identified
+   - User impact level
+
+2. **Reproduce Locally**:
+   - Create minimal reproduction scenario
+   - Verify bug exists in current codebase
+   - Document exact steps to reproduce
+
+### Phase 2: Test-Driven Bug Fix
+3. **Write Failing Regression Test**:
+   - Create test that would have caught this bug
+   - Test should fail against current broken code
+   - Include detailed comment explaining the bug context
+
+4. **Fix the Bug**:
+   - Implement minimal fix to make test pass
+   - Ensure fix doesn't break existing functionality
+   - Run full test suite to verify
+
+5. **Validate the Fix**:
+   - Regression test now passes
+   - All existing tests still pass  
+   - Manual testing confirms bug is resolved
+
+### Phase 3: Prevention & Documentation  
+6. **Document the Learning**:
+   - Add bug context to test comments
+   - Update any relevant documentation
+   - Consider if architecture needs strengthening
+
+7. **Review & Reflect**:
+   - Could this bug class be prevented by architecture?
+   - Are there similar vulnerabilities elsewhere?
+   - Should we add property tests for this invariant?
+   - **CRITICAL**: If bug was in view layer, add integration tests!
+
+8. **Integration Test for View Layer Bugs**:
+   - View layer bugs CANNOT be caught by unit tests alone
+   - Use GdUnit4 for Godot-specific integration tests
+   - Test the complete flow from UI interaction to visual feedback
+   - Verify presenter-view communication works correctly
+```
+
+#### **Real Example: BlockId Stability Bug (2025-08-14)**
+
+```csharp
+/// <summary>
+/// REGRESSION TEST: Ensures BlockId remains stable across multiple property accesses.
+/// 
+/// BUG CONTEXT:
+/// - Date: 2025-08-14
+/// - Issue: PlaceBlockCommand.BlockId was generating new GUID on every access
+/// - Symptom: "Block already exists" error despite successful placement  
+/// - Root Cause: Different GUIDs used for block creation vs effect queueing
+/// - Fix: Use Lazy<Guid> to generate stable ID once and cache it
+/// 
+/// This test prevents regression by verifying that:
+/// 1. BlockId property returns the same value on multiple accesses
+/// 2. The ID is consistent throughout the command lifecycle
+/// 3. All operations (placement, effects, notifications) use the same ID
+/// </summary>
+[Fact]
+public void PlaceBlockCommand_BlockId_RemainsStableAcrossMultipleAccesses()
+{
+    // Test implementation ensures bug never reoccurs
+}
+```
+
+### 9.2 Production Bug Response
 ```powershell
-# Emergency hotfix workflow
+# Emergency hotfix workflow WITH MANDATORY TEST
 function New-Hotfix {
     param([string]$IssueNumber)
     
     # 1. Create hotfix branch
     git checkout -b "hotfix/issue-$IssueNumber"
     
-    # 2. Write failing test
-    # 3. Fix issue
-    # 4. Run all tests
+    # 2. Write failing regression test (MANDATORY)
+    # 3. Fix issue to make test pass
+    # 4. Run all tests including new regression test
     dotnet test
     
     # 5. Create PR with expedited review
+    # 6. Ensure regression test is included in PR
 }
 ```
 
-### 9.2 Performance Crisis
+### 9.3 Performance Crisis
 1. Enable detailed logging
 2. Profile with dotTrace
 3. Identify bottleneck
 4. Apply tactical fix
 5. Plan strategic solution
 
-### 9.3 Architecture Violation
+### 9.4 Architecture Violation
 1. Add architecture test to prevent recurrence
 2. Refactor violation
 3. Update documentation

@@ -1,0 +1,124 @@
+# **Dynamic Bug Management: A Methodological Stack**
+
+This is an excellent question. You've astutely identified that the ultimate way to solve "documentation debt" is to make the "documentation" itself obsolete, or rather, to have the process automatically generate "living documents."
+
+You're asking how to build a **systemic learning and feedback loop**, not a static, manually maintained document repository. You're right—simply "organizing documents" is a failed approach because it violates the core principle we discussed earlier: **documentation must be close to the object it describes, and its maintenance cost must be as low as possible.**
+
+There is no single methodology here, but a **system** composed of tools, processes, and culture. Let's break it down systematically.
+
+-----
+
+### **High-Level Explanation (The 'Why')**
+
+#### **The Pain Point: "Déjà Vu Bugs"**
+
+Imagine this scenario:
+
+  * **Monday**: Your app has a rare payment concurrency issue that causes a small number of users to be double-charged. The team works overnight to fix it and releases an emergency patch.
+  * **Six months later**: A new team member joins. While refactoring the payment module, he "optimizes the code" by deleting a piece of "strange locking logic" he didn't quite understand.
+  * **Another Monday**: The double-charging bug re-emerges on a massive scale, causing significant reputational and financial damage to the company.
+
+Where did it go wrong? All the valuable knowledge from the initial bug fix—"Why did we need a lock here?" and "What were the boundary conditions for concurrency?"—existed only in the memory of a senior employee or in the comments of a closed Jira ticket. This knowledge was never systematically captured, and the new team member unknowingly repeated the same mistake.
+
+#### **The Rationale**
+
+An effective bug-handling system's core logic is to establish a **traceable, single source of truth** that seamlessly links these five key components:
+
+1.  **The Problem**: What is the bug's observed behavior?
+2.  **The Analysis**: What is the root cause of the bug?
+3.  **The Solution**: How did we decide to fix it?
+4.  **The Code**: Which lines of code implement this fix?
+5.  **The Verification**: Which automated test ensures this bug won't happen again?
+
+The failure of "organizing documents" is that it only focuses on points 1, 2, and 3, and places them in a location (like a Wiki) that is completely separate from points 4 and 5. A good system must connect all five points.
+
+#### **The 'Bad' Way**
+
+  * **Reporting bugs via chat/verbally**: "Hey, a user said the app crashed, can you check it out?"—Information is fragmented, untraceable, and not captured.
+  * **`TODO` / `FIXME` comments in code**: Only developers can see them; product managers and testers are unaware of the bug's status and priority.
+  * **Relying on individual heroes**: The entire team's knowledge depends on a single "guru's" memory. If they take a vacation or leave, the system is at risk of collapse.
+  * **Tracking bugs in Excel/Word documents**: States aren't updated in real time, and they can't be linked to code changes, quickly becoming outdated and abandoned.
+
+-----
+
+### **Implementation & Impact: The "Dynamic Documentation Methodological Stack"**
+
+This isn't a single method, but a layered combination of practices.
+
+#### **Layer 1 (Foundation): A Unified Issue Tracker**
+
+This is the cornerstone of the entire system—the **single source of truth**.
+
+  * **Tools**: Jira, GitHub Issues, GitLab Issues, etc.
+  * **What to do**: Every bug, feature request, or technical task must exist as a "ticket" or "issue" in this system.
+  * **Why it's not just "organizing documents"**:
+      * **It's stateful**: Every ticket has a clear status (To Do, In Progress, Awaiting Review, Done).
+      * **It has ownership**: Every ticket is explicitly assigned to an individual.
+      * **It's a discussion forum**: All relevant discussions happen in the ticket's comments, building context.
+      * **It's linkable**: It can be linked to other tickets, code commits, and documentation pages.
+
+#### **Layer 2 (Process): Bug Triage & Visualization**
+
+When bugs come flooding in, you need a process to handle them.
+
+  * **Methodology**: **Kanban** is the most common visualization method.
+  * **What to do**:
+    1.  **Triage**: Establish a regular "Bug Triage Meeting." The team quickly reviews new bugs together and evaluates them based on two key axes:
+          * **Severity**: How big is the impact of this bug on users/business? (Crash \> Functional error \> UI misalignment)
+          * **Frequency**: How many users are affected? (All users \> Users in specific scenarios \> Extremely rare cases)
+    2.  **Prioritize**: Based on severity and frequency, decide whether the bug should be "Fixed Immediately," "Fixed in the Next Sprint," or "Added to the Backlog."
+    3.  **Visualize**: Place tickets on a visual Kanban board (e.g., `Backlog` -\> `To Do` -\> `In Progress` -\> `In Review` -\> `Done`) so everyone can clearly see the lifecycle of each bug.
+
+#### **Layer 3 (Depth): Root Cause Analysis (RCA)**
+
+For important, recurring bugs, fixing only the symptoms isn't enough.
+
+  * **Methodology**: The **"5 Whys"** is a simple yet powerful technique.
+  * **What to do**: For a given problem, ask "why?" five times to get to the root cause.
+      * **Problem**: The website crashed at night.
+      * **1. Why?** Because the database connection pool was exhausted.
+      * **2. Why?** Because a nightly batch job created many database connections without releasing them.
+      * **3. Why?** Because the developer who wrote the job didn't know they needed to manually release the connections.
+      * **4. Why?** Because the documentation for the database connection library we used was unclear, and the team lacked best-practice training on it.
+      * **5. Why? (Root Cause)** Because we lack a new-hire technical onboarding and code review checklist to ensure these foundational errors are caught.
+  * **How to document**: Record this analysis process in the ticket itself, or for major incidents, write a **Postmortem report** and link it to the ticket. This report is the "living document."
+
+#### **Layer 4 (Linking): Connecting Code to Issues**
+
+This is the magic that ties everything together.
+
+  * **Practice**: **Enforce the rule that your code commit messages and pull requests must reference the ticket number.**
+  * **Code Example (A good Commit Message)**:
+
+<!-- end list -->
+
+```
+feat: Add connection pooling to batch processor
+
+This change introduces a connection pool to prevent exhausting
+database connections during the nightly job. It also adds
+more robust error handling and logging.
+
+Fixes #472  <-- The magic happens here!
+```
+
+  * **The effect**:
+      * When you look at the code, you can find `#472` in the commit log, click it, and be taken directly to Jira/GitHub to see all the context and history of that bug.
+      * When you look at ticket `#472` in Jira, the system will automatically display all related code commits.
+      * **The problem, analysis, code, and verification are now permanently linked.**
+
+### **Methodological Stack Summary**
+
+| Problem | Methodology / Tools | Core Concept |
+| :--- | :--- | :--- |
+| **How to track all bugs?** | Issue Tracker (Jira) | Establish a single source of truth |
+| **How to decide what to fix first?** | Bug Triage & Kanban | Visualize the process based on impact and frequency |
+| **How to prevent bugs from recurring?** | Root Cause Analysis (RCA) | Find and solve systemic problems, not just symptoms |
+| **How to link code and issues?** | Commit Message Convention | Create a bidirectional link between code and requirements by referencing ticket numbers |
+| **How to capture lessons learned?** | Postmortem Report | For major incidents, conduct a blameless review to create actionable improvements |
+
+This system itself is a **dynamic, self-maintaining document**. It doesn't require you to "organize" it separately because the act of organization is integrated into every standard process of your daily development and bug-fixing workflow.
+
+-----
+
+Would you like to dive deeper into how to implement one of these layers, such as setting up a bug triage process or a structured root cause analysis?

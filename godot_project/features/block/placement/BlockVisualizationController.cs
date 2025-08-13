@@ -37,9 +37,24 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     
     public Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type)
     {
+        // FIXED: Handle duplicate notifications gracefully
+        // If block already exists at this exact position with same ID, it's a duplicate notification
         if (_blockNodes.ContainsKey(blockId))
         {
-            GD.PrintErr($"Block {blockId} already exists");
+            // Check if it's at the same position - if so, just ignore the duplicate
+            if (_blockNodes.TryGetValue(blockId, out var existingNode))
+            {
+                var existingPos = WorldToGridPosition(existingNode.Position);
+                if (existingPos == position)
+                {
+                    // Same block, same position - just a duplicate notification, ignore it
+                    GD.Print($"Ignoring duplicate notification for block {blockId} at {position}");
+                    return Task.CompletedTask;
+                }
+            }
+            
+            // Different position or corrupted state - this is an actual error
+            GD.PrintErr($"ERROR: Block {blockId} already exists but at different position!");
             return Task.CompletedTask;
         }
         
