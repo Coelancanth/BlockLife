@@ -133,9 +133,12 @@ public static class GameStrapper
         // --- Register Other Core Services ---
         services.AddSingleton<IPresenterFactory, PresenterFactory>();
         
-        // --- Grid and Block Services ---
-        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IGridStateService, BlockLife.Core.Infrastructure.Services.GridStateService>();
-        services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository, BlockLife.Core.Infrastructure.Block.InMemoryBlockRepository>();
+        // --- Grid and Block Services (Consolidated to eliminate dual state management) ---
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.GridStateService>();
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IGridStateService>(
+            provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
+        services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
+            provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
         
         // --- Validation Rules ---
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsValidRule, BlockLife.Core.Features.Block.Placement.Rules.PositionIsValidRule>();
@@ -312,11 +315,12 @@ public static class GameStrapper
         // --- Register Core Services ---
         services.AddSingleton<IPresenterFactory, PresenterFactory>();
         
-        // --- Grid and Block Services ---
-        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IGridStateService, 
-            BlockLife.Core.Infrastructure.Services.GridStateService>();
-        services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository, 
-            BlockLife.Core.Infrastructure.Block.InMemoryBlockRepository>();
+        // --- Grid and Block Services (Consolidated to eliminate dual state management) ---
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.GridStateService>();
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IGridStateService>(
+            provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
+        services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
+            provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
         
         // --- Validation Rules ---
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsValidRule, 

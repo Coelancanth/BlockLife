@@ -36,7 +36,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### 3️⃣ Implementation Plans ([3_Implementation_Plans/](3_Implementation_Plans/))
 - [0_Vertical_Slice_Architecture_Plan.md](3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - VSA patterns and approach
-- [1_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - ✅ **REFERENCE IMPLEMENTATION** (Gold Standard)
+- [1_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Gold Standard - All critical fixes applied)
 - [2_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - 🔄 **IN PROGRESS** (70% - Phase 1-2 Complete)
 - [3_Animation_System_Implementation_Plan.md](3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - ❌ **NOT STARTED** (Animation architecture)
 - [5_Dotnet_New_Templates_Implementation_Plan.md](3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - ❌ **NOT STARTED** (Project templates)
@@ -46,7 +46,14 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 📊 **[Implementation Status Tracker](0_Global_Tracker/Implementation_Status_Tracker.md)** - **NEW**: Central tracking of all implementation plan statuses and progress
 
-### 4️⃣ Bug Post-Mortems ([4_Bug_PostMortems/](4_Bug_PostMortems/))
+### 4️⃣ Post-Mortems & Architecture Reviews ([4_Post_Mortems/](4_Post_Mortems/) & [4_Bug_PostMortems/](4_Bug_PostMortems/))
+
+#### 🔴 **Architecture Stress Test Reports**
+- [F1_Architecture_Stress_Test_Report.md](4_Post_Mortems/F1_Architecture_Stress_Test_Report.md) - ✅ **RESOLVED** - Critical architecture vulnerabilities identified and fixed ⭐⭐⭐
+- [Architecture_Stress_Testing_Lessons_Learned.md](4_Post_Mortems/Architecture_Stress_Testing_Lessons_Learned.md) - ✅ **REFERENCE** - Key learnings from F1 stress test experience ⭐⭐⭐
+- [Move_Block_Architecture_Stress_Test_Report.md](4_Post_Mortems/Move_Block_Architecture_Stress_Test_Report.md) - 📝 **DRAFT** - F2 Move Block feature architecture review
+
+#### 🐛 **Bug Post-Mortems**
 - [000_Bug_Post_Mortem_Template.md](4_Bug_PostMortems/000_Bug_Post_Mortem_Template.md) - Standard template for post-mortems
 - [000_Bug_Post_Mortem_Examples.md](4_Bug_PostMortems/000_Bug_Post_Mortem_Examples.md) - Common patterns and examples
 - [003_DI_Container_Presenter_Registration.md](4_Bug_PostMortems/003_DI_Container_Presenter_Registration.md) - Presenter notification handler constraints
@@ -66,6 +73,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
 - [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) - **MUST FOLLOW** TDD+VSA process
 - [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md) - Step-by-step checklists
+- [Pull_Request_Guide.md](6_Guides/Pull_Request_Guide.md) - **CRITICAL**: PR template compliance to prevent CI failures ⭐⭐⭐
 - [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) - **NEW**: Comprehensive feature implementation guide with examples
 - [Debugging_Notification_Pipeline.md](6_Guides/Debugging_Notification_Pipeline.md) - Systematic debugging for broken view updates
 

@@ -10,6 +10,7 @@ using BlockLife.Core.Tests.Utils;
 using FluentAssertions;
 using LanguageExt;
 using LanguageExt.Common;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -29,6 +30,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
         private readonly Mock<IBlockExistsRule> _mockBlockExistsRule;
         private readonly Mock<IGridStateService> _mockGridState;
         private readonly Mock<ISimulationManager> _mockSimulation;
+        private readonly Mock<IMediator> _mockMediator;
         private readonly Mock<ILogger<RemoveBlockCommandHandler>> _mockLogger;
         private readonly RemoveBlockCommandHandler _handler;
 
@@ -37,12 +39,14 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockBlockExistsRule = new Mock<IBlockExistsRule>();
             _mockGridState = new Mock<IGridStateService>();
             _mockSimulation = new Mock<ISimulationManager>();
+            _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<RemoveBlockCommandHandler>>();
             
             _handler = new RemoveBlockCommandHandler(
                 _mockBlockExistsRule.Object,
                 _mockGridState.Object,
                 _mockSimulation.Object,
+                _mockMediator.Object,
                 _mockLogger.Object
             );
         }
@@ -241,6 +245,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
         private readonly Mock<IBlockExistsRule> _mockBlockExistsRule;
         private readonly Mock<IGridStateService> _mockGridState;
         private readonly Mock<ISimulationManager> _mockSimulation;
+        private readonly Mock<IMediator> _mockMediator;
         private readonly Mock<ILogger<RemoveBlockByIdCommandHandler>> _mockLogger;
         private readonly RemoveBlockByIdCommandHandler _handler;
 
@@ -249,12 +254,14 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockBlockExistsRule = new Mock<IBlockExistsRule>();
             _mockGridState = new Mock<IGridStateService>();
             _mockSimulation = new Mock<ISimulationManager>();
+            _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<RemoveBlockByIdCommandHandler>>();
             
             _handler = new RemoveBlockByIdCommandHandler(
                 _mockBlockExistsRule.Object,
                 _mockGridState.Object,
                 _mockSimulation.Object,
+                _mockMediator.Object,
                 _mockLogger.Object
             );
         }

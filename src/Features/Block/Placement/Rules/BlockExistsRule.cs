@@ -25,9 +25,9 @@ public class BlockExistsRule : IBlockExistsRule
     
     public Fin<Domain.Block.Block> Validate(Guid blockId)
     {
-        var blockTask = _repository.GetByIdAsync(blockId);
-        blockTask.Wait(); // Synchronous for now, can be made async if needed
-        return blockTask.Result
+        // Use synchronous GridStateService method to avoid deadlock risk
+        // Both IGridStateService and IBlockRepository now point to the same consolidated GridStateService
+        return _gridState.GetBlockById(blockId)
             .ToFin(Error.New("BLOCK_NOT_FOUND", $"Block with ID {blockId} not found"));
     }
 }

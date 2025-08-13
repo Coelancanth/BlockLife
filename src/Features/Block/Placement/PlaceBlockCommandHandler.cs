@@ -56,26 +56,39 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
         return await result.Match(
             Succ: async block =>
             {
-                // Create and publish notification directly (following MoveBlock pattern)
-                var notification = new BlockPlacedNotification(
-                    block.Id,
-                    block.Position,
-                    block.Type,
-                    block.CreatedAt
-                );
+                // Process queued effects to maintain consistency with RemoveBlock behavior
+                var processResult = await ProcessQueuedEffects();
                 
-                var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block placed notification");
-                
-                return publishResult.Match(
-                    Succ: _ =>
+                return await processResult.Match(
+                    Succ: async _ =>
                     {
-                        _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
-                        return FinSucc(Unit.Default);
+                        // Create and publish notification after successful effect processing
+                        var notification = new BlockPlacedNotification(
+                            block.Id,
+                            block.Position,
+                            block.Type,
+                            block.CreatedAt
+                        );
+                        
+                        var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block placed notification");
+                        
+                        return publishResult.Match(
+                            Succ: _ =>
+                            {
+                                _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
+                                return FinSucc(Unit.Default);
+                            },
+                            Fail: error =>
+                            {
+                                _logger.LogWarning("PlaceBlockCommand notification failed for position {Position}: {Error}", request.Position, error.Message);
+                                return FinFail<Unit>(error);
+                            }
+                        );
                     },
                     Fail: error =>
                     {
-                        _logger.LogWarning("PlaceBlockCommand notification failed for position {Position}: {Error}", request.Position, error.Message);
-                        return FinFail<Unit>(error);
+                        _logger.LogWarning("PlaceBlockCommand effect processing failed for position {Position}: {Error}", request.Position, error.Message);
+                        return Task.FromResult(FinFail<Unit>(error));
                     }
                 );
             },
@@ -107,5 +120,19 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             block.Type,
             block.CreatedAt
         ));
+    
+    private async Task<Fin<Unit>> ProcessQueuedEffects()
+    {
+        var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+        
+        return result.Match(
+            Succ: _ => result,
+            Fail: error =>
+            {
+                _logger.LogError("Failed to process queued effects: {Error}", error.Message);
+                return result;
+            }
+        );
+    }
     
 }

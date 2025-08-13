@@ -99,16 +99,51 @@ Before writing custom C# code for a presentation-layer problem, always prefer Go
 *   **For Intra-View Communication**: Use Godot Signals. They are visible and manageable in the editor, providing crucial discoverability.
 *   **For Data**: Use Godot's `Resource` system. It promotes a data-driven design easily accessible to non-programmers.
 
-### 5. MIND THE MAIN THREAD (`async/await` Usage)
+### 5. MIND THE MAIN THREAD (`async/await` Usage) - **CRITICAL GODOT CONSTRAINT**
 
-The Godot engine runs on a single main thread. Blocking this thread will freeze the game. Therefore, the use of `async/await` is strictly controlled. Handlers must be fast, synchronous, in-memory operations.
-*   **Rationale**: This rule exists to **guarantee application responsiveness**.
+The Godot engine runs on a single main thread. Blocking this thread will freeze the game. Therefore, the use of `async/await` is strictly controlled. **Using `async/await` on Godot's main thread for anything other than Godot's own async operations (like `ToSignal`) will cause game freezes and frame drops.**
+
+*   **Rationale**: This rule exists to **guarantee application responsiveness** and prevent production game freezes.
+*   **FORBIDDEN PATTERNS**:
+    ```csharp
+    // ❌ FORBIDDEN - Will freeze the game
+    private async Task HandleBlockMovedAsync(Guid blockId, Vector2Int fromPos, Vector2Int toPos)
+    {
+        await View.AnimateMoveAsync(blockId, fromPos, toPos); // Blocks main thread!
+        await View.ShowFeedbackAsync("Success"); // Compound blocking!
+    }
+    
+    // ❌ FORBIDDEN - Any await that blocks main thread
+    await SomeWebApiCall();
+    await Task.Delay(1000);
+    await File.WriteAllTextAsync();
+    ```
+*   **ALLOWED PATTERNS**:
+    ```csharp
+    // ✅ ALLOWED - Godot's own async operations
+    await ToSignal(tween, "finished");
+    await ToSignal(animationPlayer, "animation_finished");
+    
+    // ✅ ALLOWED - Fire-and-forget operations
+    _ = SomeBackgroundTask(); // No await on main thread
+    
+    // ✅ PREFERRED - Signal-based coordination
+    View.StartMoveAnimation(blockId, fromPos, toPos);
+    // Animation completion handled via signals, not awaiting
+    ```
 *   **Handling Asynchronous Operations**: When an operation is inherently asynchronous (e.g., calling a web API, loading large assets), it MUST NOT be executed directly within a standard Command Handler or directly by the Presenter using `await` for the entire duration. The correct pattern is to introduce a dedicated **Async Orchestrator Service**:
     1.  The Presenter (or a dedicated View) initiates the async operation by calling a simple, immediately-returning method on an injected `Async Orchestrator Service`. The Presenter may show a loading indicator.
     2.  The `Async Orchestrator Service` (e.g., `ILoginOrchestrator`) is a DI-managed service responsible for handling all complex asynchronous logic, including `async/await` calls, retries, error handling, and background processing. This service is ignorant of the game loop.
     3.  Upon completion of the asynchronous work, the `Async Orchestrator Service` uses the `IMediator` to send a **new Command** with the final result (e.g., `ProcessLoginResultCommand`).
     4.  This new command is then processed by a standard, synchronous Handler on the main thread, which updates the Authoritative Model state.
     This pattern completely strips complex asynchronous logic from the Presenter, maintaining its single responsibility of "translating" between View and Model.
+
+*   **CRITICAL WARNING**: Any `async/await` usage that can block the main thread for longer than a single frame (16ms at 60fps) will cause:
+    - **Game Freezes**: Entire game becomes unresponsive
+    - **Frame Rate Drops**: Visible stuttering and poor user experience  
+    - **Input Lag**: User input becomes unresponsive during blocking operations
+    - **Platform Issues**: Mobile platforms may kill the app for being unresponsive
+    - **Editor Crashes**: Godot editor may crash during development
 
 ### 6. AVOID RACE CONDITIONS; ENSURE DETERMINISM
 
@@ -264,10 +299,36 @@ public class MyPresenter : PresenterBase<IMyView>  // ✅ No handler interfaces
 *   **D. The State-Impotence Principle (Reflect, Don't Own)**
     A Presenter is **forbidden** from holding any **authoritative game state** (e.g., `currentHealth`, `ammoCount`). It may only hold temporary, non-authoritative presentation state (e.g., `private bool _isAnimating;`). To read authoritative state, it sends a `Query`; to change it, it sends a `Command`.
 
-#### 16.1 (Sub-rule) Pragmatic `async` in Presenters
-The Humble Presenter Principle allows for a specific, controlled use of `async/await`:
-*   **ALLOWED**: Using `async/await` for **presentation flow control**, such as waiting for a `Tween`, `Timer`, or `AnimationPlayer` signal (e.g., `await ToSignal(myTween, "finished")`). This is a core part of coordinating complex visual sequences.
+#### 16.1 (Sub-rule) Pragmatic `async` in Presenters - **UPDATED FOR GODOT MAIN THREAD SAFETY**
+
+**⚠️ CRITICAL UPDATE**: Based on Move Block implementation stress testing, the previous guidance on `async/await` in Presenters has been **significantly revised** to prevent main thread blocking.
+
+*   **STRICTLY FORBIDDEN**: Using `async/await` for any operation that blocks the main thread:
+    ```csharp
+    // ❌ FORBIDDEN - Blocks main thread, causes game freezes
+    private async Task HandleBlockMovedAsync(...)
+    {
+        await View.AnimateMoveAsync(...); // Will freeze the game!
+    }
+    ```
+
+*   **ALLOWED (With Extreme Caution)**: Using `await` **only** for Godot's own async primitives that don't block the main thread:
+    ```csharp
+    // ✅ ALLOWED - Godot's internal async operations
+    await ToSignal(tween, "finished");
+    await ToSignal(animationPlayer, "animation_finished");
+    ```
+
+*   **STRONGLY PREFERRED**: Use signal-based coordination instead of `async/await`:
+    ```csharp
+    // ✅ PREFERRED - Non-blocking signal pattern
+    View.StartMoveAnimation(blockId, fromPos, toPos);
+    // Connect to animation completion signal instead of awaiting
+    ```
+
 *   **FORBIDDEN**: Using `async/await` to perform long-running, non-presentation tasks (e.g., I/O, web requests). Such operations **MUST** follow **Rule #5** and be handled by a dedicated **Async Orchestrator Service**.
+
+*   **ARCHITECTURE IMPACT**: This change means most Presenter methods should be **synchronous** to prevent accidental main thread blocking. Any complex async coordination should be delegated to dedicated services or handled via Godot's signal system.
 
 #### 16.2 (Sub-rule) The Complexity Threshold
 For **exceptionally simple** presentation logic (e.g., a method under 10 lines that just sets a `Label.Text` or toggles `Visible`), a Presenter may directly manipulate a Godot node without a dedicated Controller. When logic grows beyond this, or when multiple distinct presentation concerns arise within a single view, it is a **mandatory refactoring signal** to apply the **Composite View Pattern** and the Delegation Principle.

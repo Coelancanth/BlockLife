@@ -1,5 +1,7 @@
 using BlockLife.Core.Domain.Block; // For BlockTypeExtensions
 using BlockLife.Core.Features.Block.Placement;
+using BlockLife.Core.Features.Block.Placement.Effects;
+using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Infrastructure.Services;
 using BlockLife.Core.Presentation;
 using MediatR;
@@ -29,15 +31,22 @@ namespace BlockLife.Core.Features.Block.Presenters
 
         /// <summary>
         /// Initializes the grid presenter and refreshes the view with current state.
+        /// Subscribes to domain notifications to keep the view in sync with state changes.
         /// </summary>
         public override void Initialize()
         {
             base.Initialize();
 
-            _logger.Information("GridPresenter initialized, setting up grid display");
+            _logger.Information("GridPresenter initialized, setting up grid display and notification subscriptions");
 
             try
             {
+                // Subscribe to domain notification events from the notification bridge
+                BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
+                BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
+                
+                _logger.Information("Subscribed to block placement notification events");
+
                 // Display grid boundaries
                 var gridDimensions = _gridStateService.GetGridDimensions();
                 _ = View.DisplayGridBoundariesAsync(gridDimensions);
@@ -272,6 +281,58 @@ namespace BlockLife.Core.Features.Block.Presenters
             {
                 _logger.Error(ex, "Error handling block moved for block {BlockId}", blockId);
             }
+        }
+
+        /// <summary>
+        /// Handles block placed notifications from the domain notification bridge.
+        /// Automatically updates the view when blocks are placed via commands.
+        /// </summary>
+        private async Task OnBlockPlacedNotification(BlockPlacedNotification notification)
+        {
+            try
+            {
+                _logger.Debug("Received block placed notification for block {BlockId} at {Position}", 
+                    notification.BlockId, notification.Position);
+                
+                await HandleBlockPlacedAsync(notification.BlockId, notification.Type, notification.Position);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error handling block placed notification for block {BlockId}", notification.BlockId);
+            }
+        }
+
+        /// <summary>
+        /// Handles block removed notifications from the domain notification bridge.
+        /// Automatically updates the view when blocks are removed via commands.
+        /// </summary>
+        private async Task OnBlockRemovedNotification(BlockRemovedNotification notification)
+        {
+            try
+            {
+                _logger.Debug("Received block removed notification for block {BlockId} at {Position}", 
+                    notification.BlockId, notification.Position);
+                
+                await HandleBlockRemovedAsync(notification.BlockId, notification.Position);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error handling block removed notification for block {BlockId}", notification.BlockId);
+            }
+        }
+
+        /// <summary>
+        /// Disposes the presenter and unsubscribes from domain notifications to prevent memory leaks.
+        /// </summary>
+        public override void Dispose()
+        {
+            // Unsubscribe from notification events to prevent memory leaks
+            BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
+            BlockPlacementNotificationBridge.BlockRemovedEvent -= OnBlockRemovedNotification;
+            
+            _logger.Information("GridPresenter disposed and unsubscribed from notification events");
+            
+            base.Dispose();
         }
     }
 }
