@@ -12,7 +12,8 @@
       "Bash(mv:*)",
       "Bash(git add:*)",
       "Bash(dotnet add:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
