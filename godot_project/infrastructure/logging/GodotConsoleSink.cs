@@ -43,7 +43,9 @@ public class GodotConsoleSink : ILogEventSink
         {
             if (!string.IsNullOrEmpty(line)) // Avoid printing empty lines
             {
-                GD.PrintRich($"[color=#{color}]{line}[/color]");
+                // Enhance line with special formatting for coordinates and values
+                var enhancedLine = EnhanceLineFormatting(line);
+                GD.PrintRich($"[color=#{color}]{enhancedLine}[/color]");
             }
         }
 
@@ -53,6 +55,35 @@ public class GodotConsoleSink : ILogEventSink
             GD.PushError(logEvent.Exception);
         else
             GD.PushWarning(logEvent.Exception);
+    }
+
+    private static string EnhanceLineFormatting(string line)
+    {
+        // Highlight coordinate patterns like (X, Y) or X, Y with bright colors
+        line = System.Text.RegularExpressions.Regex.Replace(line, 
+            @"\((\d+),\s*(\d+)\)", 
+            "[/color][color=orange]($1, $2)[/color][color=inherit]");
+        
+        // Highlight standalone numbers that might be coordinates or important values
+        line = System.Text.RegularExpressions.Regex.Replace(line,
+            @"\b(\d+)x(\d+)\b",
+            "[/color][color=lime]$1x$2[/color][color=inherit]");
+            
+        // Highlight timing values (e.g., "7ms", "150ms")
+        line = System.Text.RegularExpressions.Regex.Replace(line,
+            @"\b(\d+)ms\b",
+            "[/color][color=yellow]$1ms[/color][color=inherit]");
+            
+        // Highlight SUCCESS/FAILED patterns
+        line = System.Text.RegularExpressions.Regex.Replace(line,
+            @"\b(SUCCESS|COMPLETED)\b",
+            "[/color][color=lightgreen]$1[/color][color=inherit]");
+            
+        line = System.Text.RegularExpressions.Regex.Replace(line,
+            @"\b(FAILED|ERROR|CRITICAL)\b",
+            "[/color][color=red]$1[/color][color=inherit]");
+            
+        return line;
     }
 
     private class TemplateRenderer : ITextFormatter
@@ -112,7 +143,7 @@ public class GodotConsoleSink : ILogEventSink
                     propertyValue.Render(output, format, _formatProvider);
             };
         }
-    }
+}
 }
 
 public static class GodotSinkExtensions

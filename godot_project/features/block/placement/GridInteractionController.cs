@@ -4,6 +4,7 @@ using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Domain.Common;
+using BlockLife.Godot.Scenes;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
@@ -31,7 +32,8 @@ public partial class GridInteractionController : Control, IGridInteractionView
         CustomMinimumSize = new Vector2(GridSize.X * CellSize, GridSize.Y * CellSize);
         Size = CustomMinimumSize;
         
-        GD.Print($"GridInteractionController ready with size {GridSize.X}x{GridSize.Y}, cell size {CellSize}");
+        var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+        logger?.Information("GridInteractionController ready with size {GridWidth}x{GridHeight}, cell size {CellSize}", GridSize.X, GridSize.Y, CellSize);
         
         // Force initial draw of the grid
         QueueRedraw();
@@ -78,7 +80,8 @@ public partial class GridInteractionController : Control, IGridInteractionView
         var gridPosition = ScreenToGridPositionInternal(mousePosition);
         if (IsValidGridPosition(gridPosition))
         {
-            GD.Print($"Grid cell clicked at {gridPosition.X}, {gridPosition.Y}");
+            var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+            logger?.Information("🎯 Grid cell clicked at ({X}, {Y})", gridPosition.X, gridPosition.Y);
             _cellClicked.OnNext(gridPosition);
         }
     }

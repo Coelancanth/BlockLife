@@ -10,7 +10,10 @@ public static class LogCategory
     public const string DI = "DependencyInjection";
     public const string Input = "Input";
     public const string GameState = "GameState";
-    public const string AI = "AI";
-    public const string Physics = "Physics";
-    public const string Rendering = "Rendering";
+    public const string Commands = "Commands";
+    public const string Queries = "Queries";
+    public const string RuleEngine = "RuleEngine";
+    public const string Animation = "Animation";
+    public const string Performance = "Performance";
+    public const string UI = "UI";
 }
