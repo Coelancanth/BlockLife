@@ -51,12 +51,14 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### 5️⃣ Architecture Decision Records ([5_Architecture_Decision_Records/](5_Architecture_Decision_Records/))
 - [ADR-006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - **ACTIVE DECISION**: Fin<T> vs Task<T> consistency
-- [Complex_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/Complex_Rule_Engine_Architecture.md) - Rule engine design
+- [Complex_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/Complex_Rule_Engine_Architecture.md) - Rule engine design decision
+- [Complex_Rule_Engine_Implementation_Guide.md](5_Architecture_Decision_Records/Complex_Rule_Engine_Implementation_Guide.md) - **NEW**: Detailed rule engine implementation with examples
 - [Developer_Tooling_Guide.md](5_Architecture_Decision_Records/Developer_Tooling_Guide.md) - Development tooling decisions
 
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
 - [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) - **MUST FOLLOW** TDD+VSA process
 - [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md) - Step-by-step checklists
+- [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) - **NEW**: Comprehensive feature implementation guide with examples
 - [Debugging_Notification_Pipeline.md](6_Guides/Debugging_Notification_Pipeline.md) - Systematic debugging for broken view updates
 
 ### 7️⃣ Overview Documents ([7_Overview/](7_Overview/))
@@ -67,9 +69,10 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### When implementing a new feature:
 1. Check [3_Implementation_Plans/](3_Implementation_Plans/) for existing plan
-2. Read [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md)
-3. Use [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)
-4. Reference `src/Features/Block/Move/` as pattern example
+2. Read [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) for comprehensive implementation patterns
+3. Read [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) for TDD+VSA process
+4. Use [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)
+5. Reference `src/Features/Block/Move/` as pattern example
 
 ### When fixing a bug:
 1. Check [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) for related prevention measures
