@@ -6,12 +6,12 @@ This document consolidates all prevention measures and action items from bug pos
 
 ## 📊 Status Summary
 
-- **Total Action Items**: 11
-- **Completed**: 9 (82%)
+- **Total Action Items**: 21
+- **Completed**: 9 (43%)
 - **In Progress**: 0 (0%)
-- **Pending**: 2 (18%)
+- **Pending**: 12 (57%)
 
-*Last Updated: 2025-08-13*
+*Last Updated: 2025-08-14*
 
 ## 🚀 High Priority Action Items
 
@@ -45,6 +45,26 @@ This document consolidates all prevention measures and action items from bug pos
 |----|--------|------|--------|------|-------|
 | **TT-001** | ✅ **COMPLETED** | Create feature template with standard notification patterns | [BPM-005](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md#L226) | 2025-08-13 | Move Block feature serves as template |
 | **TT-002** | ✅ **COMPLETED** | Establish and enforce consistent patterns across all features | [BPM-005](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md#L134) | 2025-08-13 | ADR-006 implementation enforces consistency |
+
+### 🔥 CRITICAL - Concurrency & Thread Safety
+
+| ID | Status | Item | Source | Date | Notes |
+|----|--------|------|--------|------|-------|
+| **CRIT-001** | 🔴 **CRITICAL** | Replace Queue with ConcurrentQueue in SimulationManager | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Thread-unsafe queue will corrupt under load |
+| **CRIT-002** | 🔴 **CRITICAL** | Add rollback verification in GridStateService.MoveBlock | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Silent rollback failures cause state corruption |
+| **CRIT-003** | 🔴 **CRITICAL** | Replace static events with weak event pattern | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Memory leaks from undisposed presenters |
+| **CRIT-004** | 🔴 **CRITICAL** | Add mutex protection to SceneRoot singleton | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Race condition allows duplicate DI containers |
+| **CRIT-005** | 🔴 **CRITICAL** | Flatten nested async Match operations in handlers | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Deadlock risk under thread pool starvation |
+
+### Testing - Stress & Concurrency
+
+| ID | Status | Item | Source | Date | Notes |
+|----|--------|------|--------|------|-------|
+| **TEST-001** | 📋 **PENDING** | Add concurrent operation tests (100+ threads) | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | No race condition coverage |
+| **TEST-002** | 📋 **PENDING** | Add memory leak detection tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Verify presenter disposal |
+| **TEST-003** | 📋 **PENDING** | Add thread pool starvation tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Test under resource constraints |
+| **TEST-004** | 📋 **PENDING** | Add scene lifecycle integration tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Godot scene transition testing |
+| **TEST-005** | 📋 **PENDING** | Create comprehensive stress test suite | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Production load simulation |
 
 ## 📋 Detailed Action Items by Category
 

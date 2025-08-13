@@ -52,6 +52,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 #### 🔴 **Architecture Stress Test Reports**
 - [F1_Architecture_Stress_Test_Report.md](4_Post_Mortems/F1_Architecture_Stress_Test_Report.md) - ✅ **RESOLVED** - Critical architecture vulnerabilities identified and fixed ⭐⭐⭐
 - [Architecture_Stress_Testing_Lessons_Learned.md](4_Post_Mortems/Architecture_Stress_Testing_Lessons_Learned.md) - ✅ **REFERENCE** - Key learnings from F1 stress test experience ⭐⭐⭐
+- [Architecture_Stress_Test_Critical_Findings.md](4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) - 🔴 **CRITICAL** - 10 critical weaknesses: thread safety, memory leaks, race conditions (2025-08-14) ⭐⭐⭐
 - [Move_Block_Architecture_Stress_Test_Report.md](4_Post_Mortems/Move_Block_Architecture_Stress_Test_Report.md) - 📝 **DRAFT** - F2 Move Block feature architecture review
 
 #### 🐛 **Bug Post-Mortems**
@@ -165,15 +166,15 @@ addons\gdUnit4\runtest.cmd
 ```
 
 ## 📊 Current Statistics
-- **Total Tests**: 65 (as of 2025-08-13)
-- **Architecture Tests**: 16
-- **Unit Tests**: 40
-- **Property Tests**: 9 (900 validations)
+- **Total Tests**: 80 (as of 2025-08-14)
+- **Architecture Tests**: 0
+- **Unit Tests**: 0
+- **Property Tests**: 0 (0 validations)
 - **Test Coverage Target**: >90% for core logic
 
 ## 🔄 Maintenance Notes
 
-**Last Updated**: 2025-08-13
+**Last Updated**: 2025-08-14 (Auto-synced)
 **Maintained By**: Development Team
 **Update Frequency**: After each feature completion or major documentation change
 

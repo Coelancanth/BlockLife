@@ -322,7 +322,45 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ## Agent-Specific Workflow Instructions
 
+### For Tech Lead Advisory (tech-lead-advisor agent)
+**MUST follow this workflow:**
+1. **Provide strategic guidance** on technical decisions
+2. **Save recommendations** following naming convention:
+   - ADR for architectural decisions: `Docs/5_Architecture_Decision_Records/ADR_XXX_[Topic].md`
+   - Technical guidance: `Docs/6_Guides/Tech_Lead_[Topic]_Guide.md`
+   - Team process improvements: `Docs/2_Development_Process/[Topic]_Process.md`
+3. **Create ADRs when necessary** for significant architectural decisions:
+   - Use next available ADR number (currently up to 008)
+   - Format: `ADR_009_[Decision_Topic].md`
+4. **Update tracking systems**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
+**ADR should include:**
+- Context and problem statement
+- Decision drivers
+- Considered options with pros/cons
+- Decision outcome and rationale
+- Consequences (positive/negative)
+- Implementation guidance
+
 ### For Implementation Planning (implementation-planner agent)
+**MUST follow this workflow:**
+1. **Create implementation plan** following the template
+2. **Save plan** with naming convention:
+   - Location: `Docs/3_Implementation_Plans/XXX_[Feature]_Implementation_Plan.md`
+   - Use next available number (currently up to 005)
+   - Example: `006_Inventory_System_Implementation_Plan.md`
+3. **Update Implementation Status Tracker** at `Docs/0_Global_Tracker/Implementation_Status_Tracker.md`:
+   - Add new plan to the tracker
+   - Set initial status as "Planning"
+   - Include estimated phases and timeline
+4. **Run synchronization scripts**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
 **MUST consult these documents:**
 1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
 2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
@@ -336,6 +374,8 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - Property test requirements for invariants
 - Integration test boundaries
 - Quality gates and acceptance criteria
+- Phase breakdown with clear deliverables
+- Risk assessment and mitigation strategies
 
 ### For Code Review (code-review-expert agent)
 **MUST validate against:**
@@ -366,6 +406,38 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - Update test statistics when new tests added
 - Maintain consistency with Move Block reference implementation
 - Document any new patterns discovered
+
+### For Architecture Stress Testing (architecture-stress-tester agent)
+**MUST follow this workflow:**
+1. **Conduct thorough stress test** of architecture and implementation
+2. **Save report** following naming convention:
+   - Location: `Docs/4_Post_Mortems/Architecture_Stress_Test_[Date]_[Focus].md`
+   - Example: `Architecture_Stress_Test_Critical_Findings.md`
+3. **Update Master Action Items tracker** at `Docs/0_Global_Tracker/Master_Action_Items.md`:
+   - Add critical findings as new action items
+   - Use appropriate categories (CRIT-XXX for critical, TEST-XXX for testing gaps)
+   - Mark all new items as 🔴 **CRITICAL** or 📋 **PENDING**
+4. **Update Documentation Catalogue** at `Docs/DOCUMENTATION_CATALOGUE.md`:
+   - Add report to Post-Mortems section
+   - Mark with 🔴 **CRITICAL** status
+5. **Run synchronization scripts**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
+**Categorize issues by severity:**
+- CRITICAL: Will cause production failures
+- HIGH: Significant risk under load
+- MEDIUM: Performance/maintainability issues
+- LOW: Best practice violations
+
+**Report MUST include:**
+- Executive summary with risk assessment
+- Specific code locations with line numbers
+- Reproduction tests/scenarios
+- Impact under production load
+- Concrete fix recommendations
+- Action items with priority levels
 
 ### For General Development
 **Claude Code MUST:**
