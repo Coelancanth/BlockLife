@@ -120,7 +120,17 @@ test-branch
 
 ## Commit Message Guidelines
 
-### **Format**: `<type>: <description>`
+### **Format**: `<type>: <description> (#issue-number)`
+
+### **Extended Format (for complex changes):**
+```
+<type>: <description> (#issue-number)
+
+[optional body explaining the why, not the what]
+
+Fixes #BUG-XXX  (closes bug issues)
+Refs #FEAT-XXX  (references features)
+```
 
 ### **Types:**
 - **`feat:`** - New feature
@@ -132,13 +142,29 @@ test-branch
 
 ### **Examples:**
 ```bash
-feat: implement block movement with drag and drop
-fix: resolve notification pipeline race condition
+# Simple commits
+feat: implement block movement with drag and drop (#FEAT-002)
+fix: resolve notification pipeline race condition (#BUG-003)
 docs: add comprehensive Git workflow guide
 refactor: extract command validation logic
 test: add property tests for grid validation
 chore: update dependencies to latest versions
+
+# Complex bug fix with full context
+git commit -m "fix: resolve BlockId stability issue causing duplicate errors
+
+BlockId property was generating new GUID on each access,
+causing different IDs for placement vs notification.
+Now uses Lazy<Guid> for stable ID generation.
+
+Fixes #BUG-001"
 ```
+
+### **Why Reference Issues?**
+- **Traceability**: Links code changes to requirements/bugs
+- **Context**: Future developers understand the "why" 
+- **Automation**: Issue trackers auto-close when PR merges
+- **Knowledge Preservation**: Prevents "déjà vu bugs" from recurring
 
 ## Pull Request Requirements
 

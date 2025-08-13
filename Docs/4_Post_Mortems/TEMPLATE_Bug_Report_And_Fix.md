@@ -25,6 +25,16 @@
 - **System Impact**: [Does this affect other systems/features?]
 - **Business Impact**: [Any business consequences?]
 
+### Bug Triage Matrix
+| Criterion | Value | Notes |
+|-----------|-------|-------|
+| **Severity** | [Critical/High/Medium/Low] | [Impact level explanation] |
+| **Frequency** | [Always/Often/Sometimes/Rare] | [How often it occurs] |
+| **Priority** | [P0/P1/P2/P3] | [When to fix] |
+| **Users Affected** | [Percentage/Count] | [Scope of impact] |
+
+**Triage Decision**: [Fix immediately / Next sprint / Backlog]
+
 ## 🔍 Investigation
 
 ### Reproduction Steps
@@ -40,7 +50,24 @@
 - **Branch/Commit**: [Git reference]
 
 ### Root Cause Analysis
-**Primary Cause**: [Technical explanation of what went wrong]
+
+#### **The "5 Whys" Technique**
+1. **Why did [symptom] occur?**
+   → [Answer that leads to next why]
+
+2. **Why did [previous answer] happen?**
+   → [Answer that leads to next why]
+
+3. **Why did [previous answer] happen?**
+   → [Answer that leads to next why]
+
+4. **Why did [previous answer] happen?**
+   → [Answer that leads to next why]
+
+5. **Why did [previous answer] happen? (ROOT CAUSE)**
+   → [The fundamental systemic issue]
+
+**Primary Cause**: [Summarize the root cause from 5 Whys]
 
 **Contributing Factors**: [Other conditions that enabled the bug]
 
