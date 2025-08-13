@@ -1,29 +1,49 @@
-name: .NET Core CI
+name: Quick CI - Basic Validation
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    types: [ opened, synchronize ]
 
 jobs:
-  build:
+  quick-validation:
+    name: 🚀 Quick Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-    - name: Checkout repository
+    - name: 📥 Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: 🔧 Setup .NET 8
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
+    - name: 📦 Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: 🔄 Restore dependencies
       run: dotnet restore BlockLife.sln
 
-    - name: Build solution
-      run: dotnet build BlockLife.sln --no-restore
+    - name: 🔨 Build solution
+      run: dotnet build BlockLife.sln --no-restore --configuration Debug
 
-    - name: Run unit tests
-      run: dotnet test tests/BlockLife.Core.Tests.csproj --no-build --verbosity normal
+    - name: 🏗️ Architecture Tests (MUST PASS)
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --filter "FullyQualifiedName~Architecture" --no-build --configuration Debug --verbosity minimal
+      
+    - name: 🧪 Run All Tests
+      run: dotnet test tests/BlockLife.Core.Tests.csproj --no-build --configuration Debug --verbosity minimal
+
+    - name: ✅ Summary
+      if: always()
+      run: |
+        echo "✅ Quick validation complete"
+        echo "For comprehensive testing, see ci-comprehensive.yml workflow"

@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://ko2eo5hcjxkl"]
+
+[ext_resource type="Script" uid="uid://cnkwf7d32dn6h" path="res://godot_project/features/block/placement/GridView.cs" id="1_kkt3w"]
+[ext_resource type="Script" uid="uid://1y7361a257ob" path="res://godot_project/features/block/placement/BlockVisualizationController.cs" id="2_3okcj"]
+[ext_resource type="Script" uid="uid://beyv8auwjrhvi" path="res://godot_project/features/block/placement/GridInteractionController.cs" id="3_7qbr8"]
+
+[node name="Grid" type="Control" node_paths=PackedStringArray("VisualizationController", "InteractionController")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_kkt3w")
+VisualizationController = NodePath("VisualizationController")
+InteractionController = NodePath("InteractionController")
+
+[node name="BlockContainer" type="Node2D" parent="."]
+
+[node name="FeedbackContainer" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VisualizationController" type="Node2D" parent="." node_paths=PackedStringArray("BlockContainer", "FeedbackContainer")]
+script = ExtResource("2_3okcj")
+BlockContainer = NodePath("../BlockContainer")
+FeedbackContainer = NodePath("../FeedbackContainer")
+
+[node name="InteractionController" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_7qbr8")

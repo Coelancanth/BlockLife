@@ -11,12 +11,21 @@ config_version=5
 [application]
 
 config/name="BlockLife"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+run/main_scene="uid://o8gakj4jxun8"
+config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneRoot="*res://godot_project/scenes/Main/SceneRoot.tscn"
 
 [dotnet]
 
 project/assembly_name="BlockLife"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
 
 [rendering]
 
