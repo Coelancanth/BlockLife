@@ -48,7 +48,6 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 _mockPositionEmptyRule.Object,
                 _mockGridState.Object,
                 _mockSimulation.Object,
-                _mockMediator.Object,
                 _mockLogger.Object
             );
         }

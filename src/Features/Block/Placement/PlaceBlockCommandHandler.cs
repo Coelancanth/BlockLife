@@ -1,6 +1,5 @@
 using BlockLife.Core.Application.Simulation;
 using BlockLife.Core.Features.Block.Placement.Effects;
-using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Features.Block.Placement.Rules;
 using BlockLife.Core.Infrastructure.Extensions;
 using BlockLife.Core.Infrastructure.Services;
@@ -21,7 +20,6 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
     private readonly IPositionIsEmptyRule _positionEmptyRule;
     private readonly IGridStateService _gridState;
     private readonly ISimulationManager _simulation;
-    private readonly IMediator _mediator;
     private readonly ILogger<PlaceBlockCommandHandler> _logger;
     
     public PlaceBlockCommandHandler(
@@ -29,14 +27,12 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
         IPositionIsEmptyRule positionEmptyRule,
         IGridStateService gridState,
         ISimulationManager simulation,
-        IMediator mediator,
         ILogger<PlaceBlockCommandHandler> logger)
     {
         _positionValidRule = positionValidRule;
         _positionEmptyRule = positionEmptyRule;
         _gridState = gridState;
         _simulation = simulation;
-        _mediator = mediator;
         _logger = logger;
     }
     
@@ -56,34 +52,15 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
         return await result.Match(
             Succ: async block =>
             {
-                // Process queued effects to maintain consistency with RemoveBlock behavior
+                // Process queued effects which will publish the notification
+                // The SimulationManager.ProcessBlockPlacedEffect publishes BlockPlacedNotification
                 var processResult = await ProcessQueuedEffects();
                 
                 return await processResult.Match(
-                    Succ: async _ =>
+                    Succ: _ =>
                     {
-                        // Create and publish notification after successful effect processing
-                        var notification = new BlockPlacedNotification(
-                            block.Id,
-                            block.Position,
-                            block.Type,
-                            block.CreatedAt
-                        );
-                        
-                        var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block placed notification");
-                        
-                        return publishResult.Match(
-                            Succ: _ =>
-                            {
-                                _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
-                                return FinSucc(Unit.Default);
-                            },
-                            Fail: error =>
-                            {
-                                _logger.LogWarning("PlaceBlockCommand notification failed for position {Position}: {Error}", request.Position, error.Message);
-                                return FinFail<Unit>(error);
-                            }
-                        );
+                        _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
+                        return Task.FromResult(FinSucc(Unit.Default));
                     },
                     Fail: error =>
                     {
