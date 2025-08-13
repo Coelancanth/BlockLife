@@ -93,7 +93,176 @@ public class MyPresenter : PresenterBase<IMyView>
 4. **Testable**: Static events can be tested by subscribing to them in tests
 5. **Debuggable**: Clear event subscription/unsubscription lifecycle
 
-## 2. Direct Notification Publishing Pattern 📢
+## 2. Functional Error Handling Pattern 🚂
+*Railway-Oriented Programming with TaskFinExtensions*
+
+### Purpose
+Provide consistent functional error handling across all async operations, eliminating imperative try-catch blocks in favor of railway-oriented programming.
+
+### Problem Solved
+Mixed imperative/functional patterns created inconsistent error handling and broke functional composition chains:
+
+```csharp
+// ❌ PROBLEMATIC: Breaking functional chain with try-catch
+public async Task<Fin<Unit>> Handle(PlaceBlockCommand request, CancellationToken cancellationToken)
+{
+    // ... pure functional Fin<T> chain ...
+    
+    // Forced to break functional chain with try-catch
+    try
+    {
+        await _simulation.ProcessQueuedEffectsAsync(); // Returns Task, not Fin<T>
+        return FinSucc(Unit.Default);
+    }
+    catch (Exception ex)
+    {
+        return FinFail<Unit>(Error.New("PROCESS_EFFECTS_FAILED", ex.Message));
+    }
+}
+```
+
+### Implementation Pattern
+
+**TaskFinExtensions** (`src/Core/Infrastructure/Extensions/TaskFinExtensions.cs`):
+
+```csharp
+public static class TaskFinExtensions
+{
+    // Basic conversion with automatic error handling
+    public static async Task<Fin<T>> ToFin<T>(this Task<T> task)
+    {
+        try
+        {
+            var result = await task.ConfigureAwait(false);
+            return FinSucc(result);
+        }
+        catch (Exception ex)
+        {
+            return FinFail<T>(Error.New("TASK_EXECUTION_FAILED", ex.Message));
+        }
+    }
+
+    // With custom error code and message
+    public static async Task<Fin<T>> ToFin<T>(this Task<T> task, string errorCode, string errorMessage)
+    {
+        try
+        {
+            var result = await task.ConfigureAwait(false);
+            return FinSucc(result);
+        }
+        catch (Exception ex)
+        {
+            return FinFail<T>(Error.New(errorCode, $"{errorMessage}: {ex.Message}"));
+        }
+    }
+
+    // For Task (no return value) → Fin<Unit>
+    public static async Task<Fin<Unit>> ToFin(this Task task, string errorCode, string errorMessage)
+    {
+        try
+        {
+            await task.ConfigureAwait(false);
+            return FinSucc(Unit.Default);
+        }
+        catch (Exception ex)
+        {
+            return FinFail<Unit>(Error.New(errorCode, $"{errorMessage}: {ex.Message}"));
+        }
+    }
+}
+```
+
+**Clean Command Handler Pattern:**
+
+```csharp
+// ✅ SOLUTION: Clean railway-oriented programming
+public async Task<Fin<Unit>> Handle(PlaceBlockCommand request, CancellationToken cancellationToken)
+{
+    return await result.Match(
+        Succ: async block =>
+        {
+            var notification = new BlockPlacedNotification(request.Position, request.BlockType);
+            
+            // Clean functional composition - no try-catch needed!
+            return await _mediator.Publish(notification, cancellationToken)
+                .ToFin("NOTIFICATION_FAILED", "Failed to publish block placed notification")
+                .Map(_ => Unit.Default);
+        },
+        Fail: error => Task.FromResult(FinFail<Unit>(error))
+    );
+}
+```
+
+### Usage Examples
+
+```csharp
+// Infrastructure service calls
+var result = await _simulation.ProcessQueuedEffectsAsync()
+    .ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+
+// MediatR publishing
+var publishResult = await _mediator.Publish(notification, cancellationToken)
+    .ToFin("PUBLISH_FAILED", "Failed to publish notification");
+
+// Generic Task<T> conversion
+var dataResult = await _repository.GetDataAsync()
+    .ToFin("DATA_RETRIEVAL_FAILED", "Failed to retrieve data");
+
+// Chaining functional operations
+return await GetBlockData()
+    .Bind(block => ValidateBlock(block))
+    .Bind(validBlock => _service.ProcessBlockAsync(validBlock)
+        .ToFin("PROCESSING_FAILED", "Block processing failed"));
+```
+
+### Architecture Enforcement
+
+**Architecture Test Prevents Regression:**
+
+```csharp
+[Fact]
+public void CommandHandlers_ShouldNotContain_TryCatchBlocks()
+{
+    // ADR-006: Fin<T> vs Task<T> Consistency - Phase 1 Implementation
+    // Command handlers should use functional error handling with Fin<T> extensions
+    
+    var handlerTypes = GetAllCommandHandlerTypes();
+    
+    foreach (var handlerType in handlerTypes)
+    {
+        var sourceCode = GetSourceCode(handlerType);
+        
+        sourceCode.Should().NotContain("try {")
+            .And.NotContain("catch (")
+            .Because($"handler {handlerType.Name} should use functional error handling with TaskFinExtensions");
+    }
+}
+```
+
+### Benefits
+
+1. **Consistent Error Handling**: All async operations follow same pattern
+2. **Composable Pipelines**: Clean functional composition throughout
+3. **Better Error Information**: Structured errors with codes and context  
+4. **Testability**: Pure functions easier to test and reason about
+5. **Maintainability**: Railway-oriented programming reduces cognitive load
+
+### When to Use
+
+- **Always** in command handlers for async operations
+- When calling infrastructure services that return `Task<T>`
+- When publishing notifications through MediatR
+- For any async operation that could throw exceptions
+
+### Why This Pattern is Valid
+
+1. **ADR-006 Decision**: Formally adopted to solve functional/imperative inconsistency
+2. **Architecture Enforcement**: Tests prevent regression to imperative patterns
+3. **Battle-Tested**: All command handlers successfully converted
+4. **Performance**: No overhead - exceptions still bubble up as errors
+5. **Composable**: Maintains functional programming benefits
+
+## 3. Direct Notification Publishing Pattern 📢
 
 ### Purpose
 Publish domain notifications directly from command handlers without intermediate effect queuing.
@@ -150,7 +319,7 @@ public async Task<Fin<Unit>> Handle(MyCommand request, CancellationToken cancell
 3. **Clear Trade-off**: Immediate feedback prioritized over deferred processing
 4. **Infrastructure Available**: Effect queue exists for future use if needed
 
-## 3. Controlled MVP Pattern 🎯
+## 4. Controlled MVP Pattern 🎯
 
 ### Purpose
 Allow presenters to be Godot-aware while maintaining business logic purity.
@@ -207,7 +376,7 @@ public class BlockDomainService
 3. **Testable**: View interactions happen through interfaces
 4. **Maintainable**: Business logic remains pure and portable
 
-## 4. Architectural Validation
+## 5. Architectural Validation
 
 ### These Patterns Are NOT Hacks Because:
 
@@ -223,8 +392,9 @@ public class BlockDomainService
 2. **Models depending on Godot types**: Breaks Clean Architecture
 3. **Direct View updates from command handlers**: Bypasses MVP pattern
 4. **Mixed notification patterns**: Inconsistent event publishing approaches
+5. **Try-catch blocks in command handlers**: Breaks functional composition (use TaskFinExtensions)
 
-## 5. Code Templates
+## 6. Code Templates
 
 ### New Feature Notification Bridge
 
@@ -283,7 +453,7 @@ public async Task<Fin<Unit>> Handle([Feature]Command request, CancellationToken 
 }
 ```
 
-## 6. Architectural Tests
+## 7. Architectural Tests
 
 ### Validate Pattern Usage
 
@@ -325,6 +495,35 @@ public void NotificationBridges_ShouldFollow_StandardPattern()
                 "Notification bridges must implement INotificationHandler");
     }
 }
+
+[Fact]
+public void CommandHandlers_ShouldUse_FunctionalErrorHandling()
+{
+    var handlerTypes = GetAllCommandHandlerTypes();
+    
+    foreach (var handlerType in handlerTypes)
+    {
+        var sourceCode = GetSourceCode(handlerType);
+        
+        // Should not contain try-catch blocks
+        sourceCode.Should().NotContain("try {")
+            .And.NotContain("catch (")
+            .Because($"handler {handlerType.Name} should use functional error handling with TaskFinExtensions");
+        
+        // Should use TaskFinExtensions when needed
+        if (sourceCode.Contains("await") && sourceCode.Contains("Task"))
+        {
+            // If handler has async operations, should likely use .ToFin() extensions
+            var hasToFinUsage = sourceCode.Contains(".ToFin(");
+            var hasTryCatch = sourceCode.Contains("try") || sourceCode.Contains("catch");
+            
+            if (hasTryCatch)
+            {
+                Assert.Fail($"Handler {handlerType.Name} uses try-catch instead of functional error handling");
+            }
+        }
+    }
+}
 ```
 
 ---
@@ -340,4 +539,6 @@ The architecture demonstrates sophisticated understanding of the trade-offs invo
 **Related Documents:**
 - [Architecture Guide](Architecture_Guide.md) - Core principles and constraints
 - [Bug Post-Mortem BPM-005](../4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) - Pattern validation through debugging
-- [ADR-006](../4_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - Technical debt management
+- [ADR-006](../5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - Functional error handling decision
+- [TaskFinExtensions](../../src/Core/Infrastructure/Extensions/TaskFinExtensions.cs) - Implementation reference
+- [Move Block Feature](../../src/Features/Block/Move/) - Gold standard implementation using all patterns
