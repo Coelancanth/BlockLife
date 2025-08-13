@@ -7,10 +7,10 @@ Welcome to the BlockLife project documentation. This documentation follows a str
 ### 🎯 For New Developers
 1. **Start Here**: [Current Implementation Overview](0_Overview/Current_Implementation_Overview.md) - What's working right now
 2. **Architecture**: [Architecture Guide](1_Architecture/Architecture_Guide.md) - Core patterns and principles
-3. **Implementation**: [F1 Block Placement](3_Implementation_Plan/1_F1_Block_Placement_Implementation_Plan.md) - Reference implementation
+3. **Implementation**: [F1 Block Placement](_F1_Block_Placement_Implementation_Plan.md) - Reference implementation
 
 ### 🚀 For Active Development
-1. **Next Feature**: [Move Block Implementation](3_Implementation_Plan/2_Move_Block_Feature_Implementation_Plan.md)
+1. **Next Feature**: [Move Block Implementation](_Move_Block_Feature_Implementation_Plan.md)
 2. **Testing**: [Test Guide](1_Architecture/Test_Guide.md) - Testing strategies and patterns
 3. **Troubleshooting**: [Bug Post-Mortem](4_Architecture_Decision_Records/Bug_Post_Mortem_F1_Implementation.md) - Lessons learned
 
@@ -32,17 +32,17 @@ Welcome to the BlockLife project documentation. This documentation follows a str
 - **[Game Design Overview](2_Game_Design/Game_Design_Overview.md)** - Core game mechanics and vision
 - **[Brainstorming Archive](2_Game_Design/Brainstorming_Archive.md)** - Historical design discussions
 - **[Core_Mechanics/](2_Game_Design/Core_Mechanics/)** - Detailed mechanic specifications
-  - [Life Stages](2_Game_Design/Core_Mechanics/01_Life_Stages.md)
-  - [Personality System](2_Game_Design/Core_Mechanics/02_Personality_System.md)
-  - [Luck System](2_Game_Design/Core_Mechanics/03_Luck_System.md)
-  - [Block Narratives](2_Game_Design/Core_Mechanics/04_Block_Narratives.md)
+  - [Life Stages](2_Game_Design/Core_Mechanics/Life_Stages_Design.md)
+  - [Personality System](2_Game_Design/Core_Mechanics/Personality_System_Design.md)
+  - [Luck System](2_Game_Design/Core_Mechanics/Luck_System_Design.md)
+  - [Block Narratives](2_Game_Design/Core_Mechanics/Block_Narratives_Design.md)
 
-### [3_Implementation_Plan/](3_Implementation_Plan/) - Implementation Roadmaps
-- **[0_Vertical Slice Architecture Plan](3_Implementation_Plan/0_Vertical_Slice_Architecture_Plan.md)** - Overall implementation strategy
-- **[1_F1 Block Placement](3_Implementation_Plan/1_F1_Block_Placement_Implementation_Plan.md)** ✅ **COMPLETED** - Reference implementation
-- **[2_Move Block Feature](3_Implementation_Plan/2_Move_Block_Feature_Implementation_Plan.md)** 🚧 **NEXT** - Drag & drop functionality
-- **[3_Animation System](3_Implementation_Plan/3_Animation_System_Implementation_Plan.md)** - Animation infrastructure
-- **[5_Dotnet Templates](3_Implementation_Plan/5_Dotnet_New_Templates_Implementation_Plan.md)** - Developer tooling
+### [3_Implementation_Plans/](3_Implementation_Plans/) - Implementation Roadmaps
+- **[00_Vertical Slice Architecture Plan](_Vertical_Slice_Architecture_Plan.md)** - Overall implementation strategy
+- **[01_F1 Block Placement](_F1_Block_Placement_Implementation_Plan.md)** ✅ **COMPLETED** - Reference implementation
+- **[02_Move Block Feature](_Move_Block_Feature_Implementation_Plan.md)** 🚧 **NEXT** - Drag & drop functionality
+- **[3_Animation System](3_Implementation_Plans/3_Animation_System_Implementation_Plan.md)** - Animation infrastructure
+- **[05_Dotnet Templates](_Dotnet_New_Templates_Implementation_Plan.md)** - Developer tooling
 
 ### [4_Architecture_Decision_Records/](4_Architecture_Decision_Records/) - Decisions & Lessons Learned
 - **[Bug Post-Mortem F1](4_Architecture_Decision_Records/Bug_Post_Mortem_F1_Implementation.md)** 🔍 **IMPORTANT** - Lessons from F1 implementation
@@ -82,7 +82,7 @@ Welcome to the BlockLife project documentation. This documentation follows a str
 
 ### Key Files to Understand
 1. **[Architecture Guide](1_Architecture/Architecture_Guide.md)** - Core patterns (MUST READ)
-2. **[F1 Implementation](3_Implementation_Plan/1_F1_Block_Placement_Implementation_Plan.md)** - Reference example
+2. **[F1 Implementation](_F1_Block_Placement_Implementation_Plan.md)** - Reference example
 3. **[Bug Post-Mortem](4_Architecture_Decision_Records/Bug_Post_Mortem_F1_Implementation.md)** - What NOT to do
 
 ### Project Structure
@@ -100,7 +100,7 @@ BlockLife/
 ### For New Team Members
 1. Read [Current Implementation Overview](0_Overview/Current_Implementation_Overview.md)
 2. Study [Architecture Guide](1_Architecture/Architecture_Guide.md)
-3. Examine [F1 Implementation](3_Implementation_Plan/1_F1_Block_Placement_Implementation_Plan.md) as reference
+3. Examine [F1 Implementation](_F1_Block_Placement_Implementation_Plan.md) as reference
 4. Review [Bug Post-Mortem](4_Architecture_Decision_Records/Bug_Post_Mortem_F1_Implementation.md) to avoid common mistakes
 
 ### For Implementation Work
@@ -135,10 +135,10 @@ BlockLife/
 |---------------|------------|
 | Understand what's currently working | [Current Implementation Overview](0_Overview/Current_Implementation_Overview.md) |
 | Learn the architecture patterns | [Architecture Guide](1_Architecture/Architecture_Guide.md) |
-| See how to implement a feature | [F1 Implementation Plan](3_Implementation_Plan/1_F1_Block_Placement_Implementation_Plan.md) |
+| See how to implement a feature | [F1 Implementation Plan](_F1_Block_Placement_Implementation_Plan.md) |
 | Understand test strategies | [Test Guide](1_Architecture/Test_Guide.md) |
 | Avoid known issues | [Bug Post-Mortem](4_Architecture_Decision_Records/Bug_Post_Mortem_F1_Implementation.md) |
-| Plan next implementation | [Move Block Plan](3_Implementation_Plan/2_Move_Block_Feature_Implementation_Plan.md) |
+| Plan next implementation | [Move Block Plan](_Move_Block_Feature_Implementation_Plan.md) |
 | Understand game mechanics | [Game Design Overview](2_Game_Design/Game_Design_Overview.md) |
 
 ---

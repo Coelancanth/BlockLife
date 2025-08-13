@@ -298,5 +298,5 @@ Phase 2 implementation (Future): Migrate infrastructure services to return `Task
 ---
 
 **Related:**
-- [005_Block_Placement_Display_Bug.md](../4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) - Where this issue was discovered
+- [Block_Placement_Display_Bug_Report.md](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md) - Where this issue was discovered
 - [Architecture_Guide.md](../1_Architecture/Architecture_Guide.md) - Functional programming principles

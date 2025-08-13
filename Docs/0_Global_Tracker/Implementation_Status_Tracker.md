@@ -8,15 +8,15 @@
 
 | Priority | Feature | Plan File | Status | Progress | Next Action | Last Updated |
 |----------|---------|-----------|--------|----------|-------------|--------------|
-| 📖 | **Vertical Slice Architecture** | [0_Vertical_Slice_Architecture_Plan.md](../3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) | 📖 **REFERENCE** | N/A | Keep as architectural guide | 2025-08-13 |
-| 🥇 | **F1 Block Placement** | [1_F1_Block_Placement_Implementation_Plan.md](../3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) | ✅ **REFERENCE IMPLEMENTATION** | 100% | Serve as gold standard | 2025-08-13 |
-| 🚧 | **Move Block Feature** | [2_Move_Block_Feature_Implementation_Plan.md](../3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) | 🔄 **IN PROGRESS** | 70% | Continue Phase 3: Godot Integration | 2025-08-13 |
-| 🎯 | **Anchor-Based Rule Engine** | [ADR-008_Anchor_Based_Rule_Engine_Architecture.md](../5_Architecture_Decision_Records/ADR-008_Anchor_Based_Rule_Engine_Architecture.md) | 🔄 **APPROVED FOR IMPLEMENTATION** | 0% | Phase 1: Core Infrastructure (Week 1) | 2025-08-13 |
-| ⏳ | **Animation System** | [3_Animation_System_Implementation_Plan.md](../3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Ready for implementation | - |
-| 🛠️ | **Dotnet Templates** | [5_Dotnet_New_Templates_Implementation_Plan.md](../3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - developer tooling | - |
-| 🔧 | **Advanced Logger** | [6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md](../3_Implementation_Plans/6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Medium priority - infrastructure | - |
-| 🎨 | **Dynamic Logging UI** | [7_Dynamic_Logging_UI_Implementation_Plan.md](../3_Implementation_Plans/7_Dynamic_Logging_UI_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
-| 🐛 | **Debug Console** | [8_Automated_Debug_Console_Implementation_Plan.md](../3_Implementation_Plans/8_Automated_Debug_Console_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
+| 📖 | **Vertical Slice Architecture** | [00_Vertical_Slice_Architecture_Plan.md](../3_Implementation_Plans/00_Vertical_Slice_Architecture_Plan.md) | 📖 **REFERENCE** | N/A | Keep as architectural guide | 2025-08-13 |
+| 🥇 | **F1 Block Placement** | [01_F1_Block_Placement_Implementation_Plan.md](../3_Implementation_Plans/01_F1_Block_Placement_Implementation_Plan.md) | ✅ **REFERENCE IMPLEMENTATION** | 100% | Serve as gold standard | 2025-08-13 |
+| 🚧 | **Move Block Feature** | [02_Move_Block_Feature_Implementation_Plan.md](../3_Implementation_Plans/02_Move_Block_Feature_Implementation_Plan.md) | 🔄 **IN PROGRESS** | 70% | Continue Phase 3: Godot Integration | 2025-08-13 |
+| 🎯 | **Anchor-Based Rule Engine** | [ADR_008_Anchor_Based_Rule_Engine_Architecture.md](../5_Architecture_Decision_Records/ADR_008_Anchor_Based_Rule_Engine_Architecture.md) | 🔄 **APPROVED FOR IMPLEMENTATION** | 0% | Phase 1: Core Infrastructure (Week 1) | 2025-08-13 |
+| ⏳ | **Animation System** | [03_Animation_System_Implementation_Plan.md](../3_Implementation_Plans/03_Animation_System_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Ready for implementation | - |
+| 🛠️ | **Dotnet Templates** | [05_Dotnet_New_Templates_Implementation_Plan.md](../3_Implementation_Plans/05_Dotnet_New_Templates_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - developer tooling | - |
+| 🔧 | **Advanced Logger** | [06_Advanced_Logger_And_GameStrapper_Implementation_Plan.md](../3_Implementation_Plans/06_Advanced_Logger_And_GameStrapper_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Medium priority - infrastructure | - |
+| 🎨 | **Dynamic Logging UI** | [07_Dynamic_Logging_UI_Implementation_Plan.md](../3_Implementation_Plans/07_Dynamic_Logging_UI_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
+| 🐛 | **Debug Console** | [08_Automated_Debug_Console_Implementation_Plan.md](../3_Implementation_Plans/08_Automated_Debug_Console_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
 
 ## 🏆 Completed Implementations
 

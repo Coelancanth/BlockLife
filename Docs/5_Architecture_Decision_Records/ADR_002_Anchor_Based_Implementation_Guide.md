@@ -2,9 +2,9 @@
 
 ## Overview
 
-This guide provides detailed implementation instructions for the **Anchor-Based Rule Engine Architecture**. This is the **approved implementation approach** as formalized in [ADR-008: Anchor-Based Rule Engine Architecture](ADR-008_Anchor_Based_Rule_Engine_Architecture.md).
+This guide provides detailed implementation instructions for the **Anchor-Based Rule Engine Architecture**. This is the **approved implementation approach** as formalized in [ADR-008: Anchor-Based Rule Engine Architecture](ADR_008_Anchor_Based_Rule_Engine_Architecture.md).
 
-**Related Documents**: [Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md](Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md) - Alternative approach (superseded)
+**Related Documents**: [ADR_001_Grid_Scanning_Approach_SUPERSEDED.md](ADR_001_Grid_Scanning_Approach_SUPERSEDED.md) - Alternative approach (superseded)
 
 **Status**: ✅ **APPROVED FOR IMPLEMENTATION**  
 **Performance**: 150x improvement over grid-scanning (0.3ms vs 45ms)  

@@ -15,7 +15,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 ### Reference Implementation
 - **Move Block Feature** (`src/Features/Block/Move/`) - GOLD STANDARD implementation
 - **Tests**: `tests/BlockLife.Core.Tests/Features/Block/Move/`
-- **Documentation**: [2_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md)
+- **Documentation**: [02_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/02_Move_Block_Feature_Implementation_Plan.md)
 
 ## 📂 Documentation Structure
 
@@ -35,14 +35,14 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - User stories
 
 ### 3️⃣ Implementation Plans ([3_Implementation_Plans/](3_Implementation_Plans/))
-- [0_Vertical_Slice_Architecture_Plan.md](3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - VSA patterns and approach
-- [1_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Gold Standard - All critical fixes applied)
-- [2_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - 🔄 **IN PROGRESS** (70% - Phase 1-2 Complete)
-- [3_Animation_System_Implementation_Plan.md](3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - ❌ **NOT STARTED** (Animation architecture)
-- [5_Dotnet_New_Templates_Implementation_Plan.md](3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - ❌ **NOT STARTED** (Project templates)
-- [6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md](3_Implementation_Plans/6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md) - ❌ **NOT STARTED** (Infrastructure)
-- [7_Dynamic_Logging_UI_Implementation_Plan.md](3_Implementation_Plans/7_Dynamic_Logging_UI_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
-- [8_Automated_Debug_Console_Implementation_Plan.md](3_Implementation_Plans/8_Automated_Debug_Console_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
+- [00_Vertical_Slice_Architecture_Plan.md](3_Implementation_Plans/00_Vertical_Slice_Architecture_Plan.md) - VSA patterns and approach
+- [01_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/01_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Gold Standard - All critical fixes applied)
+- [02_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/02_Move_Block_Feature_Implementation_Plan.md) - 🔄 **IN PROGRESS** (70% - Phase 1-2 Complete)
+- [03_Animation_System_Implementation_Plan.md](3_Implementation_Plans/03_Animation_System_Implementation_Plan.md) - ❌ **NOT STARTED** (Animation architecture)
+- [05_Dotnet_New_Templates_Implementation_Plan.md](3_Implementation_Plans/05_Dotnet_New_Templates_Implementation_Plan.md) - ❌ **NOT STARTED** (Project templates)
+- [06_Advanced_Logger_And_GameStrapper_Implementation_Plan.md](3_Implementation_Plans/06_Advanced_Logger_And_GameStrapper_Implementation_Plan.md) - ❌ **NOT STARTED** (Infrastructure)
+- [07_Dynamic_Logging_UI_Implementation_Plan.md](3_Implementation_Plans/07_Dynamic_Logging_UI_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
+- [08_Automated_Debug_Console_Implementation_Plan.md](3_Implementation_Plans/08_Automated_Debug_Console_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
 
 📊 **[Implementation Status Tracker](0_Global_Tracker/Implementation_Status_Tracker.md)** - **NEW**: Central tracking of all implementation plan statuses and progress
 
@@ -54,20 +54,20 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - [Move_Block_Architecture_Stress_Test_Report.md](4_Post_Mortems/Move_Block_Architecture_Stress_Test_Report.md) - 📝 **DRAFT** - F2 Move Block feature architecture review
 
 #### 🐛 **Bug Post-Mortems**
-- [000_Bug_Post_Mortem_Template.md](4_Bug_PostMortems/000_Bug_Post_Mortem_Template.md) - Standard template for post-mortems
-- [000_Bug_Post_Mortem_Examples.md](4_Bug_PostMortems/000_Bug_Post_Mortem_Examples.md) - Common patterns and examples
-- [003_DI_Container_Presenter_Registration.md](4_Bug_PostMortems/003_DI_Container_Presenter_Registration.md) - Presenter notification handler constraints
-- [004_SceneRoot_Autoload_Configuration.md](4_Bug_PostMortems/004_SceneRoot_Autoload_Configuration.md) - Autoload configuration and duplicate instantiation
-- [005_Block_Placement_Display_Bug.md](4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) - ✅ Notification pipeline consistency lessons
-- [006_F1_Block_Placement_Implementation_Issues.md](4_Bug_PostMortems/006_F1_Block_Placement_Implementation_Issues.md) - Lessons from F1 implementation
+- [TEMPLATE_Bug_Post_Mortem.md](4_Post_Mortems/TEMPLATE_Bug_Post_Mortem.md) - Standard template for post-mortems
+- [EXAMPLE_Bug_Post_Mortem.md](4_Post_Mortems/EXAMPLE_Bug_Post_Mortem.md) - Common patterns and examples
+- [DI_Container_Presenter_Registration_Bug_Report.md](4_Post_Mortems/DI_Container_Presenter_Registration_Bug_Report.md) - Presenter notification handler constraints
+- [SceneRoot_Autoload_Configuration_Bug_Report.md](4_Post_Mortems/SceneRoot_Autoload_Configuration_Bug_Report.md) - Autoload configuration and duplicate instantiation
+- [Block_Placement_Display_Bug_Report.md](4_Post_Mortems/Block_Placement_Display_Bug_Report.md) - ✅ Notification pipeline consistency lessons
+- [F1_Block_Placement_Implementation_Issues_Report.md](4_Post_Mortems/F1_Block_Placement_Implementation_Issues_Report.md) - Lessons from F1 implementation
 - Pattern discoveries and anti-patterns
 
 ### 5️⃣ Architecture Decision Records ([5_Architecture_Decision_Records/](5_Architecture_Decision_Records/))
-- [ADR-006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - **ACTIVE DECISION**: Fin<T> vs Task<T> consistency
-- [ADR-007_Enhanced_Functional_Validation_Pattern.md](5_Architecture_Decision_Records/ADR-007_Enhanced_Functional_Validation_Pattern.md) - Enhanced functional validation patterns instead of FluentValidation ⭐⭐⭐
-- [ADR-008_Anchor_Based_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/ADR-008_Anchor_Based_Rule_Engine_Architecture.md) - **NEW**: ✅ **APPROVED** Anchor-based rule engine (150x performance improvement) ⭐⭐⭐
-- [Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md](5_Architecture_Decision_Records/Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md) - ❌ **SUPERSEDED** Grid-scanning approach (performance inadequate)
-- [Rule_Engine_002_Anchor_Based_Implementation_Guide.md](5_Architecture_Decision_Records/Rule_Engine_002_Anchor_Based_Implementation_Guide.md) - **APPROVED APPROACH**: Detailed anchor-based implementation guide ⭐⭐⭐
+- [ADR_006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR_006_Fin_Task_Consistency.md) - **ACTIVE DECISION**: Fin<T> vs Task<T> consistency
+- [ADR_007_Enhanced_Functional_Validation_Pattern.md](5_Architecture_Decision_Records/ADR_007_Enhanced_Functional_Validation_Pattern.md) - Enhanced functional validation patterns instead of FluentValidation ⭐⭐⭐
+- [ADR_008_Anchor_Based_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/ADR_008_Anchor_Based_Rule_Engine_Architecture.md) - **NEW**: ✅ **APPROVED** Anchor-based rule engine (150x performance improvement) ⭐⭐⭐
+- [ADR_001_Grid_Scanning_Approach_SUPERSEDED.md](5_Architecture_Decision_Records/ADR_001_Grid_Scanning_Approach_SUPERSEDED.md) - ❌ **SUPERSEDED** Grid-scanning approach (performance inadequate)
+- [ADR_002_Anchor_Based_Implementation_Guide.md](5_Architecture_Decision_Records/ADR_002_Anchor_Based_Implementation_Guide.md) - **APPROVED APPROACH**: Detailed anchor-based implementation guide ⭐⭐⭐
 - [Developer_Tooling_Guide.md](5_Architecture_Decision_Records/Developer_Tooling_Guide.md) - Development tooling decisions
 
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
@@ -92,7 +92,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### When fixing a bug:
 1. Check [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) for related prevention measures
-2. Check [4_Bug_PostMortems/](4_Bug_PostMortems/) for similar issues (especially [005_Block_Placement_Display_Bug.md](4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) for notification pipeline issues)
+2. Check [4_Post_Mortems/](4_Post_Mortems/) for similar issues (especially [Block_Placement_Display_Bug_Report.md](4_Post_Mortems/Block_Placement_Display_Bug_Report.md) for notification pipeline issues)
 3. Review [Architecture_FAQ.md](1_Architecture/Architecture_FAQ.md) for known problems and patterns
 4. Follow debugging strategies in workflow guide
 
@@ -179,19 +179,19 @@ When using this catalogue:
 ## 🐛 Known Issues & Workarounds
 
 ### Notification Pipeline Issues
-See [005_Block_Placement_Display_Bug.md](4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) for:
+See [Block_Placement_Display_Bug_Report.md](4_Post_Mortems/Block_Placement_Display_Bug_Report.md) for:
 - Notification pipeline debugging steps (Command → Handler → MediatR → Static Bridge → Presenter)
 - Common anti-patterns (empty handlers, effect queues without processing)
 - Standard notification flow patterns and troubleshooting
 
 ### General Implementation Issues  
-See [Bug_Post_Mortem_F1_Implementation.md](4_Bug_PostMortems/Bug_Post_Mortem_F1_Implementation.md) for:
+See [F1_Block_Placement_Implementation_Issues_Report.md](4_Post_Mortems/F1_Block_Placement_Implementation_Issues_Report.md) for:
 - LanguageExt.Fin<T> type ambiguity solutions
 - Presenter DI registration patterns
 - Error message format standards
 
 ### Architecture Decision Records
-See [ADR-006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) for:
+See [ADR_006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR_006_Fin_Task_Consistency.md) for:
 - **ACTIVE DECISION**: Fin<T> vs Task<T> consistency in async operations
 - Functional vs imperative error handling patterns
 - Migration strategy from mixed approach to pure functional architecture

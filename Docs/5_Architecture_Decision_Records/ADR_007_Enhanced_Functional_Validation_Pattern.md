@@ -299,15 +299,15 @@ Success criteria for this enhancement:
 
 ## Related Decisions
 
-- **ADR-006**: [Fin_Task_Consistency](ADR-006_Fin_Task_Consistency.md) - Establishes `Fin<T>` as standard error handling
+- **ADR-006**: [Fin_Task_Consistency](ADR_006_Fin_Task_Consistency.md) - Establishes `Fin<T>` as standard error handling
 - **Architecture Guide**: [Architecture_Guide.md](../1_Architecture/Architecture_Guide.md) - Clean Architecture principles
 - **Standard Patterns**: [Standard_Patterns.md](../1_Architecture/Standard_Patterns.md) - Established architectural patterns
 
 ## References
 
 - [LanguageExt Documentation](https://github.com/louthy/language-ext) - Functional programming library
-- [F1 Block Placement Implementation](../3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - Reference implementation patterns
-- [Move Block Feature Implementation](../3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - Current validation usage
+- [F1 Block Placement Implementation](_F1_Block_Placement_Implementation_Plan.md) - Reference implementation patterns
+- [Move Block Feature Implementation](_Move_Block_Feature_Implementation_Plan.md) - Current validation usage
 
 ---
 

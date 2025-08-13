@@ -249,14 +249,14 @@ The architecture prioritizes long-term maintainability and testability over rapi
 1. **[Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)** - Complete TDD+VSA process
 2. **[Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)** - Daily workflow checklists
 3. **[Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)** - Core architectural principles
-4. **`Docs/3_Implementation_Plan/`** - Feature-specific implementation plans
+4. **`Docs/3_Implementation_Plans/`** - Feature-specific implementation plans
 
 ### 📋 **Implementation Plans by Feature**
-- **Vertical Slice Architecture**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
-- **Block Placement (F1)**: [1_F1_Block_Placement_Implementation_Plan.md](Docs/3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
-- **Move Block**: [2_Move_Block_Feature_Implementation_Plan.md](Docs/3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
+- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
 - **Animation System**: [3_Animation_System_Implementation_Plan.md](Docs/3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation queuing and state
-- **Dotnet Templates**: [5_Dotnet_New_Templates_Implementation_Plan.md](Docs/3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
 ### 🎯 **Reference Implementation: Move Block Feature**
 The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for implementation:
@@ -269,7 +269,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For Implementation Planning (implementation-planner agent)
 **MUST consult these documents:**
-1. **First**: [0_Vertical_Slice_Architecture_Plan.md](Docs/3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md)
+1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
 2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 3. **Reference**: Move Block implementation in `src/Features/Block/Move/`
 4. **Follow**: TDD+VSA workflow exactly as demonstrated
@@ -303,7 +303,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 **MUST maintain these documents:**
 1. **Workflow Docs**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
 2. **Checklist**: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plan/`
+3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plans/`
 4. **Architecture Docs**: Keep `Docs/1_Architecture/` current
 
 **Update requirements:**

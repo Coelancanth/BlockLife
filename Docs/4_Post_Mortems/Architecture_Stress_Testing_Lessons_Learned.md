@@ -237,7 +237,7 @@ This experience reinforced that **architectural patterns are guidelines, not gua
 ## 📚 **References and Further Reading**
 
 - **Original Stress Test**: [F1_Architecture_Stress_Test_Report.md](F1_Architecture_Stress_Test_Report.md)
-- **Implementation Plan**: [1_F1_Block_Placement_Implementation_Plan.md](../3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md)
+- **Implementation Plan**: [01_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md)
 - **Fix Commit**: `0324c0f` - Complete architectural remediation
 - **Testing Guide**: [Quick_Reference_Development_Checklist.md](../6_Guides/Quick_Reference_Development_Checklist.md)
 

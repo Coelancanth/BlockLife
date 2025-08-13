@@ -538,7 +538,7 @@ The architecture demonstrates sophisticated understanding of the trade-offs invo
 
 **Related Documents:**
 - [Architecture Guide](Architecture_Guide.md) - Core principles and constraints
-- [Bug Post-Mortem BPM-005](../4_Bug_PostMortems/005_Block_Placement_Display_Bug.md) - Pattern validation through debugging
-- [ADR-006](../5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - Functional error handling decision
+- [Bug Post-Mortem BPM-005](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md) - Pattern validation through debugging
+- [ADR-006](../5_Architecture_Decision_Records/ADR_006_Fin_Task_Consistency.md) - Functional error handling decision
 - [TaskFinExtensions](../../src/Core/Infrastructure/Extensions/TaskFinExtensions.cs) - Implementation reference
 - [Move Block Feature](../../src/Features/Block/Move/) - Gold standard implementation using all patterns

@@ -2,7 +2,7 @@
 
 **Status**: ✅ **ACCEPTED**  
 **Date**: 2025-08-13  
-**Supersedes**: [Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md](Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md)  
+**Supersedes**: [ADR_001_Grid_Scanning_Approach_SUPERSEDED.md](ADR_001_Grid_Scanning_Approach_SUPERSEDED.md)  
 **Participants**: Development Team, Tech Lead Agent  
 **Tags**: `rule-engine`, `performance`, `architecture`, `pattern-matching`, `anchor-based`
 
@@ -490,15 +490,15 @@ Since no complex rule engine currently exists, migration is not required. Howeve
 
 ## Related Decisions
 
-- **ADR-006**: [Fin_Task_Consistency](ADR-006_Fin_Task_Consistency.md) - Establishes `Fin<T>` for error handling
-- **ADR-007**: [Enhanced_Functional_Validation_Pattern](ADR-007_Enhanced_Functional_Validation_Pattern.md) - Functional validation patterns
+- **ADR-006**: [Fin_Task_Consistency](ADR_006_Fin_Task_Consistency.md) - Establishes `Fin<T>` for error handling
+- **ADR-007**: [Enhanced_Functional_Validation_Pattern](ADR_007_Enhanced_Functional_Validation_Pattern.md) - Functional validation patterns
 - **Architecture Guide**: [Architecture_Guide.md](../1_Architecture/Architecture_Guide.md) - Clean Architecture principles
 
 ## References
 
-- [Rule_Engine_002_Anchor_Based_Implementation_Guide.md](Rule_Engine_002_Anchor_Based_Implementation_Guide.md) - Detailed implementation specifications
-- [F1 Block Placement Implementation](../3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - Reference CQRS patterns
-- [Move Block Feature Implementation](../3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - Command handler integration
+- [ADR_002_Anchor_Based_Implementation_Guide.md](ADR_002_Anchor_Based_Implementation_Guide.md) - Detailed implementation specifications
+- [F1 Block Placement Implementation](_F1_Block_Placement_Implementation_Plan.md) - Reference CQRS patterns
+- [Move Block Feature Implementation](_Move_Block_Feature_Implementation_Plan.md) - Command handler integration
 - [Comprehensive Development Workflow](../6_Guides/Comprehensive_Development_Workflow.md) - TDD+VSA development process
 
 ---

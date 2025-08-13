@@ -4,8 +4,8 @@
 
 **Status**: ❌ **SUPERSEDED**  
 **Date Superseded**: 2025-08-13  
-**Superseded By**: [ADR-008: Anchor-Based Rule Engine Architecture](ADR-008_Anchor_Based_Rule_Engine_Architecture.md)  
-**Related Documents**: [Rule_Engine_002_Anchor_Based_Implementation_Guide.md](Rule_Engine_002_Anchor_Based_Implementation_Guide.md)  
+**Superseded By**: [ADR-008: Anchor-Based Rule Engine Architecture](ADR_008_Anchor_Based_Rule_Engine_Architecture.md)  
+**Related Documents**: [ADR_002_Anchor_Based_Implementation_Guide.md](ADR_002_Anchor_Based_Implementation_Guide.md)  
 **Reason**: Performance analysis showed grid-scanning approach (O(n² × p)) is inadequate for real-time gameplay
 
 ---
@@ -18,7 +18,7 @@ After reassessing the complex rule requirements for BlockLife, I acknowledge tha
 
 This document presents a **Custom Pattern-Matching Rule Engine** that maintains Clean Architecture principles while providing the flexibility and performance needed for complex rule evaluation.
 
-**⚠️ PERFORMANCE ISSUE**: This grid-scanning approach has O(n² × p) complexity, resulting in ~45ms evaluation time for 50x50 grids, which is unacceptable for real-time gameplay. See [ADR-008](ADR-008_Anchor_Based_Rule_Engine_Architecture.md) for the adopted anchor-based solution (0.3ms evaluation time).
+**⚠️ PERFORMANCE ISSUE**: This grid-scanning approach has O(n² × p) complexity, resulting in ~45ms evaluation time for 50x50 grids, which is unacceptable for real-time gameplay. See [ADR-008](ADR_008_Anchor_Based_Rule_Engine_Architecture.md) for the adopted anchor-based solution (0.3ms evaluation time).
 
 ## 1. Problem Analysis
 
