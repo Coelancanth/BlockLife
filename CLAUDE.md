@@ -15,14 +15,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with Model-View-Presenter (MVP) pattern. The project uses CQRS with functional programming principles (LanguageExt.Core) and maintains a pure C# core separated from Godot-specific presentation code. Development 
 environment is windows 10, use powershell.
 
+## ⚠️ CRITICAL: Git Workflow Requirements
+
+**🚫 NEVER WORK DIRECTLY ON MAIN BRANCH - NO EXCEPTIONS**
+
+**MANDATORY Git Workflow for ALL Changes:**
+1. **Create feature branch FIRST**: `git checkout -b <type>/<description>`
+2. **Make changes on branch**: Never on main
+3. **Create Pull Request**: Always for review
+4. **Wait for approval**: Before merging
+5. **Follow guide**: [Git_Workflow_Guide.md](Docs/6_Guides/Git_Workflow_Guide.md)
+
+**Branch Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `hotfix/`
+
 ## 🚀 Quick Start for New Features
 
 **Before implementing ANY feature:**
-1. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
-2. Check if implementation plan exists: `Docs/3_Implementation_Plans/[FeatureName]_Implementation_Plan.md`
-3. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-4. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-5. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
+1. **🔥 CREATE BRANCH**: `git checkout -b feat/your-feature-name`
+2. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
+3. Check if implementation plan exists: `Docs/3_Implementation_Plans/[FeatureName]_Implementation_Plan.md`
+4. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
+5. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
+6. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
 
 ## Build and Development Commands
 
@@ -314,6 +328,16 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ### For General Development
 **Claude Code MUST:**
+
+**🚨 CRITICAL FIRST STEP - GIT WORKFLOW:**
+0. **NEVER work on main branch** - Always create feature branch first:
+   ```bash
+   git checkout -b <type>/<description>
+   ```
+   - **Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `hotfix/`
+   - **Must read**: [Git_Workflow_Guide.md](Docs/6_Guides/Git_Workflow_Guide.md)
+
+**DEVELOPMENT WORKFLOW:**
 1. **Check documentation** in this order:
    - Relevant implementation plan in [3_Implementation_Plans/](Docs/3_Implementation_Plans/)
    - [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
@@ -326,6 +350,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 4. **Use TodoWrite** tool to track workflow compliance
 5. **Follow TDD** Red-Green-Refactor cycle religiously
 6. **Validate** against 4-pillar testing strategy
+7. **Create Pull Request** for all changes - NO direct commits to main
 
 ## 🔍 Common Agent Queries - Quick Answers
 

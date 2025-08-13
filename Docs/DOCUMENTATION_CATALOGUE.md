@@ -8,9 +8,10 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### Essential Documents
 1. **CLAUDE.md** - Root-level agent instructions and project overview
-2. **[Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md)** - MANDATORY workflow to follow
-3. **[Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)** - Daily task checklist
-4. **[Architecture_Guide.md](1_Architecture/Architecture_Guide.md)** - Core architectural principles
+2. **[Git_Workflow_Guide.md](6_Guides/Git_Workflow_Guide.md)** - 🚨 **MANDATORY** Git branch workflow (READ FIRST)
+3. **[Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md)** - MANDATORY TDD+VSA workflow to follow
+4. **[Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)** - Daily task checklist
+5. **[Architecture_Guide.md](1_Architecture/Architecture_Guide.md)** - Core architectural principles
 
 ### Reference Implementation
 - **Move Block Feature** (`src/Features/Block/Move/`) - GOLD STANDARD implementation
@@ -71,11 +72,13 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - [Developer_Tooling_Guide.md](5_Architecture_Decision_Records/Developer_Tooling_Guide.md) - Development tooling decisions
 
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
+- [Git_Workflow_Guide.md](6_Guides/Git_Workflow_Guide.md) - 🚨 **MANDATORY** Git branch workflow - NEVER work on main ⭐⭐⭐
 - [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) - **MUST FOLLOW** TDD+VSA process
 - [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md) - Step-by-step checklists
 - [Pull_Request_Guide.md](6_Guides/Pull_Request_Guide.md) - **CRITICAL**: PR template compliance to prevent CI failures ⭐⭐⭐
 - [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) - **NEW**: Comprehensive feature implementation guide with examples
 - [Debugging_Notification_Pipeline.md](6_Guides/Debugging_Notification_Pipeline.md) - Systematic debugging for broken view updates
+- [Developer_Tooling_Guide.md](6_Guides/Developer_Tooling_Guide.md) - Development environment setup and tooling
 
 ### 7️⃣ Overview Documents ([7_Overview/](7_Overview/))
 - [BlockLife_Comprehensive_Overview.md](7_Overview/BlockLife_Comprehensive_Overview.md) - Complete project overview
@@ -84,11 +87,13 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 ## 🔍 Where to Find What
 
 ### When implementing a new feature:
-1. Check [3_Implementation_Plans/](3_Implementation_Plans/) for existing plan
-2. Read [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) for comprehensive implementation patterns
-3. Read [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) for TDD+VSA process
-4. Use [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)
-5. Reference `src/Features/Block/Move/` as pattern example
+1. **🚨 FIRST**: Create feature branch following [Git_Workflow_Guide.md](6_Guides/Git_Workflow_Guide.md)
+2. Check [3_Implementation_Plans/](3_Implementation_Plans/) for existing plan
+3. Read [Feature_Development_Guide.md](6_Guides/Feature_Development_Guide.md) for comprehensive implementation patterns
+4. Read [Comprehensive_Development_Workflow.md](6_Guides/Comprehensive_Development_Workflow.md) for TDD+VSA process
+5. Use [Quick_Reference_Development_Checklist.md](6_Guides/Quick_Reference_Development_Checklist.md)
+6. Reference `src/Features/Block/Move/` as pattern example
+7. **🚨 LAST**: Create PR following [Pull_Request_Guide.md](6_Guides/Pull_Request_Guide.md)
 
 ### When fixing a bug:
 1. Check [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) for related prevention measures

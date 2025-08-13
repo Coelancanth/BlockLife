@@ -1,5 +1,18 @@
 # Pull Request Guide
 
+## ⚠️ PREREQUISITE: Proper Git Workflow
+
+**BEFORE creating ANY PR, you MUST follow the Git workflow:**
+
+1. **Never work on main branch** - Always use feature branches
+2. **Branch naming**: `<type>/<description>` (e.g., `feat/inventory-system`)
+3. **Complete guide**: [Git_Workflow_Guide.md](Git_Workflow_Guide.md)
+
+**This guide assumes you've already:**
+- Created a proper feature branch
+- Made your changes on that branch
+- Tested your changes locally
+
 ## 🚨 CRITICAL: PR Template Compliance
 
 **ALL Pull Requests MUST use the repository's PR template** located at `.github/pull_request_template.md`. Failure to include required sections will cause CI to fail.
@@ -150,6 +163,25 @@ Include PR creation as the final step in implementation plans with template requ
 ### For Code-Review-Expert Agent
 Validate that PR descriptions follow the template before approving architectural reviews.
 
+## Git Workflow Violations
+
+### ❌ **Common Violations That Will Be Rejected:**
+
+1. **Direct commits to main** - PRs from main branch will be immediately closed
+2. **Wrong branch naming** - Must follow `<type>/<description>` format
+3. **No feature branch** - All changes must come from proper feature branches
+4. **Merge commits in PR** - Keep branch history clean
+
+### 🚨 **Enforcement:**
+- PRs violating Git workflow will be **automatically rejected**
+- Contributors must create proper feature branch and new PR
+- No exceptions for "small" or "urgent" changes
+
+### 📚 **Resources:**
+- **Complete workflow**: [Git_Workflow_Guide.md](Git_Workflow_Guide.md)
+- **Development process**: [Comprehensive_Development_Workflow.md](Comprehensive_Development_Workflow.md)
+- **Branch naming**: See Git_Workflow_Guide.md for conventions
+
 ---
 
-**Remember**: The CI system enforces these requirements. Template compliance is not optional - it's a build gate that will block merging if not followed correctly.
+**Remember**: Both Git workflow compliance AND template compliance are enforced by CI. These are not optional - they are build gates that will block merging if not followed correctly.
