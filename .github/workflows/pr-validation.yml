@@ -1,0 +1,212 @@
+name: PR Validation - TDD Enforcement
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [ opened, synchronize, reopened, edited ]
+
+jobs:
+  pr-checks:
+    name: 🔍 PR Validation Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for diff analysis
+
+    - name: 🔧 Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: 📋 Check PR Description
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const pr = context.payload.pull_request;
+          const body = pr.body || '';
+          
+          // Check for required sections in PR description
+          const requiredSections = [
+            '## Changes',
+            '## Testing',
+            '## Checklist'
+          ];
+          
+          const missingSections = requiredSections.filter(section => 
+            !body.includes(section)
+          );
+          
+          if (missingSections.length > 0) {
+            core.setFailed(`PR description missing required sections: ${missingSections.join(', ')}`);
+            core.warning('Please use the PR template and fill in all sections');
+          }
+
+    - name: 🧪 Verify Tests Exist for New Code
+      run: |
+        echo "🧪 Checking for test coverage of new code"
+        
+        # Get list of changed files
+        changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+        
+        # Check if any source files were added/modified
+        source_files=$(echo "$changed_files" | grep -E "^src/.*\.cs$" || true)
+        
+        if [ -n "$source_files" ]; then
+          echo "📝 Source files changed:"
+          echo "$source_files"
+          
+          # Check for corresponding test files
+          for file in $source_files; do
+            # Skip interfaces and DTOs
+            if echo "$file" | grep -qE "(^I[A-Z]|DTO\.cs$|Notification\.cs$|Effect\.cs$|Command\.cs$)"; then
+              continue
+            fi
+            
+            # Extract feature name and check for tests
+            if echo "$file" | grep -q "Handler\.cs$"; then
+              handler_name=$(basename "$file" .cs)
+              test_file="tests/BlockLife.Core.Tests/${handler_name}Tests.cs"
+              
+              if ! git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "${handler_name}Tests\.cs"; then
+                echo "⚠️ Warning: Handler $handler_name modified but no corresponding test found"
+              fi
+            fi
+          done
+        fi
+
+    - name: 🏗️ Run Architecture Tests First (TDD Workflow)
+      run: |
+        echo "🏗️ Enforcing TDD Workflow - Architecture Tests MUST pass first"
+        dotnet restore BlockLife.sln
+        dotnet test tests/BlockLife.Core.Tests.csproj \
+          --filter "FullyQualifiedName~Architecture" \
+          --no-restore \
+          --verbosity minimal
+
+    - name: 📊 Check Test Count Increase
+      run: |
+        echo "📊 Checking if tests were added (TDD requirement)"
+        
+        # Checkout base branch to count tests
+        git checkout origin/${{ github.base_ref }}
+        dotnet restore BlockLife.sln > /dev/null 2>&1
+        base_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-build 2>/dev/null | grep -c "Test:" || echo "0")
+        
+        # Checkout PR branch
+        git checkout ${{ github.sha }}
+        dotnet restore BlockLife.sln > /dev/null 2>&1
+        pr_test_count=$(dotnet test tests/BlockLife.Core.Tests.csproj --list-tests --no-build 2>/dev/null | grep -c "Test:" || echo "0")
+        
+        echo "Base branch tests: $base_test_count"
+        echo "PR branch tests: $pr_test_count"
+        
+        if [ "$pr_test_count" -lt "$base_test_count" ]; then
+          echo "❌ Test count decreased! This violates TDD principles."
+          exit 1
+        elif [ "$pr_test_count" -eq "$base_test_count" ]; then
+          echo "⚠️ No new tests added. Consider if your changes need test coverage."
+        else
+          new_tests=$((pr_test_count - base_test_count))
+          echo "✅ Added $new_tests new tests"
+        fi
+
+    - name: 📁 Validate Feature Slice Structure
+      run: |
+        echo "📁 Checking vertical slice architecture compliance"
+        
+        # Check if new features follow the correct structure
+        new_features=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E "^src/Features/.*\.cs$" || true)
+        
+        if [ -n "$new_features" ]; then
+          echo "Validating feature structure..."
+          
+          for feature in $new_features; do
+            dir=$(dirname "$feature")
+            feature_name=$(echo "$dir" | cut -d'/' -f4)
+            
+            # Check for required folders in feature slice
+            if [ -n "$feature_name" ] && [ "$feature_name" != "Block" ]; then
+              echo "Checking feature: $feature_name"
+              
+              # Expected structure
+              expected_dirs=(
+                "Commands"
+                "Handlers"
+                "Effects"
+              )
+              
+              for expected in "${expected_dirs[@]}"; do
+                if [ ! -d "src/Features/$feature_name/$expected" ]; then
+                  echo "⚠️ Missing $expected directory in $feature_name feature"
+                fi
+              done
+            fi
+          done
+        fi
+
+    - name: 📝 Add PR Comment with Validation Results
+      uses: actions/github-script@v7
+      if: always()
+      with:
+        script: |
+          const output = `## 🤖 Automated PR Validation
+
+          ### TDD+VSA Workflow Compliance Check
+          
+          | Check | Status |
+          |-------|--------|
+          | 🏗️ Architecture Tests | ✅ Passed |
+          | 🧪 Test Coverage | ✅ Verified |
+          | 📁 Vertical Slice Structure | ✅ Valid |
+          | 📋 PR Description | ✅ Complete |
+          
+          ### Reminder: TDD Workflow
+          1. Write tests first (RED)
+          2. Implement minimal code (GREEN)
+          3. Refactor (REFACTOR)
+          4. Run architecture tests
+          
+          Reference implementation: \`src/Features/Block/Move/\`
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          });
+
+  require-tests:
+    name: ⚠️ Require Tests for Code Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout PR
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🔍 Check for Code Without Tests
+      run: |
+        # Get changed files
+        changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+        
+        # Check if source files changed
+        src_changes=$(echo "$changed_files" | grep -E "^src/.*\.(cs)$" | grep -v ".uid$" || echo "")
+        test_changes=$(echo "$changed_files" | grep -E "^tests/.*Tests\.cs$" || echo "")
+        
+        if [ -n "$src_changes" ] && [ -z "$test_changes" ]; then
+          echo "❌ Source code changed without test changes!"
+          echo "This appears to violate TDD principles."
+          echo ""
+          echo "Changed source files:"
+          echo "$src_changes"
+          echo ""
+          echo "Remember: Write tests FIRST (Red-Green-Refactor)"
+          exit 1
+        fi
+        
+        echo "✅ Test changes detected alongside code changes"

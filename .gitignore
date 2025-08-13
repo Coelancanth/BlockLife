@@ -1,46 +1,71 @@
-# Godot 4+ specific ignores
+# --- Environment Variables ---
+# Never commit sensitive configuration
+.env
+.env.local
+
+# --- IDE Specific ---
+# VS Code extensions data
+.VSCodeCounter/
+
+# --- Godot Editor ---
+# Godot-specific editor metadata. Never commit this directory.
 .godot/
-/android/
-.specstory/
-.idea/
-.vscode/
-# Godot 4+ specific ignores
-.godot/
-.nomedia
 
-# Godot-specific ignores
-.import/
-export.cfg
-export_credentials.cfg
-*.tmp
-
-# Imported translations (automatically generated from CSV files)
-*.translation
-
-# Mono-specific ignores
+# --- Godot Mono/C# Specific ---
+# Mono-specific files and directories.
 .mono/
 data_*/
 mono_crash.*.json
 
-
-# .NET Core build artifacts
+# --- C# / .NET Build Artifacts ---
+# Build output folders.
 [Bb]in/
 [Oo]bj/
 
-# Visual Studio / Rider specific
+# Test results and coverage
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*TestResults.xml
+# dotnet test results
+test-results/
+coverage/
+
+# --- IDE / Editor Specific ---
+# Visual Studio, Rider, VS Code
 .vs/
+.idea/
+.vscode/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-
-# Build results
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-
-# Rider
-.idea/
 *.sln.iml
 
+# --- Exported Game Files ---
+# Credentials for exporting.
+export_credentials.cfg
+# Export presets. It's recommended to version this, but can be ignored
+# if each developer has their own export configurations.
+# export_presets.cfg
+# Exported game binaries.
+*.pck
+*.zip
+*.exe
+*.dll
+*.x86_64
+*.apk
+*.aab
+
+# --- Other ---
+# User-generated files that should not be in version control.
+.specstory/
+commit_message.txt
+
+# --- GdUnit4 Addon ---
+# This is managed by the addon system and should not be in version control.
+addons/gdUnit4/
+# Project icon  
+icon.svg  
+icon.svg.import  
