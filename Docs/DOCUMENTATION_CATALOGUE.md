@@ -21,6 +21,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### 0️⃣ Global Tracking ([0_Global_Tracker/](0_Global_Tracker/))
 - [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) - **CENTRALIZED** tracker for all post-mortem action items and prevention measures ⭐⭐⭐
+- [Implementation_Status_Tracker.md](0_Global_Tracker/Implementation_Status_Tracker.md) - **NEW**: Central tracking of all implementation plan statuses and progress ⭐⭐⭐
 
 ### 1️⃣ Architecture Documentation ([1_Architecture/](1_Architecture/))
 - [Architecture_Guide.md](1_Architecture/Architecture_Guide.md) - Core principles, Clean Architecture, MVP pattern ⭐⭐⭐
@@ -35,10 +36,15 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### 3️⃣ Implementation Plans ([3_Implementation_Plans/](3_Implementation_Plans/))
 - [0_Vertical_Slice_Architecture_Plan.md](3_Implementation_Plans/0_Vertical_Slice_Architecture_Plan.md) - VSA patterns and approach
-- [1_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - ✅ COMPLETED foundation feature
-- [2_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - 🔄 IN PROGRESS reference implementation
-- [3_Animation_System_Implementation_Plan.md](3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation architecture
-- [5_Dotnet_New_Templates_Implementation_Plan.md](3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+- [1_F1_Block_Placement_Implementation_Plan.md](3_Implementation_Plans/1_F1_Block_Placement_Implementation_Plan.md) - ✅ **REFERENCE IMPLEMENTATION** (Gold Standard)
+- [2_Move_Block_Feature_Implementation_Plan.md](3_Implementation_Plans/2_Move_Block_Feature_Implementation_Plan.md) - 🔄 **IN PROGRESS** (70% - Phase 1-2 Complete)
+- [3_Animation_System_Implementation_Plan.md](3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - ❌ **NOT STARTED** (Animation architecture)
+- [5_Dotnet_New_Templates_Implementation_Plan.md](3_Implementation_Plans/5_Dotnet_New_Templates_Implementation_Plan.md) - ❌ **NOT STARTED** (Project templates)
+- [6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md](3_Implementation_Plans/6_Advanced_Logger_And_GameStrapper_Implementation_Plan.md) - ❌ **NOT STARTED** (Infrastructure)
+- [7_Dynamic_Logging_UI_Implementation_Plan.md](3_Implementation_Plans/7_Dynamic_Logging_UI_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
+- [8_Automated_Debug_Console_Implementation_Plan.md](3_Implementation_Plans/8_Automated_Debug_Console_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
+
+📊 **[Implementation Status Tracker](0_Global_Tracker/Implementation_Status_Tracker.md)** - **NEW**: Central tracking of all implementation plan statuses and progress
 
 ### 4️⃣ Bug Post-Mortems ([4_Bug_PostMortems/](4_Bug_PostMortems/))
 - [000_Bug_Post_Mortem_Template.md](4_Bug_PostMortems/000_Bug_Post_Mortem_Template.md) - Standard template for post-mortems
@@ -51,8 +57,10 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### 5️⃣ Architecture Decision Records ([5_Architecture_Decision_Records/](5_Architecture_Decision_Records/))
 - [ADR-006_Fin_Task_Consistency.md](5_Architecture_Decision_Records/ADR-006_Fin_Task_Consistency.md) - **ACTIVE DECISION**: Fin<T> vs Task<T> consistency
-- [Complex_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/Complex_Rule_Engine_Architecture.md) - Rule engine design decision
-- [Complex_Rule_Engine_Implementation_Guide.md](5_Architecture_Decision_Records/Complex_Rule_Engine_Implementation_Guide.md) - **NEW**: Detailed rule engine implementation with examples
+- [ADR-007_Enhanced_Functional_Validation_Pattern.md](5_Architecture_Decision_Records/ADR-007_Enhanced_Functional_Validation_Pattern.md) - Enhanced functional validation patterns instead of FluentValidation ⭐⭐⭐
+- [ADR-008_Anchor_Based_Rule_Engine_Architecture.md](5_Architecture_Decision_Records/ADR-008_Anchor_Based_Rule_Engine_Architecture.md) - **NEW**: ✅ **APPROVED** Anchor-based rule engine (150x performance improvement) ⭐⭐⭐
+- [Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md](5_Architecture_Decision_Records/Rule_Engine_001_Grid_Scanning_Approach_SUPERSEDED.md) - ❌ **SUPERSEDED** Grid-scanning approach (performance inadequate)
+- [Rule_Engine_002_Anchor_Based_Implementation_Guide.md](5_Architecture_Decision_Records/Rule_Engine_002_Anchor_Based_Implementation_Guide.md) - **APPROVED APPROACH**: Detailed anchor-based implementation guide ⭐⭐⭐
 - [Developer_Tooling_Guide.md](5_Architecture_Decision_Records/Developer_Tooling_Guide.md) - Development tooling decisions
 
 ### 6️⃣ Guides & Workflows ([6_Guides/](6_Guides/))
