@@ -6,12 +6,12 @@ This document consolidates all prevention measures and action items from bug pos
 
 ## 📊 Status Summary
 
-- **Total Action Items**: 21
-- **Completed**: 9 (43%)
+- **Total Action Items**: 22
+- **Completed**: 9 (41%)
 - **In Progress**: 0 (0%)
-- **Pending**: 12 (57%)
+- **Pending**: 13 (59%)
 
-*Last Updated: 2025-08-14*
+*Last Updated: 2025-01-13*
 
 ## 🚀 High Priority Action Items
 
@@ -22,6 +22,7 @@ This document consolidates all prevention measures and action items from bug pos
 | **AT-001** | ✅ **COMPLETED** | Add architecture tests for notification pattern consistency | [BPM-005](../4_Post_Mortems/Block_Placement_Display_Bug_Report.md#L214) | 2025-08-13 | Implemented via ADR-006 Phase 1 |
 | **AT-002** | ✅ **COMPLETED** | Create architecture tests to prevent similar issues (try-catch regression) | [BPM-006](../4_Post_Mortems/F1_Block_Placement_Implementation_Issues_Report.md#L111) | 2025-08-13 | `CommandHandlers_ShouldNotContain_TryCatchBlocks()` test |
 | **AT-003** | ✅ **COMPLETED** | Prevent Godot imports and DI violations | [BPM-006](../4_Post_Mortems/F1_Block_Placement_Implementation_Issues_Report.md#L114) | Previous | Existing architecture fitness tests |
+| **AT-004** | 📋 **PENDING** | Deep dive investigation: Why does GetTree() return null with certain GdUnit4 test structures? | [GdUnit4 Investigation](../4_Post_Mortems/GdUnit4_Integration_Test_Setup_Investigation.md) | 2025-01-13 | Field name patterns, lifecycle timing, test framework mysteries |
 
 ### Documentation & Standards
 

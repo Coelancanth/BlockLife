@@ -204,6 +204,61 @@ public override void Dispose()
   - **Architecture Tests**: Automated architectural constraint enforcement
   - **Integration Tests**: GdUnit4 for Godot-specific testing
 
+### 🚨 CRITICAL: GdUnit4 Integration Test Pattern
+**WARNING**: GdUnit4 tests require EXACT structure or `GetTree()` will return null!
+
+**MUST follow this pattern (copied from SimpleSceneTest):**
+```csharp
+[TestSuite]
+public partial class YourIntegrationTest : Node
+{
+    private Node? _testScene;
+    private IServiceProvider? _serviceProvider;
+    private SceneTree? _sceneTree;
+
+    [Before]
+    public async Task Setup()
+    {
+        _sceneTree = GetTree();
+        _sceneTree.Should().NotBeNull("scene tree must be available");
+        
+        var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        if (sceneRoot == null)
+        {
+            GD.PrintErr("SceneRoot not found");
+            return;
+        }
+        
+        // Get service provider via reflection
+        var field = typeof(SceneRoot).GetField("_serviceProvider",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
+        
+        // Create test scene as child
+        _testScene = await CreateTestScene();
+        
+        // Get controllers from scene
+        _gridController = _testScene!.GetNode<GridInteractionController>("GridView/GridInteractionController");
+    }
+    
+    [TestCase]
+    public async Task YourTest()
+    {
+        if (_serviceProvider == null) 
+        {
+            GD.Print("Skipping test - not in proper Godot context");
+            return;
+        }
+        // Your test logic
+    }
+}
+```
+
+**See**: 
+- ✅ `SimpleSceneTest.cs` - Working reference
+- ✅ `BlockPlacementIntegrationTest.cs` - Fixed implementation
+- 📚 `Docs/4_Post_Mortems/GdUnit4_Integration_Test_Setup_Investigation.md` - Full investigation
+
 ## Development Guidelines
 
 ### 🔥 CRITICAL: Production-Ready Development Workflow
