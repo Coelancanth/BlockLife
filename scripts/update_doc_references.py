@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Document Reference Updater Script
 =================================
@@ -6,12 +7,25 @@ Document Reference Updater Script
 This script updates all cross-references in markdown files to match the new naming conventions.
 It systematically finds old file name patterns and replaces them with the standardized names.
 
+Unicode/UTF-8 Support:
+- Fully supports UTF-8 encoding for Windows with Unicode support enabled
+- Handles international characters, emojis, and special symbols
+- Sets proper encoding for all file operations
+
 Usage:
     python scripts/update_doc_references.py [--dry-run] [--verbose]
 
 Options:
     --dry-run    Show what would be changed without making changes
     --verbose    Show detailed output of all operations
+
+Environment Variables:
+    PYTHONIOENCODING=utf-8    Force UTF-8 encoding for Python I/O operations
+    
+Windows UTF-8 Setup:
+    1. Enable "Use Unicode UTF-8 for worldwide language support" in Windows settings
+    2. Set PYTHONIOENCODING=utf-8 environment variable
+    3. Ensure console supports UTF-8 (Windows Terminal recommended)
 """
 
 import os
@@ -20,6 +34,39 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple
 import sys
+import locale
+
+# Configure UTF-8 support for Windows
+if sys.platform.startswith('win'):
+    # Set PYTHONIOENCODING if not already set
+    if 'PYTHONIOENCODING' not in os.environ:
+        os.environ['PYTHONIOENCODING'] = 'utf-8'
+    
+    # Set console encoding to UTF-8
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    
+    # Set locale to UTF-8 if possible
+    try:
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_ALL, '.UTF-8')
+        except locale.Error:
+            pass  # Continue with default locale
+
+def safe_print(message: str, fallback_message: str = None) -> None:
+    """Print message with UTF-8 support, falling back to ASCII if needed."""
+    try:
+        print(message)
+    except UnicodeEncodeError:
+        if fallback_message:
+            print(fallback_message)
+        else:
+            # Remove Unicode characters and try again
+            ascii_message = message.encode('ascii', errors='ignore').decode('ascii')
+            print(ascii_message)
 
 class DocumentReferenceUpdater:
     def __init__(self, project_root: Path, dry_run: bool = False, verbose: bool = False):
@@ -153,17 +200,17 @@ class DocumentReferenceUpdater:
 
     def run(self) -> None:
         """Run the reference update process."""
-        print("Document Reference Updater")
+        safe_print("📄 Document Reference Updater", "Document Reference Updater")
         print("=" * 40)
         
         if self.dry_run:
-            print("DRY RUN MODE - No files will be modified")
+            safe_print("🔍 DRY RUN MODE - No files will be modified", "DRY RUN MODE - No files will be modified")
         
-        print(f"Scanning project: {self.project_root}")
+        safe_print(f"📁 Scanning project: {self.project_root}", f"Scanning project: {self.project_root}")
         
         # Find all markdown files
         md_files = self.find_markdown_files()
-        print(f"Found {len(md_files)} markdown files")
+        safe_print(f"📄 Found {len(md_files)} markdown files", f"Found {len(md_files)} markdown files")
         
         # Process each file
         total_changes = 0
@@ -171,7 +218,8 @@ class DocumentReferenceUpdater:
         
         for file_path in md_files:
             if self.verbose:
-                print(f"\nProcessing: {file_path.relative_to(self.project_root)}")
+                safe_print(f"\n📝 Processing: {file_path.relative_to(self.project_root)}", 
+                          f"\nProcessing: {file_path.relative_to(self.project_root)}")
             
             changes = self.update_file_references(file_path)
             if changes > 0:
@@ -179,25 +227,29 @@ class DocumentReferenceUpdater:
                 total_changes += changes
                 
                 if not self.verbose:
-                    print(f"Modified: {file_path.relative_to(self.project_root)} ({changes} changes)")
+                    safe_print(f"✏️ Modified: {file_path.relative_to(self.project_root)} ({changes} changes)",
+                              f"Modified: {file_path.relative_to(self.project_root)} ({changes} changes)")
         
         # Print summary
-        print("\nSummary")
+        safe_print("\n📊 Summary", "\nSummary")
         print("-" * 20)
         print(f"Files processed: {len(md_files)}")
         print(f"Files modified: {files_modified}")
         print(f"Total changes: {total_changes}")
         
         if self.dry_run and total_changes > 0:
-            print("\nRun without --dry-run to apply these changes")
+            safe_print("\n💡 Run without --dry-run to apply these changes",
+                      "\nRun without --dry-run to apply these changes")
         elif total_changes > 0:
-            print("\nAll references updated successfully!")
+            safe_print("\n✅ All references updated successfully!",
+                      "\nAll references updated successfully!")
         else:
-            print("\nAll references are already up to date!")
+            safe_print("\n✨ All references are already up to date!",
+                      "\nAll references are already up to date!")
         
         # Detailed change report
         if self.changes_made and self.verbose:
-            print("\nDetailed Change Report")
+            safe_print("\n📋 Detailed Change Report", "\nDetailed Change Report")
             print("-" * 30)
             for change in self.changes_made:
                 print(f"  {change['file']}: {change['changes']} changes")
@@ -234,7 +286,8 @@ Examples:
     
     # Verify we're in the right place
     if not (project_root / "CLAUDE.md").exists():
-        print("Error: Could not find project root (no CLAUDE.md found)")
+        safe_print("❌ Error: Could not find project root (no CLAUDE.md found)", 
+                   "Error: Could not find project root (no CLAUDE.md found)")
         print(f"   Looking in: {project_root}")
         sys.exit(1)
     
@@ -248,10 +301,15 @@ Examples:
     try:
         updater.run()
     except KeyboardInterrupt:
-        print("\n\nOperation cancelled by user")
+        safe_print("\n\n⏹️ Operation cancelled by user", "\n\nOperation cancelled by user")
+        sys.exit(1)
+    except UnicodeError as e:
+        safe_print(f"\n❌ Unicode encoding error: {e}", f"\nUnicode encoding error: {e}")
+        print("This may be caused by special characters in file names or content.")
+        print("Please ensure your system supports UTF-8 encoding.")
         sys.exit(1)
     except Exception as e:
-        print(f"\nError: {e}")
+        safe_print(f"\n❌ Error: {e}", f"\nError: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
