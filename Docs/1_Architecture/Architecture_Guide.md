@@ -2098,7 +2098,13 @@ The F1 Block Placement vertical slice implementation served as a critical valida
 - Use consistent Error.New() format throughout codebase
 - Consider error factory methods for commonly used error types
 
-**Rule 20: Validation-First Command Handling**
+**Rule 20: Functional Error Handling Consistency (ADR-006)**
+- Use TaskFinExtensions for Task<T> → Fin<T> conversion in async operations
+- Eliminate try-catch blocks in command handlers in favor of functional composition
+- Maintain railway-oriented programming throughout async pipelines
+- Architecture tests must enforce functional consistency to prevent regression
+
+**Rule 21: Validation-First Command Handling**
 - All command handlers MUST validate before executing state changes
 - Use validation rules, not direct service calls for business rule enforcement
 - Consider pipeline behaviors for automatic validation application
@@ -2144,13 +2150,127 @@ The F1 Block Placement vertical slice implementation served as a critical valida
 - IDE support for navigating between related files would help
 - Consider architecture validation tools
 
-### 9.7 Actionable Improvements for F2 Implementation
+### 9.7 Functional Error Handling Patterns (ADR-006 Phase 1)
 
-1. **Error Handling**: Create error factory class for consistent error creation
-2. **Validation Pipeline**: Implement MediatR pipeline behavior for automatic validation
-3. **Architecture Tests**: Add tests to prevent known anti-patterns
-4. **Developer Tooling**: Create templates based on F1 proven patterns
-5. **Documentation**: Update examples in guide to use F1-proven patterns
+**⭐ IMPLEMENTED**: Our codebase now uses consistent functional error handling throughout all async operations.
+
+#### 9.7.1 The Railway-Oriented Programming Approach
+
+**Problem Solved**: Mixed imperative/functional patterns created inconsistent error handling:
+
+```csharp
+// ❌ OLD PATTERN (Imperative - Breaking Functional Chain)
+public async Task<Fin<Unit>> Handle(PlaceBlockCommand request, CancellationToken cancellationToken)
+{
+    // ... pure functional Fin<T> chain ...
+    
+    // Forced to break functional chain with try-catch
+    try
+    {
+        await _simulation.ProcessQueuedEffectsAsync(); // Returns Task, not Fin<T>
+        return FinSucc(Unit.Default);
+    }
+    catch (Exception ex)
+    {
+        return FinFail<Unit>(Error.New("PROCESS_EFFECTS_FAILED", ex.Message));
+    }
+}
+```
+
+**Solution**: TaskFinExtensions provide seamless Task<T> → Fin<T> conversion:
+
+```csharp
+// ✅ NEW PATTERN (Functional - Clean Railway-Oriented Programming)
+public async Task<Fin<Unit>> Handle(PlaceBlockCommand request, CancellationToken cancellationToken)
+{
+    return await result.Match(
+        Succ: async block =>
+        {
+            var notification = new BlockPlacedNotification(request.Position, request.BlockType);
+            
+            // Clean functional composition - no try-catch needed!
+            return await _mediator.Publish(notification, cancellationToken)
+                .ToFin("NOTIFICATION_FAILED", "Failed to publish block placed notification")
+                .Map(_ => Unit.Default);
+        },
+        Fail: error => Task.FromResult(FinFail<Unit>(error))
+    );
+}
+```
+
+#### 9.7.2 TaskFinExtensions Reference
+
+Located in `src/Core/Infrastructure/Extensions/TaskFinExtensions.cs`:
+
+```csharp
+// Basic conversion with automatic error handling
+public static async Task<Fin<T>> ToFin<T>(this Task<T> task)
+
+// With custom error code and message
+public static async Task<Fin<T>> ToFin<T>(this Task<T> task, string errorCode, string errorMessage)
+
+// For Task (no return value) → Fin<Unit>
+public static async Task<Fin<Unit>> ToFin(this Task task, string errorCode, string errorMessage)
+```
+
+**Usage Examples**:
+```csharp
+// Infrastructure service calls
+var result = await _simulation.ProcessQueuedEffectsAsync()
+    .ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
+
+// MediatR publishing
+var publishResult = await _mediator.Publish(notification, cancellationToken)
+    .ToFin("PUBLISH_FAILED", "Failed to publish notification");
+
+// Generic Task<T> conversion
+var dataResult = await _repository.GetDataAsync()
+    .ToFin("DATA_RETRIEVAL_FAILED", "Failed to retrieve data");
+```
+
+#### 9.7.3 Architecture Enforcement
+
+**Architecture Tests Prevent Regression**:
+```csharp
+[Fact]
+public void CommandHandlers_ShouldNotContain_TryCatchBlocks()
+{
+    // ADR-006: Fin<T> vs Task<T> Consistency - Phase 1 Implementation
+    // Command handlers should use functional error handling with Fin<T> extensions
+    
+    var handlerTypes = GetAllCommandHandlerTypes();
+    
+    foreach (var handlerType in handlerTypes)
+    {
+        var sourceCode = GetSourceCode(handlerType);
+        
+        sourceCode.Should().NotContain("try {")
+            .And.NotContain("catch (")
+            .Because($"handler {handlerType.Name} should use functional error handling with TaskFinExtensions");
+    }
+}
+```
+
+#### 9.7.4 Benefits Realized
+
+1. **Consistent Error Handling**: All async operations follow same pattern
+2. **Composable Pipelines**: Clean functional composition throughout
+3. **Better Error Information**: Structured errors with codes and context
+4. **Testability**: Pure functions easier to test and reason about
+5. **Maintainability**: Railway-oriented programming reduces cognitive load
+
+#### 9.7.5 Migration Strategy
+
+**Phase 1 (✅ COMPLETED)**: Extension methods for Task<T> → Fin<T> conversion
+**Phase 2 (FUTURE)**: Migrate infrastructure services to return Task<Fin<T>> directly
+
+### 9.8 Actionable Improvements for Future Implementation
+
+1. **~~Error Handling~~**: ✅ **COMPLETED** - Functional error handling via ADR-006
+2. **Validation Pipeline**: Implement MediatR pipeline behavior for automatic validation  
+3. **~~Architecture Tests~~**: ✅ **COMPLETED** - Functional consistency enforcement
+4. **Developer Tooling**: Create templates based on proven patterns
+5. **~~Documentation~~**: ✅ **COMPLETED** - Updated with functional patterns
 
 ### 9.8 Success Metrics and Validation
 
