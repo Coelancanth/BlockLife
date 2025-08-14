@@ -19,6 +19,8 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     private readonly IMediator _mediator;
     private readonly ILogger<BlockManagementPresenter> _logger;
     private readonly CompositeDisposable _subscriptions = new();
+    private IDisposable? _blockPlacedSubscription;
+    private IDisposable? _blockRemovedSubscription;
 
     // Track current placement mode (for future enhancement)
     private BlockType _currentBlockType = BlockType.Basic;
@@ -46,10 +48,10 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         _subscriptions.Add(View.Interaction.GridCellExited
             .Subscribe(OnGridCellExited));
 
-        // Subscribe to MediatR notifications via the bridge
-        BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
-        BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
-        // Trace: Subscribed to BlockPlacementNotificationBridge events
+        // Subscribe to MediatR notifications via the bridge using weak events
+        _blockPlacedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockPlaced(OnBlockPlacedNotification);
+        _blockRemovedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockRemoved(OnBlockRemovedNotification);
+        // Trace: Subscribed to BlockPlacementNotificationBridge events using thread-safe weak events
 
         // Initialize the view with default grid size
         _ = View.InitializeAsync(new Vector2Int(10, 10)); // TODO: Get from config
@@ -61,9 +63,9 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     {
         _logger.LogDebug("Disposing BlockManagementPresenter");
 
-        // Unsubscribe from notification events
-        BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
-        BlockPlacementNotificationBridge.BlockRemovedEvent -= OnBlockRemovedNotification;
+        // Dispose weak event subscriptions
+        _blockPlacedSubscription?.Dispose();
+        _blockRemovedSubscription?.Dispose();
 
         _subscriptions.Dispose();
         _ = View.CleanupAsync();

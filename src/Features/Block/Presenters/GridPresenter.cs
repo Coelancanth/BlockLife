@@ -20,6 +20,8 @@ namespace BlockLife.Core.Features.Block.Presenters
         private readonly IMediator _mediator;
         private readonly IGridStateService _gridStateService;
         private readonly ILogger _logger;
+        private IDisposable? _blockPlacedSubscription;
+        private IDisposable? _blockRemovedSubscription;
 
         public GridPresenter(IGridView view, IMediator mediator, IGridStateService gridStateService, ILogger logger)
             : base(view)
@@ -41,11 +43,11 @@ namespace BlockLife.Core.Features.Block.Presenters
 
             try
             {
-                // Subscribe to domain notification events from the notification bridge
-                BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
-                BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
+                // Subscribe to domain notification events from the notification bridge using weak events
+                _blockPlacedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockPlaced(OnBlockPlacedNotification);
+                _blockRemovedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockRemoved(OnBlockRemovedNotification);
 
-                _logger.Information("Subscribed to block placement notification events");
+                _logger.Information("Subscribed to block placement notification events using thread-safe weak events");
 
                 // Display grid boundaries
                 var gridDimensions = _gridStateService.GetGridDimensions();
@@ -326,11 +328,11 @@ namespace BlockLife.Core.Features.Block.Presenters
         /// </summary>
         public override void Dispose()
         {
-            // Unsubscribe from notification events to prevent memory leaks
-            BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
-            BlockPlacementNotificationBridge.BlockRemovedEvent -= OnBlockRemovedNotification;
+            // Dispose weak event subscriptions to prevent memory leaks
+            _blockPlacedSubscription?.Dispose();
+            _blockRemovedSubscription?.Dispose();
 
-            _logger.Information("GridPresenter disposed and unsubscribed from notification events");
+            _logger.Information("GridPresenter disposed and weak event subscriptions cleaned up");
 
             base.Dispose();
         }
