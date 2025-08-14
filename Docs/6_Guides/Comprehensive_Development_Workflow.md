@@ -314,16 +314,37 @@ public partial class GridView : Control, IGridView
 ```
 
 #### Step 2: Write GdUnit4 Integration Tests
+**⚠️ CRITICAL**: MUST use SimpleSceneTest pattern to avoid parallel service container issues!
+
 ```csharp
 // tests/Integration/Godot/[Feature]GodotTests.cs
+// ✅ MANDATORY PATTERN - Direct Node inheritance
 [TestSuite]
-public class GridViewIntegrationTests
+public partial class GridViewIntegrationTests : Node
 {
-    [Test]
+    private IServiceProvider? _serviceProvider;
+    private Node? _testScene;
+    
+    [Before]
+    public async Task Setup()
+    {
+        // Get REAL service provider from SceneRoot autoload via reflection
+        var sceneRoot = GetTree().Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        var field = typeof(SceneRoot).GetField("_serviceProvider", 
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
+        
+        _testScene = await CreateTestScene();
+    }
+    
+    [TestCase]
     public async Task GridView_ClickCell_PlacesBlock()
     {
-        // Arrange
-        var scene = GD.Load<PackedScene>("res://godot_project/features/grid/Grid.tscn");
+        if (_serviceProvider == null) return; // Skip if not in Godot context
+        
+        // Use REAL services - same instances as production!
+        
+        // See GdUnit4_Integration_Testing_Guide.md for complete pattern
         var grid = scene.Instantiate<GridView>();
         
         // Act
@@ -372,6 +393,24 @@ public partial class GridView : Control, IGridView, IPresenterContainer<GridPres
 
 ### 2.1 Pre-Commit Quality Gates
 
+#### 🚀 **NEW: Automated Test Monitoring During Development**
+```bash
+# Start test monitor BEFORE development
+.\test-watch.bat  # Runs tests every 10s, auto-stops after 30min inactivity
+
+# Monitor shows:
+# - Test results in test-summary.md (human-readable)
+# - Structured data in test-results.json (for Claude Code)
+# - Time remaining until auto-stop
+# - Detection of file changes
+```
+
+**Benefits:**
+- ✅ Continuous TDD feedback without manual test runs
+- ✅ No copy-paste needed for Claude Code collaboration
+- ✅ Auto-cleanup prevents zombie processes
+- ✅ Perfect for Red-Green-Refactor cycle
+
 #### Automated Checks (Git Hooks)
 ```bash
 # .git/hooks/pre-commit
@@ -388,6 +427,9 @@ dotnet format --verify-no-changes
 
 # 4. Run static analysis
 dotnet build /p:TreatWarningsAsErrors=true
+
+# 5. Run test monitor for final validation
+python scripts/test_monitor.py
 ```
 
 #### Manual Checklist
@@ -980,9 +1022,11 @@ public void NewPattern_Should_FollowConvention()
 
 8. **Integration Test for View Layer Bugs**:
    - View layer bugs CANNOT be caught by unit tests alone
-   - Use GdUnit4 for Godot-specific integration tests
+   - **MANDATORY**: Use SimpleSceneTest pattern for GdUnit4 tests
+   - **See**: [GdUnit4_Integration_Testing_Guide.md](GdUnit4_Integration_Testing_Guide.md) for official pattern
    - Test the complete flow from UI interaction to visual feedback
    - Verify presenter-view communication works correctly
+   - **WARNING**: Never use GodotIntegrationTestBase (creates parallel service containers)
 ```
 
 #### **Real Example: BlockId Stability Bug (2025-08-14)**

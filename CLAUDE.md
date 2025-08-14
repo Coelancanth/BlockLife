@@ -47,6 +47,27 @@ dotnet build --configuration Release  # Release build
 ```
 
 ### Running Tests (TDD Workflow)
+
+#### 🚀 **NEW: Automated Test Monitoring (Recommended)**
+```bash
+# BEST PRACTICE: Use automated test watcher during development
+.\test-watch.bat                    # Runs every 10s, auto-stops after 30min inactivity
+
+# Or with custom settings:
+python scripts/test_monitor.py --continuous --interval 5 --timeout 60
+
+# Single test run with file output (for Claude Code collaboration)
+python scripts/test_monitor.py      # Creates test-summary.md and test-results.json
+```
+
+**Benefits of Automated Monitoring:**
+- ✅ No manual copy-pasting of test results for Claude Code
+- ✅ Auto-stops after inactivity (prevents zombie processes)
+- ✅ Structured output in both markdown and JSON formats
+- ✅ Tracks file changes and shows time until auto-stop
+- ✅ Perfect for TDD workflow with continuous feedback
+
+#### Manual Test Commands
 ```bash
 # WORKFLOW STEP 1: Architecture fitness tests (run FIRST)
 dotnet test --filter "FullyQualifiedName~Architecture"
@@ -77,6 +98,25 @@ dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/
 ## 🤖 Automation Scripts (Cognitive Load Reduction)
 
 BlockLife includes Python automation scripts to reduce manual maintenance and cognitive load:
+
+### 🔄 **Test Monitor - Automated Test Runner with File Output**
+```bash
+# Single run - generates test-summary.md and test-results.json
+python scripts/test_monitor.py
+
+# Continuous monitoring with auto-timeout
+python scripts/test_monitor.py --continuous --interval 10 --timeout 30
+
+# Quick development watcher (recommended)
+.\test-watch.bat  # Pre-configured with sensible defaults
+```
+
+**Key Features:**
+- Monitors `src/`, `tests/`, and `godot_project/` for changes
+- Auto-stops after specified minutes of inactivity
+- Generates structured output for Claude Code to read
+- Shows countdown timer until auto-stop
+- Perfect for TDD workflow
 
 ### 🧪 Test Metrics Automation
 ```bash
@@ -205,12 +245,15 @@ public override void Dispose()
   - **Integration Tests**: GdUnit4 for Godot-specific testing
 
 ### 🚨 CRITICAL: GdUnit4 Integration Test Pattern
-**WARNING**: GdUnit4 tests require EXACT structure or `GetTree()` will return null!
+**WARNING**: GdUnit4 integration tests are extremely sensitive to architectural patterns!
 
-**MUST follow this pattern (copied from SimpleSceneTest):**
+## ✅ MANDATORY PATTERN: SimpleSceneTest Architecture
+
+**ALL integration tests MUST follow this exact pattern - no exceptions:**
+
 ```csharp
 [TestSuite]
-public partial class YourIntegrationTest : Node
+public partial class YourIntegrationTest : Node  // MUST inherit from Node directly
 {
     private Node? _testScene;
     private IServiceProvider? _serviceProvider;
@@ -219,25 +262,27 @@ public partial class YourIntegrationTest : Node
     [Before]
     public async Task Setup()
     {
+        // 1. Get SceneTree from test node itself
         _sceneTree = GetTree();
         _sceneTree.Should().NotBeNull("scene tree must be available");
         
+        // 2. Get SceneRoot autoload - THE REAL ONE, not a test copy
         var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
         if (sceneRoot == null)
         {
-            GD.PrintErr("SceneRoot not found");
+            GD.PrintErr("SceneRoot not found - test must be run from Godot editor");
             return;
         }
         
-        // Get service provider via reflection
+        // 3. Access the REAL service provider via reflection
         var field = typeof(SceneRoot).GetField("_serviceProvider",
             BindingFlags.NonPublic | BindingFlags.Instance);
         _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
         
-        // Create test scene as child
+        // 4. Create test scene as child of this node
         _testScene = await CreateTestScene();
         
-        // Get controllers from scene
+        // 5. Access your controllers normally
         _gridController = _testScene!.GetNode<GridInteractionController>("GridView/GridInteractionController");
     }
     
@@ -249,15 +294,43 @@ public partial class YourIntegrationTest : Node
             GD.Print("Skipping test - not in proper Godot context");
             return;
         }
-        // Your test logic
+        // Your test logic using the REAL service provider
+        var gridState = _serviceProvider.GetRequiredService<IGridStateService>();
+        // Tests now use the same services as production!
     }
 }
 ```
 
-**See**: 
-- ✅ `SimpleSceneTest.cs` - Working reference
-- ✅ `BlockPlacementIntegrationTest.cs` - Fixed implementation
-- 📚 `Docs/4_Post_Mortems/GdUnit4_Integration_Test_Setup_Investigation.md` - Full investigation
+## 🚫 FORBIDDEN PATTERN: Custom Test Base Classes
+
+**NEVER use this pattern - it creates parallel service containers:**
+
+```csharp
+// ❌ FORBIDDEN - Creates parallel service containers!
+public partial class BadIntegrationTest : GodotIntegrationTestBase
+{
+    // This pattern creates its own DI container separate from SceneRoot
+    // Commands go to one container, notifications from another
+    // Results in impossible-to-debug failures with "phantom blocks"
+}
+```
+
+## 🔑 Critical Architecture Principle
+
+**Single Service Container Rule**: Integration tests MUST use the exact same service instances as production SceneRoot. Any test infrastructure creating parallel containers will cause:
+- Commands succeed but don't affect visible state
+- Notifications fire but don't match actual state  
+- "Blocks carryover between tests" symptoms
+- Complete state isolation leading to phantom failures
+
+## 📚 Reference Files
+
+**Working Examples**:
+- ✅ `SimpleSceneTest.cs` - Gold standard implementation
+- ✅ `BlockPlacementIntegrationTest.cs` - Refactored to use correct pattern
+
+**Investigation Documentation**:  
+- 📚 `Docs/4_Post_Mortems/Integration_Test_Architecture_Deep_Dive.md` - Complete debugging journey and architectural lessons
 
 ## Development Guidelines
 
