@@ -4,10 +4,13 @@ using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Infrastructure.Services;
 using BlockLife.Core.Presentation;
+using BlockLife.Features.Block.Move.Effects;
 using MediatR;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+// Explicit using for BlockMovedNotification from the correct namespace
+using BlockMovedNotification = BlockLife.Core.Features.Block.Effects.BlockMovedNotification;
 
 namespace BlockLife.Core.Features.Block.Presenters
 {
@@ -22,6 +25,7 @@ namespace BlockLife.Core.Features.Block.Presenters
         private readonly ILogger _logger;
         private IDisposable? _blockPlacedSubscription;
         private IDisposable? _blockRemovedSubscription;
+        private IDisposable? _blockMovedSubscription;
 
         public GridPresenter(IGridView view, IMediator mediator, IGridStateService gridStateService, ILogger logger)
             : base(view)
@@ -46,8 +50,9 @@ namespace BlockLife.Core.Features.Block.Presenters
                 // Subscribe to domain notification events from the notification bridge using weak events
                 _blockPlacedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockPlaced(OnBlockPlacedNotification);
                 _blockRemovedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockRemoved(OnBlockRemovedNotification);
+                _blockMovedSubscription = BlockMovementNotificationBridge.SubscribeToBlockMoved(OnBlockMovedNotification);
 
-                _logger.Information("Subscribed to block placement notification events using thread-safe weak events");
+                _logger.Information("Subscribed to block placement and movement notification events using thread-safe weak events");
 
                 // Display grid boundaries
                 var gridDimensions = _gridStateService.GetGridDimensions();
@@ -324,6 +329,25 @@ namespace BlockLife.Core.Features.Block.Presenters
         }
 
         /// <summary>
+        /// Handles block moved notifications from the domain notification bridge.
+        /// Automatically updates the view when blocks are moved via commands.
+        /// </summary>
+        private async Task OnBlockMovedNotification(BlockMovedNotification notification)
+        {
+            try
+            {
+                _logger.Debug("Received block moved notification for block {BlockId} from {FromPosition} to {ToPosition}",
+                    notification.BlockId, notification.FromPosition, notification.ToPosition);
+
+                await HandleBlockMovedAsync(notification.BlockId, notification.FromPosition, notification.ToPosition);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error handling block moved notification for block {BlockId}", notification.BlockId);
+            }
+        }
+
+        /// <summary>
         /// Disposes the presenter and unsubscribes from domain notifications to prevent memory leaks.
         /// </summary>
         public override void Dispose()
@@ -331,6 +355,7 @@ namespace BlockLife.Core.Features.Block.Presenters
             // Dispose weak event subscriptions to prevent memory leaks
             _blockPlacedSubscription?.Dispose();
             _blockRemovedSubscription?.Dispose();
+            _blockMovedSubscription?.Dispose();
 
             _logger.Information("GridPresenter disposed and weak event subscriptions cleaned up");
 
