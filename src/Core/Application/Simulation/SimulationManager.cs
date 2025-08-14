@@ -78,6 +78,8 @@ public class SimulationManager : ISimulationManager
 
     private async Task ProcessBlockPlacedEffect(BlockPlacedEffect effect)
     {
+        _logger.LogInformation("[TRACE] ProcessBlockPlacedEffect called for block {BlockId} at {Position}", effect.BlockId, effect.Position);
+        
         var notification = new BlockPlacedNotification(
             effect.BlockId,
             effect.Position,
@@ -86,6 +88,7 @@ public class SimulationManager : ISimulationManager
         );
         
         await PublishNotificationAsync(notification);
+        _logger.LogInformation("[TRACE] BlockPlacedNotification published for block {BlockId}", effect.BlockId);
     }
 
     private async Task ProcessBlockRemovedEffect(BlockRemovedEffect effect)

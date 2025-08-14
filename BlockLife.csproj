@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <DefineConstants>$(DefineConstants);GDUNIT4NET_API_V5</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="src\BlockLife.Core.csproj" />
@@ -23,6 +24,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="gdUnit4.api" Version="5.0.0"/>
     <PackageReference Include="gdUnit4.test.adapter" Version="3.0.0"/>
+    <PackageReference Include="FluentAssertions" Version="6.12.0"/>
     
   </ItemGroup>
   <ItemGroup>

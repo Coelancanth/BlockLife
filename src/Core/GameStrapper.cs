@@ -158,8 +158,8 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
         
         // --- Notification Handlers ---
-        // Bridge handlers to connect MediatR notifications to presenters
-        services.AddTransient<BlockLife.Core.Features.Block.Placement.Effects.BlockPlacementNotificationBridge>();
+        // NOTE: MediatR automatically discovers and registers INotificationHandler implementations
+        // during assembly scanning. Manual registration can interfere with MediatR's lifecycle management.
 
         // Presenters are NOT registered in the DI container directly
         // They are created via PresenterFactory with view dependencies
@@ -344,8 +344,8 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
         
         // --- Notification Handlers ---
-        // Bridge handlers to connect MediatR notifications to presenters
-        services.AddTransient<BlockLife.Core.Features.Block.Placement.Effects.BlockPlacementNotificationBridge>();
+        // NOTE: MediatR automatically discovers and registers INotificationHandler implementations
+        // during assembly scanning. Manual registration can interfere with MediatR's lifecycle management.
 
         // NOTE: Presenters are NOT registered in the DI container directly
         // They are created via PresenterFactory with view dependencies

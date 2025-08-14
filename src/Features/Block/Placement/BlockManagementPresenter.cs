@@ -34,7 +34,7 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     
     public override void Initialize()
     {
-        _logger.LogDebug("Initializing BlockManagementPresenter");
+        _logger.LogInformation("[TRACE] Initializing BlockManagementPresenter");
         
         // Subscribe to input events
         _subscriptions.Add(View.Interaction.GridCellClicked
@@ -49,11 +49,12 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         // Subscribe to MediatR notifications via the bridge
         BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
         BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
+        _logger.LogInformation("[TRACE] Subscribed to BlockPlacementNotificationBridge events");
         
         // Initialize the view with default grid size
         _ = View.InitializeAsync(new Vector2Int(10, 10)); // TODO: Get from config
         
-        _logger.LogInformation("BlockManagementPresenter initialized successfully");
+        _logger.LogInformation("[TRACE] BlockManagementPresenter initialized successfully");
     }
     
     public override void Dispose()
@@ -73,23 +74,31 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     // Input Handlers
     private async void OnGridCellClicked(Vector2Int position)
     {
-        _logger.LogDebug("Grid cell clicked at {Position}", position);
+        _logger.LogInformation("[TRACE] Grid cell clicked at {Position}", position);
         
         try
         {
             // For now, left click places a block
             // In the future, we could check for modifier keys for different actions
             var command = new PlaceBlockCommand(position, _currentBlockType);
+            _logger.LogInformation("[TRACE] Sending PlaceBlockCommand for {Position}", position);
             var result = await _mediator.Send(command);
             
             result.Match(
-                Succ: _ => _logger.LogDebug("Block placed successfully at {Position}", position),
-                Fail: error => HandlePlacementError(position, error)
+                Succ: _ => 
+                {
+                    _logger.LogInformation("[TRACE] Block placed successfully at {Position}", position);
+                },
+                Fail: error => 
+                {
+                    _logger.LogWarning("[TRACE] Block placement failed at {Position}: {Error}", position, error);
+                    HandlePlacementError(position, error);
+                }
             );
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error handling grid cell click at {Position}", position);
+            _logger.LogError(ex, "[TRACE] Exception in OnGridCellClicked at {Position}", position);
         }
     }
     
@@ -125,6 +134,7 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     // Event Handlers (called via notification bridge)
     private async Task OnBlockPlacedNotification(BlockPlacedNotification notification)
     {
+        _logger.LogInformation("[TRACE] OnBlockPlacedNotification called for block {BlockId} at {Position}", notification.BlockId, notification.Position);
         try
         {
             await View.Visualization.ShowBlockAsync(
@@ -132,10 +142,11 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
                 notification.Position,
                 notification.Type
             );
+            _logger.LogInformation("[TRACE] ShowBlockAsync completed for block {BlockId}", notification.BlockId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error displaying block {BlockId} at {Position}", notification.BlockId, notification.Position);
+            _logger.LogError(ex, "[TRACE] Error displaying block {BlockId} at {Position}", notification.BlockId, notification.Position);
         }
     }
     

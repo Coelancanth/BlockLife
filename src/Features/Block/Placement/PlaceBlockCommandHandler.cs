@@ -59,12 +59,12 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
                 return await processResult.Match(
                     Succ: _ =>
                     {
-                        _logger.LogDebug("PlaceBlockCommand completed successfully for position {Position}", request.Position);
+                        _logger.LogInformation("[TRACE] PlaceBlockCommand completed successfully for position {Position}", request.Position);
                         return Task.FromResult(FinSucc(Unit.Default));
                     },
                     Fail: error =>
                     {
-                        _logger.LogWarning("PlaceBlockCommand effect processing failed for position {Position}: {Error}", request.Position, error.Message);
+                        _logger.LogWarning("[TRACE] PlaceBlockCommand effect processing failed for position {Position}: {Error}", request.Position, error.Message);
                         return Task.FromResult(FinFail<Unit>(error));
                     }
                 );

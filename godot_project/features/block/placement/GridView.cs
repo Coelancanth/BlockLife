@@ -24,7 +24,7 @@ public partial class GridView : Control, IBlockManagementView
     
     public override void _Ready()
     {
-        var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+        var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
         logger?.Information("GridView _Ready called");
         
         // Validate required components
@@ -38,7 +38,7 @@ public partial class GridView : Control, IBlockManagementView
         }
         
         // Initialize presenter using the factory pattern
-        var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
+        var sceneRoot = GetNodeOrNull<SceneRoot>("/root/SceneRoot");
         if (sceneRoot != null)
         {
             _presenter = sceneRoot.CreatePresenterFor<BlockManagementPresenter, IBlockManagementView>(this);
@@ -47,7 +47,22 @@ public partial class GridView : Control, IBlockManagementView
         }
         else
         {
-            logger?.Error("SceneRoot not found! Make sure SceneRoot is set as an autoload singleton.");
+            logger?.Warning("SceneRoot not found at /root/SceneRoot. Presenter creation skipped. This is expected in test scenarios.");
+        }
+    }
+    
+    /// <summary>
+    /// Allow manual presenter injection for testing scenarios
+    /// </summary>
+    public void SetPresenterForTesting(BlockManagementPresenter presenter)
+    {
+        GD.Print($"[TRACE] SetPresenterForTesting called with presenter: {presenter != null}");
+        _presenter = presenter;
+        if (_presenter != null)
+        {
+            GD.Print("[TRACE] Calling presenter.Initialize()");
+            _presenter.Initialize();
+            GD.Print("[TRACE] presenter.Initialize() completed");
         }
     }
     

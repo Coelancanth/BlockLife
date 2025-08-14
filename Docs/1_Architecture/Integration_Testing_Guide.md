@@ -1,5 +1,17 @@
 # Integration Testing Guide for BlockLife
 
+## 🚨 CRITICAL NOTICE: This Guide is SUPERSEDED
+
+**This guide has been superseded by the official architecture established after resolving critical parallel service container issues.**
+
+**MANDATORY**: All integration testing must follow the pattern documented in:
+- **Official Guide**: [GdUnit4_Integration_Testing_Guide.md](../6_Guides/GdUnit4_Integration_Testing_Guide.md)
+- **Investigation Report**: [Integration_Test_Architecture_Deep_Dive.md](../4_Post_Mortems/Integration_Test_Architecture_Deep_Dive.md)
+
+**THE PATTERN BELOW IS OUTDATED AND WILL CAUSE PARALLEL SERVICE CONTAINER ISSUES**
+
+---
+
 ## Executive Summary
 
 This guide establishes the integration testing strategy for BlockLife, focusing on end-to-end validation of the complete MVP architecture, notification pipeline, and user interaction flows. Integration tests verify that all components work together correctly in the actual Godot runtime environment.
@@ -46,8 +58,12 @@ test/
 
 ## Writing Integration Tests
 
-### Test Structure
+### ⚠️ OUTDATED Test Structure - DO NOT USE
+
+**WARNING**: The pattern below creates parallel service containers and will cause integration test failures!
+
 ```csharp
+// ❌ FORBIDDEN PATTERN - DO NOT USE
 [TestSuite]
 public partial class FeatureIntegrationTest
 {
@@ -58,34 +74,57 @@ public partial class FeatureIntegrationTest
     [Before]
     public async Task Setup()
     {
-        // 1. Get scene tree and SceneRoot
+        // ❌ This creates a separate service container from production
+        // ❌ Commands will go to one container, notifications from another
+        // ❌ Results in "phantom blocks" and impossible-to-debug failures
         _sceneTree = Engine.GetMainLoop() as SceneTree;
         _sceneRoot = _sceneTree.Root.GetNode<SceneRoot>("/root/SceneRoot");
         
-        // 2. Load actual scene
-        var scene = GD.Load<PackedScene>("res://path/to/scene.tscn");
-        _mainScene = scene.Instantiate();
-        _sceneTree.Root.AddChild(_mainScene);
-        
-        // 3. Wait for initialization
-        await _sceneTree.ProcessFrame();
-    }
-    
-    [After]
-    public async Task Cleanup()
-    {
-        // Clean up scene
-        _mainScene?.QueueFree();
-        await _sceneTree.ProcessFrame();
-    }
-    
-    [TestCase]
-    public async Task TestScenario()
-    {
-        // Test implementation
+        // ❌ This pattern is fundamentally flawed
     }
 }
 ```
+
+### ✅ CORRECT Test Structure - MANDATORY PATTERN
+
+**Follow the SimpleSceneTest pattern documented in the official guide:**
+
+```csharp
+// ✅ CORRECT PATTERN - MUST USE
+[TestSuite]
+public partial class YourIntegrationTest : Node  // Direct Node inheritance
+{
+    private Node? _testScene;
+    private IServiceProvider? _serviceProvider;  // THE REAL service provider
+    private SceneTree? _sceneTree;
+
+    [Before]
+    public async Task Setup()
+    {
+        // Get SceneTree from test node itself
+        _sceneTree = GetTree();
+        _sceneTree.Should().NotBeNull("scene tree must be available");
+        
+        // Get SceneRoot autoload - THE REAL ONE
+        var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        if (sceneRoot == null)
+        {
+            GD.PrintErr("SceneRoot not found");
+            return;
+        }
+        
+        // Access the REAL service provider via reflection
+        var field = typeof(SceneRoot).GetField("_serviceProvider",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
+        
+        // Create test scene as child
+        _testScene = await CreateTestScene();
+    }
+}
+```
+
+**See**: [GdUnit4_Integration_Testing_Guide.md](../6_Guides/GdUnit4_Integration_Testing_Guide.md) for complete implementation.
 
 ### Common Test Patterns
 
