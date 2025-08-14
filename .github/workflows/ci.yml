@@ -123,7 +123,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Full Solution Build
-      run: dotnet build BlockLife.sln --configuration Release
+      run: dotnet build BlockLife.sln --configuration Debug
     
     - name: Publish Build Artifacts
       uses: actions/upload-artifact@v4
