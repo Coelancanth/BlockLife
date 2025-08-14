@@ -29,14 +29,14 @@ namespace BlockLife.Core.Tests.Properties
         /// </summary>
         public static Arbitrary<Vector2Int> InvalidPosition(int width, int height)
         {
-            if (width <= 0 || height <= 0) 
+            if (width <= 0 || height <= 0)
                 throw new ArgumentException("Grid dimensions must be positive");
-            
+
             var invalidX = Gen.OneOf(
                 Gen.Choose(-1000, -1),
                 Gen.Choose(width, width + 1000)
             );
-            
+
             var invalidY = Gen.OneOf(
                 Gen.Choose(-1000, -1),
                 Gen.Choose(height, height + 1000)
@@ -48,12 +48,12 @@ namespace BlockLife.Core.Tests.Properties
                     from x in invalidX
                     from y in Gen.Choose(-1000, 1000)
                     select new Vector2Int(x, y),
-                    
+
                     // Valid X, invalid Y (only if width > 0)
                     from x in Gen.Choose(0, Math.Max(0, width - 1))
                     from y in invalidY
                     select new Vector2Int(x, y),
-                    
+
                     // Invalid X and invalid Y
                     from x in invalidX
                     from y in invalidY
@@ -140,7 +140,7 @@ namespace BlockLife.Core.Tests.Properties
                 from pos in ValidPosition(gridWidth, gridHeight).Generator
                 from direction in Gen.Elements(new[] { (0, 1), (0, -1), (1, 0), (-1, 0) })
                 let adjacent = new Vector2Int(pos.X + direction.Item1, pos.Y + direction.Item2)
-                where adjacent.X >= 0 && adjacent.X < gridWidth && 
+                where adjacent.X >= 0 && adjacent.X < gridWidth &&
                       adjacent.Y >= 0 && adjacent.Y < gridHeight
                 select (pos, adjacent)
             );
@@ -164,11 +164,11 @@ namespace BlockLife.Core.Tests.Properties
         public static Gen<GridOperation[]> GridOperationSequence(int gridWidth, int gridHeight, int maxOperations = 20)
         {
             var placeOperation = from pos in ValidPosition(gridWidth, gridHeight).Generator
-                                from blockType in PrimaryBlockType().Generator
-                                select (GridOperation)new GridOperation.Place(pos, blockType);
+                                 from blockType in PrimaryBlockType().Generator
+                                 select (GridOperation)new GridOperation.Place(pos, blockType);
 
             var removeOperation = from pos in ValidPosition(gridWidth, gridHeight).Generator
-                                 select (GridOperation)new GridOperation.Remove(pos);
+                                  select (GridOperation)new GridOperation.Remove(pos);
 
             return Gen.Sized(size =>
             {

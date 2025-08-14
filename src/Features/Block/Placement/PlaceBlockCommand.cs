@@ -13,6 +13,6 @@ public sealed record PlaceBlockCommand(
 {
     // FIXED: Generate stable ID once and cache it
     private readonly Lazy<Guid> _blockId = new(() => Guid.NewGuid());
-    
+
     public Guid BlockId => RequestedId ?? _blockId.Value;
 }

@@ -46,12 +46,12 @@ namespace BlockLife.Core.Tests.Builders
         public GridStateService Build()
         {
             var service = new GridStateService(_width, _height);
-            
+
             foreach (var block in _blocks)
             {
                 service.PlaceBlock(block);
             }
-            
+
             return service;
         }
     }

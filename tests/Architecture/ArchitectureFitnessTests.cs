@@ -23,7 +23,7 @@ namespace BlockLife.Core.Tests.Architecture
         {
             // Arrange
             var coreTypes = _coreAssembly.GetTypes();
-            
+
             // Act
             var violatingTypes = coreTypes
                 .Where(t => t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
@@ -47,9 +47,9 @@ namespace BlockLife.Core.Tests.Architecture
             // Arrange
             var commandTypes = _coreAssembly.GetTypes()
                 .Where(t => !t.IsAbstract && !t.IsInterface)
-                .Where(t => t.GetInterfaces().Any(i => 
-                    i.IsGenericType && 
-                    (i.GetGenericTypeDefinition() == typeof(ICommand<>) || 
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
+                    (i.GetGenericTypeDefinition() == typeof(ICommand<>) ||
                      i == typeof(ICommand))))
                 .ToList();
 
@@ -58,9 +58,9 @@ namespace BlockLife.Core.Tests.Architecture
             {
                 // For records, init setters are acceptable and preferred
                 // Check that commands are either records or have no mutable properties
-                var isRecord = commandType.GetMethod("<Clone>$") != null || 
+                var isRecord = commandType.GetMethod("<Clone>$") != null ||
                               commandType.GetMethods().Any(m => m.Name == "PrintMembers");
-                
+
                 if (!isRecord)
                 {
                     // For non-records, check for public setters
@@ -86,8 +86,8 @@ namespace BlockLife.Core.Tests.Architecture
             // Arrange
             var handlerTypes = _coreAssembly.GetTypes()
                 .Where(t => !t.IsAbstract && !t.IsInterface)
-                .Where(t => t.GetInterfaces().Any(i => 
-                    i.IsGenericType && 
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
                 .ToList();
 
@@ -99,7 +99,7 @@ namespace BlockLife.Core.Tests.Architecture
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))
                     .ToList();
 
-                handlerInterfaces.Should().HaveCount(1, 
+                handlerInterfaces.Should().HaveCount(1,
                     $"Handler {handlerType.Name} should only handle one command type (Single Responsibility)");
             }
         }
@@ -110,8 +110,8 @@ namespace BlockLife.Core.Tests.Architecture
             // Arrange
             var requestHandlerInterfaces = _coreAssembly.GetTypes()
                 .Where(t => !t.IsAbstract && !t.IsInterface)
-                .Where(t => t.GetInterfaces().Any(i => 
-                    i.IsGenericType && 
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
                 .SelectMany(t => t.GetInterfaces())
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))
@@ -121,9 +121,9 @@ namespace BlockLife.Core.Tests.Architecture
             foreach (var handlerInterface in requestHandlerInterfaces)
             {
                 var returnType = handlerInterface.GetGenericArguments()[1];
-                
+
                 // Check if return type is Fin<T>
-                var isFinType = returnType.IsGenericType && 
+                var isFinType = returnType.IsGenericType &&
                                returnType.GetGenericTypeDefinition().FullName?.Contains("Fin") == true;
 
                 isFinType.Should().BeTrue(
@@ -151,7 +151,7 @@ namespace BlockLife.Core.Tests.Architecture
                 foreach (var method in validateMethods)
                 {
                     var returnType = method.ReturnType;
-                    var isFinUnit = returnType.IsGenericType && 
+                    var isFinUnit = returnType.IsGenericType &&
                                    returnType.GetGenericTypeDefinition().FullName?.Contains("Fin") == true &&
                                    returnType.GetGenericArguments()[0].Name == "Unit";
 
@@ -167,7 +167,7 @@ namespace BlockLife.Core.Tests.Architecture
             // This test verifies the presenter registration pattern
             // Since we can't easily check DI registration in a unit test,
             // we verify that presenters have the correct constructor pattern
-            
+
             var presenterTypes = _coreAssembly.GetTypes()
                 .Where(t => t.Name.EndsWith("Presenter") && !t.IsAbstract && !t.IsInterface)
                 .ToList();
@@ -176,8 +176,8 @@ namespace BlockLife.Core.Tests.Architecture
             {
                 // Presenters should have a constructor that takes a view
                 var constructors = presenterType.GetConstructors();
-                var hasViewParameter = constructors.Any(c => 
-                    c.GetParameters().Any(p => p.ParameterType.Name.StartsWith("I") && 
+                var hasViewParameter = constructors.Any(c =>
+                    c.GetParameters().Any(p => p.ParameterType.Name.StartsWith("I") &&
                                               p.ParameterType.Name.EndsWith("View")));
 
                 hasViewParameter.Should().BeTrue(
@@ -202,9 +202,9 @@ namespace BlockLife.Core.Tests.Architecture
                     continue;
 
                 // For records, init setters are acceptable and the preferred pattern
-                var isRecord = domainType.GetMethod("<Clone>$") != null || 
+                var isRecord = domainType.GetMethod("<Clone>$") != null ||
                               domainType.GetMethods().Any(m => m.Name == "PrintMembers");
-                
+
                 if (!isRecord)
                 {
                     // For non-records, check for public setters
@@ -250,9 +250,9 @@ namespace BlockLife.Core.Tests.Architecture
             foreach (var notificationType in notificationTypes)
             {
                 // For records, init setters are acceptable and the preferred pattern
-                var isRecord = notificationType.GetMethod("<Clone>$") != null || 
+                var isRecord = notificationType.GetMethod("<Clone>$") != null ||
                               notificationType.GetMethods().Any(m => m.Name == "PrintMembers");
-                
+
                 if (!isRecord)
                 {
                     var mutableProperties = notificationType.GetProperties()
@@ -285,7 +285,7 @@ namespace BlockLife.Core.Tests.Architecture
             // For now, we check for common service locator patterns
             var violatingTypes = applicationTypes
                 .Where(t => t.GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
-                    .Any(f => f.FieldType.Name.Contains("ServiceProvider") || 
+                    .Any(f => f.FieldType.Name.Contains("ServiceProvider") ||
                              f.FieldType.Name.Contains("ServiceLocator")))
                 .ToList();
 
@@ -300,7 +300,7 @@ namespace BlockLife.Core.Tests.Architecture
             // This is more of a convention test
             // We verify that Error.New calls in our codebase follow the single-parameter pattern
             // This would require source code analysis, so we test the pattern in our domain
-            
+
             // For now, this serves as documentation of the convention
             true.Should().BeTrue("Error.New() should use single-parameter format: Error.New(\"message\")");
         }
@@ -310,12 +310,12 @@ namespace BlockLife.Core.Tests.Architecture
         {
             // ADR-006: Fin<T> vs Task<T> Consistency - Phase 1 Implementation
             // Command handlers should use functional error handling with Fin<T> extensions
-            
+
             // Arrange
             var handlerTypes = _coreAssembly.GetTypes()
                 .Where(t => !t.IsAbstract && !t.IsInterface)
-                .Where(t => t.GetInterfaces().Any(i => 
-                    i.IsGenericType && 
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
                     (i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
                      i.GetGenericTypeDefinition() == typeof(IRequestHandler<>))))
                 .ToList();
@@ -347,14 +347,14 @@ namespace BlockLife.Core.Tests.Architecture
         {
             // ADR-006: Verify that TaskFinExtensions are properly implemented
             // and available for use in command handlers
-            
+
             // Arrange
             var extensionType = _coreAssembly.GetTypes()
                 .FirstOrDefault(t => t.Name == "TaskFinExtensions");
 
             // Act & Assert
             extensionType.Should().NotBeNull("TaskFinExtensions class should exist for Task<T> to Fin<T> conversion");
-            
+
             if (extensionType != null)
             {
                 var toFinMethods = extensionType.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -362,7 +362,7 @@ namespace BlockLife.Core.Tests.Architecture
                     .ToList();
 
                 toFinMethods.Should().NotBeEmpty("TaskFinExtensions should have ToFin methods");
-                toFinMethods.Should().HaveCountGreaterThan(1, 
+                toFinMethods.Should().HaveCountGreaterThan(1,
                     "TaskFinExtensions should have overloads for both Task<T> and Task");
             }
         }

@@ -21,7 +21,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
     private readonly IGridStateService _gridState;
     private readonly ISimulationManager _simulation;
     private readonly ILogger<PlaceBlockCommandHandler> _logger;
-    
+
     public PlaceBlockCommandHandler(
         IPositionIsValidRule positionValidRule,
         IPositionIsEmptyRule positionEmptyRule,
@@ -35,11 +35,11 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
         _simulation = simulation;
         _logger = logger;
     }
-    
+
     public async Task<Fin<Unit>> Handle(PlaceBlockCommand request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Handling PlaceBlockCommand for position {Position}", request.Position);
-        
+
         var result = await (
             from validPosition in _positionValidRule.Validate(request.Position)
             from emptyPosition in _positionEmptyRule.Validate(request.Position)
@@ -48,23 +48,23 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             from effectQueued in QueueEffect(block)
             select block
         ).AsTask();
-        
+
         return await result.Match(
             Succ: async block =>
             {
                 // Process queued effects which will publish the notification
                 // The SimulationManager.ProcessBlockPlacedEffect publishes BlockPlacedNotification
                 var processResult = await ProcessQueuedEffects();
-                
+
                 return await processResult.Match(
                     Succ: _ =>
                     {
-                        _logger.LogInformation("[TRACE] PlaceBlockCommand completed successfully for position {Position}", request.Position);
+                        // Trace: PlaceBlockCommand completed successfully for position {Position}
                         return Task.FromResult(FinSucc(Unit.Default));
                     },
                     Fail: error =>
                     {
-                        _logger.LogWarning("[TRACE] PlaceBlockCommand effect processing failed for position {Position}: {Error}", request.Position, error.Message);
+                        // Trace: PlaceBlockCommand effect processing failed - logged as Warning above
                         return Task.FromResult(FinFail<Unit>(error));
                     }
                 );
@@ -76,7 +76,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             }
         );
     }
-    
+
     private Fin<Domain.Block.Block> CreateBlock(PlaceBlockCommand request) =>
         FinSucc(new Domain.Block.Block
         {
@@ -86,10 +86,10 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             CreatedAt = DateTime.UtcNow,
             LastModifiedAt = DateTime.UtcNow
         });
-    
+
     private Fin<Unit> PlaceBlockInGrid(Domain.Block.Block block) =>
         _gridState.PlaceBlock(block);
-    
+
     private Fin<Unit> QueueEffect(Domain.Block.Block block) =>
         _simulation.QueueEffect(new BlockPlacedEffect(
             block.Id,
@@ -97,11 +97,11 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             block.Type,
             block.CreatedAt
         ));
-    
+
     private async Task<Fin<Unit>> ProcessQueuedEffects()
     {
         var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
-        
+
         return result.Match(
             Succ: _ => result,
             Fail: error =>
@@ -111,5 +111,5 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             }
         );
     }
-    
+
 }

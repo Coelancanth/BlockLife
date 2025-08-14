@@ -43,7 +43,7 @@ public class SimulationManager : ISimulationManager
         while (_effectQueue.Count > 0)
         {
             var effect = _effectQueue.Dequeue();
-            
+
             try
             {
                 switch (effect)
@@ -66,7 +66,7 @@ public class SimulationManager : ISimulationManager
         }
     }
 
-    public async Task PublishNotificationAsync<TNotification>(TNotification notification) 
+    public async Task PublishNotificationAsync<TNotification>(TNotification notification)
         where TNotification : INotification
     {
         await _mediator.Publish(notification);
@@ -78,17 +78,17 @@ public class SimulationManager : ISimulationManager
 
     private async Task ProcessBlockPlacedEffect(BlockPlacedEffect effect)
     {
-        _logger.LogInformation("[TRACE] ProcessBlockPlacedEffect called for block {BlockId} at {Position}", effect.BlockId, effect.Position);
-        
+        // Trace: ProcessBlockPlacedEffect called for block {BlockId} at {Position}
+
         var notification = new BlockPlacedNotification(
             effect.BlockId,
             effect.Position,
             effect.Type,
             effect.PlacedAt
         );
-        
+
         await PublishNotificationAsync(notification);
-        _logger.LogInformation("[TRACE] BlockPlacedNotification published for block {BlockId}", effect.BlockId);
+        // Trace: BlockPlacedNotification published for block {BlockId}
     }
 
     private async Task ProcessBlockRemovedEffect(BlockRemovedEffect effect)
@@ -99,7 +99,7 @@ public class SimulationManager : ISimulationManager
             effect.Type,
             effect.RemovedAt
         );
-        
+
         await PublishNotificationAsync(notification);
     }
 }

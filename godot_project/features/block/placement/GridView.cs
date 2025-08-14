@@ -56,13 +56,13 @@ public partial class GridView : Control, IBlockManagementView
     /// </summary>
     public void SetPresenterForTesting(BlockManagementPresenter presenter)
     {
-        GD.Print($"[TRACE] SetPresenterForTesting called with presenter: {presenter != null}");
+        // Trace: SetPresenterForTesting called with presenter
         _presenter = presenter;
         if (_presenter != null)
         {
-            GD.Print("[TRACE] Calling presenter.Initialize()");
+            // Trace: Calling presenter.Initialize()
             _presenter.Initialize();
-            GD.Print("[TRACE] presenter.Initialize() completed");
+            // Trace: presenter.Initialize() completed
         }
     }
     

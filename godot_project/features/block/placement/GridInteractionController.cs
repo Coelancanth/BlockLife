@@ -43,14 +43,14 @@ public partial class GridInteractionController : Control, IGridInteractionView
     {
         if (!IsInputEnabled) 
         {
-            GD.Print($"[TRACE] Input is disabled, ignoring event");
+            // Trace: Input is disabled, ignoring event
             return;
         }
         
         switch (@event)
         {
             case InputEventMouseButton mouseButton when mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left:
-                GD.Print($"[TRACE] Mouse click detected at position: {mouseButton.Position}");
+                // Trace: Mouse click detected at position
                 HandleMouseClick(mouseButton.Position);
                 break;
                 
@@ -83,18 +83,18 @@ public partial class GridInteractionController : Control, IGridInteractionView
     private void HandleMouseClick(Vector2 mousePosition)
     {
         var gridPosition = ScreenToGridPositionInternal(mousePosition);
-        GD.Print($"[TRACE] HandleMouseClick: mousePosition={mousePosition}, gridPosition={gridPosition}");
+        // Trace: HandleMouseClick - mousePosition and gridPosition
         
         if (IsValidGridPosition(gridPosition))
         {
-            GD.Print($"[TRACE] Valid grid position, emitting cell clicked event for {gridPosition}");
+            // Trace: Valid grid position, emitting cell clicked event
             var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
             logger?.Information("🎯 Grid cell clicked at ({X}, {Y})", gridPosition.X, gridPosition.Y);
             _cellClicked.OnNext(gridPosition);
         }
         else
         {
-            GD.Print($"[TRACE] Invalid grid position {gridPosition}, ignoring click");
+            // Trace: Invalid grid position, ignoring click
         }
     }
     

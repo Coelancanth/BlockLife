@@ -41,9 +41,9 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             await mockView.ShowBlockAsync(blockId, position, blockType);
 
             // Assert - Should only have one block, not throw error
-            mockView.BlockCount.Should().Be(1, 
+            mockView.BlockCount.Should().Be(1,
                 "Duplicate notifications for same block should be ignored");
-            mockView.ErrorCount.Should().Be(0, 
+            mockView.ErrorCount.Should().Be(0,
                 "No errors should be logged for duplicate notifications at same position");
         }
 
@@ -67,9 +67,9 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             await mockView.ShowBlockAsync(blockId, position2, blockType);
 
             // Assert - Should have one block and one error
-            mockView.BlockCount.Should().Be(1, 
+            mockView.BlockCount.Should().Be(1,
                 "Only first block should be added");
-            mockView.ErrorCount.Should().Be(1, 
+            mockView.ErrorCount.Should().Be(1,
                 "Error should be logged when same ID used for different position");
         }
 
@@ -97,9 +97,9 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             }
 
             // Assert - All blocks should be added
-            mockView.BlockCount.Should().Be(3, 
+            mockView.BlockCount.Should().Be(3,
                 "All unique blocks should be added");
-            mockView.ErrorCount.Should().Be(0, 
+            mockView.ErrorCount.Should().Be(0,
                 "No errors for unique blocks");
         }
 
@@ -109,7 +109,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
         private class MockBlockVisualizationView
         {
             private readonly Dictionary<Guid, (Vector2Int Position, BlockType Type)> _blocks = new();
-            
+
             public int BlockCount => _blocks.Count;
             public int ErrorCount { get; private set; }
 
@@ -127,7 +127,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
                             return Task.CompletedTask;
                         }
                     }
-                    
+
                     // Different position - this is an error
                     ErrorCount++;
                     return Task.CompletedTask;

@@ -10,16 +10,16 @@ namespace BlockLife.Core.Features.Block.Placement.Effects;
 /// Notification handlers that receive MediatR notifications and forward them to presenters.
 /// This solves the architectural constraint where presenters cannot implement INotificationHandler directly.
 /// </summary>
-public class BlockPlacementNotificationBridge : 
+public class BlockPlacementNotificationBridge :
     INotificationHandler<BlockPlacedNotification>,
     INotificationHandler<BlockRemovedNotification>
 {
     private readonly ILogger<BlockPlacementNotificationBridge> _logger;
-    
+
     // Static event that presenters can subscribe to
     public static event Func<BlockPlacedNotification, Task>? BlockPlacedEvent;
     public static event Func<BlockRemovedNotification, Task>? BlockRemovedEvent;
-    
+
     /// <summary>
     /// Clears all event subscriptions. Used in testing to prevent memory leaks.
     /// </summary>
@@ -28,7 +28,7 @@ public class BlockPlacementNotificationBridge :
         BlockPlacedEvent = null;
         BlockRemovedEvent = null;
     }
-    
+
     /// <summary>
     /// Gets the number of subscribers to BlockPlacedEvent. Used for testing.
     /// </summary>
@@ -36,7 +36,7 @@ public class BlockPlacementNotificationBridge :
     {
         return BlockPlacedEvent?.GetInvocationList().Length ?? 0;
     }
-    
+
     /// <summary>
     /// Manually triggers the BlockPlacedEvent for testing purposes.
     /// </summary>
@@ -56,7 +56,7 @@ public class BlockPlacementNotificationBridge :
     public async Task Handle(BlockPlacedNotification notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("BlockPlacementNotificationBridge.Handle called for BlockPlaced at {Position}", notification.Position);
-        
+
         if (BlockPlacedEvent != null)
         {
             await BlockPlacedEvent(notification);

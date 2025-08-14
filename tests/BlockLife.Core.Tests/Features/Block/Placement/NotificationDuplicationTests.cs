@@ -45,7 +45,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             // Arrange
             var notifications = new List<BlockPlacedNotification>();
             var mockMediator = new Mock<IMediator>();
-            
+
             // Capture all published notifications
             mockMediator.Setup(m => m.Publish(It.IsAny<BlockPlacedNotification>(), It.IsAny<CancellationToken>()))
                 .Callback<INotification, CancellationToken>((notif, ct) =>
@@ -71,7 +71,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
                 .Returns(FinSucc(Unit.Default));
 
             var handlerLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();
-            
+
             var handler = new PlaceBlockCommandHandler(
                 mockPositionValidRule.Object,
                 mockPositionEmptyRule.Object,
@@ -87,9 +87,9 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
 
             // Assert
             result.IsSucc.Should().BeTrue("Command should succeed");
-            notifications.Count.Should().Be(1, 
+            notifications.Count.Should().Be(1,
                 "Exactly one BlockPlacedNotification should be published (by SimulationManager only)");
-            
+
             // Verify the notification has correct data
             var notification = notifications[0];
             notification.BlockId.Should().Be(command.BlockId);
@@ -109,10 +109,10 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             var blockId = Guid.NewGuid();
             var position = new Vector2Int(3, 3);
             var placedAt = DateTime.UtcNow;
-            
+
             var mockMediator = new Mock<IMediator>();
             BlockPlacedNotification? publishedNotification = null;
-            
+
             mockMediator.Setup(m => m.Publish(It.IsAny<BlockPlacedNotification>(), It.IsAny<CancellationToken>()))
                 .Callback<INotification, CancellationToken>((notif, ct) =>
                 {
@@ -134,10 +134,10 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             publishedNotification.BlockId.Should().Be(blockId);
             publishedNotification.Position.Should().Be(position);
             publishedNotification.PlacedAt.Should().Be(placedAt);
-            
+
             // Verify exactly one publish call
-            mockMediator.Verify(m => 
-                m.Publish(It.IsAny<BlockPlacedNotification>(), It.IsAny<CancellationToken>()), 
+            mockMediator.Verify(m =>
+                m.Publish(It.IsAny<BlockPlacedNotification>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -169,7 +169,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
                 .Returns(FinSucc(Unit.Default));
 
             var mockLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();
-            
+
             // Note: Handler no longer needs IMediator
             var handler = new PlaceBlockCommandHandler(
                 mockPositionValidRule.Object,
@@ -186,15 +186,15 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
 
             // Assert
             result.IsSucc.Should().BeTrue();
-            
+
             // Verify effect was queued
-            mockSimulationManager.Verify(s => 
-                s.QueueEffect(It.IsAny<BlockPlacedEffect>()), 
+            mockSimulationManager.Verify(s =>
+                s.QueueEffect(It.IsAny<BlockPlacedEffect>()),
                 Times.Once);
-            
+
             // Verify effects were processed (which triggers notification in SimulationManager)
-            mockSimulationManager.Verify(s => 
-                s.ProcessQueuedEffectsAsync(), 
+            mockSimulationManager.Verify(s =>
+                s.ProcessQueuedEffectsAsync(),
                 Times.Once);
         }
     }

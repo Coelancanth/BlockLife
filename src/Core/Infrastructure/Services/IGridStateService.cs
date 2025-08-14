@@ -70,7 +70,7 @@ namespace BlockLife.Core.Infrastructure.Services
         /// <param name="position">The position to check</param>
         /// <returns>True if empty, false if occupied</returns>
         bool IsPositionEmpty(Vector2Int position);
-        
+
         /// <summary>
         /// Checks if a position is occupied (has a block present).
         /// </summary>

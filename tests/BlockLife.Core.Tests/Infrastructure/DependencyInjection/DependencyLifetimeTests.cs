@@ -33,7 +33,7 @@ public class DependencyLifetimeTests
 
         var factory1 = _serviceProvider.GetRequiredService<IPresenterFactory>();
         var factory2 = _serviceProvider.GetRequiredService<IPresenterFactory>();
-        
+
         // Assert
         logger1.Should().BeSameAs(logger2, "singletons should be the same instance");
         factory1.Should().BeSameAs(factory2, "singletons should be the same instance");
@@ -44,10 +44,10 @@ public class DependencyLifetimeTests
     {
         // Arrange
         var presenterFactory = _serviceProvider.GetRequiredService<IPresenterFactory>();
-        
+
         var presenterTypeToTest = typeof(GameStrapper).Assembly.GetTypes().FirstOrDefault(t =>
             !t.IsAbstract && !t.IsInterface &&
-            t.BaseType is { IsGenericType: true } && 
+            t.BaseType is { IsGenericType: true } &&
             t.BaseType.GetGenericTypeDefinition() == typeof(PresenterBase<>)
         );
 
@@ -59,7 +59,7 @@ public class DependencyLifetimeTests
 
         var viewInterfaceType = presenterTypeToTest.BaseType?.GetGenericArguments()[0];
         viewInterfaceType.Should().NotBeNull("presenter base type should have a generic argument");
-        
+
         var createMethod = typeof(IPresenterFactory).GetMethod(nameof(IPresenterFactory.Create))?
             .MakeGenericMethod(presenterTypeToTest, viewInterfaceType!);
         createMethod.Should().NotBeNull("IPresenterFactory should have a Create method");

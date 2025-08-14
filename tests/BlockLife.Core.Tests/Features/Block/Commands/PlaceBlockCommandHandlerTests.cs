@@ -42,7 +42,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockSimulation = new Mock<ISimulationManager>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();
-            
+
             _handler = new PlaceBlockCommandHandler(
                 _mockPositionValidRule.Object,
                 _mockPositionEmptyRule.Object,
@@ -62,15 +62,15 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -80,10 +80,10 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             // Assert
             result.IsSucc.Should().BeTrue();
-            
+
             _mockPositionValidRule.Verify(x => x.Validate(position), Times.Once);
             _mockPositionEmptyRule.Verify(x => x.Validate(position), Times.Once);
-            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b => 
+            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b =>
                 b.Id == TestGuids.BlockA &&
                 b.Position == position &&
                 b.Type == BlockType.Work
@@ -116,7 +116,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("INVALID_POSITION")
             );
-            
+
             _mockPositionValidRule.Verify(x => x.Validate(position), Times.Once);
             _mockPositionEmptyRule.Verify(x => x.Validate(It.IsAny<Vector2Int>()), Times.Never);
             _mockGridState.Verify(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()), Times.Never);
@@ -134,7 +134,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinFail<Unit>(expectedError));
@@ -148,7 +148,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("POSITION_OCCUPIED")
             );
-            
+
             _mockPositionValidRule.Verify(x => x.Validate(position), Times.Once);
             _mockPositionEmptyRule.Verify(x => x.Validate(position), Times.Once);
             _mockGridState.Verify(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()), Times.Never);
@@ -166,11 +166,11 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinFail<Unit>(expectedError));
@@ -184,7 +184,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("PLACEMENT_FAILED")
             );
-            
+
             _mockSimulation.Verify(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()), Times.Never);
         }
 
@@ -199,15 +199,15 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
                 .Returns(FinFail<Unit>(expectedError));
@@ -233,15 +233,15 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -251,8 +251,8 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             // Assert
             result.IsSucc.Should().BeTrue();
-            
-            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b => 
+
+            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b =>
                 b.Id != Guid.Empty &&
                 b.Position == position &&
                 b.Type == BlockType.Work
@@ -274,15 +274,15 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockPositionValidRule
                 .Setup(x => x.Validate(It.IsAny<Vector2Int>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(It.IsAny<Vector2Int>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -292,10 +292,10 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             {
                 var command = new PlaceBlockCommand(position, blockType);
                 var result = await _handler.Handle(command, CancellationToken.None);
-                
+
                 result.IsSucc.Should().BeTrue();
-                
-                _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b => 
+
+                _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b =>
                     b.Position == position &&
                     b.Type == blockType
                 )), Times.Once);
@@ -330,12 +330,12 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             var thirdAccess = command.BlockId;
 
             // Assert - All accesses return the same GUID
-            firstAccess.Should().Be(secondAccess, 
+            firstAccess.Should().Be(secondAccess,
                 "BlockId should return the same value on multiple accesses");
-            secondAccess.Should().Be(thirdAccess, 
+            secondAccess.Should().Be(thirdAccess,
                 "BlockId should remain stable throughout command lifecycle");
-            
-            firstAccess.Should().NotBe(Guid.Empty, 
+
+            firstAccess.Should().NotBe(Guid.Empty,
                 "BlockId should be a valid non-empty GUID");
         }
 
@@ -353,26 +353,26 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             // Arrange
             var position = new Vector2Int(4, 3);
             var command = new PlaceBlockCommand(position, BlockType.Basic);
-            
+
             // Capture the expected BlockId that should be used throughout
             var expectedBlockId = command.BlockId;
-            
+
             _mockPositionValidRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockPositionEmptyRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockGridState
                 .Setup(x => x.PlaceBlock(It.IsAny<Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockPlacedEffect>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.ProcessQueuedEffectsAsync())
                 .Returns(Task.FromResult(FinSucc(Unit.Default)));
@@ -382,15 +382,15 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             // Assert - Result should be successful
             result.IsSucc.Should().BeTrue();
-            
+
             // CRITICAL: Verify that the SAME BlockId was used for both operations
-            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b => 
+            _mockGridState.Verify(x => x.PlaceBlock(It.Is<Domain.Block.Block>(b =>
                 b.Id == expectedBlockId && // Same ID used for block creation
                 b.Position == position &&
                 b.Type == BlockType.Basic
             )), Times.Once, "Block creation should use the stable BlockId");
 
-            _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockPlacedEffect>(e => 
+            _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockPlacedEffect>(e =>
                 e.BlockId == expectedBlockId && // Same ID used for effect
                 e.Position == position &&
                 e.Type == BlockType.Basic
@@ -415,11 +415,11 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             var secondAccess = command.BlockId;
 
             // Assert - Should use the provided ID consistently
-            firstAccess.Should().Be(expectedId, 
+            firstAccess.Should().Be(expectedId,
                 "BlockId should use the explicitly provided RequestedId");
-            secondAccess.Should().Be(expectedId, 
+            secondAccess.Should().Be(expectedId,
                 "BlockId should remain stable even with explicit RequestedId");
-            firstAccess.Should().Be(secondAccess, 
+            firstAccess.Should().Be(secondAccess,
                 "Multiple accesses should return the same RequestedId");
         }
     }
