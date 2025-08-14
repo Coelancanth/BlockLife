@@ -79,7 +79,7 @@ namespace BlockLife.Core.Tests.Properties
                     var hasId = block.Id != Guid.Empty;
                     var hasCreatedAt = block.CreatedAt != default;
                     var hasLastModified = block.LastModifiedAt != default;
-                    
+
                     return positionValid && typeValid && hasId && hasCreatedAt && hasLastModified;
                 }
             ).QuickCheckThrowOnFailure();

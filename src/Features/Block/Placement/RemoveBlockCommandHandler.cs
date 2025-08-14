@@ -22,7 +22,7 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
     private readonly ISimulationManager _simulation;
     private readonly IMediator _mediator;
     private readonly ILogger<RemoveBlockCommandHandler> _logger;
-    
+
     public RemoveBlockCommandHandler(
         IBlockExistsRule blockExistsRule,
         IGridStateService gridState,
@@ -36,23 +36,23 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
         _mediator = mediator;
         _logger = logger;
     }
-    
+
     public async Task<Fin<Unit>> Handle(RemoveBlockCommand request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Handling RemoveBlockCommand for position {Position}", request.Position);
-        
+
         var result = await (
             from block in _blockExistsRule.Validate(request.Position)
             from removed in RemoveBlockFromGrid(request.Position)
             from effectQueued in QueueEffect(block)
             select block
         ).AsTask();
-        
+
         return await result.Match(
             Succ: async block =>
             {
                 var processResult = await ProcessQueuedEffects();
-                
+
                 return await processResult.Match(
                     Succ: async _ =>
                     {
@@ -63,9 +63,9 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
                             block.Type,
                             DateTime.UtcNow
                         );
-                        
+
                         var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block removed notification");
-                        
+
                         return publishResult.Match(
                             Succ: _ =>
                             {
@@ -89,10 +89,10 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
             Fail: error => Task.FromResult(FinFail<Unit>(error))
         );
     }
-    
+
     private Fin<Unit> RemoveBlockFromGrid(Domain.Common.Vector2Int position) =>
         _gridState.RemoveBlock(position);
-    
+
     private Fin<Unit> QueueEffect(Domain.Block.Block block) =>
         _simulation.QueueEffect(new BlockRemovedEffect(
             block.Id,
@@ -100,11 +100,11 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
             block.Type,
             DateTime.UtcNow
         ));
-    
+
     private async Task<Fin<Unit>> ProcessQueuedEffects()
     {
         var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
-        
+
         return result.Match(
             Succ: _ => result,
             Fail: error =>
@@ -123,7 +123,7 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
     private readonly ISimulationManager _simulation;
     private readonly IMediator _mediator;
     private readonly ILogger<RemoveBlockByIdCommandHandler> _logger;
-    
+
     public RemoveBlockByIdCommandHandler(
         IBlockExistsRule blockExistsRule,
         IGridStateService gridState,
@@ -137,23 +137,23 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
         _mediator = mediator;
         _logger = logger;
     }
-    
+
     public async Task<Fin<Unit>> Handle(RemoveBlockByIdCommand request, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Handling RemoveBlockByIdCommand for block {BlockId}", request.BlockId);
-        
+
         var result = await (
             from block in _blockExistsRule.Validate(request.BlockId)
             from removed in RemoveBlockFromGrid(request.BlockId)
             from effectQueued in QueueEffect(block)
             select block
         ).AsTask();
-        
+
         return await result.Match(
             Succ: async block =>
             {
                 var processResult = await ProcessQueuedEffectsForId();
-                
+
                 return await processResult.Match(
                     Succ: async _ =>
                     {
@@ -164,9 +164,9 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
                             block.Type,
                             DateTime.UtcNow
                         );
-                        
+
                         var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block removed notification");
-                        
+
                         return publishResult.Match(
                             Succ: _ =>
                             {
@@ -190,10 +190,10 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
             Fail: error => Task.FromResult(FinFail<Unit>(error))
         );
     }
-    
+
     private Fin<Unit> RemoveBlockFromGrid(Guid blockId) =>
         _gridState.RemoveBlock(blockId);
-    
+
     private Fin<Unit> QueueEffect(Domain.Block.Block block) =>
         _simulation.QueueEffect(new BlockRemovedEffect(
             block.Id,
@@ -201,11 +201,11 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
             block.Type,
             DateTime.UtcNow
         ));
-    
+
     private async Task<Fin<Unit>> ProcessQueuedEffectsForId()
     {
         var result = await _simulation.ProcessQueuedEffectsAsync().ToFin("PROCESS_EFFECTS_FAILED", "Failed to process queued effects");
-        
+
         return result.Match(
             Succ: _ => result,
             Fail: error =>

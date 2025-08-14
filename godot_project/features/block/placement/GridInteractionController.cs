@@ -41,11 +41,16 @@ public partial class GridInteractionController : Control, IGridInteractionView
     
     public override void _GuiInput(InputEvent @event)
     {
-        if (!IsInputEnabled) return;
+        if (!IsInputEnabled) 
+        {
+            // Trace: Input is disabled, ignoring event
+            return;
+        }
         
         switch (@event)
         {
             case InputEventMouseButton mouseButton when mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left:
+                // Trace: Mouse click detected at position
                 HandleMouseClick(mouseButton.Position);
                 break;
                 
@@ -78,11 +83,18 @@ public partial class GridInteractionController : Control, IGridInteractionView
     private void HandleMouseClick(Vector2 mousePosition)
     {
         var gridPosition = ScreenToGridPositionInternal(mousePosition);
+        // Trace: HandleMouseClick - mousePosition and gridPosition
+        
         if (IsValidGridPosition(gridPosition))
         {
-            var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
+            // Trace: Valid grid position, emitting cell clicked event
+            var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
             logger?.Information("🎯 Grid cell clicked at ({X}, {Y})", gridPosition.X, gridPosition.Y);
             _cellClicked.OnNext(gridPosition);
+        }
+        else
+        {
+            // Trace: Invalid grid position, ignoring click
         }
     }
     

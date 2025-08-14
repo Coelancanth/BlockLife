@@ -314,16 +314,37 @@ public partial class GridView : Control, IGridView
 ```
 
 #### Step 2: Write GdUnit4 Integration Tests
+**⚠️ CRITICAL**: MUST use SimpleSceneTest pattern to avoid parallel service container issues!
+
 ```csharp
 // tests/Integration/Godot/[Feature]GodotTests.cs
+// ✅ MANDATORY PATTERN - Direct Node inheritance
 [TestSuite]
-public class GridViewIntegrationTests
+public partial class GridViewIntegrationTests : Node
 {
-    [Test]
+    private IServiceProvider? _serviceProvider;
+    private Node? _testScene;
+    
+    [Before]
+    public async Task Setup()
+    {
+        // Get REAL service provider from SceneRoot autoload via reflection
+        var sceneRoot = GetTree().Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        var field = typeof(SceneRoot).GetField("_serviceProvider", 
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
+        
+        _testScene = await CreateTestScene();
+    }
+    
+    [TestCase]
     public async Task GridView_ClickCell_PlacesBlock()
     {
-        // Arrange
-        var scene = GD.Load<PackedScene>("res://godot_project/features/grid/Grid.tscn");
+        if (_serviceProvider == null) return; // Skip if not in Godot context
+        
+        // Use REAL services - same instances as production!
+        
+        // See GdUnit4_Integration_Testing_Guide.md for complete pattern
         var grid = scene.Instantiate<GridView>();
         
         // Act
@@ -372,6 +393,24 @@ public partial class GridView : Control, IGridView, IPresenterContainer<GridPres
 
 ### 2.1 Pre-Commit Quality Gates
 
+#### 🚀 **NEW: Automated Test Monitoring During Development**
+```bash
+# Start test monitor BEFORE development
+.\test-watch.bat  # Runs tests every 10s, auto-stops after 30min inactivity
+
+# Monitor shows:
+# - Test results in test-summary.md (human-readable)
+# - Structured data in test-results.json (for Claude Code)
+# - Time remaining until auto-stop
+# - Detection of file changes
+```
+
+**Benefits:**
+- ✅ Continuous TDD feedback without manual test runs
+- ✅ No copy-paste needed for Claude Code collaboration
+- ✅ Auto-cleanup prevents zombie processes
+- ✅ Perfect for Red-Green-Refactor cycle
+
 #### Automated Checks (Git Hooks)
 ```bash
 # .git/hooks/pre-commit
@@ -388,6 +427,9 @@ dotnet format --verify-no-changes
 
 # 4. Run static analysis
 dotnet build /p:TreatWarningsAsErrors=true
+
+# 5. Run test monitor for final validation
+python scripts/test_monitor.py
 ```
 
 #### Manual Checklist
@@ -402,7 +444,11 @@ dotnet build /p:TreatWarningsAsErrors=true
 - [ ] **No empty handlers**: All notification handlers provide actual functionality
 - [ ] **Static event bridges**: Proper MediatR-to-Presenter bridge pattern implemented
 - [ ] Logging added for debugging (especially notification publishing)
-- [ ] Documentation updated
+- [ ] **Documentation updated** (See Documentation_Update_Workflow.md)
+  - [ ] Implementation plan phases marked complete
+  - [ ] Bug reports created for any fixes
+  - [ ] CLAUDE.md updated if patterns changed
+  - [ ] Test documentation includes context
 ```
 
 ### 2.2 Pull Request Process
@@ -923,34 +969,118 @@ public void NewPattern_Should_FollowConvention()
 - Test framework upgrades
 - Documentation automation
 
-## 9. Emergency Procedures
+## 9. Emergency Procedures & Bug Response
 
-### 9.1 Production Bug Response
+### 9.1 **MANDATORY: Bug-to-Test Protocol** ⚠️
+
+**CRITICAL PRINCIPLE**: Every bug discovered must become a regression test to prevent recurrence.
+
+#### **Step-by-Step Bug Response Process:**
+
+```markdown
+## MANDATORY BUG RESPONSE WORKFLOW
+
+### Phase 1: Documentation & Reproduction
+1. **Document the Bug**:
+   - Date discovered
+   - Symptoms observed  
+   - Root cause identified
+   - User impact level
+
+2. **Reproduce Locally**:
+   - Create minimal reproduction scenario
+   - Verify bug exists in current codebase
+   - Document exact steps to reproduce
+
+### Phase 2: Test-Driven Bug Fix
+3. **Write Failing Regression Test**:
+   - Create test that would have caught this bug
+   - Test should fail against current broken code
+   - Include detailed comment explaining the bug context
+
+4. **Fix the Bug**:
+   - Implement minimal fix to make test pass
+   - Ensure fix doesn't break existing functionality
+   - Run full test suite to verify
+
+5. **Validate the Fix**:
+   - Regression test now passes
+   - All existing tests still pass  
+   - Manual testing confirms bug is resolved
+
+### Phase 3: Prevention & Documentation  
+6. **Document the Learning**:
+   - Add bug context to test comments
+   - Update any relevant documentation
+   - Consider if architecture needs strengthening
+
+7. **Review & Reflect**:
+   - Could this bug class be prevented by architecture?
+   - Are there similar vulnerabilities elsewhere?
+   - Should we add property tests for this invariant?
+   - **CRITICAL**: If bug was in view layer, add integration tests!
+
+8. **Integration Test for View Layer Bugs**:
+   - View layer bugs CANNOT be caught by unit tests alone
+   - **MANDATORY**: Use SimpleSceneTest pattern for GdUnit4 tests
+   - **See**: [GdUnit4_Integration_Testing_Guide.md](GdUnit4_Integration_Testing_Guide.md) for official pattern
+   - Test the complete flow from UI interaction to visual feedback
+   - Verify presenter-view communication works correctly
+   - **WARNING**: Never use GodotIntegrationTestBase (creates parallel service containers)
+```
+
+#### **Real Example: BlockId Stability Bug (2025-08-14)**
+
+```csharp
+/// <summary>
+/// REGRESSION TEST: Ensures BlockId remains stable across multiple property accesses.
+/// 
+/// BUG CONTEXT:
+/// - Date: 2025-08-14
+/// - Issue: PlaceBlockCommand.BlockId was generating new GUID on every access
+/// - Symptom: "Block already exists" error despite successful placement  
+/// - Root Cause: Different GUIDs used for block creation vs effect queueing
+/// - Fix: Use Lazy<Guid> to generate stable ID once and cache it
+/// 
+/// This test prevents regression by verifying that:
+/// 1. BlockId property returns the same value on multiple accesses
+/// 2. The ID is consistent throughout the command lifecycle
+/// 3. All operations (placement, effects, notifications) use the same ID
+/// </summary>
+[Fact]
+public void PlaceBlockCommand_BlockId_RemainsStableAcrossMultipleAccesses()
+{
+    // Test implementation ensures bug never reoccurs
+}
+```
+
+### 9.2 Production Bug Response
 ```powershell
-# Emergency hotfix workflow
+# Emergency hotfix workflow WITH MANDATORY TEST
 function New-Hotfix {
     param([string]$IssueNumber)
     
     # 1. Create hotfix branch
     git checkout -b "hotfix/issue-$IssueNumber"
     
-    # 2. Write failing test
-    # 3. Fix issue
-    # 4. Run all tests
+    # 2. Write failing regression test (MANDATORY)
+    # 3. Fix issue to make test pass
+    # 4. Run all tests including new regression test
     dotnet test
     
     # 5. Create PR with expedited review
+    # 6. Ensure regression test is included in PR
 }
 ```
 
-### 9.2 Performance Crisis
+### 9.3 Performance Crisis
 1. Enable detailed logging
 2. Profile with dotTrace
 3. Identify bottleneck
 4. Apply tactical fix
 5. Plan strategic solution
 
-### 9.3 Architecture Violation
+### 9.4 Architecture Violation
 1. Add architecture test to prevent recurrence
 2. Refactor violation
 3. Update documentation

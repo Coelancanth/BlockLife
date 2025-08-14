@@ -69,7 +69,7 @@ namespace BlockLife.Core.Features.Block.Rules
 
             // Rule: Check if block is currently involved in any active effects
             // (This would require integration with a future effects system)
-            
+
             // Rule: Validate minimum block requirements
             // (For example, ensuring at least one block remains on the grid)
             var allBlocks = _gridStateService.GetAllBlocks();

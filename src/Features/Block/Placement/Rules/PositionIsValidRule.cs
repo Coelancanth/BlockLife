@@ -9,12 +9,12 @@ namespace BlockLife.Core.Features.Block.Placement.Rules;
 public class PositionIsValidRule : IPositionIsValidRule
 {
     private readonly IGridStateService _gridState;
-    
+
     public PositionIsValidRule(IGridStateService gridState)
     {
         _gridState = gridState;
     }
-    
+
     public Fin<Unit> Validate(Vector2Int position) =>
         _gridState.IsValidPosition(position)
             ? FinSucc(Unit.Default)

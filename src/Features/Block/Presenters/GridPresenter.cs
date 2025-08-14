@@ -44,7 +44,7 @@ namespace BlockLife.Core.Features.Block.Presenters
                 // Subscribe to domain notification events from the notification bridge
                 BlockPlacementNotificationBridge.BlockPlacedEvent += OnBlockPlacedNotification;
                 BlockPlacementNotificationBridge.BlockRemovedEvent += OnBlockRemovedNotification;
-                
+
                 _logger.Information("Subscribed to block placement notification events");
 
                 // Display grid boundaries
@@ -291,9 +291,9 @@ namespace BlockLife.Core.Features.Block.Presenters
         {
             try
             {
-                _logger.Debug("Received block placed notification for block {BlockId} at {Position}", 
+                _logger.Debug("Received block placed notification for block {BlockId} at {Position}",
                     notification.BlockId, notification.Position);
-                
+
                 await HandleBlockPlacedAsync(notification.BlockId, notification.Type, notification.Position);
             }
             catch (Exception ex)
@@ -310,9 +310,9 @@ namespace BlockLife.Core.Features.Block.Presenters
         {
             try
             {
-                _logger.Debug("Received block removed notification for block {BlockId} at {Position}", 
+                _logger.Debug("Received block removed notification for block {BlockId} at {Position}",
                     notification.BlockId, notification.Position);
-                
+
                 await HandleBlockRemovedAsync(notification.BlockId, notification.Position);
             }
             catch (Exception ex)
@@ -329,9 +329,9 @@ namespace BlockLife.Core.Features.Block.Presenters
             // Unsubscribe from notification events to prevent memory leaks
             BlockPlacementNotificationBridge.BlockPlacedEvent -= OnBlockPlacedNotification;
             BlockPlacementNotificationBridge.BlockRemovedEvent -= OnBlockRemovedNotification;
-            
+
             _logger.Information("GridPresenter disposed and unsubscribed from notification events");
-            
+
             base.Dispose();
         }
     }

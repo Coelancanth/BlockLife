@@ -18,6 +18,7 @@
 | 🎨 | **Dynamic Logging UI** | [07_Dynamic_Logging_UI_Implementation_Plan.md](../3_Implementation_Plans/07_Dynamic_Logging_UI_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
 | 🐛 | **Debug Console** | [08_Automated_Debug_Console_Implementation_Plan.md](../3_Implementation_Plans/08_Automated_Debug_Console_Implementation_Plan.md) | ❌ **NOT STARTED** | 0% | Low priority - debug tooling | - |
 | 🤖 | **Automation Scripts** | [scripts/README.md](../../scripts/README.md) | ✅ **COMPLETED** | 100% | Cognitive load reduction achieved | 2025-08-13 |
+| 🧪 | **Integration Test Architecture** | [GdUnit4_Integration_Testing_Guide.md](../6_Guides/GdUnit4_Integration_Testing_Guide.md) | ✅ **COMPLETED** | 100% | Official pattern established | 2025-08-14 |
 
 ## 🏆 Completed Implementations
 
@@ -48,6 +49,36 @@
 - Architecture fitness test patterns
 - Error handling and validation
 - Feature slice organization
+
+### ✅ Integration Test Architecture - CRITICAL INFRASTRUCTURE
+**Status**: ✅ **COMPLETED** - Official pattern established and documented  
+**Location**: `Docs/6_Guides/GdUnit4_Integration_Testing_Guide.md`  
+**Investigation**: `Docs/4_Post_Mortems/Integration_Test_Architecture_Deep_Dive.md`
+
+**Key Achievements**:
+- ✅ **Parallel Service Container Problem Resolved** - Root cause identified and fixed
+- ✅ **SimpleSceneTest Pattern Established** - Official mandatory architecture  
+- ✅ **All Integration Tests Passing** - No more "phantom block" failures
+- ✅ **Single Service Container Rule** - Production and tests use same services
+- ✅ **Comprehensive Documentation** - Complete guide with troubleshooting
+
+**Critical Lessons Learned**:
+- **Architecture Consistency**: Working vs. failing tests revealed parallel service container issues
+- **Service Container Isolation**: Multiple DI containers created impossible-to-debug state mismatches
+- **Reflection Access Pattern**: Required to access real SceneRoot service provider
+- **SimpleSceneTest Gold Standard**: Direct Node inheritance with real autoload access
+
+**Impact on Project**:
+- **GdUnit4 integration tests now reliable** - End of random failures
+- **Official testing architecture** - Clear pattern for all future integration tests  
+- **Debugging methodology established** - How to diagnose similar architectural issues
+- **Quality gates strengthened** - Integration tests can now be trusted in CI/CD
+
+**Anti-Patterns Documented**:
+- ❌ Never inherit from `GodotIntegrationTestBase` (creates parallel containers)
+- ❌ Never create custom test service providers
+- ❌ Never use static service locators in tests
+- ❌ Never ignore the "Single Service Container Rule"
 
 ## 🚧 In-Progress Implementations
 
@@ -145,16 +176,16 @@
 ## 📈 Progress Tracking
 
 ### Development Velocity
-- **Completed Features**: 1 (F1 Block Placement)
-- **In Progress**: 1 (Move Block Feature - 70% complete)
+- **Completed Features**: 1 (Reference implementations)
+- **In Progress**: 1 (Active development)
 - **Planned**: 6 additional features
 - **Average Implementation Time**: 2-3 weeks per major feature
 
 ### Test Coverage Metrics
-- **Total Tests**: 70 (updated after Move Block Phase 1-2)
-- **Architecture Tests**: 16 (comprehensive constraint enforcement)
-- **Unit Tests**: 45 (including Move Block tests)
-- **Property Tests**: 9 (900 mathematical validations)
+- **Total Tests**: 80 (updated after latest feature development)
+- **Architecture Tests**: 0 (comprehensive constraint enforcement)
+- **Unit Tests**: 0 (including latest feature tests)
+- **Property Tests**: 0 (0 mathematical validations)
 - **Coverage Target**: >90% for core business logic
 
 ### Quality Metrics

@@ -10,7 +10,7 @@ _logSettings = ExtResource("2_po5q3")
 
 [node name="LogSettingsController" type="Node" parent="."]
 script = ExtResource("2_log")
-DefaultLogLevel = 2
+DefaultLogLevel = 0
 category_Core = 2
 category_DependencyInjection = 2
 category_Input = 2

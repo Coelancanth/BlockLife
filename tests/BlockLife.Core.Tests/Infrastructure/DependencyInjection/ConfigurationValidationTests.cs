@@ -23,7 +23,7 @@ public class ConfigurationValidationTests
         services.AddSingleton<DependentSingletonService>();
 
         var options = new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true };
-        
+
         // Act
         // With ValidateOnBuild = true, the exception is thrown when the provider is built.
         Action act = () => services.BuildServiceProvider(options);

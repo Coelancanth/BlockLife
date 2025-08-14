@@ -47,6 +47,27 @@ dotnet build --configuration Release  # Release build
 ```
 
 ### Running Tests (TDD Workflow)
+
+#### 🚀 **NEW: Automated Test Monitoring (Recommended)**
+```bash
+# BEST PRACTICE: Use automated test watcher during development
+.\test-watch.bat                    # Runs every 10s, auto-stops after 30min inactivity
+
+# Or with custom settings:
+python scripts/test_monitor.py --continuous --interval 5 --timeout 60
+
+# Single test run with file output (for Claude Code collaboration)
+python scripts/test_monitor.py      # Creates test-summary.md and test-results.json
+```
+
+**Benefits of Automated Monitoring:**
+- ✅ No manual copy-pasting of test results for Claude Code
+- ✅ Auto-stops after inactivity (prevents zombie processes)
+- ✅ Structured output in both markdown and JSON formats
+- ✅ Tracks file changes and shows time until auto-stop
+- ✅ Perfect for TDD workflow with continuous feedback
+
+#### Manual Test Commands
 ```bash
 # WORKFLOW STEP 1: Architecture fitness tests (run FIRST)
 dotnet test --filter "FullyQualifiedName~Architecture"
@@ -78,6 +99,25 @@ dotnet build && dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/
 
 BlockLife includes Python automation scripts to reduce manual maintenance and cognitive load:
 
+### 🔄 **Test Monitor - Automated Test Runner with File Output**
+```bash
+# Single run - generates test-summary.md and test-results.json
+python scripts/test_monitor.py
+
+# Continuous monitoring with auto-timeout
+python scripts/test_monitor.py --continuous --interval 10 --timeout 30
+
+# Quick development watcher (recommended)
+.\test-watch.bat  # Pre-configured with sensible defaults
+```
+
+**Key Features:**
+- Monitors `src/`, `tests/`, and `godot_project/` for changes
+- Auto-stops after specified minutes of inactivity
+- Generates structured output for Claude Code to read
+- Shows countdown timer until auto-stop
+- Perfect for TDD workflow
+
 ### 🧪 Test Metrics Automation
 ```bash
 # Automatically update documentation with test statistics
@@ -90,9 +130,13 @@ dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_met
 ### 🚨 Git Workflow Enforcement  
 ```bash
 # Setup automatic Git workflow enforcement (HIGHLY RECOMMENDED)
-python scripts/enforce_git_workflow.py --setup-hooks
+python scripts/setup_git_hooks.py
 
-# This prevents working on main branch and validates branch naming
+# This automatically creates git hooks that:
+# - Prevent working on main branch
+# - Enforce code formatting standards
+# - Run architecture fitness tests
+# - Validate unit tests before commits/pushes
 ```
 
 ### 🔄 Documentation Synchronization
@@ -203,6 +247,94 @@ public override void Dispose()
   - **Property Tests**: Mathematical proofs using FsCheck.Xunit
   - **Architecture Tests**: Automated architectural constraint enforcement
   - **Integration Tests**: GdUnit4 for Godot-specific testing
+
+### 🚨 CRITICAL: GdUnit4 Integration Test Pattern
+**WARNING**: GdUnit4 integration tests are extremely sensitive to architectural patterns!
+
+## ✅ MANDATORY PATTERN: SimpleSceneTest Architecture
+
+**ALL integration tests MUST follow this exact pattern - no exceptions:**
+
+```csharp
+[TestSuite]
+public partial class YourIntegrationTest : Node  // MUST inherit from Node directly
+{
+    private Node? _testScene;
+    private IServiceProvider? _serviceProvider;
+    private SceneTree? _sceneTree;
+
+    [Before]
+    public async Task Setup()
+    {
+        // 1. Get SceneTree from test node itself
+        _sceneTree = GetTree();
+        _sceneTree.Should().NotBeNull("scene tree must be available");
+        
+        // 2. Get SceneRoot autoload - THE REAL ONE, not a test copy
+        var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        if (sceneRoot == null)
+        {
+            GD.PrintErr("SceneRoot not found - test must be run from Godot editor");
+            return;
+        }
+        
+        // 3. Access the REAL service provider via reflection
+        var field = typeof(SceneRoot).GetField("_serviceProvider",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        _serviceProvider = field?.GetValue(sceneRoot) as IServiceProvider;
+        
+        // 4. Create test scene as child of this node
+        _testScene = await CreateTestScene();
+        
+        // 5. Access your controllers normally
+        _gridController = _testScene!.GetNode<GridInteractionController>("GridView/GridInteractionController");
+    }
+    
+    [TestCase]
+    public async Task YourTest()
+    {
+        if (_serviceProvider == null) 
+        {
+            GD.Print("Skipping test - not in proper Godot context");
+            return;
+        }
+        // Your test logic using the REAL service provider
+        var gridState = _serviceProvider.GetRequiredService<IGridStateService>();
+        // Tests now use the same services as production!
+    }
+}
+```
+
+## 🚫 FORBIDDEN PATTERN: Custom Test Base Classes
+
+**NEVER use this pattern - it creates parallel service containers:**
+
+```csharp
+// ❌ FORBIDDEN - Creates parallel service containers!
+public partial class BadIntegrationTest : GodotIntegrationTestBase
+{
+    // This pattern creates its own DI container separate from SceneRoot
+    // Commands go to one container, notifications from another
+    // Results in impossible-to-debug failures with "phantom blocks"
+}
+```
+
+## 🔑 Critical Architecture Principle
+
+**Single Service Container Rule**: Integration tests MUST use the exact same service instances as production SceneRoot. Any test infrastructure creating parallel containers will cause:
+- Commands succeed but don't affect visible state
+- Notifications fire but don't match actual state  
+- "Blocks carryover between tests" symptoms
+- Complete state isolation leading to phantom failures
+
+## 📚 Reference Files
+
+**Working Examples**:
+- ✅ `SimpleSceneTest.cs` - Gold standard implementation
+- ✅ `BlockPlacementIntegrationTest.cs` - Refactored to use correct pattern
+
+**Investigation Documentation**:  
+- 📚 `Docs/4_Post_Mortems/Integration_Test_Architecture_Deep_Dive.md` - Complete debugging journey and architectural lessons
 
 ## Development Guidelines
 
@@ -322,7 +454,45 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ## Agent-Specific Workflow Instructions
 
+### For Tech Lead Advisory (tech-lead-advisor agent)
+**MUST follow this workflow:**
+1. **Provide strategic guidance** on technical decisions
+2. **Save recommendations** following naming convention:
+   - ADR for architectural decisions: `Docs/5_Architecture_Decision_Records/ADR_XXX_[Topic].md`
+   - Technical guidance: `Docs/6_Guides/Tech_Lead_[Topic]_Guide.md`
+   - Team process improvements: `Docs/2_Development_Process/[Topic]_Process.md`
+3. **Create ADRs when necessary** for significant architectural decisions:
+   - Use next available ADR number (currently up to 008)
+   - Format: `ADR_009_[Decision_Topic].md`
+4. **Update tracking systems**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
+**ADR should include:**
+- Context and problem statement
+- Decision drivers
+- Considered options with pros/cons
+- Decision outcome and rationale
+- Consequences (positive/negative)
+- Implementation guidance
+
 ### For Implementation Planning (implementation-planner agent)
+**MUST follow this workflow:**
+1. **Create implementation plan** following the template
+2. **Save plan** with naming convention:
+   - Location: `Docs/3_Implementation_Plans/XXX_[Feature]_Implementation_Plan.md`
+   - Use next available number (currently up to 005)
+   - Example: `006_Inventory_System_Implementation_Plan.md`
+3. **Update Implementation Status Tracker** at `Docs/0_Global_Tracker/Implementation_Status_Tracker.md`:
+   - Add new plan to the tracker
+   - Set initial status as "Planning"
+   - Include estimated phases and timeline
+4. **Run synchronization scripts**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
 **MUST consult these documents:**
 1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
 2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
@@ -336,6 +506,8 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - Property test requirements for invariants
 - Integration test boundaries
 - Quality gates and acceptance criteria
+- Phase breakdown with clear deliverables
+- Risk assessment and mitigation strategies
 
 ### For Code Review (code-review-expert agent)
 **MUST validate against:**
@@ -366,6 +538,38 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - Update test statistics when new tests added
 - Maintain consistency with Move Block reference implementation
 - Document any new patterns discovered
+
+### For Architecture Stress Testing (architecture-stress-tester agent)
+**MUST follow this workflow:**
+1. **Conduct thorough stress test** of architecture and implementation
+2. **Save report** following naming convention:
+   - Location: `Docs/4_Post_Mortems/Architecture_Stress_Test_[Date]_[Focus].md`
+   - Example: `Architecture_Stress_Test_Critical_Findings.md`
+3. **Update Master Action Items tracker** at `Docs/0_Global_Tracker/Master_Action_Items.md`:
+   - Add critical findings as new action items
+   - Use appropriate categories (CRIT-XXX for critical, TEST-XXX for testing gaps)
+   - Mark all new items as 🔴 **CRITICAL** or 📋 **PENDING**
+4. **Update Documentation Catalogue** at `Docs/DOCUMENTATION_CATALOGUE.md`:
+   - Add report to Post-Mortems section
+   - Mark with 🔴 **CRITICAL** status
+5. **Run synchronization scripts**:
+   ```bash
+   python scripts/sync_documentation_status.py
+   ```
+
+**Categorize issues by severity:**
+- CRITICAL: Will cause production failures
+- HIGH: Significant risk under load
+- MEDIUM: Performance/maintainability issues
+- LOW: Best practice violations
+
+**Report MUST include:**
+- Executive summary with risk assessment
+- Specific code locations with line numbers
+- Reproduction tests/scenarios
+- Impact under production load
+- Concrete fix recommendations
+- Action items with priority levels
 
 ### For General Development
 **Claude Code MUST:**
@@ -419,6 +623,7 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 2. **Unit tests (TDD)**: Write failing test → Implement → Pass → Refactor
 3. **Property tests**: Use FsCheck for mathematical invariants
 4. **Integration tests**: Use GdUnit4 for Godot-specific testing
+5. **🚨 CRITICAL: Bug-to-Test Protocol**: Every bug MUST become a regression test - see [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md) Section 9.1
 
 ### "What patterns should I follow?"
 - **Commands**: Immutable records with init setters (see `MoveBlockCommand.cs`)
@@ -434,6 +639,19 @@ dotnet test --filter "FullyQualifiedName~Architecture"  # Architecture complianc
 dotnet test --filter "Category=Unit"                    # Unit tests
 dotnet test tests/BlockLife.Core.Tests.csproj          # All tests
 ```
+
+### "I found a bug! What's the process?"
+**🚨 MANDATORY Bug-to-Test Protocol (NO EXCEPTIONS):**
+1. **Document**: Create bug report using [TEMPLATE_Bug_Report_And_Fix.md](Docs/4_Post_Mortems/TEMPLATE_Bug_Report_And_Fix.md)
+2. **Reproduce**: Verify bug exists and document exact reproduction steps
+3. **Test First**: Write failing regression test that would have caught this bug
+4. **Fix**: Implement minimal fix to make the test pass
+5. **Validate**: Ensure all tests pass and bug is actually resolved
+6. **Learn**: Document lessons learned and prevention strategies
+
+**Key Principle**: **Every bug becomes a permanent test** - this ensures issues never reoccur and tests serve as living documentation.
+
+**Reference Example**: See [BlockId_Stability_Bug_Report.md](Docs/4_Post_Mortems/BlockId_Stability_Bug_Report.md) for complete example.
 
 ### "How do I create a proper Pull Request?"
 **CRITICAL**: Always use the repository's PR template located at `.github/pull_request_template.md`

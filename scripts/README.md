@@ -46,6 +46,9 @@ python scripts/enforce_git_workflow.py --validate-branch
 
 # Check all pre-commit requirements
 python scripts/enforce_git_workflow.py --hook pre-commit
+
+# Clean up after PR merge (prevents messy git history)
+python scripts/enforce_git_workflow.py --cleanup-after-merge
 ```
 
 **What it enforces**:
@@ -54,6 +57,7 @@ python scripts/enforce_git_workflow.py --hook pre-commit
 - Checks for staged changes (prevents empty commits)
 - Warns if branch is behind main
 - Provides clear error messages with corrective actions
+- **NEW**: Cleans up after PR merges to prevent messy git history
 
 **Pre-commit Hook Setup**:
 Once setup, this automatically runs before every commit to enforce workflow requirements.

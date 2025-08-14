@@ -2,6 +2,18 @@
 
 ## Daily Development Workflow
 
+### 🚀 NEW: Start Test Monitor First!
+```bash
+# ALWAYS start test monitor at beginning of session
+.\test-watch.bat  # Auto-runs tests, stops after 30min inactivity
+
+# This gives you:
+# - Continuous test feedback in test-summary.md
+# - No manual test running needed
+# - Auto-cleanup when you're done
+# - Perfect for TDD workflow
+```
+
 ### Starting a New Feature
 
 #### 1. Pre-Development Checklist
@@ -12,6 +24,9 @@ git pull origin main
 dotnet restore
 dotnet build
 dotnet test --filter "Category=Architecture"  # Ensure architecture is clean
+
+# Start test monitor for continuous feedback
+.\test-watch.bat
 ```
 
 #### 2. Create Feature Branch
@@ -189,8 +204,17 @@ public partial class GridView : Control, IGridView, IPresenterContainer<GridPres
 
 ### Pre-Commit Checklist
 
+#### 🚀 Automated Test Validation
+```bash
+# Run test monitor for final check
+python scripts/test_monitor.py
+
+# Check test-summary.md for results
+# All tests should show PASSED
+```
+
 #### Code Quality
-- [ ] All tests pass
+- [ ] All tests pass (check test-summary.md)
 - [ ] No compiler warnings
 - [ ] Code formatted (dotnet format)
 - [ ] TODOs addressed or ticketed
@@ -217,7 +241,12 @@ public partial class GridView : Control, IGridView, IPresenterContainer<GridPres
 dotnet build                           # Debug build
 dotnet build -c Release               # Release build
 
-# Test
+# Test - NEW AUTOMATED APPROACH
+.\test-watch.bat                      # Start continuous test monitor
+python scripts/test_monitor.py        # Single test run with output files
+python scripts/test_monitor.py -c -i 3 # Fast feedback (3 second interval)
+
+# Test - Manual commands
 dotnet test                            # All tests
 dotnet test --filter "Category=Unit"   # Unit tests only
 dotnet test --filter "Category=Architecture"  # Architecture tests

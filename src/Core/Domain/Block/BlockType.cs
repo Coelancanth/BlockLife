@@ -10,7 +10,7 @@ namespace BlockLife.Core.Domain.Block
         /// Basic block type used for testing and initial placement.
         /// </summary>
         Basic = 0,
-        
+
         /// <summary>
         /// Represents work, career, and professional development.
         /// Core building block for productivity and achievement.

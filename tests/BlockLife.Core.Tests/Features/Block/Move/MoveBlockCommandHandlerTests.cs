@@ -34,7 +34,7 @@ namespace BlockLife.Core.Tests.Features.Block.Move
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger>();
             _gridStateService = new GridStateService(5, 5);
-            
+
             // This will fail until we implement MoveBlockCommandHandler
             _handler = new MoveBlockCommandHandler(
                 _gridStateService,
@@ -74,12 +74,12 @@ namespace BlockLife.Core.Tests.Features.Block.Move
 
             // Assert - Result
             result.IsSucc.Should().BeTrue();
-            
+
             // Assert - Block moved in grid state
             var movedBlock = _gridStateService.GetBlockAt(new Vector2Int(3, 3));
             movedBlock.IsSome.Should().BeTrue();
             movedBlock.Match(Some: b => b.Id.Should().Be(TestGuids.BlockA), None: () => { });
-            
+
             // Assert - Original position is empty
             var originalPosition = _gridStateService.GetBlockAt(new Vector2Int(1, 1));
             originalPosition.IsNone.Should().BeTrue();

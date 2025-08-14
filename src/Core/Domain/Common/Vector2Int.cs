@@ -18,7 +18,7 @@ namespace BlockLife.Core.Domain.Common
         /// <summary>
         /// Calculates the Manhattan distance between two positions.
         /// </summary>
-        public int ManhattanDistanceTo(Vector2Int other) => 
+        public int ManhattanDistanceTo(Vector2Int other) =>
             Math.Abs(X - other.X) + Math.Abs(Y - other.Y);
 
         /// <summary>

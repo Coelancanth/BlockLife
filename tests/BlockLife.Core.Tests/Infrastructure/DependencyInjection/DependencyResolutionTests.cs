@@ -30,11 +30,11 @@ public class DependencyResolutionTests
         // Arrange - Test new LogSettings-based API
         var mockLogSettings = CreateMockLogSettings();
         var serviceProvider = GameStrapper.Initialize(mockLogSettings);
-        
+
         ValidateAllServicesResolvable(serviceProvider, "New LogSettings API");
     }
 
-    [Fact] 
+    [Fact]
     public void LEGACY_API_All_Registered_Services_Should_Be_Resolvable()
     {
         // Arrange - Test legacy LoggingLevelSwitch API
@@ -43,7 +43,7 @@ public class DependencyResolutionTests
         var mockSink = new Mock<ILogEventSink>();
 
         var serviceProvider = GameStrapper.Initialize(masterSwitch, categorySwitches, mockSink.Object, null);
-        
+
         ValidateAllServicesResolvable(serviceProvider, "Legacy LoggingLevelSwitch API");
     }
 
@@ -69,7 +69,7 @@ public class DependencyResolutionTests
             typeof(BlockLife.Core.Features.Block.Placement.Rules.IPositionIsEmptyRule),
             typeof(BlockLife.Core.Features.Block.Placement.Rules.IBlockExistsRule)
         };
-        
+
         serviceTypesToTest.Should().NotBeEmpty($"service interface list should contain testable services for {apiType}");
 
         // Act & Assert - Comprehensive resolution validation  
@@ -116,13 +116,13 @@ public class DependencyResolutionTests
         public Dictionary<string, LogEventLevel> GetCategoryLogLevels()
         {
             var result = new Dictionary<string, LogEventLevel>();
-            
+
             // Simple verbose flags instead of complex arrays
             if (VerboseCommands)
                 result["Commands"] = LogEventLevel.Debug;
             if (VerboseQueries)
                 result["Queries"] = LogEventLevel.Debug;
-                
+
             return result;
         }
     }

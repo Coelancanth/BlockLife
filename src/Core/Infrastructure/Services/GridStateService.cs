@@ -41,7 +41,7 @@ namespace BlockLife.Core.Infrastructure.Services
             if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height), "Height must be positive");
             if (width > MaxGridWidth) throw new ArgumentOutOfRangeException(nameof(width), $"Width cannot exceed {MaxGridWidth}");
             if (height > MaxGridHeight) throw new ArgumentOutOfRangeException(nameof(height), $"Height cannot exceed {MaxGridHeight}");
-            
+
             _gridDimensions = new Vector2Int(width, height);
             _logger = logger;
         }
@@ -148,7 +148,7 @@ namespace BlockLife.Core.Infrastructure.Services
             _blocksById.TryGetValue(blockId, out var block) ? Option<Domain.Block.Block>.Some(block) : Option<Domain.Block.Block>.None;
 
         public bool IsPositionEmpty(Vector2Int position) => !_blocksByPosition.ContainsKey(position);
-        
+
         public bool IsPositionOccupied(Vector2Int position) => _blocksByPosition.ContainsKey(position);
 
         public bool IsValidPosition(Vector2Int position) =>
@@ -189,27 +189,27 @@ namespace BlockLife.Core.Infrastructure.Services
 
         // IBlockRepository async methods implementation
         // Consolidates state management to eliminate dual-repository race conditions
-        
+
         public Task<Option<Domain.Block.Block>> GetByIdAsync(Guid id) =>
             Task.FromResult(GetBlockById(id));
-        
+
         public Task<Option<Domain.Block.Block>> GetAtPositionAsync(Vector2Int position) =>
             Task.FromResult(GetBlockAt(position));
-        
+
         public Task<IReadOnlyList<Domain.Block.Block>> GetAllAsync() =>
             Task.FromResult(GetAllBlocks().ToList() as IReadOnlyList<Domain.Block.Block>);
-        
+
         public Task<IReadOnlyList<Domain.Block.Block>> GetInRegionAsync(Vector2Int topLeft, Vector2Int bottomRight)
         {
             var blocksInRegion = _blocksById.Values
-                .Where(block => 
+                .Where(block =>
                     block.Position.X >= topLeft.X && block.Position.X <= bottomRight.X &&
                     block.Position.Y >= topLeft.Y && block.Position.Y <= bottomRight.Y)
                 .ToList();
-            
+
             return Task.FromResult(blocksInRegion as IReadOnlyList<Domain.Block.Block>);
         }
-        
+
         public Task<Fin<Unit>> AddAsync(Domain.Block.Block block)
         {
             _logger?.LogDebug("Adding block {BlockId} at position {Position}", block.Id, block.Position);
@@ -218,28 +218,28 @@ namespace BlockLife.Core.Infrastructure.Services
                 _logger?.LogDebug("Successfully added block {BlockId}", block.Id);
             return Task.FromResult(result);
         }
-        
+
         public Task<Fin<Unit>> UpdateAsync(Domain.Block.Block block)
         {
             _logger?.LogDebug("Updating block {BlockId}", block.Id);
-            
+
             if (!_blocksById.TryGetValue(block.Id, out var existingBlock))
                 return Task.FromResult(FinFail<Unit>(Error.New("BLOCK_NOT_FOUND", "Block not found")));
-            
+
             // If position changed, validate new position and update atomically
             if (existingBlock.Position != block.Position)
             {
                 // Check new position is valid and empty
                 if (!IsValidPosition(block.Position))
                     return Task.FromResult(FinFail<Unit>(Error.New("INVALID_POSITION", $"Position {block.Position} is outside grid bounds")));
-                    
+
                 if (!IsPositionEmpty(block.Position))
                     return Task.FromResult(FinFail<Unit>(Error.New("POSITION_OCCUPIED", "New position is occupied")));
-                
+
                 // Atomic update: remove from old position, add to new
                 if (!_blocksByPosition.TryRemove(existingBlock.Position, out _))
                     return Task.FromResult(FinFail<Unit>(Error.New("CONCURRENT_MODIFICATION", "Failed to remove from old position")));
-                
+
                 if (!_blocksByPosition.TryAdd(block.Position, block))
                 {
                     // Rollback: restore old position
@@ -247,14 +247,14 @@ namespace BlockLife.Core.Infrastructure.Services
                     return Task.FromResult(FinFail<Unit>(Error.New("CONCURRENT_MODIFICATION", "Failed to add to new position")));
                 }
             }
-            
+
             // Update in ID index
             _blocksById.TryUpdate(block.Id, block, existingBlock);
-            
+
             _logger?.LogDebug("Successfully updated block {BlockId}", block.Id);
             return Task.FromResult(FinSucc(Unit.Default));
         }
-        
+
         public Task<Fin<Unit>> RemoveAsync(Guid id)
         {
             _logger?.LogDebug("Removing block {BlockId}", id);
@@ -263,7 +263,7 @@ namespace BlockLife.Core.Infrastructure.Services
                 _logger?.LogDebug("Successfully removed block {BlockId}", id);
             return Task.FromResult(result);
         }
-        
+
         public Task<Fin<Unit>> RemoveAtPositionAsync(Vector2Int position)
         {
             _logger?.LogDebug("Removing block at position {Position}", position);
@@ -272,10 +272,10 @@ namespace BlockLife.Core.Infrastructure.Services
                 _logger?.LogDebug("Successfully removed block at position {Position}", position);
             return Task.FromResult(result);
         }
-        
+
         public Task<bool> ExistsAtPositionAsync(Vector2Int position) =>
             Task.FromResult(IsPositionOccupied(position));
-        
+
         public Task<bool> ExistsAsync(Guid id) =>
             Task.FromResult(_blocksById.ContainsKey(id));
     }

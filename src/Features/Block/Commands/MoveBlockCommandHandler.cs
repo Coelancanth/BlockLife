@@ -33,7 +33,7 @@ namespace BlockLife.Core.Features.Block.Commands
 
         public async Task<Fin<LanguageExt.Unit>> Handle(MoveBlockCommand request, CancellationToken cancellationToken)
         {
-            _logger.Information("Processing MoveBlockCommand for BlockId: {BlockId} to Position: {ToPosition}", 
+            _logger.Information("Processing MoveBlockCommand for BlockId: {BlockId} to Position: {ToPosition}",
                 request.BlockId, request.ToPosition);
 
             // Step 1: Get block
@@ -75,7 +75,7 @@ namespace BlockLife.Core.Features.Block.Commands
                 return FinFail<LanguageExt.Unit>(error);
             }
 
-            _logger.Information("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}", 
+            _logger.Information("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}",
                 request.BlockId, fromPosition, request.ToPosition);
 
             return FinSucc(LanguageExt.Unit.Default);
@@ -96,9 +96,9 @@ namespace BlockLife.Core.Features.Block.Commands
         }
 
         private async Task<Fin<LanguageExt.Unit>> PublishNotification(
-            System.Guid blockId, 
-            Domain.Common.Vector2Int fromPosition, 
-            Domain.Common.Vector2Int toPosition, 
+            System.Guid blockId,
+            Domain.Common.Vector2Int fromPosition,
+            Domain.Common.Vector2Int toPosition,
             CancellationToken cancellationToken)
         {
             var notification = BlockMovedNotification.Create(blockId, fromPosition, toPosition);

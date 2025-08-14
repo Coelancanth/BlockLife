@@ -41,7 +41,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockSimulation = new Mock<ISimulationManager>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<RemoveBlockCommandHandler>>();
-            
+
             _handler = new RemoveBlockCommandHandler(
                 _mockBlockExistsRule.Object,
                 _mockGridState.Object,
@@ -61,17 +61,17 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 .WithType(BlockType.Work)
                 .WithPosition(2, 2)
                 .Build();
-            
+
             var command = new RemoveBlockCommand(position);
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(block));
-            
+
             _mockGridState
                 .Setup(x => x.RemoveBlock(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -81,7 +81,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             // Assert
             result.IsSucc.Should().BeTrue();
-            
+
             _mockBlockExistsRule.Verify(x => x.Validate(position), Times.Once);
             _mockGridState.Verify(x => x.RemoveBlock(position), Times.Once);
             _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockRemovedEffect>(e =>
@@ -112,7 +112,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("NO_BLOCK_AT_POSITION")
             );
-            
+
             _mockBlockExistsRule.Verify(x => x.Validate(position), Times.Once);
             _mockGridState.Verify(x => x.RemoveBlock(It.IsAny<Vector2Int>()), Times.Never);
             _mockSimulation.Verify(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()), Times.Never);
@@ -128,14 +128,14 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 .WithType(BlockType.Work)
                 .WithPosition(2, 2)
                 .Build();
-            
+
             var command = new RemoveBlockCommand(position);
             var expectedError = Error.New("REMOVAL_FAILED", "Failed to remove block");
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(block));
-            
+
             _mockGridState
                 .Setup(x => x.RemoveBlock(position))
                 .Returns(FinFail<Unit>(expectedError));
@@ -149,7 +149,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("REMOVAL_FAILED")
             );
-            
+
             _mockSimulation.Verify(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()), Times.Never);
         }
 
@@ -163,18 +163,18 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 .WithType(BlockType.Work)
                 .WithPosition(2, 2)
                 .Build();
-            
+
             var command = new RemoveBlockCommand(position);
             var expectedError = Error.New("QUEUE_EFFECT_FAILED", "Failed to queue effect");
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(position))
                 .Returns(FinSucc(block));
-            
+
             _mockGridState
                 .Setup(x => x.RemoveBlock(position))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()))
                 .Returns(FinFail<Unit>(expectedError));
@@ -205,7 +205,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockGridState
                 .Setup(x => x.RemoveBlock(It.IsAny<Vector2Int>()))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -218,16 +218,16 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                     .WithType(blockType)
                     .WithPosition(position.X, position.Y)
                     .Build();
-                
+
                 _mockBlockExistsRule
                     .Setup(x => x.Validate(position))
                     .Returns(FinSucc(block));
-                
+
                 var command = new RemoveBlockCommand(position);
                 var result = await _handler.Handle(command, CancellationToken.None);
-                
+
                 result.IsSucc.Should().BeTrue();
-                
+
                 _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockRemovedEffect>(e =>
                     e.BlockId == blockId &&
                     e.Position == position &&
@@ -256,7 +256,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
             _mockSimulation = new Mock<ISimulationManager>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger<RemoveBlockByIdCommandHandler>>();
-            
+
             _handler = new RemoveBlockByIdCommandHandler(
                 _mockBlockExistsRule.Object,
                 _mockGridState.Object,
@@ -276,17 +276,17 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 .WithType(BlockType.Work)
                 .WithPosition(2, 2)
                 .Build();
-            
+
             var command = new RemoveBlockByIdCommand(blockId);
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(blockId))
                 .Returns(FinSucc(block));
-            
+
             _mockGridState
                 .Setup(x => x.RemoveBlock(blockId))
                 .Returns(FinSucc(Unit.Default));
-            
+
             _mockSimulation
                 .Setup(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()))
                 .Returns(FinSucc(Unit.Default));
@@ -296,7 +296,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             // Assert
             result.IsSucc.Should().BeTrue();
-            
+
             _mockBlockExistsRule.Verify(x => x.Validate(blockId), Times.Once);
             _mockGridState.Verify(x => x.RemoveBlock(blockId), Times.Once);
             _mockSimulation.Verify(x => x.QueueEffect(It.Is<BlockRemovedEffect>(e =>
@@ -327,7 +327,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
                 Succ: _ => { },
                 Fail: error => error.Message.Should().Contain("BLOCK_NOT_FOUND")
             );
-            
+
             _mockBlockExistsRule.Verify(x => x.Validate(blockId), Times.Once);
             _mockGridState.Verify(x => x.RemoveBlock(It.IsAny<Guid>()), Times.Never);
             _mockSimulation.Verify(x => x.QueueEffect(It.IsAny<BlockRemovedEffect>()), Times.Never);

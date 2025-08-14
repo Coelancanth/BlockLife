@@ -54,10 +54,10 @@ namespace BlockLife.Core.Domain.Block
         /// Creates a copy of this block with a new position.
         /// Updates the LastModifiedAt timestamp.
         /// </summary>
-        public Block MoveTo(Vector2Int newPosition) => this with 
-        { 
-            Position = newPosition, 
-            LastModifiedAt = DateTime.UtcNow 
+        public Block MoveTo(Vector2Int newPosition) => this with
+        {
+            Position = newPosition,
+            LastModifiedAt = DateTime.UtcNow
         };
 
         /// <summary>

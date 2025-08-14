@@ -37,16 +37,36 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     
     public Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type)
     {
+        // FIXED: Handle duplicate notifications gracefully
+        // If block already exists at this exact position with same ID, it's a duplicate notification
         if (_blockNodes.ContainsKey(blockId))
         {
-            GD.PrintErr($"Block {blockId} already exists");
+            // Check if it's at the same position - if so, just ignore the duplicate
+            if (_blockNodes.TryGetValue(blockId, out var existingNode))
+            {
+                var existingPos = WorldToGridPosition(existingNode.Position);
+                if (existingPos == position)
+                {
+                    // Same block, same position - just a duplicate notification, ignore it
+                    return Task.CompletedTask;
+                }
+            }
+            
+            // Different position or corrupted state - this is an actual error
+            GD.PrintErr($"ERROR: Block {blockId} already exists but at different position!");
             return Task.CompletedTask;
         }
         
         // For now, create a simple colored rectangle as a block
         var blockNode = CreateBlockNode(position, type);
         
-        BlockContainer?.AddChild(blockNode);
+        if (BlockContainer == null)
+        {
+            GD.PrintErr($"ERROR: BlockContainer is null! Cannot add block visual.");
+            return Task.CompletedTask;
+        }
+        
+        BlockContainer.AddChild(blockNode);
         _blockNodes[blockId] = blockNode;
         
         // Animate appearance
@@ -284,5 +304,28 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             _feedbackNode.QueueFree();
             _feedbackNode = null;
         }
+    }
+    
+    /// <summary>
+    /// Clears all visual blocks and resets internal state.
+    /// Used for testing cleanup.
+    /// </summary>
+    public void ClearAllBlocks()
+    {
+        // Remove all visual block nodes
+        foreach (var blockNode in _blockNodes.Values)
+        {
+            if (IsInstanceValid(blockNode))
+            {
+                blockNode.QueueFree();
+            }
+        }
+        
+        // Clear the tracking dictionary
+        _blockNodes.Clear();
+        
+        // Hide any preview or feedback
+        HidePlacementPreviewInternal();
+        HideFeedback();
     }
 }
