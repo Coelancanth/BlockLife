@@ -42,18 +42,19 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
         _logger.LogDebug("Handling RemoveBlockCommand for position {Position}", request.Position);
 
         var result = await (
-            from block in _blockExistsRule.Validate(request.Position)
+            from existingBlock in _blockExistsRule.Validate(request.Position)
             from removed in RemoveBlockFromGrid(request.Position)
-            from effectQueued in QueueEffect(block)
-            select block
+            from effectQueued in QueueEffect(existingBlock)
+            select existingBlock
         ).AsTask();
 
-        return await result.Match(
+        // Flatten nested async operations to prevent deadlocks
+        return await result.Match<Task<Fin<Unit>>>(
             Succ: async block =>
             {
                 var processResult = await ProcessQueuedEffects();
 
-                return await processResult.Match(
+                return await processResult.Match<Task<Fin<Unit>>>(
                     Succ: async _ =>
                     {
                         // Create and publish notification after successful effect processing  
@@ -66,7 +67,7 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
 
                         var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block removed notification");
 
-                        return publishResult.Match(
+                        return publishResult.Match<Fin<Unit>>(
                             Succ: _ =>
                             {
                                 _logger.LogDebug("RemoveBlockCommand completed successfully for position {Position}", request.Position);
@@ -143,18 +144,19 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
         _logger.LogDebug("Handling RemoveBlockByIdCommand for block {BlockId}", request.BlockId);
 
         var result = await (
-            from block in _blockExistsRule.Validate(request.BlockId)
+            from existingBlock in _blockExistsRule.Validate(request.BlockId)
             from removed in RemoveBlockFromGrid(request.BlockId)
-            from effectQueued in QueueEffect(block)
-            select block
+            from effectQueued in QueueEffect(existingBlock)
+            select existingBlock
         ).AsTask();
 
-        return await result.Match(
+        // Flatten nested async operations to prevent deadlocks
+        return await result.Match<Task<Fin<Unit>>>(
             Succ: async block =>
             {
                 var processResult = await ProcessQueuedEffectsForId();
 
-                return await processResult.Match(
+                return await processResult.Match<Task<Fin<Unit>>>(
                     Succ: async _ =>
                     {
                         // Create and publish notification after successful effect processing  
@@ -167,7 +169,7 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
 
                         var publishResult = await _mediator.Publish(notification, cancellationToken).ToFin("NOTIFICATION_PUBLISH_FAILED", "Failed to publish block removed notification");
 
-                        return publishResult.Match(
+                        return publishResult.Match<Fin<Unit>>(
                             Succ: _ =>
                             {
                                 _logger.LogDebug("RemoveBlockByIdCommand completed successfully for block {BlockId}", request.BlockId);

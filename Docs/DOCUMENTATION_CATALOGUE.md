@@ -166,7 +166,7 @@ addons\gdUnit4\runtest.cmd
 ```
 
 ## 📊 Current Statistics
-- **Total Tests**: 80 (as of 2025-08-14)
+- **Total Tests**: 84 (as of 2025-08-14)
 - **Architecture Tests**: 0
 - **Unit Tests**: 0
 - **Property Tests**: 0 (0 validations)

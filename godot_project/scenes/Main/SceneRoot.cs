@@ -29,6 +29,7 @@ namespace BlockLife.Godot.Scenes;
 /// </summary>
 public partial class SceneRoot : Node
 {
+    private static readonly object _initLock = new();
     public static SceneRoot? Instance { get; private set; }
     public IPresenterFactory? PresenterFactory { get; private set; }
     public ILogger? Logger { get; private set; } // Expose logger for Views
@@ -42,14 +43,17 @@ public partial class SceneRoot : Node
 
     public override void _EnterTree()
     {
-        // --- 1. Enforce Singleton Pattern (CRITICAL for DI container safety) ---
-        if (Instance != null) 
+        // --- 1. Enforce Singleton Pattern with thread-safe mutex protection ---
+        lock (_initLock)
         {
-            GD.PrintErr("FATAL: A second SceneRoot was instantiated. Destroying self to prevent multiple DI containers.");
-            QueueFree(); 
-            return; 
+            if (Instance != null) 
+            {
+                GD.PrintErr("FATAL: A second SceneRoot was instantiated. Destroying self to prevent multiple DI containers.");
+                QueueFree(); 
+                return; 
+            }
+            Instance = this;
         }
-        Instance = this;
     }
 
     public override void _Ready()

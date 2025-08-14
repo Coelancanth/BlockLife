@@ -49,24 +49,17 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             select block
         ).AsTask();
 
-        return await result.Match(
+        // Flatten nested async operations to prevent deadlocks
+        return await result.Match<Task<Fin<Unit>>>(
             Succ: async block =>
             {
                 // Process queued effects which will publish the notification
                 // The SimulationManager.ProcessBlockPlacedEffect publishes BlockPlacedNotification
                 var processResult = await ProcessQueuedEffects();
 
-                return await processResult.Match(
-                    Succ: _ =>
-                    {
-                        // Trace: PlaceBlockCommand completed successfully for position {Position}
-                        return Task.FromResult(FinSucc(Unit.Default));
-                    },
-                    Fail: error =>
-                    {
-                        // Trace: PlaceBlockCommand effect processing failed - logged as Warning above
-                        return Task.FromResult(FinFail<Unit>(error));
-                    }
+                return processResult.Match<Fin<Unit>>(
+                    Succ: _ => FinSucc(Unit.Default),
+                    Fail: error => FinFail<Unit>(error)
                 );
             },
             Fail: error =>

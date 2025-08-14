@@ -116,19 +116,38 @@ namespace BlockLife.Core.Infrastructure.Services
             // Create updated block
             var updatedBlock = block.MoveTo(toPosition);
 
-            // Perform atomic update
+            // Perform atomic update with proper rollback verification
             if (!_blocksByPosition.TryRemove(fromPosition, out _))
                 return Error.New("Failed to remove block from source position");
 
             if (!_blocksByPosition.TryAdd(toPosition, updatedBlock))
             {
-                // Rollback - put block back at original position
-                _blocksByPosition.TryAdd(fromPosition, block);
+                // Critical: Rollback MUST succeed or we have data corruption
+                if (!_blocksByPosition.TryAdd(fromPosition, block))
+                {
+                    // Fatal error - block is now in limbo state
+                    _logger?.LogCritical("CRITICAL: Rollback failed during block move. Block {BlockId} is in undefined state!", block.Id);
+                    throw new InvalidOperationException($"Critical: Rollback failed for block {block.Id} during move operation. Data integrity compromised.");
+                }
                 return Error.New("Failed to place block at target position");
             }
 
-            // Update ID index
-            _blocksById.TryUpdate(block.Id, updatedBlock, block);
+            // Update ID index with verification
+            if (!_blocksById.TryUpdate(block.Id, updatedBlock, block))
+            {
+                // Critical: ID index out of sync with position index
+                // Attempt to restore consistency
+                if (!_blocksByPosition.TryRemove(toPosition, out _))
+                {
+                    _logger?.LogCritical("CRITICAL: Failed to restore consistency after ID index update failure!");
+                }
+                if (!_blocksByPosition.TryAdd(fromPosition, block))
+                {
+                    _logger?.LogCritical("CRITICAL: Complete rollback failure! Block {BlockId} state corrupted!", block.Id);
+                    throw new InvalidOperationException($"Critical: State corruption for block {block.Id}");
+                }
+                return Error.New("Failed to update block ID index");
+            }
 
             return updatedBlock;
         }
@@ -166,12 +185,15 @@ namespace BlockLife.Core.Infrastructure.Services
             if (!includeOccupied)
                 return new List<Domain.Block.Block>().AsReadOnly();
 
-            // Optimized: Single LINQ query instead of N+1 dictionary lookups
-            // Uses the concurrent dictionary's thread-safe enumeration
-            var adjacentBlocks = _blocksByPosition
-                .Where(kvp => adjacentPositions.Contains(kvp.Key))
-                .Select(kvp => kvp.Value)
-                .ToList();
+            // Optimized: Direct dictionary lookups O(4) instead of O(n*m) enumeration
+            var adjacentBlocks = new List<Domain.Block.Block>(4); // Pre-size for max 4 orthogonal neighbors
+            foreach (var adjacentPos in adjacentPositions)
+            {
+                if (_blocksByPosition.TryGetValue(adjacentPos, out var block))
+                {
+                    adjacentBlocks.Add(block);
+                }
+            }
 
             return adjacentBlocks.AsReadOnly();
         }

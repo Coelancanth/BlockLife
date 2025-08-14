@@ -4,6 +4,7 @@ using LanguageExt;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static LanguageExt.Prelude;
@@ -15,7 +16,7 @@ public class SimulationManager : ISimulationManager
 {
     private readonly IMediator _mediator;
     private readonly ILogger<SimulationManager> _logger;
-    private readonly Queue<object> _effectQueue = new();
+    private readonly ConcurrentQueue<object> _effectQueue = new();
 
     public SimulationManager(IMediator mediator, ILogger<SimulationManager> logger)
     {
@@ -40,9 +41,8 @@ public class SimulationManager : ISimulationManager
 
     public async Task ProcessQueuedEffectsAsync()
     {
-        while (_effectQueue.Count > 0)
+        while (_effectQueue.TryDequeue(out var effect))
         {
-            var effect = _effectQueue.Dequeue();
 
             try
             {
@@ -73,7 +73,7 @@ public class SimulationManager : ISimulationManager
         _logger.LogDebug("Published notification of type {NotificationType}", typeof(TNotification).Name);
     }
 
-    public bool HasPendingEffects => _effectQueue.Count > 0;
+    public bool HasPendingEffects => !_effectQueue.IsEmpty;
     public int PendingEffectCount => _effectQueue.Count;
 
     private async Task ProcessBlockPlacedEffect(BlockPlacedEffect effect)
