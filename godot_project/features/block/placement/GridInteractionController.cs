@@ -41,8 +41,6 @@ public partial class GridInteractionController : Control, IGridInteractionView
     
     public override void _GuiInput(InputEvent @event)
     {
-        GD.Print($"[TRACE] GridInteractionController._GuiInput called with event type: {@event.GetType().Name}");
-        
         if (!IsInputEnabled) 
         {
             GD.Print($"[TRACE] Input is disabled, ignoring event");
