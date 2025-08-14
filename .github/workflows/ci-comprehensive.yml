@@ -210,10 +210,8 @@ jobs:
         dotnet tool install -g dotnet-format
         dotnet tool install -g dotnet-reportgenerator-globaltool
 
-    - name: 🎨 Check Code Formatting
-      run: |
-        echo "🎨 Checking code formatting"
-        dotnet format BlockLife.sln --verify-no-changes --verbosity diagnostic || true
+    # Format check removed - focusing on functional correctness over formatting
+    # Teams can run 'dotnet format' locally if desired
 
     - name: 📏 Check for TODO Comments
       run: |

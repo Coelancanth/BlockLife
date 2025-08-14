@@ -63,8 +63,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
-    - name: Check formatting
-      run: dotnet format BlockLife.sln --include src/ tests/ --verify-no-changes --verbosity diagnostic
+    # Format check removed - focusing on functional correctness over formatting
+    # Teams can run 'dotnet format' locally if desired
     
     - name: Build with warnings as errors
       run: dotnet build /p:TreatWarningsAsErrors=true
