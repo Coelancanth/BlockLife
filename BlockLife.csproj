@@ -32,4 +32,9 @@
     <EmbeddedResource Remove="tests\**" />
     <None Remove="tests\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="addons\**" />
+    <EmbeddedResource Remove="addons\**" />
+    <None Remove="addons\**" />
+  </ItemGroup>
 </Project>

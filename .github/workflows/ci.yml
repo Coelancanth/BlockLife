@@ -64,7 +64,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
     - name: Check formatting
-      run: dotnet format --verify-no-changes --verbosity diagnostic
+      run: dotnet format BlockLife.sln --include src/ tests/ --verify-no-changes --verbosity diagnostic
     
     - name: Build with warnings as errors
       run: dotnet build /p:TreatWarningsAsErrors=true

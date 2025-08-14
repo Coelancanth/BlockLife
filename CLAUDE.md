@@ -130,9 +130,13 @@ dotnet test tests/BlockLife.Core.Tests.csproj && python scripts/collect_test_met
 ### 🚨 Git Workflow Enforcement  
 ```bash
 # Setup automatic Git workflow enforcement (HIGHLY RECOMMENDED)
-python scripts/enforce_git_workflow.py --setup-hooks
+python scripts/setup_git_hooks.py
 
-# This prevents working on main branch and validates branch naming
+# This automatically creates git hooks that:
+# - Prevent working on main branch
+# - Enforce code formatting standards
+# - Run architecture fitness tests
+# - Validate unit tests before commits/pushes
 ```
 
 ### 🔄 Documentation Synchronization
