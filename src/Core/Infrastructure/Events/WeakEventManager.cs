@@ -37,9 +37,9 @@ public class WeakEventManager<TEventArgs> where TEventArgs : class
         {
             var handlerId = _nextHandlerId++;
             _handlers.TryAdd(handlerId, new WeakReference(handler));
-            
+
             _logger?.LogDebug("Subscribed handler {HandlerId} to event {EventName}", handlerId, _eventName);
-            
+
             return new SubscriptionToken(this, handlerId);
         }
     }
@@ -76,7 +76,7 @@ public class WeakEventManager<TEventArgs> where TEventArgs : class
         if (aliveHandlers.Count > 0)
         {
             _logger?.LogDebug("Invoking {Count} handlers for event {EventName}", aliveHandlers.Count, _eventName);
-            
+
             // Execute all handlers concurrently for better performance
             var tasks = aliveHandlers.Select(handler => InvokeHandlerSafely(handler, args));
             await Task.WhenAll(tasks);

@@ -20,15 +20,15 @@ public class BlockPlacementNotificationBridge :
     private readonly ILogger<BlockPlacementNotificationBridge> _logger;
 
     // Thread-safe weak event managers that prevent memory leaks
-    private static readonly WeakEventManager<BlockPlacedNotification> _blockPlacedManager = 
+    private static readonly WeakEventManager<BlockPlacedNotification> _blockPlacedManager =
         new("BlockPlaced");
-    private static readonly WeakEventManager<BlockRemovedNotification> _blockRemovedManager = 
+    private static readonly WeakEventManager<BlockRemovedNotification> _blockRemovedManager =
         new("BlockRemoved");
 
     // Legacy static events for backward compatibility (deprecated)
     [Obsolete("Use SubscribeToBlockPlaced instead for thread-safe weak event subscription")]
     public static event Func<BlockPlacedNotification, Task>? BlockPlacedEvent;
-    
+
     [Obsolete("Use SubscribeToBlockRemoved instead for thread-safe weak event subscription")]
     public static event Func<BlockRemovedNotification, Task>? BlockRemovedEvent;
 
@@ -66,7 +66,7 @@ public class BlockPlacementNotificationBridge :
     /// </summary>
     public static int GetBlockPlacedSubscriberCount()
     {
-        return _blockPlacedManager.GetSubscriberCount() + 
+        return _blockPlacedManager.GetSubscriberCount() +
                (BlockPlacedEvent?.GetInvocationList().Length ?? 0);
     }
 
@@ -93,7 +93,7 @@ public class BlockPlacementNotificationBridge :
 
         // Invoke weak event manager (thread-safe)
         await _blockPlacedManager.InvokeAsync(notification);
-        
+
         // Invoke legacy static event for backward compatibility
         if (BlockPlacedEvent != null)
         {
@@ -113,7 +113,7 @@ public class BlockPlacementNotificationBridge :
 
         // Invoke weak event manager (thread-safe)
         await _blockRemovedManager.InvokeAsync(notification);
-        
+
         // Invoke legacy static event for backward compatibility
         if (BlockRemovedEvent != null)
         {

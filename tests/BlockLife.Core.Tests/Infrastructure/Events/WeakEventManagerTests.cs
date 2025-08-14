@@ -55,7 +55,7 @@ public class WeakEventManagerTests : IDisposable
 
         // Assert
         Assert.Equal(3, count);
-        
+
         sub1.Dispose();
         sub2.Dispose();
         sub3.Dispose();
@@ -86,7 +86,7 @@ public class WeakEventManagerTests : IDisposable
     {
         // Arrange
         WeakReference? weakRef = null;
-        
+
         // Create subscription in a separate method to ensure it goes out of scope
         void CreateTemporarySubscription()
         {
@@ -97,7 +97,7 @@ public class WeakEventManagerTests : IDisposable
         }
 
         CreateTemporarySubscription();
-        
+
         // Act
         GC.Collect();
         GC.WaitForPendingFinalizers();
@@ -105,7 +105,7 @@ public class WeakEventManagerTests : IDisposable
 
         // Assert
         Assert.False(weakRef!.IsAlive, "Handler should have been garbage collected");
-        
+
         // Invoking should not throw even with dead handlers
         await _manager.InvokeAsync(new TestEventArgs { Message = "Test" });
     }
@@ -165,16 +165,16 @@ public class WeakEventManagerTests : IDisposable
     {
         // Arrange & Act
         Assert.Equal(0, _manager.GetSubscriberCount());
-        
+
         var sub1 = _manager.Subscribe(async _ => await Task.CompletedTask);
         Assert.Equal(1, _manager.GetSubscriberCount());
-        
+
         var sub2 = _manager.Subscribe(async _ => await Task.CompletedTask);
         Assert.Equal(2, _manager.GetSubscriberCount());
-        
+
         sub1.Dispose();
         Assert.Equal(1, _manager.GetSubscriberCount());
-        
+
         sub2.Dispose();
         Assert.Equal(0, _manager.GetSubscriberCount());
     }
@@ -185,19 +185,19 @@ public class WeakEventManagerTests : IDisposable
         // Arrange
         var handler1Called = false;
         var handler3Called = false;
-        
+
         var sub1 = _manager.Subscribe(async _ =>
         {
             handler1Called = true;
             await Task.CompletedTask;
         });
-        
+
         var sub2 = _manager.Subscribe(async _ =>
         {
             await Task.CompletedTask;
             throw new InvalidOperationException("Test exception");
         });
-        
+
         var sub3 = _manager.Subscribe(async _ =>
         {
             handler3Called = true;
@@ -210,7 +210,7 @@ public class WeakEventManagerTests : IDisposable
         // Assert
         Assert.True(handler1Called);
         Assert.True(handler3Called);
-        
+
         sub1.Dispose();
         sub2.Dispose();
         sub3.Dispose();
@@ -223,7 +223,7 @@ public class WeakEventManagerTests : IDisposable
         _manager.Subscribe(async _ => await Task.CompletedTask);
         _manager.Subscribe(async _ => await Task.CompletedTask);
         _manager.Subscribe(async _ => await Task.CompletedTask);
-        
+
         Assert.Equal(3, _manager.GetSubscriberCount());
 
         // Act
