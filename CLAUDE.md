@@ -10,6 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
+## ⚠️ CRITICAL: Agent Orchestration
+**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md) - Contains MANDATORY trigger patterns for Dynamic PO Pattern
+
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
 - **Dynamic Tracker**: Single file tracking all work in real-time
@@ -557,9 +560,16 @@ When triggering any agent, use the standard pattern shown above to have them rea
 
 ## 🤖 AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
 
-**Complete orchestration guide**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md)
+### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE FIRST
+**YOU MUST READ THIS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md)
 
-### Quick Reference
+**CRITICAL**: The orchestration guide contains ESSENTIAL trigger patterns, detection logic, and announcement requirements. You CANNOT properly trigger agents without reading it. The guide defines:
+- WHEN to trigger each agent (detection patterns)
+- HOW to announce triggers (transparency mode)
+- WHAT context to provide
+- WHY each trigger matters
+
+### Quick Reference (AFTER reading the guide)
 After EVERY development action, automatically trigger the appropriate agent to maintain the Backlog as the Single Source of Truth.
 
 **🔴 EARLY STAGE MODE**: Currently announcing all agent triggers for validation:
