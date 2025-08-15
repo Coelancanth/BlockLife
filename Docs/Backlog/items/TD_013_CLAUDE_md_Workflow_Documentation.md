@@ -8,7 +8,7 @@
 **Completed**: 2025-08-15
 
 ## 📝 Description
-Update CLAUDE.md with comprehensive workflow documentation for the Dynamic PO Pattern, including agent orchestration, trigger points, and integration patterns.
+Update CLAUDE.md with comprehensive workflow documentation for the Automatic Orchestration Pattern, including agent orchestration, trigger points, and integration patterns.
 
 ## 🎯 Why This Matters
 - **Problem**: CLAUDE.md had scattered agent instructions without clear workflow
@@ -29,7 +29,7 @@ Update CLAUDE.md with comprehensive workflow documentation for the Dynamic PO Pa
 ```markdown
 ## Multi-Agent Workflow Orchestration
 
-### Dynamic PO Pattern
+### Automatic Orchestration Pattern
 When user performs ANY development action:
 1. Main agent detects action type
 2. Invokes appropriate subagent with workflow

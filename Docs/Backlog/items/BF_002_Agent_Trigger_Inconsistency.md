@@ -5,11 +5,11 @@
 **Priority**: P1
 **Size**: S (2-3 hours)
 **Sprint**: Next Session
-**Found In**: 2025-08-15 / Dynamic PO Pattern Implementation
+**Found In**: 2025-08-15 / Automatic Orchestration Pattern Implementation
 **Reported By**: Product Owner / User Experience
 
 ## Problem Description
-The Dynamic PO Pattern implementation has inconsistent agent trigger behavior. Specifically, when users express feature requests (e.g., "I want to add"), the Product Owner agent doesn't activate reliably. This breaks the intended workflow where the PO should be automatically triggered after every agent action to maintain the Backlog as the Single Source of Truth.
+The Automatic Orchestration Pattern implementation has inconsistent agent trigger behavior. Specifically, when users express feature requests (e.g., "I want to add"), the Product Owner agent doesn't activate reliably. This breaks the intended workflow where the PO should be automatically triggered after every agent action to maintain the Backlog as the Single Source of Truth.
 
 **Impact**: Core workflow functionality partially broken - users may not receive proper product evaluation and prioritization when making feature requests.
 
@@ -21,7 +21,7 @@ The Dynamic PO Pattern implementation has inconsistent agent trigger behavior. S
 5. Consequence: Backlog state becomes out of sync, breaking Single Source of Truth principle
 
 ## Root Cause Analysis
-- Component affected: Agent trigger detection system in Dynamic PO Pattern
+- Component affected: Agent trigger detection system in Automatic Orchestration Pattern
 - Cause: Trigger point detection logic may have gaps in natural language pattern matching
 - Why it wasn't caught: TD_012 implementation focused on architecture but may need refinement in trigger detection
 - Related issue: TD_015 (PO Trigger Points Documentation) only 20% complete - may lack comprehensive trigger patterns
@@ -33,12 +33,12 @@ The Dynamic PO Pattern implementation has inconsistent agent trigger behavior. S
   - Change: Enhance pattern matching for feature request language
   - Change: Add more comprehensive trigger phrases
   - Change: Implement fallback detection mechanisms
-- File: Dynamic PO Pattern integration points
+- File: Automatic Orchestration Pattern integration points
   - Change: Add logging to debug trigger detection failures
   - Change: Implement trigger validation and retry logic
 
 ### Affected Components
-- Dynamic PO Pattern implementation (TD_012)
+- Automatic Orchestration Pattern implementation (TD_012)
 - Agent architecture integration (TD_014)
 - Workflow trigger points (TD_015)
 
@@ -96,7 +96,7 @@ public void Should_TriggerProductOwnerAgent_When_UserRequestsFeature()
 - [ ] Logging provides debugging visibility
 
 ## References
-- Original implementation: TD_012 (Dynamic PO Pattern Implementation)
+- Original implementation: TD_012 (Automatic Orchestration Pattern Implementation)
 - Related work: TD_015 (PO Trigger Points Documentation)
 - Architecture: TD_014 (Agent Architecture Pattern Update)
 - User workflow: CLAUDE.md agent integration documentation

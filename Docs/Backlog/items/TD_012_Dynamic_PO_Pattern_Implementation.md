@@ -1,4 +1,4 @@
-# TD_012: Dynamic PO Pattern Implementation
+# TD_012: Automatic Orchestration Pattern Implementation
 
 ## 📋 Overview
 **Type**: Tech Debt (Workflow Refactoring)
@@ -8,7 +8,7 @@
 **Started**: 2025-08-15
 
 ## 📝 Description
-Implement the Dynamic Product Owner Pattern where the PO agent is automatically triggered after EVERY development action to maintain the Backlog as the Single Source of Truth.
+Implement the Automatic Orchestration Pattern where agents are automatically triggered after EVERY development action to maintain the Backlog as the Single Source of Truth.
 
 ## 🎯 Why This Matters
 - **Problem**: Manual backlog updates lead to drift and inconsistency

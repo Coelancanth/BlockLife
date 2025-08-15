@@ -19,9 +19,16 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(powershell:*)",
       "Bash(python:*)",
-      "Bash(gh pr merge:*)"
+      "Bash(gh pr merge:*)",
+      "Bash(cp:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "powershell -ExecutionPolicy Bypass -File ~\\.claude\\claude-status.ps1",
+    "padding": 0
   }
 }
