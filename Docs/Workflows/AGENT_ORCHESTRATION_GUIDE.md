@@ -119,6 +119,16 @@ This helps validate the pattern is working correctly.
 | **Dependency Question** | "depends on", "requires", "blocked by" | "🤖 TECH LEAD: Analyzing dependencies" | Sequence work items |
 | **Technical Risk** | "might break", "could fail", "risky" | "🤖 TECH LEAD: Assessing technical risk" | Risk assessment and mitigation |
 
+### VSA Refactoring Triggers (Visible)
+
+| Trigger Condition | Detection Pattern | Announcement | Action |
+|-------------------|-------------------|--------------|--------|
+| **Duplication Found** | "duplicate code", "same code in", "repeated across" | "♻️ VSA REFACTOR: Analyzing duplication" | Identify extraction candidates |
+| **Extract Request** | "extract shared", "pull out common", "create service" | "♻️ VSA REFACTOR: Extracting shared code" | Extract to proper layer |
+| **VSA Cleanup** | "clean architecture", "fix boundaries" | "♻️ VSA REFACTOR: Cleaning slice boundaries" | Validate and fix VSA structure |
+| **Pattern Creation** | "standardize pattern", "create base class" | "♻️ VSA REFACTOR: Creating pattern" | Extract common patterns |
+| **3+ Slice Rule** | Code appears in 3+ feature slices | "♻️ VSA REFACTOR: Auto-detected duplication" | Suggest extraction |
+
 ### Backlog Maintainer Triggers (Silent but Announced)
 
 | Trigger Condition | Detection Pattern | Announcement | Action |
@@ -391,6 +401,34 @@ response = Task(
 )
 
 print("📐 TECH LEAD OUTPUT:")
+print(synthesize(response))
+```
+
+### VSA Refactoring Pattern
+```python
+# VSA structure maintenance and duplication extraction
+print("♻️ VSA REFACTOR: [Refactoring action needed]")
+print("   → Context: [What's being refactored]")
+
+response = Task(
+    description="VSA refactoring action",
+    prompt=f"""
+    Read workflow: Docs/Workflows/vsa-refactoring-workflow.md
+    Execute: {action}
+    
+    Current slice structure: src/Features/
+    Duplication detected: {duplication_details}
+    Extraction target: {extraction_location}
+    
+    Analyze duplication systematically.
+    Preserve slice boundaries and independence.
+    Extract only infrastructure and domain primitives.
+    Validate VSA integrity after extraction.
+    """,
+    subagent_type="vsa-refactoring"
+)
+
+print("♻️ VSA REFACTORING RESULTS:")
 print(synthesize(response))
 ```
 
