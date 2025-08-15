@@ -74,11 +74,11 @@
 
 | Priority | ID | Type | Title | Status | Progress | Agent Support | Session | Complexity | Notes |
 |----------|-----|------|-------|--------|----------|--------------|---------|------------|-------|
-| **P0** | TD_012 | Tech Debt | 🔄 Dynamic PO Pattern Implementation | 🟡 Active | 80% | tech-lead-advisor | NOW | 4-6h | Core structure complete, integration pending |
+| **P0** | TD_012 | Tech Debt | ✅ Dynamic PO Pattern Implementation | ✅ Complete | 100% | tech-lead-advisor | COMPLETED | 4-6h | Core structure complete, integration finalized |
 | **P0** | TD_013 | Tech Debt | 🔄 CLAUDE.md Workflow Documentation | ✅ Complete | 100% | docs-updater | NOW | 2-3h | Agent workflows fully documented |
 | **P1** | TD_014 | Tech Debt | 🔄 Agent Architecture Pattern Update | 🟡 Active | 60% | tech-lead-advisor | Current | 3-4h | Agent definitions created |
 | **P1** | TD_015 | Tech Debt | 🔄 PO Trigger Points Documentation | 🟢 Next Up | 20% | docs-updater | Next | 2h | Basic structure defined |
-| **PAUSED** | [VS_000.3](items/VS_000_Move_Block_Feature.md) | Feature | Move Block Phase 3 (Ghost) | ⏸️ Paused | 20% | implementation-planner | After Refactor | 2-3h | On hold during refactor |
+| **PAUSED** | [VS_000.3](items/VS_000_Move_Block_Feature.md) | Feature | Move Block Phase 3 (Ghost) | ⏸️ Paused | 35% | implementation-planner | After Refactor | 2-3h | On hold during refactor |
 | **NEXT** | [HF_002](items/HF_002_ConcurrentQueue_Thread_Safety.md) | Hotfix | ConcurrentQueue Thread Safety | 🟢 Next Up | 0% | tech-lead-advisor | Next | 1-2h | CRITICAL - Data corruption risk |
 | **NEXT** | [HF_003](items/HF_003_GridState_Rollback_Verification.md) | Hotfix | GridState Rollback Verification | 🟢 Next Up | 0% | architecture-stress-tester | Next | 1h | State consistency check |
 | **P1** | [HF_004](archive/completed/2025-Q1/HF_004_Static_Event_Memory_Leaks.md) | Hotfix | Static Event Memory Leaks | ✅ Complete | 100% | - | Done | - | Fixed with weak events |
@@ -107,6 +107,7 @@
 | **P4** | VS_008 | Feature | Particle System | 📋 Backlog | 0% | None | Future | 2 days | Visual effects |
 | **P4** | VS_009 | Feature | Save/Load System | 📋 Backlog | 0% | tech-lead-advisor | Future | 1 week | Persistence |
 | **P5** | VS_010 | Feature | Multiplayer Foundation | 📋 Backlog | 0% | tech-lead-advisor | Future | 2-3 weeks | Network base |
+| **P2** | [VS_012](items/VS_012_Ghost_Preview_Move_Block.md) | Feature | Ghost Preview Move Block | 📋 Backlog | 0% | implementation-planner | Future | 4-6h | Preview for move accuracy |
 | **P5** | VS_011 | Feature | Dotnet Templates | 📋 Backlog | 0% | None | Future | 2 days | Scaffolding |
 
 ---
