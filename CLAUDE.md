@@ -555,11 +555,101 @@ All agent-specific workflows are documented in `Docs/Workflows/`:
 
 When triggering any agent, use the standard pattern shown above to have them read their workflow file.
 
+## 🤖 AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
+
+### Core Principle
+After EVERY development action, automatically trigger the appropriate agent to maintain the Backlog as the Single Source of Truth.
+
+### Action Detection and Triggering
+
+**Feature/Bug Detection in User Messages:**
+```python
+# Detect feature requests
+if any(phrase in user_message.lower() for phrase in ["i want", "add", "feature", "it would be nice", "can we", "should have", "need"]):
+    trigger_product_owner("feature_request", context)
+
+# Detect bug reports
+if any(phrase in message.lower() for phrase in ["error", "bug", "broken", "doesn't work", "failed", "crash", "issue"]):
+    trigger_product_owner("bug_report", context)
+```
+
+**Development Action Detection:**
+```python
+# After code changes
+if tool_used in ['Write', 'Edit', 'MultiEdit'] and file_path.endswith(('.cs', '.py', '.js')):
+    trigger_backlog_maintainer("update_progress", {"event": "code_written", "item": current_item})
+
+# After tests written
+if tool_used in ['Write', 'Edit'] and 'test' in file_path.lower():
+    trigger_backlog_maintainer("update_progress", {"event": "tests_written", "item": current_item})
+
+# After tests pass
+if 'dotnet test' in bash_command and 'Passed!' in output:
+    trigger_backlog_maintainer("update_progress", {"event": "tests_passing", "item": current_item})
+```
+
+### Trigger Mapping
+
+| User Action | Agent | Action | Visibility |
+|------------|-------|--------|------------|
+| Describes feature | agile-product-owner | feature_request | Visible |
+| Reports bug | agile-product-owner | bug_report | Visible |
+| Completes work | agile-product-owner | acceptance_review | Visible |
+| Writes code | backlog-maintainer | update_progress | Silent |
+| Writes tests | backlog-maintainer | update_progress | Silent |
+| Tests pass | backlog-maintainer | update_progress | Silent |
+| Creates PR | backlog-maintainer | change_status | Silent |
+
+### Standard Invocation Pattern
+
+```python
+def trigger_product_owner(action, context):
+    """Visible Product Owner decisions"""
+    response = Task(
+        description=f"Product Owner {action}",
+        prompt=f"""
+        Read your workflow at: Docs/Workflows/product-owner-workflow.md
+        Execute action: {action}
+        
+        Context:
+        - Current priorities: {get_top_priorities()}
+        - Backlog: Docs/Backlog/Backlog.md
+        - Request: {context}
+        
+        Follow your workflow and provide decision.
+        """,
+        subagent_type="agile-product-owner"
+    )
+    # Present to user
+    show_po_decision(response)
+
+def trigger_backlog_maintainer(action, context):
+    """Silent backlog updates"""
+    Task(
+        description=f"Update backlog",
+        prompt=f"""
+        Read your workflow at: Docs/Workflows/backlog-maintainer-workflow.md
+        Execute action: {action}
+        
+        Context: {context}
+        
+        Update Docs/Backlog/Backlog.md silently.
+        Return only confirmation or errors.
+        """,
+        subagent_type="backlog-maintainer"
+    )
+    # No output to user (silent)
+```
+
 ### For General Development
 **Claude Code MUST:**
 
 **🔄 DYNAMIC PO PATTERN (MANDATORY):**
-After ANY development action (code written, tests run, bugs found, reviews completed), MUST trigger the agile-product-owner agent to update the Backlog. This maintains the Single Source of Truth automatically without manual synchronization.
+After ANY development action, automatically trigger the appropriate agent:
+- **Product Owner (Visible)**: Feature requests, bug reports, acceptance reviews, priority decisions
+- **Backlog Maintainer (Silent)**: Code changes, test results, progress updates, status changes
+
+This maintains the Backlog as the Single Source of Truth automatically without manual synchronization.
 
 **🚨 CRITICAL FIRST STEP - GIT WORKFLOW:**
 0. **NEVER work on main branch** - Always create feature branch first:
