@@ -3,6 +3,13 @@
 ## Purpose
 Define procedures for the DevOps Engineer to create CI/CD pipelines, Python automation scripts, manage deployments, and eliminate manual work through automation.
 
+## 📚 Your Documentation References
+**ALWAYS READ FIRST**: [Docs/Agent-References/devops-references.md](../Agent-References/devops-references.md)
+
+**Your Domain Documentation**: [Docs/Agent-Specific/DevOps/](../Agent-Specific/DevOps/)
+- `build-commands.md` - All build and development commands
+- `automation-guide.md` - Python automation scripts and patterns
+
 ---
 
 ## Core Workflow Actions

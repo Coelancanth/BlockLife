@@ -3,6 +3,13 @@
 ## Purpose
 Define procedures for the Architect agent to make system-wide design decisions, create ADRs, and maintain long-term architectural integrity.
 
+## 📚 Your Documentation References
+**ALWAYS READ FIRST**: [Docs/Agent-References/architect-references.md](../Agent-References/architect-references.md)
+
+**Your Domain Documentation**: [Docs/Agent-Specific/Architect/](../Agent-Specific/Architect/)
+- `core-architecture.md` - Core architectural principles and patterns  
+- `critical-patterns.md` - Critical implementation patterns
+
 ---
 
 ## Core Workflow Actions
