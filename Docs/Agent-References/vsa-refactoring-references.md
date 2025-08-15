@@ -1,4 +1,7 @@
 # VSA Refactoring Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Domain-Specific Documentation
 Location: `Docs/Agent-Specific/VSA/`
@@ -9,8 +12,14 @@ Location: `Docs/Agent-Specific/VSA/`
 
 ## Shared Documentation You Should Know
 
+### 🧠 **Living Wisdom System** (For VSA Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - VSA testing patterns and slice isolation
+- All Living Wisdom documents follow VSA organization - study their structure
+
 ### VSA Foundation
-- `Docs/Shared/Implementation-Plans/000_Vertical_Slice_Architecture_Plan.md` - Core VSA principles and patterns
+- `Docs/Shared/Architecture/Reference-Implementations/000_Vertical_Slice_Architecture_Plan.md` - Core VSA principles and patterns (archived reference)
+- `Docs/Backlog/templates/VS_Template.md` - Current VSA template with embedded planning
 - `src/Features/Block/Move/` - Gold standard VSA implementation to reference
 - `tests/BlockLife.Core.Tests/Features/Block/Move/` - Proper slice testing patterns
 

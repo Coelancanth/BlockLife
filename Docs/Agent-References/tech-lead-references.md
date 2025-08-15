@@ -1,17 +1,27 @@
 # Tech Lead Agent - Documentation References
 
-## Your Domain-Specific Documentation
-Location: `Docs/Agent-Specific/TechLead/`
+## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
 
-- `feature-development.md` - Feature development planning and TDD+VSA workflow
-- `implementation-planning.md` - Breaking down VS items into technical phases
-- `technical-decisions.md` - Technical decision-making frameworks
+## Your Domain-Specific Documentation
+
+### 🧠 **Your Living Wisdom Documents** (YOU OWN THESE)
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - ⭐ **YOUR RESPONSIBILITY** ⭐
+  - Comprehensive production readiness validation procedures
+  - Update this with new production lessons and critical checkpoints
+  - MANDATORY gate before any production deployment
+
+### Implementation Planning Workspace
+**Note**: With embedded implementation planning, Tech Leads now work directly within VS items rather than maintaining separate planning documents.
+- **Your workspace**: `Docs/Backlog/items/VS_*.md` - Add "🏗️ Implementation Plan" sections to VS items
+- **Your template**: `Docs/Backlog/templates/VS_Template.md` - Standard embedded planning structure
 
 ## Shared Documentation You Should Know
 
-### Implementation Planning
-- `Docs/Shared/Implementation-Plans/` - All feature implementation plans
-- Focus on: 000_VSA, 001_F1_Block_Placement, 002_Move_Block (reference implementations)
+### Implementation Planning (Embedded Approach)
+- `Docs/Backlog/templates/VS_Template.md` - Embedded implementation planning template
+- `Docs/Shared/Architecture/Reference-Implementations/` - Archived reference implementations
+- Focus on: Move Block feature in VS items as the gold standard pattern
 
 ### Architecture for Planning Context
 - `Docs/Shared/Architecture/Architecture_Guide.md` - Core architectural principles for planning
@@ -30,12 +40,13 @@ Location: `Docs/Agent-Specific/TechLead/`
 
 ## Planning Framework
 
-When creating implementation plans:
+When adding implementation planning to VS items:
 1. **Architecture First**: Review existing patterns and constraints
-2. **Phase Breakdown**: TDD cycle phases (RED → GREEN → REFACTOR)
+2. **Phase Breakdown**: TDD cycle phases (RED → GREEN → REFACTOR) 
 3. **Risk Assessment**: Check post-mortems for similar features
 4. **Dependency Analysis**: Identify integration points and dependencies
 5. **Testing Strategy**: Plan for 4-pillar testing approach
+6. **Embed in VS Item**: Add detailed planning directly in the VS item's "🏗️ Implementation Plan" section
 
 ## Technical Decision Criteria
 
@@ -45,24 +56,35 @@ When creating implementation plans:
 - **Performance**: Any performance implications?
 - **Risk**: What could go wrong and how do we mitigate?
 
-## VS Item Management
+## VS Item Management (Embedded Planning)
 
-### VS Item Structure
+### VS Item Structure with Embedded Planning
 ```
 VS_XXX_FeatureName.md
-├── Business Context
-├── Technical Approach  
-├── Implementation Phases
-├── Testing Strategy
-├── Risk Assessment
-└── Acceptance Criteria
+├── 📋 User Story (Product Owner)
+├── 🏗️ Implementation Plan (Tech Lead) ← YOUR DOMAIN
+│   ├── Technical Approach
+│   ├── Implementation Phases  
+│   ├── Technical Decisions
+│   └── Risk Assessment
+├── 🎯 Vertical Slice Components
+├── ✅ Acceptance Criteria
+├── 🧪 Test Strategy
+└── ✅ Definition of Done
 ```
 
-### Phase Planning Pattern
-- **Phase 1**: Core domain logic + architecture tests
-- **Phase 2**: Presenter integration + unit tests  
-- **Phase 3**: View implementation + integration tests
-- **Phase 4**: Performance validation + stress tests
+### Your Implementation Planning Responsibilities
+- **Technical Approach**: Architecture patterns and integration points
+- **Phase Breakdown**: Detailed implementation phases with TDD workflow
+- **Technical Decisions**: Data flow, error handling, state management patterns  
+- **Risk Assessment**: Technical risks, dependencies, complexity factors
+- **Mitigation Strategies**: How to reduce identified risks
+
+### Standard Phase Planning Pattern
+- **Phase 1**: Core domain logic (TDD RED → GREEN)
+- **Phase 2**: Notification & integration layer
+- **Phase 3**: Presentation layer implementation
+- **Phase 4**: Validation, stress testing, and polish
 
 ## Integration Points
 - **Product Owner**: User story refinement and acceptance criteria

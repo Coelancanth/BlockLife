@@ -26,6 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **If you did work and haven't triggered an agent, STOP and trigger NOW.**
 
 **MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+**VERIFY**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Ensure triggers happen
 **FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
@@ -69,7 +70,7 @@ BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer
 
 ### Agent-Driven Development
 
-All agents are automatically triggered by Claude Code following the Dynamic PO Pattern. Each agent has:
+All agents are automatically triggered by Claude Code following the Automatic Orchestration Pattern. Each agent has:
 - **Workflow File**: Detailed procedures in `Docs/Workflows/Agent-Workflows/[agent]-workflow.md`
 - **Agent References**: Quick documentation guide in `Docs/Agent-References/[agent]-references.md`
 - **Domain Documentation**: Agent-owned content in `Docs/Agent-Specific/[Agent]/`
@@ -124,7 +125,7 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 - **Animation System**: [003_Animation_System_Implementation_Plan.md](Docs/Shared/Implementation-Plans/003_Animation_System_Implementation_Plan.md) - Animation queuing and state
 - **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](Docs/Shared/Implementation-Plans/005_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
-## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
+## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING (Automatic Orchestration Pattern)
 
 ### ⚠️ STOP! YOU MUST TRIGGER AGENTS AUTOMATICALLY
 
@@ -147,7 +148,7 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 ### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
 **FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
 
-**Why Dynamic PO?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
+**Why Automatic Orchestration?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
 
 ### Quick Reference Pattern
 After EVERY development action:
@@ -211,7 +212,7 @@ The agent ecosystem integrates seamlessly with the established development workf
 4. **Quality Gates**: Full test suite validation with agent-assisted quality assurance
 5. **Pull Requests**: Use established PR template - managed by Git Expert agent
 
-The Dynamic PO Pattern ensures all development actions automatically update the Backlog as the Single Source of Truth.
+The Automatic Orchestration Pattern ensures all development actions automatically update the Backlog as the Single Source of Truth.
 
 ## 🔍 Common Development Questions - Agent Delegation
 

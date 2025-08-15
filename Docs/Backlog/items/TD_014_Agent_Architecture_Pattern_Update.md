@@ -8,7 +8,7 @@
 **Started**: 2025-08-15
 
 ## 📝 Description
-Update agent architecture patterns to support the Dynamic PO Pattern, including agent definitions, communication patterns, and the orchestrator-interpreter model.
+Update agent architecture patterns to support the Automatic Orchestration Pattern, including agent definitions, communication patterns, and the orchestrator-interpreter model.
 
 ## 🎯 Why This Matters
 - **Problem**: Agent communication was a "black box" to users

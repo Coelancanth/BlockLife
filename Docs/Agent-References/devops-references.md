@@ -1,5 +1,8 @@
 # DevOps Engineer Agent - Documentation References
 
+## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 ## Your Domain-Specific Documentation
 Location: `Docs/Agent-Specific/DevOps/`
 
@@ -8,6 +11,11 @@ Location: `Docs/Agent-Specific/DevOps/`
 - `ci-cd-patterns.md` - GitHub Actions and pipeline configurations
 
 ## Shared Documentation You Should Know
+
+### 🧠 **Living Wisdom System** (For Automation Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_001_Stress_Testing_Playbook.md](../Living-Wisdom/Playbooks/LWP_001_Stress_Testing_Playbook.md)** - Automation opportunities for stress testing
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - Deployment validation automation needs
 
 ### Current Automation
 - `scripts/` folder - All existing Python automation scripts

@@ -1,5 +1,8 @@
 # Product Owner Agent - Documentation References
 
+## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 ## Your Role in Strategic Product Decisions
 
 You are the strategic decision-maker who evaluates feature requests, prioritizes work, creates user stories with acceptance criteria, and maintains the Backlog as the Single Source of Truth.
@@ -14,13 +17,19 @@ You are the strategic decision-maker who evaluates feature requests, prioritizes
 
 ## Shared Documentation You Should Know
 
+### 🧠 **Living Wisdom System** (For Strategic Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents for understanding implementation complexity
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - **CRITICAL** for understanding "Definition of Done"
+- All Living Wisdom documents inform your prioritization decisions and acceptance criteria
+
 ### Product Strategy Context
 - `Docs/Backlog/` - All work items, templates, and archived items
 - VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix) work item types
 - `Docs/Shared/Guides/Work_Item_Naming_Conventions.md` - Proper item naming
 
 ### Implementation Context for Prioritization
-- `Docs/Shared/Implementation-Plans/` - Understanding technical complexity
+- `Docs/Shared/Architecture/Reference-Implementations/` - Archived implementation plans for complexity reference
+- `Docs/Backlog/items/VS_*.md` - Current VS items with embedded implementation planning
 - `src/Features/Block/Move/` - Reference implementation to understand effort
 - `Docs/Shared/Architecture/Architecture_Guide.md` - Technical constraints affecting decisions
 

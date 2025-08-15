@@ -1,4 +1,7 @@
 # Git Expert Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Domain-Specific Documentation
 Location: `Docs/Agent-Specific/Git/`
@@ -8,6 +11,11 @@ Location: `Docs/Agent-Specific/Git/`
 - `advanced-operations.md` - Complex Git operations and recovery
 
 ## Shared Documentation You Should Know
+
+### 🧠 **Living Wisdom System** (For Git Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - Pre-merge validation requirements
+- All Living Wisdom documents are managed in Git - understand their evolution patterns
 
 ### Git Workflow Integration
 - `Docs/Shared/Guides/Git_Workflow_Guide.md` - Complete Git workflow

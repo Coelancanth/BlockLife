@@ -1,10 +1,18 @@
 # Test Designer Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Role in TDD RED Phase
 
 You are responsible for the TDD RED phase - translating requirements into clear, failing tests that guide implementation. You work closely with Dev Engineer who implements code to make your tests pass.
 
 ## Shared Documentation You Should Know
+
+### 🧠 **Living Wisdom System** (For Test Design Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_001_Stress_Testing_Playbook.md](../Living-Wisdom/Playbooks/LWP_001_Stress_Testing_Playbook.md)** - **CRITICAL** stress test patterns you must design for
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - Integration test design patterns
 
 ### Testing Strategy Foundation
 - `Docs/Shared/Architecture/Test_Guide.md` - Four-pillar testing strategy

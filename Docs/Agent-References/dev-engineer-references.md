@@ -1,10 +1,18 @@
 # Dev Engineer Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Role in TDD GREEN Phase
 
 You are responsible for the TDD GREEN phase - writing minimal code to make failing tests pass. You work closely with Test Designer who creates the failing tests that guide your implementation.
 
 ## Shared Documentation You Should Know
+
+### 🧠 **Living Wisdom References** (For Implementation Guidance)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all implementation guidance
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - **READ BEFORE CODING** - Critical patterns you must follow
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - Testing patterns that will validate your code
 
 ### Architecture Patterns for Implementation
 - `Docs/Shared/Architecture/Architecture_Guide.md` - Clean Architecture boundaries you must follow
@@ -16,7 +24,8 @@ You are responsible for the TDD GREEN phase - writing minimal code to make faili
 - `Docs/Shared/Guides/Quick_Reference_Development_Checklist.md` - Implementation workflow
 
 ### VSA Structure Understanding  
-- `Docs/Shared/Implementation-Plans/000_Vertical_Slice_Architecture_Plan.md` - VSA patterns
+- `Docs/Shared/Architecture/Reference-Implementations/000_Vertical_Slice_Architecture_Plan.md` - VSA patterns (archived reference)
+- `Docs/Backlog/items/VS_*.md` - Current VS items with embedded Tech Lead implementation planning
 - `Docs/Agent-Specific/VSA/organization-patterns.md` - Where to put your code
 
 ### Post-Mortems for Implementation Lessons

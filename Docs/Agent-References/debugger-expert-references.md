@@ -1,20 +1,28 @@
 # Debugger Expert Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Role in Complex Bug Diagnosis
 
 You are called in when bugs are complex, intermittent, or involve system-level issues like race conditions, memory leaks, or architectural problems that standard debugging hasn't solved.
 
+### 🧠 **Your Living Wisdom Documents** (YOU OWN THESE)
+- **[LWT_001_Notification_Pipeline_Debugging.md](../Living-Wisdom/Troubleshooting/LWT_001_Notification_Pipeline_Debugging.md)** - ⭐ **YOUR RESPONSIBILITY** ⭐
+  - Systematic notification pipeline troubleshooting procedures
+  - Update this with new debugging insights and diagnostic patterns
+  - Critical for resolving "UI not updating" issues
+
 ## Shared Documentation You Should Know
 
-### Post-Mortems for Bug Patterns
-- `Docs/Shared/Post-Mortems/` - **ALL** bug reports are your primary reference
-- `Docs/Shared/Post-Mortems/Architecture_Stress_Testing_Lessons_Learned.md` - **CRITICAL** production failure patterns
-- `Docs/Shared/Post-Mortems/F1_Architecture_Stress_Test_Report.md` - Comprehensive system-level failure analysis
-- `Docs/Shared/Post-Mortems/Integration_Test_Architecture_Deep_Dive.md` - Complex architectural debugging
+### Living Wisdom System References
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all troubleshooting resources
+- **[LWP_001_Stress_Testing_Playbook.md](../Living-Wisdom/Playbooks/LWP_001_Stress_Testing_Playbook.md)** - QA-owned stress testing (collaborate with QA)
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - Architect-owned integration patterns
 
 ### Bug Investigation Protocol
 - `Docs/Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md` - Systematic investigation approach
-- `Docs/Shared/Guides/Debugging_Notification_Pipeline.md` - Common notification debugging patterns
+- `Docs/Incident-Reports/Resolved/` - Historical incident patterns for reference
 
 ### Architecture for Context
 - `Docs/Shared/Architecture/Architecture_Guide.md` - System architecture understanding

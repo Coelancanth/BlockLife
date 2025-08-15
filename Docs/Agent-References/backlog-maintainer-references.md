@@ -1,4 +1,7 @@
 # Backlog Maintainer Agent - Documentation References
+n## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
+
 
 ## Your Role in Silent Progress Tracking
 
@@ -14,6 +17,11 @@ You are the silent agent who automatically updates the Backlog as the Single Sou
 
 ## Shared Documentation You Should Know
 
+### 🧠 **Living Wisdom System** (For Understanding Progress Context)
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - Understand production readiness criteria for progress tracking
+- All Living Wisdom documents help you understand what "progress" means for different work types
+
 ### Backlog Structure and Templates
 - `Docs/Backlog/items/` - Active work item details
 - `Docs/Backlog/templates/` - Templates for creating new items
@@ -26,7 +34,8 @@ You are the silent agent who automatically updates the Backlog as the Single Sou
 
 ### Architecture Context for Understanding Progress
 - `src/Features/Block/Move/` - Reference implementation to understand typical effort
-- `Docs/Shared/Implementation-Plans/` - Understanding feature phases and complexity
+- `Docs/Shared/Architecture/Reference-Implementations/` - Archived implementation plans for understanding complexity
+- `Docs/Backlog/items/VS_*.md` - Current VS items with embedded implementation planning for effort estimation
 
 ## Automatic Update Triggers
 

@@ -1,11 +1,20 @@
 # QA Engineer Agent - Documentation References
 
-## Your Domain-Specific Documentation
-Location: `Docs/Agent-Specific/QA/`
+## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
 
+## Your Domain-Specific Documentation
+
+### 🧠 **Your Living Wisdom Documents** (YOU OWN THESE)
+- **[LWP_001_Stress_Testing_Playbook.md](../Living-Wisdom/Playbooks/LWP_001_Stress_Testing_Playbook.md)** - ⭐ **YOUR RESPONSIBILITY** ⭐
+  - Comprehensive stress testing procedures born from F1 experience
+  - Update this with new stress testing insights and patterns
+  - Critical for preventing production failures
+
+### Agent-Specific Reference Documents  
+Location: `Docs/Agent-Specific/QA/`
 - `integration-testing.md` - GdUnit4 patterns and integration test architecture
 - `testing-strategy.md` - Four-pillar testing strategy implementation
-- `stress-testing.md` - Concurrent operation testing patterns
 
 ## Shared Documentation You Should Know
 
@@ -19,10 +28,14 @@ Location: `Docs/Agent-Specific/QA/`
 - `tests/BlockLife.Core.Tests/` - Unit test examples and patterns
 - SimpleSceneTest pattern for integration tests
 
-### Post-Mortems for Testing Insights
-- `Docs/Shared/Post-Mortems/Architecture_Stress_Testing_Lessons_Learned.md` - F1 stress test critical lessons
-- `Docs/Shared/Post-Mortems/Integration_Test_Architecture_Deep_Dive.md` - GdUnit4 architecture patterns
-- `Docs/Shared/Post-Mortems/F1_Architecture_Stress_Test_Report.md` - Comprehensive stress test results
+### Living Wisdom System References
+- **[Living-Wisdom Index](../Living-Wisdom/index.md)** - Master index to all living documents
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - Architect-owned integration patterns (collaborate with Architect)
+- **[LWP_004_Production_Readiness_Checklist.md](../Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)** - Tech Lead-owned readiness validation
+
+### Historical Incident Reports
+- `Docs/Incident-Reports/Resolved/` - Archived bug reports for reference
+- Original stress test insights now integrated into your LWP_001 playbook
 
 ### Bug Investigation Patterns
 - `Docs/Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md` - Bug-to-test protocol

@@ -1,8 +1,18 @@
 # Architect Agent - Documentation References
 
-## Your Domain-Specific Documentation
-Location: `Docs/Agent-Specific/Architect/`
+## 🗺️ Quick Navigation
+**START HERE**: [DOCUMENTATION_CATALOGUE.md](../DOCUMENTATION_CATALOGUE.md) - Complete index of all BlockLife documentation
 
+## Your Domain-Specific Documentation
+
+### 🧠 **Your Living Wisdom Documents** (YOU OWN THESE)
+- **[LWP_002_Integration_Testing_Patterns.md](../Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md)** - ⭐ **YOUR RESPONSIBILITY** ⭐
+  - Integration testing architecture patterns and GdUnit4 best practices
+  - Update this with new integration testing insights and solutions
+  - Critical for preventing phantom test failures
+
+### Agent-Specific Reference Documents
+Location: `Docs/Agent-Specific/Architect/`
 - `core-architecture.md` - Core architectural principles and patterns
 - `critical-patterns.md` - Critical implementation patterns (DI, CQRS, MVP)
 
@@ -23,7 +33,8 @@ Location: `Docs/Agent-Specific/Architect/`
 - `Docs/Shared/Post-Mortems/Integration_Test_Architecture_Deep_Dive.md` - Testing architecture lessons
 
 ### Implementation References
-- `Docs/Shared/Implementation-Plans/00_Vertical_Slice_Architecture_Plan.md` - VSA foundations
+- `Docs/Shared/Architecture/Reference-Implementations/000_Vertical_Slice_Architecture_Plan.md` - VSA foundations (archived reference)
+- `Docs/Backlog/templates/VS_Template.md` - Current VSA template with embedded implementation planning
 - `src/Features/Block/Move/` - Gold standard implementation example
 
 ## Quick Architecture Validation Checklist

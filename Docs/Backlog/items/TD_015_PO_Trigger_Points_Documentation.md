@@ -83,4 +83,4 @@ Document all trigger points where the Product Owner or Backlog Maintainer agents
 - [ ] Quick reference available
 
 ## 📝 Notes
-This documentation is critical for making the Dynamic PO Pattern actually work. Without clear triggers, the pattern remains theoretical rather than practical.
+This documentation is critical for making the Automatic Orchestration Pattern actually work. Without clear triggers, the pattern remains theoretical rather than practical.

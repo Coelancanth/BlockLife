@@ -16,7 +16,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 ### Reference Implementation
 - **Move Block Feature** (`src/Features/Block/Move/`) - GOLD STANDARD implementation
 - **Tests**: `tests/BlockLife.Core.Tests/Features/Block/Move/`
-- **Documentation**: [002_Move_Block_Feature_Implementation_Plan.md](Shared/Implementation-Plans/002_Move_Block_Feature_Implementation_Plan.md)
+- **Documentation**: [002_Move_Block_Feature_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/002_Move_Block_Feature_Implementation_Plan.md)
 
 ## 🤖 Agent Ecosystem Documentation
 
@@ -59,18 +59,25 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - [Test_Guide.md](Shared/Architecture/Test_Guide.md) - Four-pillar testing strategy
 - [Property_Based_Testing_Guide.md](Shared/Architecture/Property_Based_Testing_Guide.md) - FsCheck patterns
 
-### 📝 Implementation Plans ([Shared/Implementation-Plans/](Shared/Implementation-Plans/))
-- [000_Vertical_Slice_Architecture_Plan.md](Shared/Implementation-Plans/000_Vertical_Slice_Architecture_Plan.md) - VSA patterns and approach
-- [001_F1_Block_Placement_Implementation_Plan.md](Shared/Implementation-Plans/001_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Gold Standard)
-- [002_Move_Block_Feature_Implementation_Plan.md](Shared/Implementation-Plans/002_Move_Block_Feature_Implementation_Plan.md) - ✅ **Phase 1 COMPLETED** (Reference Implementation)
-- [003_Animation_System_Implementation_Plan.md](Shared/Implementation-Plans/003_Animation_System_Implementation_Plan.md) - ❌ **NOT STARTED**
-- [005_Dotnet_New_Templates_Implementation_Plan.md](Shared/Implementation-Plans/005_Dotnet_New_Templates_Implementation_Plan.md) - ❌ **NOT STARTED**
+### 📝 Implementation Planning (Embedded in VS Items)
+- **Current Approach**: Implementation planning embedded within VS items via `Docs/Backlog/templates/VS_Template.md`
+- **Tech Lead Section**: Each VS item contains "🏗️ Implementation Plan" section owned by Tech Lead
+- **Archived Reference**: [Shared/Architecture/Reference-Implementations/](Shared/Architecture/Reference-Implementations/) - Historical implementation plans for reference
+  - [000_Vertical_Slice_Architecture_Plan.md](Shared/Architecture/Reference-Implementations/000_Vertical_Slice_Architecture_Plan.md) - VSA patterns (archived)
+  - [001_F1_Block_Placement_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/001_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Reference)
+  - [002_Move_Block_Feature_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/002_Move_Block_Feature_Implementation_Plan.md) - ✅ **COMPLETED** (Reference)
+- **Live Planning**: Check `Docs/Backlog/items/VS_*.md` files for current embedded implementation plans
 
-### 🔍 Post-Mortems and Bug Reports ([Shared/Post-Mortems/](Shared/Post-Mortems/))
+### 🧠 Living Wisdom System ([Living-Wisdom/](Living-Wisdom/)) - **STRATEGIC KNOWLEDGE BASE** ⭐⭐⭐⭐⭐
+- [index.md](Living-Wisdom/index.md) - **MASTER INDEX** to all living documents
+- **Playbooks**: [LWP_001_Stress_Testing_Playbook.md](Living-Wisdom/Playbooks/LWP_001_Stress_Testing_Playbook.md), [LWP_002_Integration_Testing_Patterns.md](Living-Wisdom/Playbooks/LWP_002_Integration_Testing_Patterns.md), [LWP_004_Production_Readiness_Checklist.md](Living-Wisdom/Playbooks/LWP_004_Production_Readiness_Checklist.md)
+- **Troubleshooting**: [LWT_001_Notification_Pipeline_Debugging.md](Living-Wisdom/Troubleshooting/LWT_001_Notification_Pipeline_Debugging.md)
+
+### 🔍 Incident Reports ([Incident-Reports/](Incident-Reports/))
 - [TEMPLATE_Bug_Report_And_Fix.md](Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md) - Bug-to-test protocol template ⭐⭐⭐
-- [Architecture_Stress_Testing_Lessons_Learned.md](Shared/Post-Mortems/Architecture_Stress_Testing_Lessons_Learned.md) - **CRITICAL** production lessons ⭐⭐⭐⭐⭐
-- [Integration_Test_Architecture_Deep_Dive.md](Shared/Post-Mortems/Integration_Test_Architecture_Deep_Dive.md) - GdUnit4 architecture investigation ⭐⭐⭐
-- [F1_Architecture_Stress_Test_Report.md](Shared/Post-Mortems/F1_Architecture_Stress_Test_Report.md) - Comprehensive stress test results
+- **Active/**: Current incidents under investigation
+- **Resolved/**: Completed incident reports (archived by date)
+- **Archive/**: Historical incidents (organized by quarter)
 
 ### 🏛️ Architecture Decision Records ([Shared/ADRs/](Shared/ADRs/))
 - [ADR_007_Enhanced_Functional_Validation_Pattern.md](Shared/ADRs/ADR_007_Enhanced_Functional_Validation_Pattern.md) - Functional validation patterns
@@ -90,8 +97,9 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 1. Check [Backlog.md](Backlog/Backlog.md) for current priorities
 2. Read [Comprehensive_Development_Workflow.md](Shared/Guides/Comprehensive_Development_Workflow.md)
 3. Create feature branch using [Git_Workflow_Guide.md](Shared/Guides/Git_Workflow_Guide.md)
-4. Follow Move Block reference implementation pattern
-5. Use [Quick_Reference_Development_Checklist.md](Shared/Guides/Quick_Reference_Development_Checklist.md)
+4. Use embedded planning: Tech Lead adds "🏗️ Implementation Plan" section to VS item
+5. Follow Move Block reference implementation pattern
+6. Use [Quick_Reference_Development_Checklist.md](Shared/Guides/Quick_Reference_Development_Checklist.md)
 
 ### For Bug Fixes
 1. Use [TEMPLATE_Bug_Report_And_Fix.md](Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md)
