@@ -80,11 +80,11 @@ Claude Code implements a **Single Orchestrator Pattern** where one main agent ma
 | Agent Name | Description (Triggers Selection & Proactivity) | Purpose | Model |
 |------------|-----------------------------------------------|---------|-------|
 | `general-purpose` | "Complex research and multi-step tasks" | Open-ended exploration | - |
-| `agile-product-owner` | "Use PROACTIVELY when user describes features or bugs are found. Break down features into user stories, create acceptance criteria, prioritize backlog items, translate business requirements into technical implementation plans" | Feature planning & backlog maintenance | opus |
+| `product-owner` | "Use PROACTIVELY when user describes features or bugs are found. Break down features into user stories, create acceptance criteria, prioritize backlog items, translate business requirements into technical implementation plans" | Feature planning & backlog maintenance | opus |
 | `code-reviewer` | "MUST BE USED after significant code implementation. Review for architecture violations, validate patterns, check test coverage" | Code quality assurance | - |
 | `statusline-setup` | "Configure status line settings" | UI configuration | - |
 
-**Key Insight:** The `description` field is pattern-matched against user requests. When users say "break down this feature" or "create user stories", the agile-product-owner agent is automatically selected.
+**Key Insight:** The `description` field is pattern-matched against user requests. When users say "break down this feature" or "create user stories", the product-owner agent is automatically selected.
 
 **Characteristics:**
 - **Clean slate** (no CLAUDE.md, no conversation history)
@@ -275,7 +275,7 @@ def handle_feature_request(user_request):
         4. Create new story: Docs/Product_Backlog/backlog/VS_XXX_Feature.md
         5. Update README with new item
         """,
-        subagent_type="agile-product-owner"
+        subagent_type="product-owner"
     )
     
     # Step 2: Create implementation plan
@@ -345,7 +345,7 @@ CLAUDE.md must contain **file paths and locations** that the main agent uses to 
 ## Multi-Agent Workflow Orchestration
 
 ### Feature Request → Agile Product Owner
-When user requests a feature, invoke agile-product-owner with:
+When user requests a feature, invoke product-owner with:
 - Read current backlog: Docs/Product_Backlog/Backlog.md
 - Check existing items: Docs/Product_Backlog/backlog/
 - Templates location: Docs/Product_Backlog/templates/
@@ -353,7 +353,7 @@ When user requests a feature, invoke agile-product-owner with:
 - Naming pattern: VS_XXX_[Domain]_[Feature].md
 
 ### Bug Report → Agile Product Owner
-When bugs are found, invoke agile-product-owner with:
+When bugs are found, invoke product-owner with:
 - Read bug report: [specific path provided]
 - Template: Docs/Product_Backlog/templates/BF_Template.md
 - Create items in: Docs/Product_Backlog/backlog/
@@ -565,18 +565,18 @@ Claude Code automatically selects agents when task matches description.
 To override or ensure specific agent use:
 
 **Force specific agent:**
-"Use the agile-product-owner agent to..."
+"Use the product-owner agent to..."
 
 **Trigger automatic selection with keywords:**
-- "break down this feature" → agile-product-owner
+- "break down this feature" → product-owner
 - "review this code" → code-reviewer
 - "stress test this" → architecture-stress-tester
 
 ### Proactive Agent Usage
 **Main agent should proactively use agents when:**
-- Complex feature request → agile-product-owner
+- Complex feature request → product-owner
 - Code implementation complete → code-reviewer
-- Bug report received → agile-product-owner (create BF item)
+- Bug report received → product-owner (create BF item)
 - Performance concerns → architecture-stress-tester
 
 ### Agent Sequencing
@@ -757,7 +757,7 @@ Task(f"Given {result}, do Y", agent_type="helper")
 ```
 1. Main agent recognizes complex feature request
 
-2. Invokes agile-product-owner:
+2. Invokes product-owner:
    Task: "Create user stories for inventory system
    Instructions:
    - Read backlog: Docs/Product_Backlog/Backlog.md
@@ -918,7 +918,7 @@ Track these metrics for agent optimization:
 ```
 User: "Break down the inventory feature"
          ↓
-Main Agent: Matches "break down" to agile-product-owner description
+Main Agent: Matches "break down" to product-owner description
          ↓
 Main Agent: "Read backlog at Docs/Product_Backlog/Backlog.md,
             Create story at Docs/Product_Backlog/backlog/VS_XXX.md"

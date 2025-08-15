@@ -89,7 +89,7 @@ response = Task(
     Execute: {action}
     Context: {context}
     """,
-    subagent_type="agile-product-owner"
+    subagent_type="product-owner"
 )
 
 print("📊 PO DECISION:")

@@ -23,11 +23,11 @@ def after_any_action(action_performed, context):
     """
     trigger_map = {
         # Product Owner triggers (visible)
-        'feature_described': ('agile-product-owner', 'feature_request', True),
-        'bug_found': ('agile-product-owner', 'bug_report', True),
-        'work_completed': ('agile-product-owner', 'acceptance_review', True),
-        'priority_conflict': ('agile-product-owner', 'priority_decision', True),
-        'session_start': ('agile-product-owner', 'session_planning', True),
+        'feature_described': ('product-owner', 'feature_request', True),
+        'bug_found': ('product-owner', 'bug_report', True),
+        'work_completed': ('product-owner', 'acceptance_review', True),
+        'priority_conflict': ('product-owner', 'priority_decision', True),
+        'session_start': ('product-owner', 'session_planning', True),
         
         # Backlog Maintainer triggers (silent)
         'code_written': ('backlog-maintainer', 'update_progress', False),
@@ -104,7 +104,7 @@ if "i want" in user_message:
         
         Follow your workflow to evaluate and decide.
         """,
-        subagent_type="agile-product-owner"
+        subagent_type="product-owner"
     )
     
     # Present PO decision to user

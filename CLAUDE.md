@@ -584,9 +584,9 @@ After EVERY development action, automatically trigger the appropriate agent to m
 
 | Trigger | Agent | When | Visibility |
 |---------|-------|------|------------|
-| "I want to add..." | agile-product-owner | Feature request | Visible with decision |
-| "Bug/Error found" | agile-product-owner | Bug report | Visible with BF creation |
-| Tests pass | agile-product-owner | Acceptance review | Visible with approval |
+| "I want to add..." | product-owner | Feature request | Visible with decision |
+| "Bug/Error found" | product-owner | Bug report | Visible with BF creation |
+| Tests pass | product-owner | Acceptance review | Visible with approval |
 | Code edited | backlog-maintainer | After file save | Silent (+40% progress) |
 | Tests written | backlog-maintainer | After test file save | Silent (+15% progress) |
 | Tests pass | backlog-maintainer | After dotnet test | Silent (+15% progress) |
