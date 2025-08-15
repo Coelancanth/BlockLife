@@ -12,6 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## ⚠️ CRITICAL: Agent Orchestration
 **MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md) - Contains MANDATORY trigger patterns for Dynamic PO Pattern
+**FEEDBACK SYSTEM**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report missed triggers, wrong agents, or workflow failures
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)

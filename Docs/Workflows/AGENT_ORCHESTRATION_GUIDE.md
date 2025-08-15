@@ -60,6 +60,18 @@ If automatic triggering misses something, you can request:
 - **"Check backlog status"** - Force synchronization
 - **"Show PO decision"** - Get strategic input
 
+## 🐛 Feedback Commands
+
+Report orchestration issues immediately:
+
+- **"Missed trigger!"** - Should have triggered but didn't
+- **"Wrong agent!"** - Used wrong agent for task
+- **"No announcement!"** - Forgot to announce
+- **"Workflow broken!"** - Didn't follow workflow
+- **"Bug: [details]"** - Detailed issue report
+
+See [ORCHESTRATION_FEEDBACK_SYSTEM.md](ORCHESTRATION_FEEDBACK_SYSTEM.md) for complete feedback guide.
+
 ---
 
 ## 📋 Standard Invocation Patterns
