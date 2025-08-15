@@ -1,6 +1,6 @@
 ---
 name: backlog-maintainer
-description: "AUTOMATICALLY triggered after EVERY development action. Silently updates progress percentages, changes item statuses, manages file archival, maintains Backlog.md as the Single Source of Truth without interrupting development flow."
+description: "AUTOMATICALLY and PROACTIVELY triggered after EVERY development action. Silently updates progress percentages, changes item statuses, manages file archival, maintains Backlog.md as the Single Source of Truth without interrupting development flow."
 model: haiku
 color: cyan
 ---

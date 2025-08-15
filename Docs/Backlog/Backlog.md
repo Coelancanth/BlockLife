@@ -20,7 +20,7 @@
 3. Status and progress tracked here, details maintained in item files
 
 **Currently Available Files:**
-- 📁 `items/`: 15 active work items (HF, TD, VS types)
+- 📁 `items/`: 16 active work items (HF, TD, VS, BF types)
 - 📁 `archive/completed/2025-Q1/`: 1 completed item (HF_004)
 
 **Items Pending File Creation:**
@@ -76,13 +76,14 @@
 |----------|-----|------|-------|--------|----------|--------------|---------|------------|-------|
 | **P0** | TD_012 | Tech Debt | ✅ Dynamic PO Pattern Implementation | ✅ Complete | 100% | tech-lead-advisor | COMPLETED | 4-6h | Core structure complete, integration finalized |
 | **P0** | TD_013 | Tech Debt | 🔄 CLAUDE.md Workflow Documentation | ✅ Complete | 100% | docs-updater | NOW | 2-3h | Agent workflows fully documented |
-| **P1** | TD_014 | Tech Debt | 🔄 Agent Architecture Pattern Update | 🟡 Active | 60% | tech-lead-advisor | Current | 3-4h | Agent definitions created |
+| **P1** | TD_014 | Tech Debt | 🔄 Agent Architecture Pattern Update | 🟡 Active | 80% | tech-lead-advisor | Current | 3-4h | Agent definitions created, integration progress |
 | **P1** | TD_015 | Tech Debt | 🔄 PO Trigger Points Documentation | 🟢 Next Up | 20% | docs-updater | Next | 2h | Basic structure defined |
 | **PAUSED** | [VS_000.3](items/VS_000_Move_Block_Feature.md) | Feature | Move Block Phase 3 (Ghost) | ⏸️ Paused | 35% | implementation-planner | After Refactor | 2-3h | On hold during refactor |
 | **NEXT** | [HF_002](items/HF_002_ConcurrentQueue_Thread_Safety.md) | Hotfix | ConcurrentQueue Thread Safety | 🟢 Next Up | 0% | tech-lead-advisor | Next | 1-2h | CRITICAL - Data corruption risk |
 | **NEXT** | [HF_003](items/HF_003_GridState_Rollback_Verification.md) | Hotfix | GridState Rollback Verification | 🟢 Next Up | 0% | architecture-stress-tester | Next | 1h | State consistency check |
 | **P1** | [HF_004](archive/completed/2025-Q1/HF_004_Static_Event_Memory_Leaks.md) | Hotfix | Static Event Memory Leaks | ✅ Complete | 100% | - | Done | - | Fixed with weak events |
 | **P1** | [HF_005](items/HF_005_SceneRoot_Singleton_Race_Condition.md) | Hotfix | SceneRoot Singleton Race | 🟢 Next Up | 0% | code-review-expert | Next | 2h | Initialization race condition |
+| **P1** | [BF_002](items/BF_002_Agent_Trigger_Inconsistency.md) | Bug Fix | Agent Triggers Not Firing Consistently | ⏸️ Queued | 0% | tech-lead-advisor | Next | 2-3h | Dynamic PO Pattern trigger gaps |
 | **P1** | [TD_002](items/TD_002_Async_Match_Deadlock_Risk.md) | Tech Debt | Async Match Deadlock Risk | ⏸️ Queued | 0% | tech-lead-advisor | Later | 3-4h | Refactor pattern |
 | **P1** | [TD_003](items/TD_003_Concurrent_Operation_Test_Suite.md) | Tech Debt | Concurrent Operation Tests | ⏸️ Queued | 0% | None | Later | 1-2 days | Test suite creation |
 | **P1** | [TD_005](items/TD_005_Comprehensive_Stress_Test_Suite.md) | Tech Debt | Stress Test Suite | ⏸️ Queued | 0% | architecture-stress-tester | Later | 2-3 days | Load testing |
