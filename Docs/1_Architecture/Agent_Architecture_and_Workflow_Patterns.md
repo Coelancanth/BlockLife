@@ -95,6 +95,127 @@ Claude Code implements a **Single Orchestrator Pattern** where one main agent ma
 
 ## Communication Patterns
 
+### The Orchestrator-Interpreter Pattern (Critical Understanding)
+
+**IMPORTANT:** The main agent doesn't just dispatch tasks - it interprets and integrates responses. Understanding this pattern is crucial for effective agent use.
+
+#### What Actually Happens
+
+```
+User Perception:           Actual Mechanics:
+1. Request made        →   1. Main agent receives request
+2. [Black box]         →   2. Main agent invokes Task()
+3. Get answer          →   3. Subagent returns FULL response
+                          4. Main agent receives complete text
+                          5. Main agent interprets/synthesizes
+                          6. Main agent presents to user
+```
+
+#### The Interpretation Layer
+
+The main agent acts as both **orchestrator** and **interpreter**:
+
+```python
+# What happens inside the main agent
+def handle_subagent_response(raw_response):
+    # 1. Receive complete response
+    full_text = subagent.execute()  # e.g., 2000 words
+    
+    # 2. Interpret in context
+    relevant_parts = extract_relevant(full_text, user_question)
+    
+    # 3. Synthesize with conversation
+    integrated = combine_with_context(relevant_parts, conversation_history)
+    
+    # 4. Present to user
+    return formatted_response  # e.g., 200 words
+```
+
+#### Why Main Agent "Retells" Responses
+
+**Benefits of Interpretation:**
+1. **Context Integration** - Subagent output fits conversation flow
+2. **Noise Filtering** - Only relevant information passed through
+3. **Continuity** - Maintains narrative thread with user
+4. **Action Synthesis** - Combines multiple agent outputs coherently
+
+**Risks of Interpretation:**
+1. **Information Loss** - Important details might be filtered
+2. **Interpretation Bias** - Main agent's understanding colors response
+3. **Double Processing** - Inefficient token usage
+4. **Hidden Decisions** - User doesn't see what was filtered
+
+#### Making the Black Box Transparent
+
+To see what's really happening, use debug mode:
+
+```python
+# Transparent invocation pattern
+def invoke_with_visibility(agent_type, action, context):
+    print("=== SENDING TO SUBAGENT ===")
+    print(f"Agent: {agent_type}")
+    print(f"Action: {action}")
+    print(f"Context: {context}")
+    
+    response = Task(agent_type, action, context)
+    
+    print("=== RAW SUBAGENT RESPONSE ===")
+    print(response)  # FULL unfiltered response
+    
+    print("=== MAIN AGENT INTERPRETATION ===")
+    interpretation = synthesize(response)
+    print(interpretation)
+    
+    return interpretation
+```
+
+#### Example: Feature Request Processing
+
+```
+User: "Add pets to the game"
+
+MAIN AGENT SENDS:
+{
+  "agent": "product-owner",
+  "action": "evaluate_feature",
+  "context": {"idea": "pets", "priorities": ["HF_002"]}
+}
+
+SUBAGENT RETURNS (2000 words):
+- Detailed value analysis
+- Cost breakdown
+- Strategic recommendations
+- Alternative proposals
+- Priority comparison
+- Implementation phases
+- Risk assessment
+
+MAIN AGENT INTERPRETS (200 words):
+"The PO recommends deferring pets due to critical bugs.
+Focus on HF_002 first. Alternative: static pets (1-2 days)."
+
+USER SEES:
+The interpreted summary only
+```
+
+#### Controlling the Interpretation
+
+You can request different levels of transparency:
+
+```python
+# Option 1: Interpreted (default)
+"Give me the PO's recommendation"  # Get summary
+
+# Option 2: Raw response
+"Show me the PO's complete response"  # Get everything
+
+# Option 3: Both
+"Give me both raw and interpreted"  # See both layers
+
+# Option 4: Structured
+"Extract just the decision and reasoning"  # Get specific parts
+```
+
 ### Critical: File Path Orchestration
 
 **Subagents start with clean slate - the main agent MUST provide explicit file paths:**
