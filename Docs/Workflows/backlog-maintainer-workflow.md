@@ -4,7 +4,7 @@
 Silent tracker that maintains accurate backlog state without interrupting development flow.
 
 ## Core Principle
-*"Keep everything perfectly tracked while being invisible."*
+*"Keep everything perfectly tracked with minimal disruption."*
 
 ---
 
@@ -44,16 +44,16 @@ Silently update work item progress based on development events.
    if new_progress > 100: new_progress = 100
    ```
 
-4. **Update Silently**
+4. **Update and Confirm**
    ```
    - Edit Backlog.md progress column
    - Update "Last Modified" timestamp
-   - NO output to user (silent operation)
+   - Return minimal confirmation of what changed
    ```
 
 ### Outputs
-- Silent update (no user notification)
-- Exception: If item not found, minimal error
+- Minimal confirmation: "✓ TD_014: 60% → 80%"
+- Exception: If item not found, error with details
 
 ### Progress Calculation Table
 ```
@@ -309,10 +309,10 @@ Ensure backlog tracker matches actual file state.
 
 ## Operation Modes
 
-### Silent Mode (Default)
-- No output unless error
+### Minimal Mode (Default)
+- Brief confirmation of changes
 - Quick updates (<1 second)
-- Minimal file locks
+- Example: "✓ VS_000: 45% → 60%"
 
 ### Verbose Mode (Debug)
 - Output each operation
