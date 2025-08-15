@@ -90,7 +90,7 @@ class DocumentationStatusSync:
     def __init__(self, project_root: Path):
         self.project_root = project_root
         self.docs_path = project_root / "Docs"
-        self.tracker_path = self.docs_path / "0_Global_Tracker"
+        self.backlog_path = self.docs_path / "Backlog"
         
     def sync_all_documentation(self, dry_run: bool = False) -> bool:
         """
@@ -132,14 +132,14 @@ class DocumentationStatusSync:
             return False
 
     def _parse_action_items(self) -> List[ActionItem]:
-        """Parse action items from Master_Action_Items.md"""
-        action_items_file = self.tracker_path / "Master_Action_Items.md"
+        """Parse action items from current backlog structure"""
+        backlog_file = self.backlog_path / "Backlog.md"
         
-        if not action_items_file.exists():
-            logger.warning(f"❌ Action items file not found: {action_items_file}")
+        if not backlog_file.exists():
+            logger.warning(f"❌ Backlog file not found: {backlog_file}")
             return []
         
-        content = action_items_file.read_text(encoding='utf-8')
+        content = backlog_file.read_text(encoding='utf-8')
         action_items = []
         
         # Parse table rows from action items
@@ -163,37 +163,45 @@ class DocumentationStatusSync:
         return action_items
 
     def _parse_implementation_plans(self) -> List[ImplementationPlan]:
-        """Parse implementation plans from Implementation_Status_Tracker.md"""
-        tracker_file = self.tracker_path / "Implementation_Status_Tracker.md"
+        """Parse implementation plans from current backlog structure"""
+        # Implementation plans are now embedded in VS items in Backlog/items/
+        items_dir = self.backlog_path / "items"
         
-        if not tracker_file.exists():
-            logger.warning(f"❌ Implementation tracker not found: {tracker_file}")
+        if not items_dir.exists():
+            logger.warning(f"❌ Backlog items directory not found: {items_dir}")
             return []
         
-        content = tracker_file.read_text(encoding='utf-8')
         plans = []
         
-        # Parse the quick status overview table
-        table_pattern = r'\| [📖🥇🚧🎯⏳🛠️🔧🎨🐛] \| \*\*(.*?)\*\* \| \[(.*?)\]\((.*?)\) \| (.*?) \| (.*?) \| (.*?) \| (.*?) \|'
+        # Parse VS items (Vertical Slice items contain implementation plans)
+        vs_files = list(items_dir.glob("VS_*.md"))
         
-        for match in re.finditer(table_pattern, content):
-            name, file_name, file_path, status, progress, next_action, last_updated = match.groups()
-            
-            # Clean up status (remove emoji and markdown)
-            clean_status = re.sub(r'[✅📖🔄❌]|\*\*', '', status).strip()
-            
-            # Extract progress percentage
-            progress_match = re.search(r'(\d+)%', progress)
-            progress_percent = int(progress_match.group(1)) if progress_match else 0
-            
-            plans.append(ImplementationPlan(
-                name=name.strip(),
-                file_path=file_path.strip(),
-                status=clean_status,
-                progress=progress_percent,
-                next_action=next_action.strip(),
-                last_updated=last_updated.strip()
-            ))
+        for vs_file in vs_files:
+            try:
+                content = vs_file.read_text(encoding='utf-8')
+                vs_name = vs_file.stem.replace('VS_', '').replace('_', ' ')
+                
+                # Simple status extraction based on content
+                if "✅ COMPLETED" in content or "Phase 1 COMPLETED" in content:
+                    status = "COMPLETED"
+                    progress = 100
+                elif "🚧 IN PROGRESS" in content or "ACTIVE" in content:
+                    status = "IN_PROGRESS"
+                    progress = 50  # Default progress for in-progress items
+                else:
+                    status = "NOT_STARTED"
+                    progress = 0
+                
+                plans.append(ImplementationPlan(
+                    name=vs_name,
+                    file_path=str(vs_file.relative_to(self.project_root)),
+                    status=status,
+                    progress=progress,
+                    next_action="See VS item for details",
+                    last_updated=datetime.now().strftime('%Y-%m-%d')
+                ))
+            except Exception as e:
+                logger.warning(f"⚠️ Could not parse VS file {vs_file}: {e}")
         
         return plans
 
@@ -253,51 +261,24 @@ class DocumentationStatusSync:
 
     def _update_master_action_items(self, action_items: List[ActionItem], 
                                   status: DocumentationStatus):
-        """Update the master action items file with current statistics"""
-        action_items_file = self.tracker_path / "Master_Action_Items.md"
-        content = action_items_file.read_text(encoding='utf-8')
+        """Update the backlog with current statistics"""
+        backlog_file = self.backlog_path / "Backlog.md"
         
-        # Update status summary section
+        if not backlog_file.exists():
+            logger.warning(f"❌ Backlog file not found: {backlog_file}")
+            return
+            
+        # For now, just log the statistics - the new backlog structure is maintained differently
         completion_rate = (status.completed_action_items / status.total_action_items * 100) if status.total_action_items > 0 else 0
-        
-        summary_pattern = r'## 📊 Status Summary\n\n- \*\*Total Action Items\*\*: \d+\n- \*\*Completed\*\*: \d+ \(\d+%\)\n- \*\*In Progress\*\*: \d+ \(\d+%\)\n- \*\*Pending\*\*: \d+ \(\d+%\)\n\n\*Last Updated: [^*]+\*'
-        
-        pending_items = status.total_action_items - status.completed_action_items
-        
-        new_summary = f"""## 📊 Status Summary
-
-- **Total Action Items**: {status.total_action_items}
-- **Completed**: {status.completed_action_items} ({completion_rate:.0f}%)
-- **In Progress**: 0 (0%)
-- **Pending**: {pending_items} ({100-completion_rate:.0f}%)
-
-*Last Updated: {datetime.now().strftime('%Y-%m-%d')}*"""
-        
-        updated_content = re.sub(summary_pattern, new_summary, content, flags=re.MULTILINE)
-        action_items_file.write_text(updated_content, encoding='utf-8')
-        
-        logger.info(f"📝 Updated master action items: {completion_rate:.0f}% completion rate")
+        logger.info(f"📝 Backlog statistics: {completion_rate:.0f}% completion rate ({status.completed_action_items}/{status.total_action_items})")
 
     def _update_implementation_status_tracker(self, impl_plans: List[ImplementationPlan],
                                             status: DocumentationStatus):
-        """Update implementation status tracker with current metrics"""
-        tracker_file = self.tracker_path / "Implementation_Status_Tracker.md"
-        content = tracker_file.read_text(encoding='utf-8')
-        
-        # Update development velocity section
-        velocity_pattern = r'### Development Velocity\n- \*\*Completed Features\*\*: \d+ \([^)]+\)\n- \*\*In Progress\*\*: \d+ \([^)]+\)\n- \*\*Planned\*\*: \d+ additional features'
-        
+        """Log implementation status metrics"""
+        # Implementation status is now tracked in individual VS items
         planned_features = status.total_implementation_plans - status.completed_implementation_plans - status.in_progress_implementation_plans
         
-        new_velocity = f"""### Development Velocity
-- **Completed Features**: {status.completed_implementation_plans} (Reference implementations)
-- **In Progress**: {status.in_progress_implementation_plans} (Active development)
-- **Planned**: {planned_features} additional features"""
-        
-        updated_content = re.sub(velocity_pattern, new_velocity, content, flags=re.MULTILINE)
-        tracker_file.write_text(updated_content, encoding='utf-8')
-        
-        logger.info(f"📊 Updated implementation tracker: {status.completed_implementation_plans} completed, {status.in_progress_implementation_plans} in progress")
+        logger.info(f"📊 Implementation status: {status.completed_implementation_plans} completed, {status.in_progress_implementation_plans} in progress, {planned_features} planned")
 
     def _update_documentation_catalogue(self, status: DocumentationStatus):
         """Update documentation catalogue with sync status"""
