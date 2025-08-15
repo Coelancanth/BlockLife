@@ -29,9 +29,16 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### Agent Reference Files
 - **[Agent-References/architect-references.md](Agent-References/architect-references.md)** - Documentation guide for Architect agent
+- **[Agent-References/backlog-maintainer-references.md](Agent-References/backlog-maintainer-references.md)** - Documentation guide for Backlog Maintainer agent
+- **[Agent-References/debugger-expert-references.md](Agent-References/debugger-expert-references.md)** - Documentation guide for Debugger Expert agent
+- **[Agent-References/dev-engineer-references.md](Agent-References/dev-engineer-references.md)** - Documentation guide for Dev Engineer agent
 - **[Agent-References/devops-references.md](Agent-References/devops-references.md)** - Documentation guide for DevOps Engineer agent
 - **[Agent-References/git-references.md](Agent-References/git-references.md)** - Documentation guide for Git Expert agent
+- **[Agent-References/product-owner-references.md](Agent-References/product-owner-references.md)** - Documentation guide for Product Owner agent
 - **[Agent-References/qa-references.md](Agent-References/qa-references.md)** - Documentation guide for QA Engineer agent
+- **[Agent-References/tech-lead-references.md](Agent-References/tech-lead-references.md)** - Documentation guide for Tech Lead agent
+- **[Agent-References/test-designer-references.md](Agent-References/test-designer-references.md)** - Documentation guide for Test Designer agent
+- **[Agent-References/vsa-refactoring-references.md](Agent-References/vsa-refactoring-references.md)** - Documentation guide for VSA Refactoring agent
 
 ### Agent Workflows
 - **[Workflows/](Workflows/)** - All agent workflow files and orchestration guides
