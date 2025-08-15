@@ -30,9 +30,17 @@ Each agent has a dedicated workflow file that defines its exact procedures. Main
 
 #### Workflow Files Location
 All workflows are documented in `Docs/Workflows/`:
-- `product-owner-workflow.md` - Strategic product decisions
-- `backlog-maintainer-workflow.md` - Silent tracking updates
-- Additional workflows added as new agents are created
+- `product-owner-workflow.md` - Strategic product decisions and user stories
+- `backlog-maintainer-workflow.md` - Silent tracking updates and progress
+- `tech-lead-workflow.md` - Implementation planning and technical decisions
+- `test-designer-workflow.md` - TDD RED phase test creation
+- `dev-engineer-workflow.md` - TDD GREEN phase implementation
+- `qa-engineer-workflow.md` - Integration testing and quality assurance
+- `architect-workflow.md` - System design and architectural decisions
+- `vsa-refactoring-workflow.md` - VSA maintenance and code extraction
+- `debugger-expert-workflow.md` - Complex debugging and root cause analysis
+- `git-expert-workflow.md` - Advanced Git operations and repository management
+- `devops-engineer-workflow.md` - CI/CD pipelines and automation scripts
 
 ### **Dynamic Backlog Pattern - CRITICAL**
 
@@ -547,15 +555,59 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - **Components**: MoveBlockCommand, MoveBlockCommandHandler, BlockMovedNotification
 - **Testing**: 5 comprehensive unit tests following exact TDD workflow
 
-## Agent Workflow Reference
+## 🤖 Complete Agent Ecosystem
 
-All agent-specific workflows are documented in `Docs/Workflows/`:
+BlockLife employs a comprehensive 9-agent ecosystem designed for solo developer + AI workflows:
 
-| Agent | Workflow File | Purpose |
-|-------|--------------|---------|
-| `product-owner` | [product-owner-workflow.md](Docs/Workflows/product-owner-workflow.md) | User stories, prioritization, acceptance |
-| `backlog-maintainer` | [backlog-maintainer-workflow.md](Docs/Workflows/backlog-maintainer-workflow.md) | Silent progress tracking, status updates |
-| *(future agents)* | *workflow files added as created* | *specific purposes* |
+### Core Workflow Agents
+| Agent | Model | Workflow File | Purpose |
+|-------|-------|--------------|---------|
+| `product-owner` | Opus | [product-owner-workflow.md](Docs/Workflows/product-owner-workflow.md) | User stories, backlog prioritization, acceptance criteria |
+| `backlog-maintainer` | Sonnet | [backlog-maintainer-workflow.md](Docs/Workflows/backlog-maintainer-workflow.md) | Silent progress tracking, status updates |
+| `tech-lead` | Opus | [tech-lead-workflow.md](Docs/Workflows/tech-lead-workflow.md) | Implementation planning, technical decisions, architecture |
+
+### TDD Workflow Agents  
+| Agent | Model | Workflow File | Purpose |
+|-------|-------|--------------|---------|
+| `test-designer` | Sonnet | [test-designer-workflow.md](Docs/Workflows/test-designer-workflow.md) | TDD RED phase - create failing tests from requirements |
+| `dev-engineer` | Sonnet | [dev-engineer-workflow.md](Docs/Workflows/dev-engineer-workflow.md) | TDD GREEN phase - minimal implementation to pass tests |
+| `qa-engineer` | Sonnet | [qa-engineer-workflow.md](Docs/Workflows/qa-engineer-workflow.md) | Integration tests, stress testing, edge case discovery |
+
+### Architecture & Maintenance Agents
+| Agent | Model | Workflow File | Purpose |
+|-------|-------|--------------|---------|
+| `architect` | Opus | [architect-workflow.md](Docs/Workflows/architect-workflow.md) | System-wide design decisions, ADRs, long-term strategy |
+| `vsa-refactoring` | Opus | [vsa-refactoring-workflow.md](Docs/Workflows/vsa-refactoring-workflow.md) | VSA maintenance, code duplication analysis, extraction |
+| `debugger-expert` | Opus | [debugger-expert-workflow.md](Docs/Workflows/debugger-expert-workflow.md) | Complex bug diagnosis, race conditions, memory issues |
+
+### DevOps & Operations Agents
+| Agent | Model | Workflow File | Purpose |
+|-------|-------|--------------|---------|
+| `git-expert` | Sonnet | [git-expert-workflow.md](Docs/Workflows/git-expert-workflow.md) | Complex Git operations, merge conflicts, repository management |
+| `devops-engineer` | Sonnet | [devops-engineer-workflow.md](Docs/Workflows/devops-engineer-workflow.md) | CI/CD pipelines, Python automation, deployment strategies |
+
+### Agent Selection Strategy
+
+**★ Insight ─────────────────────────────────────**
+- **Opus Model**: Used for complex decision-making agents (Product Owner, Tech Lead, Architect, VSA Refactoring, Debugger) that require deep reasoning
+- **Sonnet Model**: Used for implementation-focused agents that execute well-defined workflows with high consistency
+- **Automatic Triggering**: All agents integrate with the Dynamic PO Pattern for seamless workflow orchestration
+**─────────────────────────────────────────────────**
+
+### Quick Agent Reference
+
+**When to use each agent:**
+- 🎯 **Product Owner**: Feature requests, bug reports, priority decisions, acceptance reviews
+- 📊 **Backlog Maintainer**: Silent progress updates (automatically triggered)
+- 🏗️ **Tech Lead**: VS items ready for planning, technical decisions, risk assessment
+- 📝 **Test Designer**: "I want to test...", edge cases, test structure design
+- 💚 **Dev Engineer**: Make failing tests pass, implement handlers/services/presenters
+- 🧪 **QA Engineer**: Implementation complete, stress testing, integration validation
+- 📐 **Architect**: Major system decisions, pattern standardization, ADR creation
+- ♻️ **VSA Refactoring**: Code duplication across slices, extract shared concerns
+- 🔍 **Debugger Expert**: Complex bugs, race conditions, mysterious failures
+- 🔧 **Git Expert**: Merge conflicts, history cleanup, complex repository operations
+- 🤖 **DevOps Engineer**: Automate manual tasks, CI/CD setup, Python scripting
 
 When triggering any agent, use the standard pattern shown above to have them read their workflow file.
 
