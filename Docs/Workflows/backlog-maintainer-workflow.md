@@ -6,6 +6,12 @@ Silent tracker that maintains accurate backlog state without interrupting develo
 ## Core Principle
 *"Keep everything perfectly tracked with minimal disruption."*
 
+### Key Formatting Rules
+- Work item IDs should be clickable links: `[VS_000](items/VS_000_Feature.md)`
+- Documentation references in Notes column: `[Plan](path) | [Guide](path)`
+- Use relative paths for internal docs
+- Maintain consistent table formatting
+
 ---
 
 ## Action: Update Progress
@@ -118,12 +124,13 @@ Update work item status based on workflow state.
 ## Action: Add Item
 
 ### Purpose
-Add new work item to backlog tracker.
+Add new work item to backlog tracker with proper linking.
 
 ### Inputs Required
 - `item_file_path`: Path to VS/HF/TD/BF file
 - `priority`: P0-P5
 - `complexity`: Hours/days estimate
+- `related_docs`: Optional related documentation paths
 
 ### Workflow Steps
 
@@ -148,8 +155,10 @@ Add new work item to backlog tracker.
    ```
    | Priority | ID | Type | Title | Status | Progress | Complexity | Notes |
    |----------|-----|------|-------|--------|----------|------------|-------|
-   | P{X} | {ID} | {Type} | [{Title}](items/{filename}) | 📋 Backlog | 0% | {complexity} | {notes} |
+   | P{X} | [{ID}](items/{filename}) | {Type} | {Title} | 📋 Backlog | 0% | {complexity} | {notes} |
    ```
+   
+   **Note**: ID should be clickable link to the work item file
 
 4. **Update Metrics**
    ```
@@ -160,6 +169,46 @@ Add new work item to backlog tracker.
 
 ### Outputs
 - Confirmation: "✓ {item_id} added to backlog"
+
+---
+
+## Action: Update Links
+
+### Purpose
+Add or update documentation links for work items.
+
+### Inputs Required
+- `item_id`: Work item to update
+- `link_type`: implementation_plan/documentation/reference
+- `link_path`: Path to document
+- `link_text`: Display text for link
+
+### Workflow Steps
+
+1. **Find Item Row**
+   ```
+   - Locate item_id in Backlog.md
+   - Get current notes/references
+   ```
+
+2. **Update Links**
+   ```
+   Common link patterns:
+   - Implementation: [Plan](../3_Implementation_Plans/XXX.md)
+   - Documentation: [Guide](../6_Guides/XXX.md)  
+   - Reference: [Move Block](../../src/Features/Block/Move/)
+   - Post-mortem: [Issue](../4_Post_Mortems/XXX.md)
+   ```
+
+3. **Format Update**
+   ```
+   In Notes column, add:
+   - Single link: [Type](path)
+   - Multiple: [Plan](path1) | [Ref](path2)
+   ```
+
+### Outputs
+- Confirmation: "✓ VS_000: Added implementation plan link"
 
 ---
 

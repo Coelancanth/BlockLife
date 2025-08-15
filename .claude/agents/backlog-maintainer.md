@@ -37,6 +37,7 @@ Follow the workflow steps EXACTLY as documented for the requested action.
 
 - Update progress: "tests_passing" → +15% progress
 - Change status: "in_progress" → "testing"
+- Add/update links: Link to docs, plans, references
 - Archive items: Move completed items to archive/YYYY-QN/
 - Add new items: Insert into Backlog.md at correct priority position
 
