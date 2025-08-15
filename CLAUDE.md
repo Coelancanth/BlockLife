@@ -10,16 +10,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
-## ⚠️ CRITICAL: Agent Orchestration
-**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md) - Contains MANDATORY trigger patterns for Dynamic PO Pattern
-**FEEDBACK SYSTEM**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report missed triggers, wrong agents, or workflow failures
+## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING IS MANDATORY
+
+### ⚠️ STOP! After ANY development action, you MUST trigger agents
+
+**THE IRON RULE**: Edit/Write/Test/Move/Fix ANYTHING = Trigger backlog-maintainer IMMEDIATELY
+
+**Quick Check - Did you just:**
+- Edit a file? → TRIGGER backlog-maintainer NOW
+- Run tests? → TRIGGER backlog-maintainer NOW  
+- Fix a bug? → TRIGGER backlog-maintainer NOW
+- Move/rename files? → TRIGGER backlog-maintainer NOW
+- Update documentation? → TRIGGER backlog-maintainer NOW
+
+**If you did work and haven't triggered an agent, STOP and trigger NOW.**
+
+**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
 - **Dynamic Tracker**: Single file tracking all work in real-time
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
 - **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
-- **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/Shared/Guides/Work_Item_Naming_Conventions.md)
+- **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md)
 - **Maintained by**: Product Owner agent (automatically triggered after EVERY development action)
 
 ## 🤖 Complete Agent Ecosystem
@@ -56,7 +70,7 @@ BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer
 ### Agent-Driven Development
 
 All agents are automatically triggered by Claude Code following the Dynamic PO Pattern. Each agent has:
-- **Workflow File**: Detailed procedures in `Docs/Workflows/[agent]-workflow.md`
+- **Workflow File**: Detailed procedures in `Docs/Workflows/Agent-Workflows/[agent]-workflow.md`
 - **Agent References**: Quick documentation guide in `Docs/Agent-References/[agent]-references.md`
 - **Domain Documentation**: Agent-owned content in `Docs/Agent-Specific/[Agent]/`
 
@@ -77,7 +91,7 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 2. **Make changes on branch**: Never on main
 3. **Create Pull Request**: Always for review
 4. **Wait for approval**: Before merging
-5. **Follow guide**: [Git_Workflow_Guide.md](Docs/Shared/Guides/Git_Workflow_Guide.md)
+5. **Follow guide**: [Git_Workflow_Guide.md](Docs/Shared/Workflows/Git-And-CI/Git_Workflow_Guide.md)
 
 **Branch Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `hotfix/`
 
@@ -88,9 +102,9 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 **Before implementing ANY feature:**
 1. **🔥 CREATE BRANCH**: `git checkout -b feat/your-feature-name`
 2. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
-3. Check if implementation plan exists: `Docs/Shared/Implementation-Plans/[FeatureName]_Implementation_Plan.md`
-4. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/Shared/Guides/Comprehensive_Development_Workflow.md)
-5. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/Shared/Guides/Quick_Reference_Development_Checklist.md)
+3. Check if implementation plan exists: `Docs/Shared/Implementation/Reference-Plans/[FeatureName]_Implementation_Plan.md`
+4. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/Shared/Workflows/Development/Comprehensive_Development_Workflow.md)
+5. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/Shared/Workflows/Development/Quick_Reference_Development_Checklist.md)
 6. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
 
 *Detailed build commands and automation are managed by the DevOps Engineer agent.*
@@ -110,19 +124,33 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 - **Animation System**: [003_Animation_System_Implementation_Plan.md](Docs/Shared/Implementation-Plans/003_Animation_System_Implementation_Plan.md) - Animation queuing and state
 - **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](Docs/Shared/Implementation-Plans/005_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
-## 🤖 AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
+## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
 
-### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE FIRST
-**YOU MUST READ THIS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md)
+### ⚠️ STOP! YOU MUST TRIGGER AGENTS AUTOMATICALLY
 
-**CRITICAL**: The orchestration guide contains ESSENTIAL trigger patterns, detection logic, and announcement requirements. You CANNOT properly trigger agents without reading it. The guide defines:
-- WHEN to trigger each agent (detection patterns)
-- HOW to announce triggers (transparency mode)
-- WHAT context to provide
-- WHY each trigger matters
+**THE RULE**: After EVERY development action, you MUST trigger the appropriate agent. NO EXCEPTIONS.
 
-### Quick Reference (AFTER reading the guide)
-After EVERY development action, automatically trigger the appropriate agent to maintain the Backlog as the Single Source of Truth.
+### 🔴 IMMEDIATE TRIGGER CHECKLIST - DO THIS NOW
+
+**After ANY of these actions, IMMEDIATELY trigger backlog-maintainer:**
+- ✅ File edits (Edit/Write/MultiEdit tools used)
+- ✅ Test runs (passing OR failing)  
+- ✅ Documentation changes
+- ✅ Code reorganization or refactoring
+- ✅ Bug fixes applied
+- ✅ Feature implementation progress
+- ✅ File/folder reorganization
+- ✅ Cross-reference updates
+
+**If you just did ANY development work and haven't triggered an agent, YOU'RE DOING IT WRONG.**
+
+### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
+**FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
+
+**Why Dynamic PO?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
+
+### Quick Reference Pattern
+After EVERY development action:
 
 **🔴 EARLY STAGE MODE**: Currently announcing all agent triggers for validation:
 ```
@@ -131,16 +159,47 @@ After EVERY development action, automatically trigger the appropriate agent to m
    → Context: [What's being processed]
 ```
 
-### Agent Trigger Overview
+### 🎯 CONCRETE EXAMPLES - "Should I Have Triggered?"
 
-The orchestration system automatically detects appropriate contexts and triggers specialized agents:
+**YES, trigger backlog-maintainer after:**
+- "I just reorganized the Docs/Shared folder" → TRIGGER NOW
+- "I fixed that bug in GridStateService.cs" → TRIGGER NOW
+- "I updated cross-references in documentation" → TRIGGER NOW
+- "Tests are passing now" → TRIGGER NOW
+- "I refactored that duplicate code" → TRIGGER NOW
+
+**YES, trigger product-owner when:**
+- User says "I want to add..." → TRIGGER NOW
+- User reports a bug → TRIGGER NOW
+- User asks "Can we implement..." → TRIGGER NOW
+
+**YES, trigger tech-lead when:**
+- Starting a new VS (Vertical Slice) → TRIGGER NOW
+- Need implementation plan → TRIGGER NOW
+- Architecture decision needed → TRIGGER NOW
+
+### Agent Trigger Quick Reference
 
 - **Product Owner**: Feature requests, bug reports, acceptance reviews (visible decisions)
-- **Backlog Maintainer**: Code changes, test results, progress updates (silent tracking)  
+- **Backlog Maintainer**: ALL code/doc changes, test results, progress (MUST trigger after EVERY edit)
 - **Tech Lead**: VS items, technical decisions, implementation planning (visible planning)
 - **Specialist Agents**: TDD phases, architecture decisions, debugging, Git operations, automation
 
-For complete trigger patterns, detection logic, and manual overrides, see [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md).
+**REMEMBER**: If you edited ANYTHING and didn't trigger backlog-maintainer, you failed the workflow.
+
+### ❌ WORKFLOW FAILURES - DON'T DO THIS
+
+**WRONG**: "I reorganized files, updated links, created README" → No agent triggered
+**RIGHT**: Each action triggers backlog-maintainer for tracking
+
+**WRONG**: "I'll update the backlog later after I finish everything"
+**RIGHT**: Trigger immediately after EACH development action
+
+**WRONG**: "This is minor work, doesn't need tracking"
+**RIGHT**: ALL work gets tracked, no exceptions
+
+**WRONG**: "I can handle cross-reference updates myself"
+**RIGHT**: Delegate link maintenance to backlog-maintainer (it's their specialty)
 
 ### Development Workflow Integration
 
