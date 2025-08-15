@@ -10,12 +10,85 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
-## 📋 Product Backlog - SINGLE SOURCE OF TRUTH
+## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
+- **Dynamic Tracker**: Single file tracking all work in real-time
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
 - **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
 - **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/6_Guides/Work_Item_Naming_Conventions.md)
-- **Maintained by**: Agile Product Owner
+- **Maintained by**: Agile Product Owner agent (automatically triggered after EVERY development action)
+
+## 🔄 Dynamic PO Pattern - CRITICAL WORKFLOW CHANGE
+
+### **MANDATORY: Agile Product Owner Auto-Update Pattern**
+
+**The Agile Product Owner agent MUST be triggered automatically after EVERY agent action to maintain the Backlog as the Single Source of Truth.**
+
+#### Trigger Points for PO Updates:
+
+1. **Feature Implementation Progress**
+   ```
+   Main Agent completes work → Trigger PO:
+   "Phase X of VS_XXX completed, update Backlog.md progress to Y%"
+   ```
+
+2. **Bug Discovery**
+   ```
+   Bug found during testing → Trigger PO:
+   "Create BF item for [bug description], link to affected feature"
+   ```
+
+3. **Code Review Findings**
+   ```
+   Review identifies issues → Trigger PO:
+   "Review found N issues in VS_XXX, create TD items if needed"
+   ```
+
+4. **Test Results**
+   ```
+   Tests fail/pass → Trigger PO:
+   "Update VS_XXX status based on test results: [details]"
+   ```
+
+5. **Architecture/Stress Test Results**
+   ```
+   Critical issues found → Trigger PO:
+   "Stress test found critical issues, create HF items: [list]"
+   ```
+
+#### PO Workflow for Main Agent:
+
+```python
+# Pseudo-code showing MANDATORY pattern
+def after_any_work():
+    result = do_work()  # Any development work
+    
+    # ALWAYS trigger PO to update Backlog
+    Task(
+        description="Update backlog",
+        prompt=f"""
+        Work completed: {result}
+        
+        Actions needed:
+        1. Read Backlog at Docs/Backlog/Backlog.md
+        2. Update relevant item status/progress
+        3. Create new items if issues found
+        4. Adjust priorities if needed
+        5. Keep Backlog.md as living SSOT
+        
+        Item files are in Docs/Backlog/items/
+        Templates in Docs/Backlog/templates/
+        Archive completed items to Docs/Backlog/archive/YYYY-QN/
+        """,
+        subagent_type="agile-product-owner"
+    )
+```
+
+#### File Paths for PO Agent:
+- **Backlog Tracker**: `Docs/Backlog/Backlog.md`
+- **Work Items**: `Docs/Backlog/items/[ID]_[Name].md`
+- **Templates**: `Docs/Backlog/templates/[Type]_Template.md`
+- **Archive**: `Docs/Backlog/archive/YYYY-QN/`
 
 ## Project Overview
 
@@ -446,11 +519,11 @@ The architecture prioritizes long-term maintainability and testability over rapi
 4. **`Docs/3_Implementation_Plans/`** - Feature-specific implementation plans
 
 ### 📋 **Implementation Plans by Feature**
-- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
-- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
-- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
+- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
 - **Animation System**: [3_Animation_System_Implementation_Plan.md](Docs/3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation queuing and state
-- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
 ### 🎯 **Reference Implementation: Move Block Feature**
 The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for implementation:
@@ -461,125 +534,41 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 
 ## Agent-Specific Workflow Instructions
 
-### For Tech Lead Advisory (tech-lead-advisor agent)
-**MUST follow this workflow:**
-1. **Provide strategic guidance** on technical decisions
-2. **Save recommendations** following naming convention:
-   - ADR for architectural decisions: `Docs/5_Architecture_Decision_Records/ADR_XXX_[Topic].md`
-   - Technical guidance: `Docs/6_Guides/Tech_Lead_[Topic]_Guide.md`
-   - Team process improvements: `Docs/2_Development_Process/[Topic]_Process.md`
-3. **Create ADRs when necessary** for significant architectural decisions:
-   - Use next available ADR number (currently up to 008)
-   - Format: `ADR_009_[Decision_Topic].md`
-4. **Update tracking systems**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
+### For Agile Product Owner (agile-product-owner agent)
+**PRIMARY AGENT - Used PROACTIVELY after every action**
 
-**ADR should include:**
-- Context and problem statement
-- Decision drivers
-- Considered options with pros/cons
-- Decision outcome and rationale
-- Consequences (positive/negative)
-- Implementation guidance
+**Automatic Triggers:**
+- User describes features → Create VS items
+- Bugs found → Create BF items
+- Any work completed → Update progress
+- Issues identified → Create TD/HF items
+- Tests run → Update status
 
-### For Implementation Planning (implementation-planner agent)
-**MUST follow this workflow:**
-1. **Create implementation plan** following the template
-2. **Save plan** with naming convention:
-   - Location: `Docs/3_Implementation_Plans/XXX_[Feature]_Implementation_Plan.md`
-   - Use next available number (currently up to 005)
-   - Example: `006_Inventory_System_Implementation_Plan.md`
-3. **Update Implementation Status Tracker** at `Docs/0_Global_Tracker/Implementation_Status_Tracker.md`:
-   - Add new plan to the tracker
-   - Set initial status as "Planning"
-   - Include estimated phases and timeline
-4. **Run synchronization scripts**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
+**MUST maintain:**
+1. **Backlog.md** as single dynamic tracker
+2. **Work item files** in items/ folder
+3. **Archive** completed items
+4. **Priority adjustments** based on findings
 
-**MUST consult these documents:**
-1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
-2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-3. **Reference**: Move Block implementation in `src/Features/Block/Move/`
-4. **Follow**: TDD+VSA workflow exactly as demonstrated
+**Workflow:**
+1. Read current Backlog.md
+2. Read/create/update work item files
+3. Update statuses and progress %
+4. Reprioritize based on new information
+5. Archive completed items
+6. Return summary of changes
 
-**Required planning elements:**
-- Architecture fitness tests definition
-- Vertical slice breakdown
-- TDD cycle for each component (Red-Green-Refactor)
-- Property test requirements for invariants
-- Integration test boundaries
-- Quality gates and acceptance criteria
-- Phase breakdown with clear deliverables
-- Risk assessment and mitigation strategies
-
-### For Code Review (code-review-expert agent)
-**MUST validate against:**
-1. **Workflow**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-2. **Architecture**: [Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)
-3. **Reference**: Move Block implementation as gold standard
-4. **Tests**: `tests/Architecture/ArchitectureFitnessTests.cs`
-
-**Validation checklist:**
-✅ Architecture fitness tests written first
-✅ Commands are immutable records with init setters
-✅ Handlers return Fin<T> for error handling  
-✅ No Godot dependencies in Core project
-✅ Presenters follow MVP pattern without mutable state
-✅ Property tests cover mathematical invariants
-✅ Integration tests verify complete slices
-✅ Documentation updated per workflow
-
-### For Documentation Updates (docs-updater agent)
-**MUST maintain these documents:**
-1. **Workflow Docs**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-2. **Checklist**: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plans/`
-4. **Architecture Docs**: Keep `Docs/1_Architecture/` current
-
-**Update requirements:**
-- Mark completed phases in implementation plans
-- Update test statistics when new tests added
-- Maintain consistency with Move Block reference implementation
-- Document any new patterns discovered
-
-### For Architecture Stress Testing (architecture-stress-tester agent)
-**MUST follow this workflow:**
-1. **Conduct thorough stress test** of architecture and implementation
-2. **Save report** following naming convention:
-   - Location: `Docs/4_Post_Mortems/Architecture_Stress_Test_[Date]_[Focus].md`
-   - Example: `Architecture_Stress_Test_Critical_Findings.md`
-3. **Update Master Action Items tracker** at `Docs/0_Global_Tracker/Master_Action_Items.md`:
-   - Add critical findings as new action items
-   - Use appropriate categories (CRIT-XXX for critical, TEST-XXX for testing gaps)
-   - Mark all new items as 🔴 **CRITICAL** or 📋 **PENDING**
-4. **Update Documentation Catalogue** at `Docs/DOCUMENTATION_CATALOGUE.md`:
-   - Add report to Post-Mortems section
-   - Mark with 🔴 **CRITICAL** status
-5. **Run synchronization scripts**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
-
-**Categorize issues by severity:**
-- CRITICAL: Will cause production failures
-- HIGH: Significant risk under load
-- MEDIUM: Performance/maintainability issues
-- LOW: Best practice violations
-
-**Report MUST include:**
-- Executive summary with risk assessment
-- Specific code locations with line numbers
-- Reproduction tests/scenarios
-- Impact under production load
-- Concrete fix recommendations
-- Action items with priority levels
+**File Paths:**
+- Backlog: `Docs/Backlog/Backlog.md`
+- Items: `Docs/Backlog/items/`
+- Templates: `Docs/Backlog/templates/`
+- Archive: `Docs/Backlog/archive/YYYY-QN/`
 
 ### For General Development
 **Claude Code MUST:**
+
+**🔄 DYNAMIC PO PATTERN (MANDATORY):**
+After ANY development action (code written, tests run, bugs found, reviews completed), MUST trigger the agile-product-owner agent to update the Backlog. This maintains the Single Source of Truth automatically without manual synchronization.
 
 **🚨 CRITICAL FIRST STEP - GIT WORKFLOW:**
 0. **NEVER work on main branch** - Always create feature branch first:
@@ -600,9 +589,10 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
    - Unit tests: `dotnet test --filter "Category=Unit"`
    - All tests: `dotnet test tests/BlockLife.Core.Tests.csproj`
 4. **Use TodoWrite** tool to track workflow compliance
-5. **Follow TDD** Red-Green-Refactor cycle religiously
-6. **Validate** against 4-pillar testing strategy
-7. **Create Pull Request** for all changes - NO direct commits to main
+5. **Trigger PO agent** to update Backlog after each action
+6. **Follow TDD** Red-Green-Refactor cycle religiously
+7. **Validate** against 4-pillar testing strategy
+8. **Create Pull Request** for all changes - NO direct commits to main
 
 ## 🔍 Common Agent Queries - Quick Answers
 
