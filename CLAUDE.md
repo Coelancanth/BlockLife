@@ -10,6 +10,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
+## 📋 Product Backlog - SINGLE SOURCE OF TRUTH
+**ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
+- **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
+- **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
+- **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/6_Guides/Work_Item_Naming_Conventions.md)
+- **Maintained by**: Agile Product Owner
+
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with Model-View-Presenter (MVP) pattern. The project uses CQRS with functional programming principles (LanguageExt.Core) and maintains a pure C# core separated from Godot-specific presentation code. Development 

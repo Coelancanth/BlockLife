@@ -1,17 +1,36 @@
-# 🎯 Master Action Items Tracker
+# 🎯 Master Action Items Tracker [DEPRECATED]
+
+> ⚠️ **DEPRECATED**: Critical work items have been migrated to the [Product Backlog](../Product_Backlog/Backlog.md).
+>
+> **DO NOT UPDATE THIS FILE** - All new action items should be created as work items in the Product Backlog.
+>
+> This file remains for:
+> - Historical reference of completed items
+> - Technical context for post-mortems
+> - Traceability of architectural decisions
+>
+> For active work tracking, see:
+> - **Critical Issues**: HF items in [Product_Backlog/Backlog.md](../Product_Backlog/Backlog.md)
+> - **Tech Debt**: TD items in [Product_Backlog/Backlog.md](../Product_Backlog/Backlog.md)
+> - **Features**: VS items in [Product_Backlog/Backlog.md](../Product_Backlog/Backlog.md)
+
+---
 
 ## Overview
 
-This document consolidates all prevention measures and action items from bug post-mortems, ADRs, and architectural decisions across the entire project. It provides centralized visibility into what has been implemented vs. what remains pending.
+This document consolidates all prevention measures and action items from bug post-mortems, ADRs, and architectural decisions across the entire project. ~~It provides centralized visibility into what has been implemented vs. what remains pending.~~ **NOW REPLACED BY PRODUCT BACKLOG FOR ACTIVE TRACKING.**
 
 ## 📊 Status Summary
 
 - **Total Action Items**: 22
-- **Completed**: 9 (41%)
+- **Completed/Migrated**: 19 (86%)
 - **In Progress**: 0 (0%)
-- **Pending**: 13 (59%)
+- **Pending**: 3 (14%)
+- **Migrated to Product Backlog**: 10 critical items (CRIT-001 to CRIT-005, TEST-001 to TEST-005)
 
-*Last Updated: 2025-08-14*
+*Last Updated: 2025-08-15*
+
+> **Note**: Critical production issues (CRIT-XXX) and test gaps (TEST-XXX) have been migrated to the Product Backlog as HF (Hotfix) and TD (Tech Debt) items. The Product Backlog is now the single source of truth for work prioritization. This tracker remains for technical reference and historical context.
 
 ## 🚀 High Priority Action Items
 
@@ -51,25 +70,25 @@ This document consolidates all prevention measures and action items from bug pos
 
 | ID | Status | Item | Source | Date | Notes |
 |----|--------|------|--------|------|-------|
-| **CRIT-001** | 🔴 **CRITICAL** | Replace Queue with ConcurrentQueue in SimulationManager | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Thread-unsafe queue will corrupt under load |
-| **CRIT-002** | 🔴 **CRITICAL** | Add rollback verification in GridStateService.MoveBlock | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Silent rollback failures cause state corruption |
-| **CRIT-003** | 🔴 **CRITICAL** | Replace static events with weak event pattern | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Memory leaks from undisposed presenters |
-| **CRIT-004** | 🔴 **CRITICAL** | Add mutex protection to SceneRoot singleton | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Race condition allows duplicate DI containers |
-| **CRIT-005** | 🔴 **CRITICAL** | Flatten nested async Match operations in handlers | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-14 | Deadlock risk under thread pool starvation |
+| **CRIT-001** | ✅ **MIGRATED** | Replace Queue with ConcurrentQueue in SimulationManager | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: HF_002 |
+| **CRIT-002** | ✅ **MIGRATED** | Add rollback verification in GridStateService.MoveBlock | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: HF_003 |
+| **CRIT-003** | ✅ **COMPLETED** | Replace static events with weak event pattern | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: HF_004 (PR #13) |
+| **CRIT-004** | ✅ **MIGRATED** | Add mutex protection to SceneRoot singleton | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: HF_005 |
+| **CRIT-005** | ✅ **MIGRATED** | Flatten nested async Match operations in handlers | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: TD_002 |
 
 ### Testing - Stress & Concurrency
 
 | ID | Status | Item | Source | Date | Notes |
 |----|--------|------|--------|------|-------|
-| **TEST-001** | 📋 **PENDING** | Add concurrent operation tests (100+ threads) | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | No race condition coverage |
-| **TEST-002** | 📋 **PENDING** | Add memory leak detection tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Verify presenter disposal |
-| **TEST-003** | 📋 **PENDING** | Add thread pool starvation tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Test under resource constraints |
-| **TEST-004** | 📋 **PENDING** | Add scene lifecycle integration tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Godot scene transition testing |
-| **TEST-005** | 📋 **PENDING** | Create comprehensive stress test suite | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | - | Production load simulation |
+| **TEST-001** | ✅ **MIGRATED** | Add concurrent operation tests (100+ threads) | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: TD_003 |
+| **TEST-002** | ✅ **MIGRATED** | Add memory leak detection tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: TD_004 |
+| **TEST-003** | ✅ **MIGRATED** | Add thread pool starvation tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Included in TD_003 |
+| **TEST-004** | ✅ **MIGRATED** | Add scene lifecycle integration tests | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Included in TD_005 |
+| **TEST-005** | ✅ **MIGRATED** | Create comprehensive stress test suite | [AST-001](../4_Post_Mortems/Architecture_Stress_Test_Critical_Findings.md) | 2025-08-15 | → Product Backlog: TD_005 |
 
 ## 📋 Detailed Action Items by Category
 
-### ✅ Completed Items (9)
+### ✅ Completed Items (19)
 
 #### Architecture Tests
 - **AT-001**: Architecture tests for notification consistency ✅
