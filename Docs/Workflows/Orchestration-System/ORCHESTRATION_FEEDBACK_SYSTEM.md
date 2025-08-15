@@ -143,6 +143,23 @@ Keep a running log of issues and improvements:
 - ✅ **Fixed**: Created announcement patterns
 - 🔄 **Pending**: Test in real development
 - 📝 **Note**: User concerned about follow-through
+- 🐛 **NEW ISSUE**: Docs reorganization workflow failure (see below)
+
+#### WORKFLOW FAILURE: Docs Reorganization (2025-08-15)
+**Issue**: Did major Docs/Shared reorganization but:
+1. Failed to automatically trigger backlog-maintainer for progress tracking
+2. Tried to handle link updates manually instead of delegating to specialist
+
+**Pattern Gap**: 
+- Missing: File reorganization → auto-trigger backlog-maintainer
+- Missing: Link maintenance = backlog-maintainer specialty
+
+**Fix Applied**: 
+- User caught the error and pointed it out
+- Properly triggered backlog-maintainer for both tracking and link updates
+- Backlog-maintainer did much better job than manual approach
+
+**Lesson**: Agent delegation boundaries need better understanding - maintenance tasks should go to specialists
 
 ### Future Sessions
 - [ ] **Issue**: [Description]

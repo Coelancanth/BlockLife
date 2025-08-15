@@ -1,7 +1,7 @@
-# Dynamic PO Pattern - Trigger Implementation Guide
+# Automatic Orchestration Pattern - Trigger Implementation Guide
 
 ## 🎯 Purpose
-This document provides the ACTUAL IMPLEMENTATION code for automatic agent triggering in the Dynamic PO Pattern.
+This document provides the ACTUAL IMPLEMENTATION code for automatic agent triggering in the Automatic Orchestration Pattern.
 
 ---
 
@@ -10,7 +10,7 @@ This document provides the ACTUAL IMPLEMENTATION code for automatic agent trigge
 Add this section to CLAUDE.md to enable automatic triggering:
 
 ```markdown
-## 🤖 AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
+## 🤖 AUTOMATIC AGENT TRIGGERING (Automatic Orchestration Pattern)
 
 ### Core Trigger Logic
 After EVERY action, evaluate and trigger appropriate agent:
@@ -196,7 +196,7 @@ if test_command_successful:
 
 ## 🔄 Implementation Checklist
 
-To fully implement the Dynamic PO Pattern:
+To fully implement the Automatic Orchestration Pattern:
 
 ### Phase 1: Detection (Immediate)
 - [ ] Add action detection logic to CLAUDE.md

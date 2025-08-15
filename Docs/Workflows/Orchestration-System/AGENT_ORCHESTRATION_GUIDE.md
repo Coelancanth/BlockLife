@@ -1,7 +1,7 @@
 # Agent Orchestration Guide
 
 ## Purpose
-This document defines WHEN and HOW Claude Code triggers specialized agents to maintain the Dynamic PO Pattern.
+This document defines WHEN and HOW Claude Code triggers specialized agents to maintain the Automatic Orchestration Pattern.
 
 ---
 

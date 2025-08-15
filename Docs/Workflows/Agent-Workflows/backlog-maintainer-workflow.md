@@ -353,6 +353,23 @@ Ensure backlog tracker matches actual file state.
 - Items: `Docs/Backlog/items/*.md`
 - Archive: `Docs/Backlog/archive/YYYY-QN/*.md`
 - Templates: `Docs/Backlog/templates/*.md`
+- Documentation: `Docs/**/*.md`
+
+### Documentation Maintenance Scope
+1. **Naming Convention Validation**
+   - Enforce naming rules in `Docs/6_Guides/Work_Item_Naming_Conventions.md`
+   - Check file names match expected patterns
+   - Silent correction or flagging
+
+2. **Reference Validation**
+   - Verify all documentation files include catalogue navigation header
+   - Check references in `DOCUMENTATION_CATALOGUE.md`
+   - Validate internal links
+
+3. **Template Consistency**
+   - Ensure documentation follows established templates
+   - Check for required sections in implementation plans, bug reports
+   - Silent normalization of document structure
 
 ---
 
@@ -395,3 +412,48 @@ Ensure backlog tracker matches actual file state.
 - **Accuracy**: 100% tracking accuracy
 - **Silence Rate**: >95% silent operations
 - **Availability**: 99.9% uptime
+- **Documentation Health**: 
+  - 100% naming convention compliance
+  - 0 broken internal links
+  - 100% template adherence
+
+## Action: Documentation Maintenance
+
+### Purpose
+Silently validate and maintain documentation hygiene across project repositories.
+
+### Inputs Required
+- `doc_path`: Path to documentation file
+- `validation_type`: naming/references/structure
+
+### Workflow Steps
+
+1. **Naming Convention Check**
+   ```
+   - Extract file name, path
+   - Compare against Work_Item_Naming_Conventions.md
+   - Silent rename or flag for review
+   ```
+
+2. **Reference Validation**
+   ```
+   - Scan for broken internal links
+   - Check catalogue header presence
+   - Validate link targets exist
+   ```
+
+3. **Template Enforcement**
+   ```
+   - Validate required sections
+   - Check section ordering
+   - Silent normalization
+   ```
+
+### Outputs
+- Minimal confirmation: "✓ Doc Health: 3 refs updated"
+- Optional warning if manual intervention needed
+
+### Exclusions
+- Never modify content meaning
+- No changes to diagrams or code samples
+- Always preserve original author's intent

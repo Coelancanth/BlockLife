@@ -334,7 +334,7 @@ operations:
 
 ### Phase 2: Workflow Integration  
 1. Update CLAUDE.md with new patterns
-2. Modify Dynamic PO Pattern to use both agents
+2. Modify Automatic Orchestration Pattern to use both agents
 3. Test complete workflow
 
 ### Phase 3: Deprecate Old Agent
