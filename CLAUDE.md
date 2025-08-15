@@ -100,11 +100,6 @@ trigger_agent(
 )
 ```
 
-#### File Paths for PO Agent:
-- **Backlog Tracker**: `Docs/Backlog/Backlog.md`
-- **Work Items**: `Docs/Backlog/items/[ID]_[Name].md`
-- **Templates**: `Docs/Backlog/templates/[Type]_Template.md`
-- **Archive**: `Docs/Backlog/archive/YYYY-QN/`
 
 ## Project Overview
 
@@ -548,37 +543,17 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - **Components**: MoveBlockCommand, MoveBlockCommandHandler, BlockMovedNotification
 - **Testing**: 5 comprehensive unit tests following exact TDD workflow
 
-## Agent-Specific Workflow Instructions
+## Agent Workflow Reference
 
-### For Agile Product Owner (agile-product-owner agent)
-**PRIMARY AGENT - Used PROACTIVELY after every action**
+All agent-specific workflows are documented in `Docs/Workflows/`:
 
-**Automatic Triggers:**
-- User describes features → Create VS items
-- Bugs found → Create BF items
-- Any work completed → Update progress
-- Issues identified → Create TD/HF items
-- Tests run → Update status
+| Agent | Workflow File | Purpose |
+|-------|--------------|---------|
+| `product-owner` | [product-owner-workflow.md](Docs/Workflows/product-owner-workflow.md) | User stories, prioritization, acceptance |
+| `backlog-maintainer` | [backlog-maintainer-workflow.md](Docs/Workflows/backlog-maintainer-workflow.md) | Silent progress tracking, status updates |
+| *(future agents)* | *workflow files added as created* | *specific purposes* |
 
-**MUST maintain:**
-1. **Backlog.md** as single dynamic tracker
-2. **Work item files** in items/ folder
-3. **Archive** completed items
-4. **Priority adjustments** based on findings
-
-**Workflow:**
-1. Read current Backlog.md
-2. Read/create/update work item files
-3. Update statuses and progress %
-4. Reprioritize based on new information
-5. Archive completed items
-6. Return summary of changes
-
-**File Paths:**
-- Backlog: `Docs/Backlog/Backlog.md`
-- Items: `Docs/Backlog/items/`
-- Templates: `Docs/Backlog/templates/`
-- Archive: `Docs/Backlog/archive/YYYY-QN/`
+When triggering any agent, use the standard pattern shown above to have them read their workflow file.
 
 ### For General Development
 **Claude Code MUST:**
