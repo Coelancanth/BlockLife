@@ -7,10 +7,13 @@ using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Presentation;
+using BlockLife.Features.Block.Move.Effects;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
 using Microsoft.Extensions.Logging;
+// Explicit using for BlockMovedNotification from the correct namespace
+using BlockMovedNotification = BlockLife.Core.Features.Block.Effects.BlockMovedNotification;
 
 namespace BlockLife.Core.Features.Block.Placement;
 
@@ -21,9 +24,13 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     private readonly CompositeDisposable _subscriptions = new();
     private IDisposable? _blockPlacedSubscription;
     private IDisposable? _blockRemovedSubscription;
+    private IDisposable? _blockMovedSubscription;
 
     // Track current placement mode (for future enhancement)
     private BlockType _currentBlockType = BlockType.Basic;
+    
+    // Control automatic placement behavior - can be disabled for manual placement control
+    public bool AutoPlaceOnClick { get; set; } = false; // Changed default to false
 
     public BlockManagementPresenter(
         IBlockManagementView view,
@@ -51,7 +58,8 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         // Subscribe to MediatR notifications via the bridge using weak events
         _blockPlacedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockPlaced(OnBlockPlacedNotification);
         _blockRemovedSubscription = BlockPlacementNotificationBridge.SubscribeToBlockRemoved(OnBlockRemovedNotification);
-        // Trace: Subscribed to BlockPlacementNotificationBridge events using thread-safe weak events
+        _blockMovedSubscription = BlockMovementNotificationBridge.SubscribeToBlockMoved(OnBlockMovedNotification);
+        // Trace: Subscribed to BlockPlacementNotificationBridge and BlockMovementNotificationBridge events using thread-safe weak events
 
         // Initialize the view with default grid size
         _ = View.InitializeAsync(new Vector2Int(10, 10)); // TODO: Get from config
@@ -66,6 +74,7 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         // Dispose weak event subscriptions
         _blockPlacedSubscription?.Dispose();
         _blockRemovedSubscription?.Dispose();
+        _blockMovedSubscription?.Dispose();
 
         _subscriptions.Dispose();
         _ = View.CleanupAsync();
@@ -76,24 +85,26 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     // Input Handlers
     private async void OnGridCellClicked(Vector2Int position)
     {
-        // Trace: Grid cell clicked at {Position} - logged at Information level below
+        // Only handle automatic placement if enabled
+        if (!AutoPlaceOnClick)
+        {
+            // Automatic placement disabled - clicks are handled by other input managers
+            return;
+        }
 
         try
         {
-            // For now, left click places a block
-            // In the future, we could check for modifier keys for different actions
+            // Legacy behavior: left click places a block
             var command = new PlaceBlockCommand(position, _currentBlockType);
-            // Trace: Sending PlaceBlockCommand for {Position}
             var result = await _mediator.Send(command);
 
             result.Match(
                 Succ: _ =>
                 {
-                    // Trace: Block placed successfully at {Position}
+                    _logger.LogDebug("Block placed successfully at {Position}", position);
                 },
                 Fail: error =>
                 {
-                    // Trace: Block placement failed - logged as Warning above
                     HandlePlacementError(position, error);
                 }
             );
@@ -161,6 +172,24 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error removing block {BlockId}", notification.BlockId);
+        }
+    }
+
+    private async Task OnBlockMovedNotification(BlockMovedNotification notification)
+    {
+        try
+        {
+            _logger.LogDebug("Updating view for moved block {BlockId} from {FromPosition} to {ToPosition}", 
+                notification.BlockId, notification.FromPosition, notification.ToPosition);
+            
+            await View.Visualization.UpdateBlockPositionAsync(
+                notification.BlockId,
+                notification.ToPosition
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating position for moved block {BlockId}", notification.BlockId);
         }
     }
 

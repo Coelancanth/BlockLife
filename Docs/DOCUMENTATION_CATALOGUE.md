@@ -20,9 +20,15 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ## 📂 Documentation Structure
 
-### 0️⃣ Global Tracking ([0_Global_Tracker/](0_Global_Tracker/))
-- [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) - **CENTRALIZED** tracker for all post-mortem action items and prevention measures ⭐⭐⭐
-- [Implementation_Status_Tracker.md](0_Global_Tracker/Implementation_Status_Tracker.md) - **NEW**: Central tracking of all implementation plan statuses and progress ⭐⭐⭐
+### 📋 Product Backlog ([Product_Backlog/](Product_Backlog/)) - **SINGLE SOURCE OF TRUTH**
+- [Backlog.md](Product_Backlog/Backlog.md) - **ACTIVE** work tracking, session planning, solo dev workflow ⭐⭐⭐⭐⭐
+- All work items (VS, HF, TD, BF) tracked here
+- This is the **ONLY** place for work tracking
+
+### 0️⃣ Global Tracking ([0_Global_Tracker/](0_Global_Tracker/)) - **DEPRECATED**
+- ⚠️ **DEPRECATED** - Historical reference only, DO NOT UPDATE
+- [Master_Action_Items.md](0_Global_Tracker/Master_Action_Items.md) - Historical action items (migrated to Product Backlog)
+- [Implementation_Status_Tracker.md](0_Global_Tracker/Implementation_Status_Tracker.md) - Historical status tracking (replaced by Product Backlog)
 
 ### 1️⃣ Architecture Documentation ([1_Architecture/](1_Architecture/))
 - [Architecture_Guide.md](1_Architecture/Architecture_Guide.md) - Core principles, Clean Architecture, MVP pattern ⭐⭐⭐
@@ -45,7 +51,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - [07_Dynamic_Logging_UI_Implementation_Plan.md](3_Implementation_Plans/07_Dynamic_Logging_UI_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
 - [08_Automated_Debug_Console_Implementation_Plan.md](3_Implementation_Plans/08_Automated_Debug_Console_Implementation_Plan.md) - ❌ **NOT STARTED** (Debug tooling)
 
-📊 **[Implementation Status Tracker](0_Global_Tracker/Implementation_Status_Tracker.md)** - **NEW**: Central tracking of all implementation plan statuses and progress
+📊 **Work Tracking**: See [Product Backlog](Product_Backlog/Backlog.md) for all active work items and status
 
 ### 4️⃣ Post-Mortems & Architecture Reviews ([4_Post_Mortems/](4_Post_Mortems/) & [4_Bug_PostMortems/](4_Bug_PostMortems/))
 

@@ -10,6 +10,101 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
+## ⚠️ CRITICAL: Agent Orchestration
+**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md) - Contains MANDATORY trigger patterns for Dynamic PO Pattern
+**FEEDBACK SYSTEM**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report missed triggers, wrong agents, or workflow failures
+
+## 📋 Backlog - SINGLE SOURCE OF TRUTH
+**ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
+- **Dynamic Tracker**: Single file tracking all work in real-time
+- **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
+- **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
+- **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/6_Guides/Work_Item_Naming_Conventions.md)
+- **Maintained by**: Agile Product Owner agent (automatically triggered after EVERY development action)
+
+## 🔄 Agent Workflow System
+
+### **Hybrid Workflow Architecture**
+
+Each agent has a dedicated workflow file that defines its exact procedures. Main agent orchestrates by telling agents to read their workflows.
+
+#### Workflow Files Location
+All workflows are documented in `Docs/Workflows/`:
+- `product-owner-workflow.md` - Strategic product decisions
+- `backlog-maintainer-workflow.md` - Silent tracking updates
+- Additional workflows added as new agents are created
+
+### **Dynamic Backlog Pattern - CRITICAL**
+
+**The Backlog Maintainer agent MUST be triggered automatically after EVERY development action to maintain the Backlog as the Single Source of Truth.**
+
+#### Trigger Points for PO Updates:
+
+1. **Feature Implementation Progress**
+   ```
+   Main Agent completes work → Trigger PO:
+   "Phase X of VS_XXX completed, update Backlog.md progress to Y%"
+   ```
+
+2. **Bug Discovery**
+   ```
+   Bug found during testing → Trigger PO:
+   "Create BF item for [bug description], link to affected feature"
+   ```
+
+3. **Code Review Findings**
+   ```
+   Review identifies issues → Trigger PO:
+   "Review found N issues in VS_XXX, create TD items if needed"
+   ```
+
+4. **Test Results**
+   ```
+   Tests fail/pass → Trigger PO:
+   "Update VS_XXX status based on test results: [details]"
+   ```
+
+5. **Architecture/Stress Test Results**
+   ```
+   Critical issues found → Trigger PO:
+   "Stress test found critical issues, create HF items: [list]"
+   ```
+
+#### Agent Invocation Pattern:
+
+```python
+# Standard pattern for invoking any agent with workflow
+def trigger_agent(agent_type, action, context):
+    Task(
+        description=f"{action} action",
+        prompt=f"""
+        Read your workflow at: Docs/Workflows/{agent_type}-workflow.md
+        
+        Execute action: {action}
+        Context: {context}
+        
+        Follow the workflow steps exactly as documented.
+        Return the outputs specified in the workflow.
+        """,
+        subagent_type=agent_type
+    )
+
+# Example: Feature request
+trigger_agent(
+    "product-owner",
+    "feature_request",
+    {"idea": "Add multiplayer", "current_priorities": ["HF_002", "HF_003"]}
+)
+
+# Example: Silent progress update  
+trigger_agent(
+    "backlog-maintainer",
+    "update_progress", 
+    {"item_id": "VS_000", "event": "tests_passing"}
+)
+```
+
+
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with Model-View-Presenter (MVP) pattern. The project uses CQRS with functional programming principles (LanguageExt.Core) and maintains a pure C# core separated from Godot-specific presentation code. Development 
@@ -439,11 +534,11 @@ The architecture prioritizes long-term maintainability and testability over rapi
 4. **`Docs/3_Implementation_Plans/`** - Feature-specific implementation plans
 
 ### 📋 **Implementation Plans by Feature**
-- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
-- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
-- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](_F1_Block_Placement_Implementation_Plan.md) - Foundation feature
+- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
 - **Animation System**: [3_Animation_System_Implementation_Plan.md](Docs/3_Implementation_Plans/3_Animation_System_Implementation_Plan.md) - Animation queuing and state
-- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
 ### 🎯 **Reference Implementation: Move Block Feature**
 The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for implementation:
@@ -452,127 +547,61 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
 - **Components**: MoveBlockCommand, MoveBlockCommandHandler, BlockMovedNotification
 - **Testing**: 5 comprehensive unit tests following exact TDD workflow
 
-## Agent-Specific Workflow Instructions
+## Agent Workflow Reference
 
-### For Tech Lead Advisory (tech-lead-advisor agent)
-**MUST follow this workflow:**
-1. **Provide strategic guidance** on technical decisions
-2. **Save recommendations** following naming convention:
-   - ADR for architectural decisions: `Docs/5_Architecture_Decision_Records/ADR_XXX_[Topic].md`
-   - Technical guidance: `Docs/6_Guides/Tech_Lead_[Topic]_Guide.md`
-   - Team process improvements: `Docs/2_Development_Process/[Topic]_Process.md`
-3. **Create ADRs when necessary** for significant architectural decisions:
-   - Use next available ADR number (currently up to 008)
-   - Format: `ADR_009_[Decision_Topic].md`
-4. **Update tracking systems**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
+All agent-specific workflows are documented in `Docs/Workflows/`:
 
-**ADR should include:**
-- Context and problem statement
-- Decision drivers
-- Considered options with pros/cons
-- Decision outcome and rationale
-- Consequences (positive/negative)
-- Implementation guidance
+| Agent | Workflow File | Purpose |
+|-------|--------------|---------|
+| `product-owner` | [product-owner-workflow.md](Docs/Workflows/product-owner-workflow.md) | User stories, prioritization, acceptance |
+| `backlog-maintainer` | [backlog-maintainer-workflow.md](Docs/Workflows/backlog-maintainer-workflow.md) | Silent progress tracking, status updates |
+| *(future agents)* | *workflow files added as created* | *specific purposes* |
 
-### For Implementation Planning (implementation-planner agent)
-**MUST follow this workflow:**
-1. **Create implementation plan** following the template
-2. **Save plan** with naming convention:
-   - Location: `Docs/3_Implementation_Plans/XXX_[Feature]_Implementation_Plan.md`
-   - Use next available number (currently up to 005)
-   - Example: `006_Inventory_System_Implementation_Plan.md`
-3. **Update Implementation Status Tracker** at `Docs/0_Global_Tracker/Implementation_Status_Tracker.md`:
-   - Add new plan to the tracker
-   - Set initial status as "Planning"
-   - Include estimated phases and timeline
-4. **Run synchronization scripts**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
+When triggering any agent, use the standard pattern shown above to have them read their workflow file.
 
-**MUST consult these documents:**
-1. **First**: [000_Vertical_Slice_Architecture_Plan.md](_Vertical_Slice_Architecture_Plan.md)
-2. **Then**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-3. **Reference**: Move Block implementation in `src/Features/Block/Move/`
-4. **Follow**: TDD+VSA workflow exactly as demonstrated
+## 🤖 AUTOMATIC AGENT TRIGGERING (Dynamic PO Pattern)
 
-**Required planning elements:**
-- Architecture fitness tests definition
-- Vertical slice breakdown
-- TDD cycle for each component (Red-Green-Refactor)
-- Property test requirements for invariants
-- Integration test boundaries
-- Quality gates and acceptance criteria
-- Phase breakdown with clear deliverables
-- Risk assessment and mitigation strategies
+### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE FIRST
+**YOU MUST READ THIS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/AGENT_ORCHESTRATION_GUIDE.md)
 
-### For Code Review (code-review-expert agent)
-**MUST validate against:**
-1. **Workflow**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-2. **Architecture**: [Architecture_Guide.md](Docs/1_Architecture/Architecture_Guide.md)
-3. **Reference**: Move Block implementation as gold standard
-4. **Tests**: `tests/Architecture/ArchitectureFitnessTests.cs`
+**CRITICAL**: The orchestration guide contains ESSENTIAL trigger patterns, detection logic, and announcement requirements. You CANNOT properly trigger agents without reading it. The guide defines:
+- WHEN to trigger each agent (detection patterns)
+- HOW to announce triggers (transparency mode)
+- WHAT context to provide
+- WHY each trigger matters
 
-**Validation checklist:**
-✅ Architecture fitness tests written first
-✅ Commands are immutable records with init setters
-✅ Handlers return Fin<T> for error handling  
-✅ No Godot dependencies in Core project
-✅ Presenters follow MVP pattern without mutable state
-✅ Property tests cover mathematical invariants
-✅ Integration tests verify complete slices
-✅ Documentation updated per workflow
+### Quick Reference (AFTER reading the guide)
+After EVERY development action, automatically trigger the appropriate agent to maintain the Backlog as the Single Source of Truth.
 
-### For Documentation Updates (docs-updater agent)
-**MUST maintain these documents:**
-1. **Workflow Docs**: [Comprehensive_Development_Workflow.md](Docs/6_Guides/Comprehensive_Development_Workflow.md)
-2. **Checklist**: [Quick_Reference_Development_Checklist.md](Docs/6_Guides/Quick_Reference_Development_Checklist.md)
-3. **Implementation Plans**: Update status in `Docs/3_Implementation_Plans/`
-4. **Architecture Docs**: Keep `Docs/1_Architecture/` current
+**🔴 EARLY STAGE MODE**: Currently announcing all agent triggers for validation:
+```
+🤖 AGENT TRIGGER: [Reason detected]
+   → Invoking [Agent] for [Action]
+   → Context: [What's being processed]
+```
 
-**Update requirements:**
-- Mark completed phases in implementation plans
-- Update test statistics when new tests added
-- Maintain consistency with Move Block reference implementation
-- Document any new patterns discovered
+### Agent Triggers At-a-Glance
 
-### For Architecture Stress Testing (architecture-stress-tester agent)
-**MUST follow this workflow:**
-1. **Conduct thorough stress test** of architecture and implementation
-2. **Save report** following naming convention:
-   - Location: `Docs/4_Post_Mortems/Architecture_Stress_Test_[Date]_[Focus].md`
-   - Example: `Architecture_Stress_Test_Critical_Findings.md`
-3. **Update Master Action Items tracker** at `Docs/0_Global_Tracker/Master_Action_Items.md`:
-   - Add critical findings as new action items
-   - Use appropriate categories (CRIT-XXX for critical, TEST-XXX for testing gaps)
-   - Mark all new items as 🔴 **CRITICAL** or 📋 **PENDING**
-4. **Update Documentation Catalogue** at `Docs/DOCUMENTATION_CATALOGUE.md`:
-   - Add report to Post-Mortems section
-   - Mark with 🔴 **CRITICAL** status
-5. **Run synchronization scripts**:
-   ```bash
-   python scripts/sync_documentation_status.py
-   ```
+| Trigger | Agent | When | Visibility |
+|---------|-------|------|------------|
+| "I want to add..." | product-owner | Feature request | Visible with decision |
+| "Bug/Error found" | product-owner | Bug report | Visible with BF creation |
+| Tests pass | product-owner | Acceptance review | Visible with approval |
+| Code edited | backlog-maintainer | After file save | Silent (+40% progress) |
+| Tests written | backlog-maintainer | After test file save | Silent (+15% progress) |
+| Tests pass | backlog-maintainer | After dotnet test | Silent (+15% progress) |
 
-**Categorize issues by severity:**
-- CRITICAL: Will cause production failures
-- HIGH: Significant risk under load
-- MEDIUM: Performance/maintainability issues
-- LOW: Best practice violations
-
-**Report MUST include:**
-- Executive summary with risk assessment
-- Specific code locations with line numbers
-- Reproduction tests/scenarios
-- Impact under production load
-- Concrete fix recommendations
-- Action items with priority levels
+For complete trigger patterns, detection logic, and manual overrides, see the orchestration guide.
 
 ### For General Development
 **Claude Code MUST:**
+
+**🔄 DYNAMIC PO PATTERN (MANDATORY):**
+After ANY development action, automatically trigger the appropriate agent:
+- **Product Owner (Visible)**: Feature requests, bug reports, acceptance reviews, priority decisions
+- **Backlog Maintainer (Silent)**: Code changes, test results, progress updates, status changes
+
+This maintains the Backlog as the Single Source of Truth automatically without manual synchronization.
 
 **🚨 CRITICAL FIRST STEP - GIT WORKFLOW:**
 0. **NEVER work on main branch** - Always create feature branch first:
@@ -593,9 +622,10 @@ The Move Block feature (Phase 1 completed) serves as the **GOLD STANDARD** for i
    - Unit tests: `dotnet test --filter "Category=Unit"`
    - All tests: `dotnet test tests/BlockLife.Core.Tests.csproj`
 4. **Use TodoWrite** tool to track workflow compliance
-5. **Follow TDD** Red-Green-Refactor cycle religiously
-6. **Validate** against 4-pillar testing strategy
-7. **Create Pull Request** for all changes - NO direct commits to main
+5. **Trigger PO agent** to update Backlog after each action
+6. **Follow TDD** Red-Green-Refactor cycle religiously
+7. **Validate** against 4-pillar testing strategy
+8. **Create Pull Request** for all changes - NO direct commits to main
 
 ## 🔍 Common Agent Queries - Quick Answers
 
