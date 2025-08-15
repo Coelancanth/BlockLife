@@ -18,11 +18,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/6_Guides/Work_Item_Naming_Conventions.md)
 - **Maintained by**: Agile Product Owner agent (automatically triggered after EVERY development action)
 
-## 🔄 Dynamic PO Pattern - CRITICAL WORKFLOW CHANGE
+## 🔄 Agent Workflow System
 
-### **MANDATORY: Agile Product Owner Auto-Update Pattern**
+### **Hybrid Workflow Architecture**
 
-**The Agile Product Owner agent MUST be triggered automatically after EVERY agent action to maintain the Backlog as the Single Source of Truth.**
+Each agent has a dedicated workflow file that defines its exact procedures. Main agent orchestrates by telling agents to read their workflows.
+
+#### Workflow Files Location
+All workflows are documented in `Docs/Workflows/`:
+- `product-owner-workflow.md` - Strategic product decisions
+- `backlog-maintainer-workflow.md` - Silent tracking updates
+- Additional workflows added as new agents are created
+
+### **Dynamic Backlog Pattern - CRITICAL**
+
+**The Backlog Maintainer agent MUST be triggered automatically after EVERY development action to maintain the Backlog as the Single Source of Truth.**
 
 #### Trigger Points for PO Updates:
 
@@ -56,32 +66,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    "Stress test found critical issues, create HF items: [list]"
    ```
 
-#### PO Workflow for Main Agent:
+#### Agent Invocation Pattern:
 
 ```python
-# Pseudo-code showing MANDATORY pattern
-def after_any_work():
-    result = do_work()  # Any development work
-    
-    # ALWAYS trigger PO to update Backlog
+# Standard pattern for invoking any agent with workflow
+def trigger_agent(agent_type, action, context):
     Task(
-        description="Update backlog",
+        description=f"{action} action",
         prompt=f"""
-        Work completed: {result}
+        Read your workflow at: Docs/Workflows/{agent_type}-workflow.md
         
-        Actions needed:
-        1. Read Backlog at Docs/Backlog/Backlog.md
-        2. Update relevant item status/progress
-        3. Create new items if issues found
-        4. Adjust priorities if needed
-        5. Keep Backlog.md as living SSOT
+        Execute action: {action}
+        Context: {context}
         
-        Item files are in Docs/Backlog/items/
-        Templates in Docs/Backlog/templates/
-        Archive completed items to Docs/Backlog/archive/YYYY-QN/
+        Follow the workflow steps exactly as documented.
+        Return the outputs specified in the workflow.
         """,
-        subagent_type="agile-product-owner"
+        subagent_type=agent_type
     )
+
+# Example: Feature request
+trigger_agent(
+    "product-owner",
+    "feature_request",
+    {"idea": "Add multiplayer", "current_priorities": ["HF_002", "HF_003"]}
+)
+
+# Example: Silent progress update  
+trigger_agent(
+    "backlog-maintainer",
+    "update_progress", 
+    {"item_id": "VS_000", "event": "tests_passing"}
+)
 ```
 
 #### File Paths for PO Agent:
