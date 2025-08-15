@@ -1,8 +1,15 @@
-# Architecture Stress Testing: Lessons Learned
+# Stress Testing Playbook
 
-**Date**: 2025-08-13  
-**Context**: F1 Block Placement Critical Architecture Fixes  
-**Commit**: `0324c0f`
+**Document ID**: LWP_001  
+**Version**: 2.0  
+**Last Updated**: 2025-08-15  
+**Owner**: QA Engineer Agent  
+**Status**: Active  
+**Evolution History**: 
+- v1.0: F1 Block Placement stress test lessons (2025-08-13)
+- v2.0: Converted to living playbook format (2025-08-15)
+- v2.1: Added insights from Architecture_Stress_Test_Critical_Findings (2025-08-15)
+- v2.2: Merged Move Block architecture stress test findings (2025-08-15)
 
 ## Executive Summary
 
@@ -51,6 +58,39 @@ services.AddSingleton<IBlockRepository>(provider => provider.GetRequiredService<
 
 **Key Principle**: **One Entity = One Source of Truth = One Implementation**
 
+### 1a. **Dual Dictionary Anti-Pattern**
+
+**Problem Found**: Using two dictionaries to manage the same entities creates synchronization and atomicity issues.
+
+**Example from GridStateService**:
+```csharp
+private readonly ConcurrentDictionary<Vector2Int, Block> _blocksByPosition;
+private readonly ConcurrentDictionary<Guid, Block> _blocksById;
+```
+
+**Root Cause**: Operations like `MoveBlock` require 4 dictionary operations that aren't atomic.
+
+**Failure Scenario**:
+```csharp
+// Thread 1: MoveBlock(A, pos1 → pos2)
+// Thread 2: MoveBlock(B, pos3 → pos2)
+// Race condition: Both pass "empty" check, both try to move
+// Result: One block disappears, dictionary desync
+```
+
+**Learning**:
+```csharp
+// ❌ DANGEROUS - Dual state that can desynchronize
+private readonly ConcurrentDictionary<Vector2Int, Block> _blocksByPosition;
+private readonly ConcurrentDictionary<Guid, Block> _blocksById;
+
+// ✅ SAFER - Single source with efficient access patterns
+private readonly ConcurrentDictionary<Guid, Block> _blocks;
+// Create indexes/views as needed, but maintain single source
+```
+
+**Key Principle**: **Dual state management doubles your failure modes - use single source with derived views**
+
 ### 2. **Notification Systems: Wiring is Everything**
 
 **Problem Found**: Domain notifications were published but no subscribers existed, creating "silent failure" mode.
@@ -91,6 +131,45 @@ return _gridState.GetBlockById(blockId); // Synchronous when appropriate
 
 **Key Principle**: **Choose sync vs async based on the execution context, not convenience**
 
+### 3a. **CRITICAL: Godot Main Thread Anti-Pattern**
+
+**Problem Found**: Using async/await operations on Godot's main thread causes game freezes and frame drops.
+
+**Root Cause**: Godot's main thread must never be blocked by async operations for UI responsiveness.
+
+**Learning**:
+```csharp
+// ❌ CRITICAL BUG - Will freeze the entire game
+private async Task HandleBlockMovedAsync(Guid blockId, Vector2Int fromPosition, Vector2Int toPosition)
+{
+    await View.BlockAnimator?.AnimateMoveAsync(blockId, fromPosition, toPosition); // BLOCKS MAIN THREAD!
+    await View.ShowSuccessFeedbackAsync(toPosition, "Block moved successfully");
+}
+
+// ✅ CORRECT - Non-blocking Godot pattern using signals
+private void HandleBlockMoved(Guid blockId, Vector2Int fromPosition, Vector2Int toPosition)
+{
+    View.StartMoveAnimation(blockId, fromPosition, toPosition);
+    // Animation completes via signal emission, not await
+    // Connect animation_completed signal to continuation method
+}
+```
+
+**Godot Threading Rules**:
+- Main thread must NEVER be blocked by async operations
+- All UI updates MUST happen on main thread synchronously  
+- Long-running operations must use Godot's threading primitives (signals, CallDeferred)
+- `await` in `_Process()` or UI event handlers = guaranteed frame drops
+
+**Production Failures**:
+- Game freezes during any animation > 16ms
+- Input lag from blocked main thread
+- Frame rate death spiral with multiple concurrent animations
+- Godot Editor crashes from async operations
+- Mobile platforms kill blocked main threads
+
+**Key Principle**: **Never await in Godot UI thread - use signals and CallDeferred instead**
+
 ### 4. **Performance: N+1 Queries Hide in Plain Sight**
 
 **Problem Found**: Innocent-looking adjacency checks performed 4 separate dictionary lookups per operation.
@@ -130,6 +209,46 @@ public override void Dispose()
 ```
 
 **Key Principle**: **Every subscription needs a corresponding unsubscription**
+
+### 5a. **Notification Scalability Anti-Pattern**
+
+**Problem Found**: Static event bridges broadcast all notifications to all presenters, creating O(n*m) scaling problems.
+
+**Current Architecture Flow**:
+1. Command → Handler (validates, updates state)
+2. Handler → Publish notification via MediatR
+3. MediatR → NotificationBridge handler
+4. Bridge → Static event to ALL presenters (including zombies)
+5. Presenter → View update
+
+**Scaling Failure**:
+```csharp
+// At scale: 100 blocks moving simultaneously
+// → 100 notifications published
+// → Each notification processed by EVERY presenter instance (including disposed ones)
+// → No batching, no debouncing, no prioritization
+// → UI thread blocked by synchronous event handlers
+```
+
+**Memory Leak Cascade**:
+```csharp
+// User plays for 1 hour, entering/exiting grid view 60 times
+// → 60 presenter instances subscribed to static events
+// → Each block move triggers 60 handler executions
+// → Memory usage grows linearly
+// → GC pressure increases → Frame drops → Out of memory
+```
+
+**Learning**:
+```csharp
+// ❌ SCALABILITY KILLER - Broadcast to all
+public static event Func<BlockPlacedNotification, Task>? BlockPlacedEvent;
+
+// ✅ SCALABLE - Targeted notifications with weak references
+// Use DI-managed subscription system with lifecycle management
+```
+
+**Key Principle**: **Static broadcast events don't scale - use targeted, lifecycle-managed subscriptions**
 
 ---
 
@@ -186,6 +305,50 @@ For every feature implementation:
 - **Integration Tests**: End-to-end notification flow verification
 - **Load Tests**: Performance under realistic data volumes
 
+### 2a. **Critical Move Block Stress Test Scenarios**
+
+Based on architectural analysis, these specific scenarios must pass:
+
+**The Memory Leak Cascade Test**:
+```csharp
+// Create 100 grid views rapidly (user switching screens)
+for(int i = 0; i < 100; i++) {
+    var view = CreateGridView();
+    PerformSomeMoves(view, 10);
+    view.Dispose(); // Verify presenter unsubscribed properly
+}
+// Assert: Memory usage returns to baseline
+```
+
+**The Animation Race Test**:
+```csharp
+// User drags block A to position X, immediately drags block B to position X
+var taskA = MoveBlockAsync(blockA, positionX);
+var taskB = MoveBlockAsync(blockB, positionX); // Should this fail or queue?
+await Task.WhenAll(taskA, taskB);
+// Assert: Exactly one block at positionX, no visual corruption
+```
+
+**The Disposal Crash Test**:
+```csharp
+// Start long animation, dispose view mid-animation
+var moveTask = StartLongMoveAnimation(blockId, fromPos, toPos);
+await Task.Delay(50); // Let animation start
+view.Dispose();
+await moveTask; // Should complete without NullReferenceException
+```
+
+**The Rapid Input Spam Test**:
+```csharp
+// Simulate user rapidly clicking move operations
+var tasks = new List<Task>();
+for(int i = 0; i < 1000; i++) {
+    tasks.Add(MoveBlockAsync(blockId, RandomPosition()));
+}
+await Task.WhenAll(tasks);
+// Assert: All operations either succeed or fail gracefully, no corruption
+```
+
 ### 3. **Code Review Focus Areas**
 
 When reviewing code, specifically look for:
@@ -194,6 +357,16 @@ When reviewing code, specifically look for:
 - `.Wait()` or `.Result` on async operations  
 - Loops that perform individual lookups (N+1 patterns)
 - Static event subscriptions without disposal
+
+### 3a. **Additional Godot-Specific Review Points**
+
+Critical items for Godot game development:
+- **Async/await in UI threads**: Any `await` in `_Process`, `_Input`, or UI event handlers
+- **Static event bridges**: Broadcasting to all presenters instead of targeted subscriptions
+- **Dual dictionary patterns**: Multiple collections managing same entities without transaction boundaries
+- **Animation blocking**: Any code that waits for animations to complete instead of using signals
+- **Missing system state**: Operations that should be locked during animations but aren't
+- **Presenter disposal**: Event subscriptions that aren't cleaned up in `Dispose()` methods
 
 ---
 
