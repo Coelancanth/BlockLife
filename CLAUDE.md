@@ -268,7 +268,35 @@ Phase 3: Execution
 4. **Quality Integration** - Synthesize multiple expert outputs into coherent action plan
 5. **Critical Evaluation** - Challenge over-engineering in expert recommendations
 
-### 🔍 POST-AGENT REVIEW PROTOCOL (NEW)
+### 🔍 SUBAGENT DELEGATION PROTOCOL (ENHANCED)
+
+**MANDATORY**: Before delegating to any subagent, show complete prompt for user review and approval.
+
+#### Pre-Delegation Review Requirements
+```
+🔍 BEFORE SENDING TO SUBAGENT:
+- Show complete subagent prompt text to user
+- Explain which agent and why (delegation reasoning)
+- Wait for user approval: "Yes, send this" or modifications
+- User can review for quality, context, and accuracy
+```
+
+#### Delegation Quality Checklist
+- [ ] Agent type matches the task domain expertise needed
+- [ ] **ALL HISTORICAL CONTEXT PROVIDED** - Agents are stateless and can't remember previous conversations
+- [ ] All evidence included (original + current + any intermediate data)
+- [ ] Clear success criteria and deliverables specified
+- [ ] Appropriate scope (not too broad, not too narrow)
+- [ ] No missing critical information that could lead to failure
+
+#### 🚨 CRITICAL: Stateless Agent Context Requirements
+**Agents have NO memory of previous interactions** - Every delegation must include:
+- **Complete historical context** - All previous findings, attempts, failures
+- **ALL evidence data** - Original evidence + any new evidence + patterns
+- **Previous agent attempts** - What was tried, what failed, what was learned
+- **Full problem timeline** - How the issue evolved and current status
+
+### 🔍 POST-AGENT REVIEW PROTOCOL (EXISTING)
 
 **MANDATORY**: After any agent produces a plan/design, always conduct technical review before implementation.
 
@@ -321,6 +349,8 @@ Agent Plan → Technical Review → Decision Point:
 - **Work item classification matters**: Use correct types (VS for new features, TD for enhancements to existing features)
 - **Generate work items from templates**: Always create proper work item files for backlog tracking
 - **Update backlog immediately**: Add items to backlog before starting implementation work
+- **Subagent delegation requires user review**: Show complete subagent prompt before sending for quality control
+- **Agents are stateless**: Must provide ALL historical context, evidence, and previous attempts in every delegation
 
 ### Agent Resources
 - **Quick patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md) - **Enhanced with concurrent orchestration**
