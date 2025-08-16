@@ -206,7 +206,6 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 **⚠️ NEW: Agent Output Verification Required** - After BF_003 incident, ALL agent outputs must be verified. Agents can report false success. Always verify file operations, status updates, and archive operations actually completed.
 
 **🔍 Verification Tool**: Run `python scripts/verify_agent_output.py` after agent operations to confirm work was actually done.
-
 ### Quick Reference Pattern
 After EVERY development action:
 
@@ -288,7 +287,6 @@ After EVERY development action:
 ### Development Workflow Integration
 
 The agent ecosystem integrates seamlessly with the established development workflow:
-
 1. **Git Workflow**: Always create feature branches - managed by Git Expert agent
 2. **Documentation First**: Check implementation plans, comprehensive workflow, and quick reference guides
 3. **TDD Cycle**: Architecture tests → RED → GREEN → REFACTOR with automatic agent triggering
