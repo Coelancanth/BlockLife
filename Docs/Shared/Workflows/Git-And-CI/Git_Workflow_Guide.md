@@ -12,7 +12,7 @@ This document establishes the **mandatory Git workflow** for the BlockLife proje
 - **Created**: 2025-08-13
 - **Last Updated**: 2025-08-13  
 - **Status**: **MANDATORY** - Must be followed by all contributors
-- **Related Documents**: [Pull_Request_Guide.md](Pull_Request_Guide.md), [Comprehensive_Development_Workflow.md](Comprehensive_Development_Workflow.md)
+- **Related Documents**: [Pull_Request_Guide.md](Pull_Request_Guide.md), [Essential_Development_Workflow.md](Essential_Development_Workflow.md)
 
 ## 🚫 What NOT to Do (Common Mistakes)
 
@@ -525,7 +525,7 @@ gh config set prompt disabled
 ## Related Documentation
 
 - **[Pull_Request_Guide.md](Pull_Request_Guide.md)** - Detailed PR creation and review process
-- **[Comprehensive_Development_Workflow.md](Comprehensive_Development_Workflow.md)** - TDD+VSA development process
+- **[Essential_Development_Workflow.md](Essential_Development_Workflow.md)** - TDD+VSA development process
 - **[Naming_Conventions.md](../1_Architecture/Naming_Conventions.md)** - Branch and commit naming standards
 
 ## Exceptions

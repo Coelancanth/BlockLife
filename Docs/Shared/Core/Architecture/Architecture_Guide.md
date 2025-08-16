@@ -993,7 +993,6 @@ public interface IQuery<TResult> : IRequest<Fin<TResult>> { }
 
 For comprehensive guidance on implementing new features, including step-by-step instructions, functional programming patterns, rule engines, and the Humble Presenter principle with practical examples, see:
 
-**👉 [Feature Development Guide](../6_Guides/Feature_Development_Guide.md)**
 
 Key topics covered:
 - Step-by-step feature implementation process

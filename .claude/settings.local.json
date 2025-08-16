@@ -24,14 +24,23 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(\".claude/manage-agent-config.sh\" set on)",
-      "Bash(\".claude/manage-agent-config.sh\" set off)"
+      "Bash(\".claude/manage-agent-config.sh\" set off)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head:*)",
+      "Bash(done)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\Docs",
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\.claude"
+    ]
   },
   "statusLine": {
     "type": "command",
     "command": "powershell -ExecutionPolicy Bypass -File ~\\.claude\\claude-status.ps1",
     "padding": 0
-  }
+  },
+  "outputStyle": "Explanatory"
 }

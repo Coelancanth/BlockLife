@@ -302,7 +302,7 @@ blockContainer.GetChildCount().Should().Be(1, "exactly one visual block should e
 ### Related Documentation  
 - **`Integration_Test_Architecture_Deep_Dive.md`** - Complete investigation and resolution
 - **`CLAUDE.md`** - Project-wide integration test requirements
-- **`Comprehensive_Development_Workflow.md`** - TDD workflow including integration tests
+- **`Essential_Development_Workflow.md`** - TDD workflow including integration tests
 
 ## 🎯 Conclusion
 

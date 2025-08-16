@@ -587,6 +587,5 @@ The anchor-based approach using the last-placed block as the trigger position is
 ## Related Documents
 
 - [Complex Rule Engine Architecture ADR](Complex_Rule_Engine_Architecture.md) - Decision rationale and architectural overview
-- [Feature Development Guide](../6_Guides/Feature_Development_Guide.md) - General feature implementation patterns
 - [Standard Patterns](../1_Architecture/Standard_Patterns.md) - Validated architectural patterns
 - [Architecture Guide](../1_Architecture/Architecture_Guide.md) - Core architectural principles

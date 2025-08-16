@@ -273,7 +273,7 @@ Scripts provide metrics for monitoring:
 
 - **[CLAUDE.md](../CLAUDE.md)** - Project instructions and workflow
 - **[Git_Workflow_Guide.md](../Docs/6_Guides/Git_Workflow_Guide.md)** - Detailed Git workflow requirements
-- **[Comprehensive_Development_Workflow.md](../Docs/6_Guides/Comprehensive_Development_Workflow.md)** - Complete development process
+- **[Essential_Development_Workflow.md](../Docs/6_Guides/Essential_Development_Workflow.md)** - Complete development process
 - **[Master_Action_Items.md](../Docs/0_Global_Tracker/Master_Action_Items.md)** - Action item tracking
 - **[Implementation_Status_Tracker.md](../Docs/0_Global_Tracker/Implementation_Status_Tracker.md)** - Implementation progress
 

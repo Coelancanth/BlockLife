@@ -211,7 +211,7 @@ public void PlaceBlockCommand_BlockId_RemainsStableAcrossMultipleAccesses()
 ### Related Issues
 - **Similar Bugs**: None found in current codebase
 - **Architecture Decisions**: Relates to command design patterns and ID generation
-- **Documentation**: Updated Comprehensive_Development_Workflow.md with bug-to-test protocol
+- **Documentation**: Updated Essential_Development_Workflow.md with bug-to-test protocol
 
 ### External References
 - **C# Lazy<T>**: Microsoft documentation on thread-safe lazy initialization

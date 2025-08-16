@@ -296,7 +296,7 @@ Docs/
 **6. Guides (`6_Guides/`)**
 - **Pattern**: `{Purpose}_{Type}.md`
 - **Examples**:
-  - `Comprehensive_Development_Workflow.md`
+  - `Essential_Development_Workflow.md`
   - `Quick_Reference_Development_Checklist.md`
   - `Debugging_Notification_Pipeline.md`
   - `Pull_Request_Guide.md`

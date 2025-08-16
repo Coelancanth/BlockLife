@@ -499,7 +499,7 @@ Since no complex rule engine currently exists, migration is not required. Howeve
 - [ADR_002_Anchor_Based_Implementation_Guide.md](ADR_002_Anchor_Based_Implementation_Guide.md) - Detailed implementation specifications
 - [F1 Block Placement Implementation](_F1_Block_Placement_Implementation_Plan.md) - Reference CQRS patterns
 - [Move Block Feature Implementation](_Move_Block_Feature_Implementation_Plan.md) - Command handler integration
-- [Comprehensive Development Workflow](../6_Guides/Comprehensive_Development_Workflow.md) - TDD+VSA development process
+- [Comprehensive Development Workflow](../6_Guides/Essential_Development_Workflow.md) - TDD+VSA development process
 
 ---
 

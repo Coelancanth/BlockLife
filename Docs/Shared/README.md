@@ -29,14 +29,10 @@ Documents that define the fundamental principles and rarely change.
 Documents that define how we work and collaborate.
 
 **🤖 Agent-Patterns/** - AI Agent Workflow Patterns
-- `AI_Workflow_overview.md` - AI workflow overview
-- `Agent-Architecture-and-Workflow-Patterns.md` - Agent collaboration patterns
-- `Agent-Ecosystem-Design.md` - Complete agent ecosystem design
-- `Product-Owner-vs-Backlog-Maintainer-Design.md` - Specific agent responsibilities
+- `Agent_Orchestration_Guide.md` - Complete agent orchestration patterns and triggers
 
 **👨‍💻 Development/** - Development Process Guides
-- `Comprehensive_Development_Workflow.md` - Complete TDD+VSA process
-- `Feature_Development_Guide.md` - Feature development approach
+- `Essential_Development_Workflow.md` - Practical TDD workflow for solo development
 - `Quick_Reference_Development_Checklist.md` - Daily workflow checklist
 - `Documentation_Update_Workflow.md` - Documentation maintenance
 
@@ -88,7 +84,7 @@ Centralized location for all template files.
 → Check `Core/Architecture/Architecture_FAQ.md` for specific questions
 
 **🚀 Implement a new feature**
-→ Follow `Workflows/Development/Comprehensive_Development_Workflow.md`
+→ Follow `Workflows/Development/Essential_Development_Workflow.md`
 → Use `Implementation/Reference-Plans/` for step-by-step guidance
 → Reference `Workflows/Development/Quick_Reference_Development_Checklist.md`
 
@@ -98,8 +94,8 @@ Centralized location for all template files.
 → For specific testing strategies: `Workflows/Testing/` folder
 
 **🤖 Understand agent workflows**
-→ Read `Workflows/Agent-Patterns/Agent-Ecosystem-Design.md`
-→ Check `Workflows/Agent-Patterns/` for specific patterns
+→ Read `Workflows/Agent-Patterns/Agent_Orchestration_Guide.md`
+→ Check individual agent workflows in `../../Agents/` directories
 
 **📝 Report a bug**
 → Use templates in `Templates/Bug-Report-Templates/`
@@ -137,4 +133,4 @@ Some documents may still reference old paths. These will be updated as encounter
 
 ---
 
-**Quick Start**: New to the project? Begin with `Core/Architecture/Architecture_Guide.md` and `Workflows/Development/Comprehensive_Development_Workflow.md`
+**Quick Start**: New to the project? Begin with `Core/Architecture/Architecture_Guide.md` and `Workflows/Development/Essential_Development_Workflow.md`
