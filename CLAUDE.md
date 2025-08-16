@@ -47,6 +47,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **If you did work and haven't triggered an agent, STOP and trigger NOW.**
 
 **MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+**PO TRIGGERS**: [PO_TRIGGER_POINTS.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_POINTS.md) - Complete PO trigger catalog
+**QUICK REF**: [PO_TRIGGER_QUICK_REFERENCE.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_QUICK_REFERENCE.md) - Instant trigger guide
 **VERIFY**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Ensure triggers happen
 **FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
 

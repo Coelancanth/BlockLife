@@ -109,6 +109,8 @@ This helps validate the pattern is working correctly.
 | **Priority Question** | "what should", "which first", "priority" | "🤖 PO TRIGGER: Priority decision needed" | Provide strategic guidance |
 | **Session Start** | Beginning work session | "🤖 PO TRIGGER: Session planning" | Set session goals |
 
+**📋 COMPREHENSIVE DOCUMENTATION**: See [PO_TRIGGER_POINTS.md](PO_TRIGGER_POINTS.md) for complete trigger patterns, priority rules, edge cases, and integration details.
+
 ### Tech Lead Triggers (Visible)
 
 | Trigger Condition | Detection Pattern | Announcement | Action |
@@ -560,3 +562,23 @@ During early stage, validate each trigger:
 - Announcement mode helps us validate and improve patterns
 - Goal is to reach Stage 3 (fully automatic) once patterns are proven
 - Feedback on missed triggers helps improve detection
+
+---
+
+## 📚 Related Documentation
+
+### Core Orchestration Documents
+- **[AGENT_COMMUNICATION_PROTOCOLS.md](AGENT_COMMUNICATION_PROTOCOLS.md)** - How agents communicate
+- **[AGENT_INTEGRATION_PATTERNS.md](AGENT_INTEGRATION_PATTERNS.md)** - Proven integration patterns
+- **[AGENT_INTERACTION_DIAGRAMS.md](AGENT_INTERACTION_DIAGRAMS.md)** - Visual workflow representations
+- **[DOUBLE_VERIFICATION_PROTOCOL.md](DOUBLE_VERIFICATION_PROTOCOL.md)** - Validation mechanisms
+- **[ORCHESTRATION_FEEDBACK_SYSTEM.md](ORCHESTRATION_FEEDBACK_SYSTEM.md)** - Feedback and improvement
+
+### Agent Workflows
+All agent-specific workflows are in: `Docs/Workflows/Agent-Workflows/`
+- Each agent has a dedicated workflow file
+- Workflows define exact procedures
+- Integration points are documented
+
+### Implementation Status
+See **TD_014** in Backlog for Agent Architecture Pattern Update status

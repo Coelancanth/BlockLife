@@ -30,8 +30,13 @@ Core orchestration system that manages how and when agents are triggered.
 
 **Critical Files:**
 - `AGENT_ORCHESTRATION_GUIDE.md` - **MANDATORY READING** - Trigger patterns and detection logic
+- `AGENT_COMMUNICATION_PROTOCOLS.md` - How agents communicate and coordinate
+- `AGENT_INTEGRATION_PATTERNS.md` - Proven patterns for multi-agent workflows
+- `AGENT_INTERACTION_DIAGRAMS.md` - Visual representations of agent workflows
+- `DOUBLE_VERIFICATION_PROTOCOL.md` - Validation mechanisms for agent triggers
 - `ORCHESTRATION_FEEDBACK_SYSTEM.md` - Report and track workflow failures
 - `workflow-testing-protocol.md` - Testing procedures for workflow validation
+- `TD_014_COMPLETION_SUMMARY.md` - Agent Architecture Pattern Update (100% complete)
 
 ### 📊 Automatic-Orchestration-Pattern/
 Documentation of the Automatic Orchestration Pattern that ensures all development work is tracked.
