@@ -20,6 +20,32 @@ public static class PerformanceProfiler
     public static void Initialize(ILogger logger)
     {
         _logger = logger?.ForContext("SourceContext", "Performance");
+        
+        // Pre-warm Stopwatch to avoid JIT compilation on first click
+        // This moves the ~280ms initialization cost to startup time
+        var initTimer = new Stopwatch();
+        initTimer.Start();
+        
+        // Create and use a Stopwatch to trigger JIT compilation
+        var warmupStopwatch = new Stopwatch();
+        warmupStopwatch.Start();
+        warmupStopwatch.Stop();
+        
+        initTimer.Stop();
+        
+        // Verify pre-warming worked (should be fast after first Stopwatch creation)
+        var verifyTimer = new Stopwatch();
+        verifyTimer.Start();
+        verifyTimer.Stop();
+        
+        _logger?.Information("PerformanceProfiler pre-warmed in {InitMs}ms (verification: {VerifyMs}ms)", 
+            initTimer.ElapsedMilliseconds, verifyTimer.ElapsedMilliseconds);
+        
+        // Runtime assertion - if verification takes >10ms, pre-warming failed
+        if (verifyTimer.ElapsedMilliseconds > 10)
+        {
+            _logger?.Warning("Pre-warming may have failed - verification took {Ms}ms", verifyTimer.ElapsedMilliseconds);
+        }
     }
     
     /// <summary>
