@@ -5,6 +5,7 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+- **TD_005**: **URGENT** Debugger-expert agent workflow improvement (critical - agent failed twice with false resolutions)
 - **BF_001**: Investigate view layer lag in block movement (performance issue despite 0-4ms commands)
 - **VS_004**: View layer debugging system with GDUnit4 integration (specialized debugging tools for UI/animation performance)
 - Fix critical bugs in Grid State
