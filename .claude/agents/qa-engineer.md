@@ -1,7 +1,7 @@
 ---
 name: qa-engineer
 description: "Integration and stress testing specialist. Finds what breaks under real conditions. Tests concurrent operations, edge cases, validates features work end-to-end."
-model: sonnet
+model: opus
 color: purple
 ---
 

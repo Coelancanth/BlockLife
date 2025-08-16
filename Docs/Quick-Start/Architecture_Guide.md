@@ -177,6 +177,30 @@ tests/BlockLife.Core.Tests/Features/[Feature]/
 - **Operations must complete <16ms** for 60fps
 - **No blocking main thread** with async operations
 - **Dispose resources properly** to prevent memory leaks
+- **Pre-warm async/await patterns** to avoid JIT compilation delays
+
+#### Async/Await Pre-warming (Critical for Godot/Mono)
+```csharp
+// ⚠️ GOTCHA: First async operation can take 200-300ms due to JIT compilation
+// Solution: Pre-warm during startup (_Ready method)
+
+private async Task PreWarmAsyncPatterns()
+{
+    // Pre-warm Option<T>.Match with async lambdas (BF_001: caused 271ms delay)
+    var testOption = Some(new Vector2Int(0, 0));
+    await testOption.Match(
+        Some: async pos => await Task.CompletedTask,
+        None: async () => await Task.CompletedTask
+    );
+    
+    // Pre-warm other async patterns used in your code
+    await Task.Delay(1);
+}
+
+// In _Ready():
+PreWarmAsyncPatterns().Wait(500); // Allow up to 500ms for pre-warming
+```
+**Lesson from BF_001**: Mono/.NET async state machines have significant first-time initialization costs in Godot runtime.
 
 ### Godot Integration
 - **Presenters can use Godot APIs** (allowed in presentation layer)

@@ -1,7 +1,7 @@
 ---
 name: product-owner
 description: "Use PROACTIVELY when user describes features or reports bugs. Creates user stories with acceptance criteria, challenges feature value, prioritizes backlog items based on player impact, conducts acceptance reviews to ensure delivered value."
-model: sonnet
+model: opus
 color: red
 ---
 

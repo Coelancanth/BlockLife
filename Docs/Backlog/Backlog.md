@@ -6,7 +6,6 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 - **TD_005**: **URGENT** Debugger-expert agent workflow improvement (critical - agent failed twice with false resolutions)
-- **BF_001**: Investigate view layer lag in block movement (performance issue despite 0-4ms commands)
 - **VS_004**: View layer debugging system with GDUnit4 integration (specialized debugging tools for UI/animation performance)
 - Fix critical bugs in Grid State
 - Complete Move Block feature (Phase 1) dependencies
@@ -39,6 +38,7 @@
 - ~~Workflow transformation - intelligent orchestration with complexity-based delegation~~
 - ~~CLAUDE.md update - added critical thinking mandate and over-engineering safeguards~~
 - **TD_002**: Block interaction reflection removal (eliminated initialization bottleneck)
+- **BF_001**: ✅ RESOLVED - First-click lag fixed via async/await pre-warming (271ms JIT compilation moved to startup)
 
 ## 🚧 Currently Blocked
 - Audio system implementation (external dependency: Godot 4.4)

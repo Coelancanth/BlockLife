@@ -1,1 +1,1 @@
-TD_010: Notification Pipeline Framework [infrastructure][completed]
+2025-08-17: BF_001 - First-click lag fixed via async/await pre-warming (271ms JIT compilation)

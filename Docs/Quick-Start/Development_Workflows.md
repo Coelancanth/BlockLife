@@ -269,6 +269,37 @@ _someStaticValue = newValue; // No validation or tracking!
 4. **Verify test passes** (confirms fix works)
 5. **Add to regression suite** (prevents reoccurrence)
 
+## 📚 Performance Gotchas & Lessons Learned
+
+### Critical Performance Issues (From Post-Mortems)
+
+#### Async/Await JIT Compilation (BF_001)
+**Issue**: First async operation can take 200-300ms due to Mono/.NET JIT compilation
+**Symptom**: First block move took 271ms, subsequent moves <1ms
+**Root Cause**: `Option<T>.Match` with async lambdas triggers state machine compilation
+**Solution**: Pre-warm async patterns during startup:
+```csharp
+// In _Ready() method
+private async Task PreWarmAsyncPatterns()
+{
+    var testOption = Some(new Vector2Int(0, 0));
+    await testOption.Match(
+        Some: async pos => await Task.CompletedTask,
+        None: async () => await Task.CompletedTask
+    );
+}
+PreWarmAsyncPatterns().Wait(500); // Move 271ms cost to startup
+```
+
+### Debugging Complex Performance Issues
+
+When facing mysterious performance lags:
+1. **Add granular instrumentation first** - Don't guess, measure
+2. **Check for first-time initialization costs** - JIT, lazy loading, etc.
+3. **Profile at micro-operation level** - Even simple comparisons can hide costs
+4. **Trust user reports over assumptions** - If they say it's slow, it is
+5. **Use debugger-expert with complete context** - Include all evidence and history
+
 ## 🤖 Automation Integration
 
 ### Essential Automation Scripts

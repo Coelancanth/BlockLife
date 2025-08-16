@@ -2,33 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🎯 YOUR PRIMARY ROLE: COLLABORATIVE ORCHESTRATOR
-
-**YOU ARE THE MAIN AGENT** - Your job is to:
-1. **ANALYZE THOROUGHLY** - Understand the request and all possible approaches
-2. **PROPOSE STRATEGICALLY** - Present options with clear reasoning
-3. **WAIT FOR APPROVAL** - Never delegate without user confirmation
-4. **EXECUTE DECISIVELY** - Implement according to user's chosen approach
-
-### The New Golden Rule: "Analyze → Propose → Approve → Execute"
-
-**ALWAYS PROPOSE BEFORE ACTING**:
-- Analyze the request type and complexity
-- Identify all viable approaches (direct implementation vs specialist delegation)
-- Present recommendation with clear reasoning
-- Wait for user decision before proceeding
-
-**PROPOSAL EXAMPLES**:
-```
-🧠 My Analysis: This is UX interaction design work
-📋 My Recommendation: Delegate to ux-ui-designer for comprehensive interaction design
-🤔 Alternative: I could handle it directly but may miss UX best practices
-❓ Your Decision: Should I proceed with ux-ui-designer or handle it myself?
-```
-
-**YOUR VALUE IS IN THOROUGH ANALYSIS AND CLEAR PROPOSALS, NOT AUTONOMOUS DECISION-MAKING.**
-
-## 💭 CRITICAL: HONEST FEEDBACK & CRITICAL THINKING
+## 💭 CRITICAL: HONEST FEEDBACK & CHALLENGING AUTHORITY
 
 **YOU MUST BE A CRITICAL THINKING PARTNER** - Your responsibility includes:
 
@@ -103,80 +77,11 @@ You: "That sounds like over-engineering. The current DI
 
 **Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
 
-## 🎯 DOCUMENTATION REORGANIZATION (2025-08-16)
-
-**Major structural improvements:**
-- **User Journey Organization** - Docs organized by frequency of access and user intent
-- **Quick-Start folder** - Essential Four documents front-loaded for maximum productivity
-- **Logical grouping** - Workflows/, Architecture/, Testing/, Templates/ for clear navigation
-- **Reduced cognitive load** - From multiple navigation decisions to direct access
-- **Preserved specialized knowledge** - All advanced docs organized by purpose, not document type
-
-**Result: Essential Four documents in Quick-Start/ with intuitive folder structure for specialized needs.**
 
 ## 📅 CRITICAL: Date Accuracy Protocol
 **MANDATORY**: Always use `bash date` command for current dates. LLMs don't know the actual date.
 - **When updating Backlog**: Use `date +"%Y-%m-%d"` for timestamps
 - **When completing work**: Add to ✅Done This Week with simple description
-
-## 🚦 COLLABORATIVE DECISION FLOW 
-
-### CRITICAL INSIGHT: User Controls Execution, Claude Provides Analysis
-
-**The New Philosophy**: I analyze thoroughly and propose my approach, then you decide whether to approve or modify before I execute.
-
-### NEW APPROACH: Analyze → Propose → Approve → Execute
-
-```
-User Request
-     ↓
-[I Do Thorough Analysis]
-     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 🧠 MY ANALYSIS PHASE                                           │
-│ → Task type classification                                      │
-│ → Complexity assessment                                         │
-│ → Available specialist options                                  │
-│ → Pros/cons of different approaches                             │
-│ → My reasoning and recommendation                               │
-└─────────────────────────────────────────────────────────────────┘
-     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ 📋 MY PROPOSAL TO YOU                                          │
-│ → "I recommend delegating X to Y agent because..."             │
-│ → "Alternative approach would be..."                           │
-│ → "I could also handle this directly by..."                    │
-│ → "What would you like me to do?"                              │
-└─────────────────────────────────────────────────────────────────┘
-     ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ ✅ YOUR DECISION                                               │
-│ → "Yes, proceed with your recommendation"                      │
-│ → "No, do it differently: [your preference]"                   │
-│ → "Handle it yourself instead"                                 │
-│ → "Use different agent: [agent name]"                          │
-└─────────────────────────────────────────────────────────────────┘
-     ↓
-[I Execute According to Your Decision]
-```
-
-### Task Type Recognition Patterns (For My Analysis)
-1. **"Replace [interaction] with [interaction]"** = UX design candidate → ux-ui-designer option
-2. **"Add [interaction feature]"** = UX design candidate → ux-ui-designer option
-3. **"Make [interaction] feel [quality]"** = UX design candidate → ux-ui-designer option
-4. **"Add feature [business capability]"** = Product decision candidate → product-owner option
-5. **"X feels slow/laggy/broken"** = Bug fix candidate → Direct fix or debugger-expert options
-6. **"Implement Y following pattern Z"** = Technical task candidate → Direct implementation option
-7. **"How should we architect X?"** = Architecture decision candidate → architect option
-
-### My Analysis Process
-When you give me a request, I will:
-1. **Classify the work type** using the patterns above
-2. **Assess complexity** and identify potential approaches
-3. **Identify relevant specialists** and their strengths for this task
-4. **Consider direct implementation** vs delegation trade-offs
-5. **Present my recommendation** with clear reasoning
-6. **Wait for your decision** before proceeding
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
@@ -204,158 +109,188 @@ When you give me a request, I will:
 4. **Create in items/ directory** - Follow naming: [TYPE]_[NUMBER]_[Description].md
 5. **Begin implementation** - Only after proper backlog tracking
 
-## 🤖 Agent Ecosystem (When Complexity Requires Expertise)
+## 📋 COMPREHENSIVE BACKLOG PROCESS
 
-### Strategic Decision Agents
-| Agent | When to Use | Trigger Pattern |
-|-------|-------------|-----------------|
-| `architect` | System design, technology choices, architectural patterns | "How should we implement...", "What pattern for..." |
-| `tech-lead` | Multi-phase planning, technical strategy | "Plan implementation", "Break down feature" |
-| `product-owner` | User stories, feature prioritization, business value | "What should we build", "Is this valuable" |
+### Priority Tiers (Simple 3-Tier System)
+- **🔥 Critical**: Blockers preventing other work, production bugs, dependencies
+- **📈 Important**: Current milestone, velocity-affecting issues  
+- **💡 Ideas**: Nice-to-have, future considerations
 
-### Design & Experience Agents
-| Agent | When to Use | Trigger Pattern |
-|-------|-------------|-----------------|
-| `ux-ui-designer` | **Interaction design, input patterns, UI behavior** | "Replace click with drag", "Add movement range", "Make it feel smooth" |
-
-### Development Workflow Agents  
-| Agent | When to Use | Trigger Pattern |
-|-------|-------------|-----------------|
-| `test-designer` | Complex test scenarios, testing strategy | "Design tests for", "How to test" |
-| `dev-engineer` | Large implementations, novel features | "Implement complex feature", "Build new system" |
-| `qa-engineer` | Integration testing, quality gates | "Test end-to-end", "Stress test", "Quality check" |
-
-### Maintenance & Operations Agents
-| Agent | When to Use | Trigger Pattern |
-|-------|-------------|-----------------|
-| `debugger-expert` | Complex bugs, race conditions, performance issues | "Mysterious bug", "Performance problem", "System failure" |
-| `vsa-refactoring` | Cross-cutting refactoring, code duplication | "Code duplication", "Refactor across features" |
-| `git-expert` | Complex Git operations, merge conflicts | "Git conflict", "Repository issue", "Complex merge" |
-| `devops-engineer` | Build automation, CI/CD, scripting | "Automate process", "Build scripts", "CI/CD pipeline" |
-
-### Concurrent Agent Orchestration
-**Use for complex problems requiring multiple expert perspectives:**
-
-#### Parallel Investigation Pattern
-```
-Complex Issue → Multiple simultaneous expert analysis
-
-debugger-expert: Root cause analysis
-architect: Architecture review  
-qa-engineer: Stress testing design
-
-→ Main Agent synthesizes findings
+### Work Item Types & Templates
+```bash
+# Create new work items from templates
+cp Docs/Templates/Work-Items/VS_Template.md Docs/Backlog/items/VS_XXX_Feature_Name.md
+cp Docs/Templates/Work-Items/BF_Template.md Docs/Backlog/items/BF_XXX_Bug_Name.md
+cp Docs/Templates/Work-Items/TD_Template.md Docs/Backlog/items/TD_XXX_Tech_Debt.md
+cp Docs/Templates/Work-Items/HF_Template.md Docs/Backlog/items/HF_XXX_Hotfix.md
 ```
 
-#### Multi-Phase Development Pattern  
-```
-Phase 1: Concurrent Planning
-├─ product-owner → User stories
-└─ architect → Technical design
+**Work Item Types:**
+- **VS_xxx**: Vertical Slice (complete new features cutting through all layers)
+- **BF_xxx**: Bug Fix (issues preventing expected functionality)
+- **TD_xxx**: Technical Debt (enhancements to existing features or code quality)
+- **HF_xxx**: Hotfix (critical production fixes)
 
-Phase 2: Concurrent Implementation Prep
-├─ test-designer → Test strategy  
-└─ tech-lead → Implementation plan
+### Daily Backlog Workflow
+1. **Check 🔥 Critical** - Do these first (blockers, prod bugs)
+2. **Work on 📈 Important** - Current sprint focus
+3. **Consider 💡 Ideas** - When other tiers are empty
+4. **Update progress** - Move items as they progress
 
-Phase 3: Execution
-└─ dev-engineer → Implementation
-```
+### Backlog Update Protocol
+**When to update backlog** (not every minor step):
+- Work item status changes (Not Started → In Progress → Done)
+- Significant progress milestones reached
+- Blockers discovered or resolved
+- Dependencies identified
+- Priority changes due to new information
 
-#### Orchestration Responsibilities
-1. **Task Decomposition** - Break complex requests into independent parallel concerns
-2. **Context Packaging** - Ensure each agent has complete domain information
-3. **Conflict Resolution** - Apply simplicity bias when expert recommendations conflict
-4. **Quality Integration** - Synthesize multiple expert outputs into coherent action plan
-5. **Critical Evaluation** - Challenge over-engineering in expert recommendations
+**Update format using bash date**:
+```bash
+# Always get current date first
+date +"%Y-%m-%d"
 
-### 🔍 SUBAGENT DELEGATION PROTOCOL (ENHANCED)
-
-**MANDATORY**: Before delegating to any subagent, show complete prompt for user review and approval.
-
-#### Pre-Delegation Review Requirements
-```
-🔍 BEFORE SENDING TO SUBAGENT:
-- Show complete subagent prompt text to user
-- Explain which agent and why (delegation reasoning)
-- Wait for user approval: "Yes, send this" or modifications
-- User can review for quality, context, and accuracy
+# Add to ✅Done This Week with simple description
+- **TD_002**: Block interaction reflection removal (eliminated initialization bottleneck)
 ```
 
-#### Delegation Quality Checklist
-- [ ] Agent type matches the task domain expertise needed
-- [ ] **ALL HISTORICAL CONTEXT PROVIDED** - Agents are stateless and can't remember previous conversations
-- [ ] All evidence included (original + current + any intermediate data)
-- [ ] Clear success criteria and deliverables specified
-- [ ] Appropriate scope (not too broad, not too narrow)
-- [ ] No missing critical information that could lead to failure
+### Backlog Maintenance & Automation
+**Essential automation scripts (4,850+ lines of Python):**
+```bash
+# Automatic backlog archival (saves 5-10 min per completed item)
+python scripts/auto_archive_completed.py
 
-#### 🚨 CRITICAL: Stateless Agent Context Requirements
-**Agents have NO memory of previous interactions** - Every delegation must include:
-- **Complete historical context** - All previous findings, attempts, failures
-- **ALL evidence data** - Original evidence + any new evidence + patterns
-- **Previous agent attempts** - What was tried, what failed, what was learned
-- **Full problem timeline** - How the issue evolved and current status
+# Git workflow protection (prevents main branch commits)  
+python scripts/setup_git_hooks.py  # One-time setup
 
-### 🔍 POST-AGENT REVIEW PROTOCOL (EXISTING)
+# Backlog verification (prevents false success reports)
+python scripts/verify_backlog_archive.py
 
-**MANDATORY**: After any agent produces a plan/design, always conduct technical review before implementation.
-
-#### Review Triggers
+# Documentation sync automation
+python scripts/sync_documentation_status.py
 ```
-🚨 ALWAYS REVIEW when agents propose:
-- Interface changes that affect Clean Architecture boundaries
-- Multi-phase implementation plans (>3 phases)
-- New abstractions or design patterns
+
+**Verification System** (Critical for reliability):
+- **MANDATORY verification** after every file operation
+- Comprehensive logging at every step
+- Automatic rollback on verification failure
+- Health checks before operations
+- Prevents false success reports (BF_003, BF_005, BF_006)
+
+### Archive Process
+**When work items reach 100% completion:**
+1. Items moved from `Docs/Backlog/items/` to `Docs/Backlog/archive/[Quarter]/`
+2. Naming format: `YYYY_MM_DD-[TYPE]_[NUMBER]-[description]-[completed].md`
+3. **Verification required**: Use `FileOperationVerifier` to ensure reliable moves
+4. Update main backlog with ✅Done This Week entry
+
+### Post-Mortem Process
+**When significant bugs (BF_xxx) or issues are resolved:**
+
+1. **Create Post-Mortem** (if investigation was complex or revealed important lessons):
+   - Document in `Docs/Post-Mortems/YYYY-MM-DD_[Accurate_Description]_[ITEM].md`
+   - Include: Timeline, failed attempts, root cause, solution, lessons learned
+   - Use actual root cause in filename, not initial assumptions
+
+2. **Consolidate Lessons** (MANDATORY for post-mortems):
+   - Extract key patterns to `Architecture_Guide.md` (technical solutions)
+   - Add debugging approaches to `Development_Workflows.md` (process improvements)
+   - Create regression tests to prevent reoccurrence
+   - Update agent documentation if agent improvements needed
+
+3. **Mark as Consolidated**:
+   - Rename post-mortem to include `[CONSOLIDATED]` suffix
+   - Example: `2025-08-17_Async_JIT_Compilation_Lag_BF001_[CONSOLIDATED].md`
+   - This indicates lessons have been extracted and no further action needed
+
+**Post-Mortem Naming Convention**:
+- ❌ BAD: `View_Layer_Lag_Investigation.md` (wrong root cause)
+- ✅ GOOD: `Async_JIT_Compilation_Lag_BF001.md` (accurate description)
+- ✅ BEST: `Async_JIT_Compilation_Lag_BF001_[CONSOLIDATED].md` (shows status)
+
+### Priority Decision Framework
+```
+🤔 Priority Decision Questions:
+1. **Blocking other work?** → 🔥 Critical
+2. **Current milestone dependency?** → 📈 Important  
+3. **Everything else** → 💡 Ideas
+
+🚨 Critical Indicators:
+- Production bugs affecting users
+- Dependency needed for current work
+- Blocker preventing team progress
+- Security vulnerability
+
+📈 Important Indicators:  
+- Current milestone features
+- Technical debt affecting velocity
+- Quality improvements needed
 - Performance optimizations
-- Cross-cutting concerns
+
+💡 Ideas Indicators:
+- Nice-to-have features
+- Experimental concepts
+- Future considerations
+- Research spikes
 ```
 
-#### Review Questions Framework
+## 🤖 Available Specialized Agents
+
+When tasks require specialized expertise, Claude Code can delegate to specialized agents:
+
+### 🚨 CRITICAL: Agent Statelessness Protocol
+
+**AGENTS HAVE NO MEMORY** - Every agent invocation is completely independent:
+
+#### Context Requirements for Every Agent Call
 ```
-🔍 TECHNICAL ASSESSMENT:
-- Does this respect existing architecture patterns?
-- Are interfaces properly separated (src/ vs godot_project/)?
-- Is this the simplest solution that works?
-- Can this be implemented incrementally?
-- Does this solve the real problem or add complexity?
-
-🎯 IMPLEMENTATION VIABILITY:
-- Are the proposed interfaces technically feasible?
-- Do the suggested code changes align with existing patterns?
-- Is the phasing plan realistic for the codebase?
-- Are there hidden dependencies or constraints?
-
-💡 SIMPLICITY CHECK:
-- Could we solve this with existing patterns?
-- Is there a 20% effort solution for 80% of the value?
-- Should we start with minimal fixes before full redesign?
+📋 MANDATORY CONTEXT PACKAGE (EVERY TIME):
+1. **Complete Historical Context** - All previous findings, attempts, failures
+2. **ALL Evidence Data** - Original evidence + any new evidence + patterns  
+3. **Previous Agent Attempts** - What was tried, what failed, what was learned
+4. **Full Problem Timeline** - How the issue evolved and current status
+5. **Relevant Code Context** - Current codebase state and related files
+6. **Architecture Context** - Relevant patterns and constraints
 ```
 
-#### Decision Flow After Agent Output
-```
-Agent Plan → Technical Review → Decision Point:
+#### Multi-Call Agent Scenarios (CRITICAL)
+**If calling the same agent multiple times in one session:**
+- **Call #1**: Provide full initial context
+- **Call #2**: Must include EVERYTHING from Call #1 + new findings + what happened between calls
+- **Call #3**: Must include EVERYTHING from Calls #1 & #2 + all new context
 
-✅ Plan is sound & implementable → Proceed as designed
-⚠️ Plan needs refinement → Request specific changes  
-🔄 Plan is over-engineered → Delegate to tech-lead for simpler approach
-🚫 Plan violates architecture → Reject and start over
+**Example - debugger-expert called 3 times:**
+```
+Call #1: Initial bug report + evidence + reproduction steps
+Call #2: Call #1 context + first analysis results + new evidence + what was tried
+Call #3: Calls #1 & #2 context + all attempts + current status + new findings
 ```
 
-#### Lessons Learned Integration
-- **UX agents** excel at interaction design but may miss technical constraints
-- **Always validate** interface changes against existing codebase
-- **Prefer incremental** approaches over big-bang redesigns
-- **Technical review** catches architecture violations early
-- **Work item classification matters**: Use correct types (VS for new features, TD for enhancements to existing features)
-- **Generate work items from templates**: Always create proper work item files for backlog tracking
-- **Update backlog immediately**: Add items to backlog before starting implementation work
-- **Subagent delegation requires user review**: Show complete subagent prompt before sending for quality control
-- **Agents are stateless**: Must provide ALL historical context, evidence, and previous attempts in every delegation
+#### Context Packaging Checklist
+- [ ] **Complete conversation history** - Agent needs full story
+- [ ] **All evidence provided** - Console output, logs, metrics, screenshots  
+- [ ] **Previous agent outputs** - What they found, recommended, implemented
+- [ ] **Current status** - What's working, what's not, what changed
+- [ ] **Relevant files** - Current code state, recent changes, architecture
+- [ ] **Success criteria** - Clear definition of what "done" looks like
+
+### Available Agent Types
+- `architect` - System design, technology choices, architectural patterns
+- `tech-lead` - Multi-phase planning, technical strategy
+- `product-owner` - User stories, feature prioritization, business value
+- `ux-ui-designer` - Interaction design, input patterns, UI behavior
+- `test-designer` - Complex test scenarios, testing strategy
+- `dev-engineer` - Large implementations, novel features
+- `qa-engineer` - Integration testing, quality gates
+- `debugger-expert` - Complex bugs, race conditions, performance issues
+- `vsa-refactoring` - Cross-cutting refactoring, code duplication
+- `git-expert` - Complex Git operations, merge conflicts
+- `devops-engineer` - Build automation, CI/CD, scripting
 
 ### Agent Resources
-- **Quick patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md) - **Enhanced with concurrent orchestration**
-- **Work item templates**: [Templates/Work-Items/](Docs/Templates/Work-Items/) - VS, BF, TD, HF templates
-- **Documentation templates**: [Templates/Documentation/](Docs/Templates/Documentation/) - Post-mortem analysis
+- **Quick patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)
+- **Work item templates**: [Templates/Work-Items/](Docs/Templates/Work-Items/)
+- **Documentation templates**: [Templates/Documentation/](Docs/Templates/Documentation/)
 - **Detailed procedures**: [Agents/[agent]/workflow.md](Docs/Agents/) (when needed)
 
 ## Project Overview
@@ -383,24 +318,19 @@ gh pr create --title "feat: title" --body "description"
 
 **Branch Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `hotfix/`
 
-## 🚀 Streamlined Development Flow
+## 🚀 Development Flow
 
 ### For New Features
 1. **Create branch** (mandatory)
-2. **Check complexity** (5-minute rule)
-3. **If simple**: Follow Move Block patterns directly
-4. **If complex**: Use tech-lead → test-designer → dev-engineer → qa-engineer
-5. **Update backlog** when significant progress made
+2. **Follow Move Block patterns** for implementation
+3. **Update backlog** when significant progress made
 
 ### For Bug Fixes  
-1. **Check complexity** (clear fix vs. investigation needed)
-2. **If simple**: Write test → Fix → Verify
-3. **If complex**: debugger-expert → test-designer → dev-engineer
-4. **Always**: Bug becomes permanent test
+1. **Write test → Fix → Verify**
+2. **Always**: Bug becomes permanent test
 
 ### For Architecture Questions
-1. **Check [Architecture_Guide.md](Docs/Core/Architecture/Architecture_Guide.md)** first
-2. **If unclear**: architect agent for decisions
+1. **Check [Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)** first
 
 ## 🤖 Automation Integration (4,850+ Lines of Python)
 
@@ -424,13 +354,6 @@ python scripts/collect_test_metrics.py --update-docs
 python scripts/test_monitor.py  # Background monitoring
 ```
 
-### DevOps Agent Integration
-When complexity requires automation:
-- **Manual process >5 minutes** → Use devops-engineer agent
-- **Repetitive workflow steps** → Create verification-first scripts
-- **Error-prone operations** → Add automatic rollback capabilities
-- **Documentation drift** → Implement sync automation
-
 **See**: [Automation_Scripts_Guide.md](Docs/Workflows/Development/Automation_Scripts_Guide.md)
 
 ## 🔧 Essential Commands (Use Directly)
@@ -450,75 +373,15 @@ cp Docs/Templates/Work-Items/VS_Template.md Docs/Backlog/items/VS_XXX_Feature_Na
 cp Docs/Templates/Work-Items/BF_Template.md Docs/Backlog/items/BF_XXX_Bug_Name.md
 ```
 
-## 🎯 Success Metrics
+## 🎯 Quality Standards
 
-### Flow State Indicators (Good)
-- Simple tasks completed in <5 minutes
-- Clear patterns followed without hesitation  
-- Agents used for genuine expertise needs
-- **Lessons learned applied** from Agent Quick Reference
-- Templates accessed from unified location
-- Backlog updated with meaningful progress
-
-### Process Overhead Indicators (Bad)
-- Spending time deciding which agent to use
-- Delegating simple file reads or basic edits
-- Updating backlog for every minor step
-- Breaking flow state for routine operations
-
-### Quality Indicators (Always)
+### Always Maintain
 - Tests pass after changes
 - Architecture patterns followed
-- Git workflow respected  
-- Complex decisions get expert input
+- Git workflow respected
+- Backlog updated with meaningful progress
 
-## 🔄 Agent Orchestration Workflow (When Needed)
-
-### Multi-Agent Coordination
-1. **Identify scope** - Is this a multi-step complex task?
-2. **Plan sequence** - Which agents in what order?
-3. **Trigger first agent** - With clear context and expectations
-4. **Verify output** - Did they complete their part?
-5. **Coordinate handoff** - Pass results to next agent
-6. **Update backlog** - Record significant progress
-7. **Synthesize results** - Present unified outcome to user
-
-### After Agent Interactions
-- **Verify completion** - Did they do what was asked?
-- **Check quality** - Does output meet standards?
-- **Update progress** - Record in backlog if significant
-- **Continue flow** - Next step or completion
-
----
-
-## 📝 Philosophy: Intelligent Orchestration
-
-This approach balances:
-- **Rapid execution** for routine work
-- **Expert specialization** for complex challenges  
-- **Flow state preservation** through reduced process overhead
-- **Quality maintenance** through appropriate delegation
-
-**The goal**: Spend time building software, not managing process overhead.
-
-## 🎯 Quick Reference Summary
-
-### Your Evolved Responsibilities
-1. **Execute directly** - Simple tasks following established patterns
-2. **Delegate strategically** - Complex tasks requiring expertise
-3. **Maintain flow** - Minimize process interruption  
-4. **Ensure quality** - Use experts when impact is high
-5. **Track progress** - Update backlog for significant milestones
-
-### Critical Guidelines
-- **Follow the 5-minute rule** for delegation decisions
-- **Copy Move Block patterns** for routine implementations
-- **Use Git workflow** without exception
-- **Update backlog** for meaningful progress only
-- **Preserve flow state** while maintaining quality
-
-### Emergency Contacts
-- Simple task feels complex → Check Agent_Quick_Reference.md
-- Need architectural guidance → Architecture_Guide.md  
-- Complex workflow confusion → Appropriate agent workflow file
-- Process feels heavy → Reassess using 5-minute rule
+### Quick Reference Resources
+- **Architecture guidance**: [Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)
+- **Development workflows**: [Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)
+- **Agent patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)
