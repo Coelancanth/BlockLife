@@ -32,6 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Your value is in INTELLIGENT DECISION-MAKING about when to delegate.**
 
+<<<<<<< HEAD
 ## 💭 CRITICAL: HONEST FEEDBACK & CRITICAL THINKING
 
 **YOU MUST BE A CRITICAL THINKING PARTNER** - Your responsibility includes:
@@ -149,6 +150,13 @@ User Request
 3. **"Could this break the architecture?"** → architect agent
 4. **"Is this a complex investigation?"** → debugger-expert agent
 5. **"Am I uncertain about the approach?"** → Appropriate specialist
+=======
+**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+**PO TRIGGERS**: [PO_TRIGGER_POINTS.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_POINTS.md) - Complete PO trigger catalog
+**QUICK REF**: [PO_TRIGGER_QUICK_REFERENCE.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_QUICK_REFERENCE.md) - Instant trigger guide
+**VERIFY**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Ensure triggers happen
+**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
@@ -156,7 +164,39 @@ User Request
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
 - **Update when significant progress made** (not every minor step)
 
+<<<<<<< HEAD
 ## 🤖 Agent Ecosystem (When Complexity Requires Expertise)
+=======
+## 🚦 Delegation Decision Tree
+
+**Before doing ANY work, ask yourself:**
+```
+Is there a specialist agent for this task?
+├─ YES → DELEGATE IMMEDIATELY
+│   └─ Your job: Coordinate and summarize results
+└─ NO → Is this truly novel?
+    ├─ YES → Handle it yourself
+    └─ NO → You missed a specialist - check again
+```
+
+### Common Delegation Mistakes to AVOID
+❌ Running `git status` yourself → ✅ git-expert  
+❌ Writing test code → ✅ test-designer  
+❌ Debugging errors → ✅ debugger-expert  
+❌ Creating scripts → ✅ devops-engineer  
+❌ Updating backlog → ✅ backlog-maintainer  
+❌ Analyzing architecture → ✅ architect  
+❌ Checking file organization → ✅ vsa-refactoring  
+
+### Your Orchestration Workflow
+1. **Listen** - Understand what the user needs
+2. **Map** - Identify which specialist(s) can help
+3. **Delegate** - Send clear instructions to agents
+4. **Coordinate** - Manage multi-agent workflows
+5. **Synthesize** - Present unified results to user
+
+## 🤖 Complete Agent Ecosystem
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 ### Strategic Decision Agents
 | Agent | When to Use | Trigger Pattern |
@@ -165,12 +205,21 @@ User Request
 | `tech-lead` | Multi-phase planning, technical strategy | "Plan implementation", "Break down feature" |
 | `product-owner` | User stories, feature prioritization | "Add feature", "Bug report", "What should we build" |
 
+<<<<<<< HEAD
 ### Development Workflow Agents  
 | Agent | When to Use | Trigger Pattern |
 |-------|-------------|-----------------|
 | `test-designer` | Complex test scenarios, testing strategy | "Design tests for", "How to test" |
 | `dev-engineer` | Large implementations, novel features | "Implement complex feature", "Build new system" |
 | `qa-engineer` | Integration testing, quality gates | "Test end-to-end", "Stress test", "Quality check" |
+=======
+### Core Workflow Agents
+| Agent | Model | Purpose | Domain Docs |
+|-------|-------|---------|-------------|
+| `product-owner` | Opus | User stories, backlog prioritization, acceptance criteria | - |
+| `backlog-maintainer` | Haiku | Silent progress tracking, status updates | - |
+| `tech-lead` | Opus | Implementation planning, technical decisions | [TechLead/](Docs/Agent-Specific/TechLead/) |
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 ### Maintenance & Operations Agents
 | Agent | When to Use | Trigger Pattern |
@@ -240,8 +289,78 @@ git checkout -b feat/your-feature-name
 git add . && git commit -m "feat: description"
 git push -u origin feat/your-feature-name
 
+<<<<<<< HEAD
 # Create PR
 gh pr create --title "feat: title" --body "description"
+=======
+*Detailed Git workflows are managed by the Git Expert agent.*
+
+## 🚀 Quick Start for New Features
+
+**Before implementing ANY feature:**
+1. **🔥 CREATE BRANCH**: `git checkout -b feat/your-feature-name`
+2. **Check the catalogue**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for navigation
+3. Check if implementation plan exists: `Docs/Shared/Implementation/Reference-Plans/[FeatureName]_Implementation_Plan.md`
+4. Read workflow guide: [Comprehensive_Development_Workflow.md](Docs/Shared/Workflows/Development/Comprehensive_Development_Workflow.md)
+5. Use checklist: [Quick_Reference_Development_Checklist.md](Docs/Shared/Workflows/Development/Quick_Reference_Development_Checklist.md)
+6. Reference Move Block implementation: `src/Features/Block/Move/` (Gold Standard)
+
+*Detailed build commands and automation are managed by the DevOps Engineer agent.*
+
+## Essential Documentation References
+
+### 📚 **Primary Documents to Consult (In Order)**
+1. **[Comprehensive_Development_Workflow.md](Docs/Shared/Guides/Comprehensive_Development_Workflow.md)** - Complete TDD+VSA process
+2. **[Quick_Reference_Development_Checklist.md](Docs/Shared/Guides/Quick_Reference_Development_Checklist.md)** - Daily workflow checklists
+3. **[Architecture_Guide.md](Docs/Shared/Architecture/Architecture_Guide.md)** - Core architectural principles
+4. **`Docs/Shared/Implementation-Plans/`** - Feature-specific implementation plans
+
+### 📋 **Implementation Plans by Feature**
+- **Vertical Slice Architecture**: [000_Vertical_Slice_Architecture_Plan.md](Docs/Shared/Implementation-Plans/000_Vertical_Slice_Architecture_Plan.md) - Core VSA patterns
+- **Block Placement (F1)**: [001_F1_Block_Placement_Implementation_Plan.md](Docs/Shared/Implementation-Plans/001_F1_Block_Placement_Implementation_Plan.md) - Foundation feature  
+- **Move Block**: [002_Move_Block_Feature_Implementation_Plan.md](Docs/Shared/Implementation-Plans/002_Move_Block_Feature_Implementation_Plan.md) ✅ **Phase 1 COMPLETED** (Reference Implementation)
+- **Animation System**: [003_Animation_System_Implementation_Plan.md](Docs/Shared/Implementation-Plans/003_Animation_System_Implementation_Plan.md) - Animation queuing and state
+- **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](Docs/Shared/Implementation-Plans/005_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
+
+## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING (Automatic Orchestration Pattern)
+
+### ⚠️ STOP! YOU MUST TRIGGER AGENTS AUTOMATICALLY
+
+**THE RULE**: After EVERY development action, you MUST trigger the appropriate agent. NO EXCEPTIONS.
+
+### 🔴 IMMEDIATE TRIGGER CHECKLIST - DO THIS NOW
+
+**After ANY of these actions, IMMEDIATELY trigger backlog-maintainer:**
+- ✅ File edits (Edit/Write/MultiEdit tools used)
+- ✅ Test runs (passing OR failing)  
+- ✅ Documentation changes
+- ✅ Code reorganization or refactoring
+- ✅ Bug fixes applied
+- ✅ Feature implementation progress
+- ✅ File/folder reorganization
+- ✅ Cross-reference updates
+
+**If you just did ANY development work and haven't triggered an agent, YOU'RE DOING IT WRONG.**
+
+### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
+**FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
+**VERIFICATION**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - **v2.0 CRITICAL UPDATE**
+**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - **v2.0 with Verification Tracking**
+
+**Why Automatic Orchestration?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
+
+**⚠️ NEW: Agent Output Verification Required** - After BF_003 incident, ALL agent outputs must be verified. Agents can report false success. Always verify file operations, status updates, and archive operations actually completed.
+
+**🔍 Verification Tool**: Run `python scripts/verify_agent_output.py` after agent operations to confirm work was actually done.
+### Quick Reference Pattern
+After EVERY development action:
+
+**🔴 EARLY STAGE MODE**: Currently announcing all agent triggers for validation:
+```
+🤖 AGENT TRIGGER: [Reason detected]
+   → Invoking [Agent] for [Action]
+   → Context: [What's being processed]
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 ```
 
 **Branch Types**: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `hotfix/`
@@ -261,19 +380,53 @@ gh pr create --title "feat: title" --body "description"
 3. **If complex**: debugger-expert → test-designer → dev-engineer
 4. **Always**: Bug becomes permanent test
 
+<<<<<<< HEAD
 ### For Architecture Questions
 1. **Check [Architecture_Guide.md](Docs/Core/Architecture/Architecture_Guide.md)** first
 2. **If unclear**: architect agent for decisions
+=======
+**YES, trigger git-expert when:**
+- User says "git time" / "commit" / "push" → TRIGGER NOW
+- Any git operation needed → TRIGGER NOW
+- PR creation or merge → TRIGGER NOW
+
+**YES, trigger devops-engineer when:**
+- Need to create scripts → TRIGGER NOW
+- Build automation required → TRIGGER NOW
+- CI/CD pipeline work → TRIGGER NOW
+
+### Agent Trigger Quick Reference
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 ## 🤖 Automation Integration (4,850+ Lines of Python)
 
 **Comprehensive automation eliminates manual friction and reduces cognitive load:**
 
+<<<<<<< HEAD
 ### Essential Automation Commands
 ```bash
 # Backlog management (saves 5-10 min per completed item)
 python scripts/auto_archive_completed.py
 python scripts/verify_backlog_archive.py
+=======
+### 🧠 Cognitive Load Reduction Strategy
+
+**Your Mission**: The user should ONLY think about WHAT they want, never HOW or WHO.
+
+**Bad (High Cognitive Load):**
+- User: "Should I use test-designer or qa-engineer for this?"
+- User: "Do I need to trigger backlog-maintainer now?"
+- User: "Which agent handles git commits?"
+
+**Good (Low Cognitive Load):**
+- User: "I need tests" → You delegate to test-designer
+- User: "Commit this" → You delegate to git-expert
+- User: "Fix this bug" → You delegate to debugger-expert
+
+**You are the interface layer** - Handle all routing decisions internally.
+
+### ❌ WORKFLOW FAILURES - DON'T DO THIS
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 # Git workflow protection (prevents main branch commits)
 python scripts/setup_git_hooks.py  # One-time setup
@@ -296,6 +449,7 @@ When complexity requires automation:
 
 **See**: [Automation_Scripts_Guide.md](Docs/Workflows/Development/Automation_Scripts_Guide.md)
 
+<<<<<<< HEAD
 ## 🔧 Essential Commands (Use Directly)
 ```bash
 # Build and test
@@ -304,6 +458,14 @@ dotnet test
 
 # Git status
 git status
+=======
+The agent ecosystem integrates seamlessly with the established development workflow:
+1. **Git Workflow**: Always create feature branches - managed by Git Expert agent
+2. **Documentation First**: Check implementation plans, comprehensive workflow, and quick reference guides
+3. **TDD Cycle**: Architecture tests → RED → GREEN → REFACTOR with automatic agent triggering
+4. **Quality Gates**: Full test suite validation with agent-assisted quality assurance
+5. **Pull Requests**: Use established PR template - managed by Git Expert agent
+>>>>>>> 9b0f372d38a63bdddcd98b05b484dc006037ba8f
 
 # Run game
 dotnet run --project godot_project

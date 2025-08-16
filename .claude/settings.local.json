@@ -29,7 +29,9 @@
       "Bash(do echo \"=== $file ===\")",
       "Bash(head:*)",
       "Bash(done)",
-      "Bash(git merge:*)"
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": [],
