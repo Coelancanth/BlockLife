@@ -76,5 +76,6 @@
 <!-- Any additional context for reviewers -->
 
 ---
-**Reference Implementation:** `src/Features/Block/Move/` (Gold Standard)
-**Workflow Guide:** [Comprehensive_Development_Workflow.md](../Docs/6_Guides/Comprehensive_Development_Workflow.md)
+**Reference Implementation:** `src/Features/Block/Move/` (Gold Standard)  
+**Workflow Guide:** [Development_Workflows.md](../Docs/Quick-Start/Development_Workflows.md)  
+**Agent Reference:** [Agent_Quick_Reference.md](../Docs/Quick-Start/Agent_Quick_Reference.md)

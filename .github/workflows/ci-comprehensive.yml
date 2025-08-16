@@ -2,11 +2,15 @@ name: Comprehensive CI - TDD+VSA Workflow
 
 on:
   push:
-    branches: [ main, develop, 'feature/**' ]
+    branches: [ main ]  # Only run CI on main branch pushes
+    paths-ignore:
+      - 'Docs/**'
+      - '*.md'
+      - '.github/pull_request_template.md'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]  # Always run on PRs to main (regardless of content)
     types: [ opened, synchronize, reopened ]
-  workflow_dispatch: # Allow manual triggering
+  workflow_dispatch: # Allow manual triggering for any branch
 
 env:
   DOTNET_VERSION: '8.0.x'
@@ -237,9 +241,10 @@ jobs:
         
         # Check for required documentation files
         required_docs=(
-          "Docs/Shared/Workflows/Development/Comprehensive_Development_Workflow.md"
-          "Docs/Shared/Workflows/Development/Quick_Reference_Development_Checklist.md"
-          "Docs/Shared/Core/Architecture/Architecture_Guide.md"
+          "Docs/Quick-Start/Development_Workflows.md"
+          "Docs/Quick-Start/Agent_Quick_Reference.md"
+          "Docs/Quick-Start/Architecture_Guide.md"
+          "Docs/Workflows/Development/Essential_Development_Workflow.md"
           "CLAUDE.md"
         )
         
@@ -255,7 +260,7 @@ jobs:
     - name: 📋 Check Implementation Plans
       run: |
         echo "📋 Checking implementation plans"
-        ls -la Docs/Shared/Implementation/Reference-Plans/ || echo "❌ Reference implementations directory missing"
+        ls -la Docs/Architecture/Reference-Implementations/ || echo "❌ Reference implementations directory missing"
         ls -la Docs/Backlog/items/ || echo "❌ Active implementation plans directory missing"
 
   # Final Summary Job

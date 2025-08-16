@@ -2,6 +2,7 @@ using System.Reflection;
 using FluentAssertions;
 using Xunit;
 using BlockLife.Core;
+using System.Collections.Concurrent;
 
 namespace BlockLife.Core.Tests.Architecture;
 
@@ -100,5 +101,106 @@ public class ArchitectureTests
                 }
             }
         }
+    }
+
+    [Fact]
+    public void Core_Assembly_Should_Use_Thread_Safe_Collections()
+    {
+        // Regression test for HF_002 - Prevent use of non-thread-safe collections
+        // This enforces that all Queue usage in Core assembly uses ConcurrentQueue
+        
+        var violations = new List<string>();
+        var allTypes = _coreAssembly.GetTypes();
+
+        foreach (var type in allTypes)
+        {
+            // Check private fields for Queue usage
+            var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            foreach (var field in fields)
+            {
+                CheckFieldForThreadSafetyViolations(field, type, violations);
+            }
+
+            // Check public fields (less common but possible)
+            var publicFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            foreach (var field in publicFields)
+            {
+                CheckFieldForThreadSafetyViolations(field, type, violations);
+            }
+
+            // Check properties for Queue usage
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            foreach (var property in properties)
+            {
+                CheckPropertyForThreadSafetyViolations(property, type, violations);
+            }
+        }
+
+        violations.Should().BeEmpty($"Found thread-safety violations in Core assembly:{Environment.NewLine}{string.Join(Environment.NewLine, violations)}");
+    }
+
+    private static void CheckFieldForThreadSafetyViolations(FieldInfo field, Type declaringType, List<string> violations)
+    {
+        var fieldType = field.FieldType;
+        
+        // Check for System.Collections.Generic.Queue<T>
+        if (IsNonThreadSafeQueue(fieldType))
+        {
+            violations.Add($"{declaringType.FullName}.{field.Name} uses non-thread-safe Queue<T>. Use ConcurrentQueue<T> instead for thread safety.");
+        }
+
+        // Check for other non-thread-safe collections that might be problematic
+        if (IsNonThreadSafeCollection(fieldType))
+        {
+            violations.Add($"{declaringType.FullName}.{field.Name} uses potentially non-thread-safe collection {fieldType.Name}. Consider thread-safe alternatives from System.Collections.Concurrent.");
+        }
+    }
+
+    private static void CheckPropertyForThreadSafetyViolations(PropertyInfo property, Type declaringType, List<string> violations)
+    {
+        var propertyType = property.PropertyType;
+        
+        // Check for System.Collections.Generic.Queue<T>
+        if (IsNonThreadSafeQueue(propertyType))
+        {
+            violations.Add($"{declaringType.FullName}.{property.Name} property uses non-thread-safe Queue<T>. Use ConcurrentQueue<T> instead for thread safety.");
+        }
+    }
+
+    private static bool IsNonThreadSafeQueue(Type type)
+    {
+        // Check if it's exactly System.Collections.Generic.Queue<T>
+        if (type.IsGenericType && type.GetGenericTypeDefinition().FullName == "System.Collections.Generic.Queue`1")
+        {
+            return true;
+        }
+
+        // Check if it's the non-generic Queue (less common but possible)
+        if (type.FullName == "System.Collections.Queue")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsNonThreadSafeCollection(Type type)
+    {
+        // List of potentially problematic non-thread-safe collection types
+        var nonThreadSafeTypes = new[]
+        {
+            "System.Collections.Generic.Stack`1",
+            "System.Collections.Stack",
+            "System.Collections.ArrayList",
+            "System.Collections.Hashtable"
+        };
+
+        if (type.IsGenericType)
+        {
+            var genericTypeName = type.GetGenericTypeDefinition().FullName;
+            return nonThreadSafeTypes.Contains(genericTypeName);
+        }
+
+        return nonThreadSafeTypes.Contains(type.FullName);
     }
 }
