@@ -261,66 +261,19 @@ gh pr create --title "feat: feature name" --body "Description"
 
 ## 🐛 Debugger Expert Agent
 
-### Systematic Investigation
-1. **Reproduce reliably**: Create minimal reproduction case
-2. **Isolate the problem**: Binary search through recent changes  
-3. **Analyze symptoms**: Logs, state, timing
-4. **Form hypothesis**: What could cause this behavior?
-5. **Test hypothesis**: Focused experiments
-6. **Implement fix**: Minimal change to address root cause
+### When to Use
+- **Complex bug investigation** (unclear root cause)
+- **Race conditions and timing issues**
+- **Memory leaks and performance problems**
+- **Cross-component debugging**
 
-### 🚨 Common Bug Patterns (Historical Lessons)
+### Quick Investigation Steps
+1. **Reproduce reliably** - Create minimal case
+2. **Isolate component** - Binary search through changes
+3. **Form hypothesis** - What could cause this?
+4. **Test focused fix** - Minimal change to address root cause
 
-#### GUID Stability Issues
-**Problem**: Properties generating new values on each access
-```csharp
-// ❌ DANGEROUS - New GUID every time!
-public Guid BlockId => RequestedId ?? Guid.NewGuid();
-
-// ✅ SAFE - Cached stable value
-private readonly Lazy<Guid> _blockId = new(() => Guid.NewGuid());
-public Guid BlockId => RequestedId ?? _blockId.Value;
-```
-**Detection**: "Already exists" errors despite successful operations
-**Prevention**: Test property stability across multiple accesses
-
-#### DI Registration Circular Dependencies
-**Problem**: Presenters depending on Views not in DI container
-```csharp
-// ❌ PROBLEM - Presenter as notification handler
-public class MyPresenter : INotificationHandler<Event>
-
-// ✅ SOLUTION - Separate handler + factory pattern
-public class MyPresenter // No MediatR interfaces
-// Create via PresenterFactory at runtime
-```
-**Detection**: DI validation errors at startup
-**Prevention**: Presenters depend only on interfaces, use factories
-
-#### Duplicate Notification Publishing
-**Problem**: Same notification published from multiple handlers
-**Detection**: Log entries showing duplicate notifications
-**Root Cause**: Command handler AND simulation manager both publishing
-**Fix**: Single point of notification responsibility per event
-
-#### Missing Validation Enforcement
-**Problem**: Business rules bypassed in handlers
-```csharp
-// ❌ DANGEROUS - Direct state change
-await _gridService.RemoveBlock(id);
-
-// ✅ SAFE - Validation first
-var validation = await _validator.ValidateRemoval(id);
-if (validation.IsFail) return validation.Error;
-await _gridService.RemoveBlock(id);
-```
-
-### Critical Investigation Patterns
-- **Race conditions**: Timing-dependent failures
-- **Memory leaks**: Resources not properly disposed  
-- **State corruption**: Shared mutable state issues
-- **Performance**: Operations exceeding frame time (16ms)
-- **Type ambiguity**: Conflicts between custom and library types
+**For detailed bug patterns and debugging procedures**: → **[Technical_Patterns.md](Technical_Patterns.md)**
 
 ## 🚀 Quick Agent Selection Guide
 

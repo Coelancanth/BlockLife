@@ -3,15 +3,16 @@
 ## 🗺️ Quick Navigation Guide for AI Agents
 
 **★ Insight ─────────────────────────────────────**
-**Simplified Navigation**: This streamlined catalogue reduces cognitive overhead by highlighting the 3 essential documents needed for 90% of development tasks, while maintaining access to specialized knowledge.
+**Simplified Navigation**: This streamlined catalogue focuses on 4 core documents that handle 95% of development needs. Strategic split prevents any single file from becoming unwieldy while maintaining rapid access to essential knowledge.
 **─────────────────────────────────────────────────**
 
-## 🚀 Primary References (Start Here - 90% of Your Needs)
+## 🚀 Primary References (Start Here - 95% of Your Needs)
 
-### 🎯 The Essential Three
-1. **[Agent_Quick_Reference.md](Agent_Quick_Reference.md)** - ⭐⭐⭐⭐⭐ **ALL agent patterns and templates in one place**
+### 🎯 The Essential Four (Optimized)
+1. **[Agent_Quick_Reference.md](Agent_Quick_Reference.md)** - ⭐⭐⭐⭐⭐ **Daily agent orchestration and basic templates** (~300 lines)
 2. **[Development_Workflows.md](Development_Workflows.md)** - ⭐⭐⭐⭐⭐ **Complete workflow checklists and Git requirements**
-3. **[Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md)** - ⭐⭐⭐⭐ **Core architectural principles**
+3. **[Technical_Patterns.md](Technical_Patterns.md)** - ⭐⭐⭐⭐ **Deep debugging, architecture patterns, and production knowledge**
+4. **[Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md)** - ⭐⭐⭐⭐ **Core architectural principles**
 
 ### Reference Implementation
 - **Move Block Feature** (`src/Features/Block/Move/`) - GOLD STANDARD implementation
