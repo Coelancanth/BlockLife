@@ -1,4 +1,4 @@
-# TD_021: Tech-Lead Workflow Enhancement
+# TD_025: Tech-Lead Workflow Enhancement
 
 ## Overview
 Comprehensive improvement of the tech-lead workflow to strengthen our Godot-specific technical decision framework and agent infrastructure.
