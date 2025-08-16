@@ -1,7 +1,23 @@
 # Tech Lead Agent Workflow
 
 ## Purpose
-This workflow defines the exact procedures for the Tech Lead agent when creating implementation plans, making technical decisions, and bridging business requirements to technical execution.
+This workflow defines the exact procedures for the Tech Lead agent when creating implementation plans, making technical decisions, and bridging business requirements to technical execution. Specialized for Godot 4.4 + C# development with Clean Architecture.
+
+---
+
+## Pre-Flight Checks (NEW)
+
+### Before Any Planning
+1. **Check Current WIP**
+   - Read `Docs/Backlog/Backlog.md` for active items
+   - Verify no resource conflicts
+   - Check dependency completion status
+   - Warn if WIP limit exceeded (>3 items)
+
+2. **Review Historical Estimates**
+   - Check `Docs/Agent-Specific/TechLead/estimate-accuracy.log`
+   - Adjust confidence based on past accuracy
+   - Apply learning multipliers to new estimates
 
 ---
 
@@ -22,33 +38,49 @@ This workflow defines the exact procedures for the Tech Lead agent when creating
    - Extract acceptance criteria
    - Identify core behaviors requiring implementation
    - Check if technical section already exists
+   - Check Backlog.md for related active work
 
 2. **Assess Technical Approach**
    - Determine if feature fits existing patterns
    - Identify new patterns needed
    - Check architectural boundaries
+   - **Godot-Specific Decisions**:
+     * Node lifecycle strategy (_Ready vs _EnterTree vs _Process)
+     * Signal vs event bridge pattern
+     * Scene organization (composition vs inheritance)
+     * Resource loading (preload vs load vs load_threaded)
+     * Thread safety for Godot operations
 
-3. **Break Down Into Phases**
+3. **Break Down Into Test-First Phases**
    ```
-   Phase 1: Core Domain Logic (30% effort)
+   Phase 1: Core Domain Logic (30% effort) - TEST FIRST
+   - Write failing unit tests
    - Commands and handlers
    - Domain entities
    - Business rules
+   - Verify tests pass
    
-   Phase 2: Infrastructure (20% effort)
+   Phase 2: Infrastructure (20% effort) - TEST FIRST
+   - Write failing integration tests
    - Services and repositories
    - State management
    - Integration points
+   - Verify tests pass
    
-   Phase 3: Presentation (30% effort)
+   Phase 3: Presentation (30% effort) - TEST FIRST
+   - Write view interface tests
    - View interfaces
    - Presenters
-   - UI components
+   - Godot UI components
+   - Wire up signals/events
+   - Verify tests pass
    
    Phase 4: Testing & Polish (20% effort)
-   - Integration tests
+   - Property-based tests
+   - Stress tests
    - Edge cases
    - Performance optimization
+   - Godot profiler validation
    ```
 
 4. **Identify Risks and Dependencies**
@@ -80,23 +112,30 @@ This workflow defines the exact procedures for the Tech Lead agent when creating
 
 ### Implementation Phases
 
-#### Phase 1: Core Domain Logic (Est: X hours)
+#### Phase 1: Core Domain Logic (Est: X hours) - TEST FIRST
+- [ ] Write failing test for command behavior
 - [ ] Create command: [CommandName]
+- [ ] Write failing test for handler logic
 - [ ] Create handler with business logic
 - [ ] Define domain events
-- [ ] Write unit tests (TDD)
+- [ ] Verify all unit tests pass
 
-#### Phase 2: Infrastructure (Est: X hours)
+#### Phase 2: Infrastructure (Est: X hours) - TEST FIRST
+- [ ] Write failing integration test
 - [ ] Implement state service
 - [ ] Create repository if needed
 - [ ] Setup DI registration
-- [ ] Integration tests
+- [ ] Verify integration tests pass
 
-#### Phase 3: Presentation (Est: X hours)
+#### Phase 3: Presentation (Est: X hours) - TEST FIRST
+- [ ] Write view interface contract tests
 - [ ] Define view interface
+- [ ] Write presenter tests
 - [ ] Create presenter
 - [ ] Implement Godot view
-- [ ] Wire up UI events
+- [ ] Wire up signals (not static events if possible)
+- [ ] Handle node lifecycle properly
+- [ ] Verify UI responds correctly
 
 #### Phase 4: Testing & Polish (Est: X hours)
 - [ ] End-to-end testing
@@ -196,6 +235,87 @@ Recommended Sequence:
 
 ---
 
+## Godot-Specific Technical Decisions (NEW)
+
+### Node Lifecycle Strategy
+| Scenario | Use _Ready | Use _EnterTree | Use _Process |
+|----------|------------|----------------|--------------|
+| One-time setup | ✅ Default | When order matters | Never for init |
+| Child dependencies | After children ready | Before children exist | N/A |
+| Scene transitions | Re-runs on re-add | First entry only | Continuous |
+| Autoload refs | Safe to access | Too early | Safe |
+
+### Signal vs Event Bridge
+| Use Signals | Use Event Bridge | Use Static Events |
+|-------------|------------------|-------------------|
+| Node-to-node in scene | Cross-scene communication | NEVER in Godot |
+| UI interactions | Domain events | Causes memory leaks |
+| Parent-child | Decoupled systems | Breaks on scene change |
+| Short-lived connections | Long-lived subscriptions | Not thread-safe |
+
+### Resource Loading Strategy
+| Strategy | Use Case | Performance | Memory |
+|----------|----------|-------------|--------|
+| preload() | Small, frequently used | Fast access | High usage |
+| load() | Large, rarely used | Slower access | On-demand |
+| load_threaded() | Large assets, loading screens | Non-blocking | Managed |
+
+### Thread Safety Rules
+- **Main Thread Only**: All node operations, scene tree changes
+- **Any Thread**: Pure domain logic, calculations
+- **CallDeferred Required**: Cross-thread UI updates
+- **Mutex Required**: Shared state modifications
+
+---
+
+## ADR Creation Triggers (NEW)
+
+### When to Create an ADR
+Create an Architecture Decision Record when:
+1. **Novel Pattern**: Introducing pattern not in reference implementation
+2. **Trade-off Decision**: Choosing between valid alternatives
+3. **Cross-cutting Change**: Affects multiple vertical slices
+4. **Performance Trade-off**: Sacrificing ideal pattern for performance
+5. **Godot Integration**: New approach to C#/Godot boundary
+
+### ADR Template Location
+`Docs/Core/ADRs/ADR-XXX-[Decision-Name].md`
+
+### Quick ADR Format
+```markdown
+# ADR-XXX: [Decision Title]
+Status: Proposed/Accepted
+Context: [Why this decision is needed]
+Decision: [What we're doing]
+Consequences: [Trade-offs and impacts]
+```
+
+---
+
+## Learning Feedback System (NEW)
+
+### Estimate Tracking
+After each VS completion, record:
+```markdown
+File: Docs/Agent-Specific/TechLead/estimate-accuracy.log
+VS_XXX:
+  Estimated: X-Y hours
+  Actual: Z hours
+  Variance: +/-N%
+  Factors: [What affected accuracy]
+  Learning: [Adjustment for future]
+```
+
+### Estimation Adjustments
+Apply these multipliers based on history:
+- First Godot UI feature: x2.0 (learning curve)
+- Similar to previous work: x0.8 (familiarity)
+- High WIP (>3 items): x1.3 (context switching)
+- Complex state management: x1.5 (debugging time)
+- After 5 similar features: x0.7 (expertise gained)
+
+---
+
 ## Decision Patterns
 
 ### Pattern Selection Matrix
@@ -208,7 +328,7 @@ Recommended Sequence:
 | UI updates | Presenter pattern | Keeps views humble |
 | Async operations | Fin<T> with async/await | Error handling built-in |
 
-### Estimation Heuristics
+### Estimation Heuristics (Enhanced for Godot)
 
 | Task Type | Base Estimate | Modifiers |
 |-----------|--------------|-----------|
@@ -216,6 +336,19 @@ Recommended Sequence:
 | New presenter | 3-5 hours | +100% if complex UI |
 | Service implementation | 4-8 hours | +50% if external integration |
 | Test suite | 2-3 hours | +100% if property tests needed |
+| **Godot UI Component** | 4-6 hours | +50% if custom drawing/shaders |
+| **Scene Architecture** | 2-3 hours | +100% if complex node hierarchy |
+| **Signal Wiring** | 1-2 hours | +50% if cross-scene communication |
+| **Resource Loading** | 2-4 hours | +100% if async loading required |
+| **Node Lifecycle** | 1-2 hours | +200% if complex state transitions |
+
+### Godot-Specific Multipliers
+- First time implementing pattern in Godot: **x1.5**
+- Complex node tree manipulation: **x1.3**
+- Custom node class creation: **x2.0**
+- Thread marshalling required: **x1.4**
+- Scene transition handling: **x1.3**
+- After 3+ similar Godot features: **x0.8**
 
 ---
 
@@ -226,11 +359,14 @@ Recommended Sequence:
 - Clarify requirements when ambiguous
 - Report technical blockers
 - Negotiate scope based on complexity
+- **NEW**: Check if VS conflicts with current WIP
 
 ### With Backlog Maintainer
+- **NEW**: Read current WIP before planning
 - Trigger updates when phases complete
 - Report actual vs estimated times
 - Update status to "in_development"
+- **NEW**: Record actual hours for learning system
 
 ### With QA/Test Engineer
 - Provide test scenarios from plan

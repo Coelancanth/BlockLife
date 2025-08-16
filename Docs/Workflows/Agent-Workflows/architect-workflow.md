@@ -1,7 +1,7 @@
 # Architect Workflow
 
 ## Purpose
-Define procedures for the Architect agent to make system-wide design decisions, create ADRs, and maintain long-term architectural integrity.
+Define procedures for the Architect agent to make system-wide design decisions, create ADRs, and maintain long-term architectural integrity for BlockLife's Godot 4.4 + C# Clean Architecture with Vertical Slice Architecture (VSA).
 
 ## 📚 Your Documentation References
 **ALWAYS READ FIRST**: [Docs/Agent-References/architect-references.md](../Agent-References/architect-references.md)
@@ -9,6 +9,12 @@ Define procedures for the Architect agent to make system-wide design decisions, 
 **Your Domain Documentation**: [Docs/Agent-Specific/Architect/](../Agent-Specific/Architect/)
 - `core-architecture.md` - Core architectural principles and patterns  
 - `critical-patterns.md` - Critical implementation patterns
+
+**BlockLife Architecture State**:
+- **Current ADRs**: `Docs/Core/ADRs/` - Review existing decisions
+- **Reference Implementation**: `src/Features/Block/Move/` - Gold standard VSA
+- **Architecture Tests**: `tests/Architecture/ArchitectureTests.cs`
+- **Known Debt**: Check Backlog.md for architecture-related TD items
 
 ---
 
@@ -371,23 +377,306 @@ Define procedures for the Architect agent to make system-wide design decisions, 
 
 ---
 
+## Godot-Specific Architecture Decisions (NEW)
+
+### Scene vs Code Architecture Decision Matrix
+
+| Use Scenes (.tscn) | Use Pure Code | Hybrid Approach |
+|-------------------|---------------|-----------------|
+| UI layouts and visual design | Complex business logic | Main structure in scene |
+| Designer/artist collaboration | Unit testing critical | Logic controllers in code |
+| Visual tool editing needed | Performance critical paths | Data-driven from scene |
+| Reusable UI components | Dynamic generation required | Static base + dynamic |
+| Node composition trees | Pure domain operations | Scene for structure, code for behavior |
+
+### C#/Godot Boundary Patterns
+
+#### Thin Godot Layer Pattern
+```csharp
+// Godot node - minimal logic
+public partial class BlockView : Node3D
+{
+    private IBlockPresenter _presenter;
+    
+    public override void _Ready()
+    {
+        _presenter = ServiceLocator.Get<IBlockPresenter>();
+        _presenter.Initialize(this);
+    }
+    
+    // Only UI concerns, no business logic
+    public void UpdateVisualPosition(Vector3 position)
+    {
+        Position = position;
+    }
+}
+```
+
+#### Rich Domain Model Pattern
+```csharp
+// Pure C# - no Godot dependencies
+public class Block
+{
+    public BlockId Id { get; }
+    public BlockType Type { get; }
+    public GridPosition Position { get; private set; }
+    
+    public Fin<Unit> MoveTo(GridPosition newPosition)
+    {
+        // Business rules here, no Godot types
+        if (!CanMoveTo(newPosition))
+            return Error.New("Invalid move");
+        
+        Position = newPosition;
+        return unit;
+    }
+}
+```
+
+#### Memory Management Rules
+- **GodotObject Lifecycle**: Always use WeakRef for long-lived references
+- **Static Events**: NEVER use with Godot nodes (causes leaks)
+- **Signal Connections**: Always disconnect in _ExitTree
+- **Resource References**: Use preload() for small, load() for large
+- **Scene Changes**: Implement proper cleanup in presenter Dispose
+
+### Node Architecture Patterns
+
+| Pattern | When to Use | Example |
+|---------|------------|---------|
+| **Composition** | Reusable behaviors | Health, Movement components |
+| **Inheritance** | IS-A relationship clear | CustomButton : Button |
+| **Aggregation** | Dynamic children | Inventory slots |
+| **Scene Instantiation** | Complex prefabs | Enemy with AI, visuals, collision |
+
+### Resource Management Architecture
+
+```markdown
+Resource Loading Strategy:
+1. Preload during _Ready for critical resources
+2. Load on-demand for large/rare resources  
+3. Use ResourcePreloader for level assets
+4. Implement resource pooling for frequently spawned
+5. Clear references on scene exit
+```
+
+---
+
+## Vertical Slice Architecture (VSA) Rules (NEW)
+
+### VSA Principles for BlockLife
+
+1. **Slice Independence**: Each feature slice can be developed, tested, and deployed independently
+2. **No Cross-Slice References**: Slices communicate only through defined contracts
+3. **Shared Kernel Minimal**: Only truly cross-cutting concerns in shared
+4. **Slice-Complete**: Each slice contains all layers (Domain, App, Infrastructure, Presentation)
+
+### VSA Folder Structure
+```
+src/Features/
+├── Block/
+│   └── Move/                 # Complete vertical slice
+│       ├── Domain/           # Pure C# business logic
+│       ├── Application/      # Use cases and handlers
+│       ├── Infrastructure/   # Services and repos
+│       └── Presentation/     # Godot views and presenters
+├── Inventory/                # Another independent slice
+└── Shared/                   # Minimal shared kernel
+    ├── Events/              # Cross-slice events only
+    └── ValueObjects/        # Truly shared types
+```
+
+### Cross-Slice Communication Patterns
+
+#### Event-Driven Architecture
+```csharp
+// Slice A publishes
+public class BlockMovedEvent : IDomainEvent
+{
+    public BlockId Id { get; }
+    public GridPosition NewPosition { get; }
+}
+
+// Slice B subscribes
+public class InventoryUpdater : IHandles<BlockMovedEvent>
+{
+    public void Handle(BlockMovedEvent evt) 
+    {
+        // React to other slice's event
+    }
+}
+```
+
+#### Service Contracts
+```csharp
+// Shared contract
+public interface IInventoryQuery
+{
+    IReadOnlyList<Item> GetItems();
+}
+
+// Slice implements
+internal class InventoryService : IInventoryQuery
+{
+    // Implementation details hidden
+}
+```
+
+---
+
+## Architecture Testing Strategy (NEW)
+
+### Architecture Fitness Functions
+
+#### Layer Dependency Tests
+```csharp
+[Fact]
+public void Domain_Should_Not_Depend_On_Godot()
+{
+    var result = Types.InAssembly(DomainAssembly)
+        .Should()
+        .NotHaveDependencyOn("Godot")
+        .GetResult();
+        
+    result.IsSuccessful.Should().BeTrue();
+}
+```
+
+#### VSA Independence Tests
+```csharp
+[Fact]
+public void Feature_Slices_Should_Not_Reference_Each_Other()
+{
+    var slices = new[] { "Block", "Inventory", "Combat" };
+    
+    foreach (var slice in slices)
+    {
+        var otherSlices = slices.Where(s => s != slice);
+        
+        Types.InNamespace($"Features.{slice}")
+            .Should()
+            .NotHaveDependencyOnAny(otherSlices.Select(s => $"Features.{s}"))
+            .GetResult()
+            .IsSuccessful.Should().BeTrue();
+    }
+}
+```
+
+#### Memory Leak Prevention Tests
+```csharp
+[Fact]
+public void Presenters_Should_Not_Use_Static_Events()
+{
+    var result = Types.InNamespace("Presentation")
+        .That()
+        .AreClasses()
+        .Should()
+        .NotHaveFieldOfType(typeof(EventHandler))
+        .And()
+        .NotHaveFieldOfType(typeof(Action))
+        .GetResult();
+        
+    result.IsSuccessful.Should().BeTrue();
+}
+```
+
+### Continuous Architecture Validation
+- Run architecture tests in CI/CD pipeline
+- Fail builds on architecture violations
+- Track architecture metrics over time
+- Generate architecture documentation from tests
+
+---
+
+## Migration and Evolution Patterns (NEW)
+
+### Legacy to Clean Architecture Migration
+
+#### Strangler Fig Pattern
+```markdown
+1. Identify boundary of legacy component
+2. Create new clean implementation alongside
+3. Add routing layer to direct traffic
+4. Gradually move features to new implementation
+5. Remove legacy when empty
+```
+
+#### Feature Flag Architecture
+```csharp
+public interface IFeatureFlags
+{
+    bool IsEnabled(string feature);
+}
+
+// Usage in presenter
+if (_featureFlags.IsEnabled("NewInventorySystem"))
+{
+    // New implementation
+}
+else
+{
+    // Legacy implementation
+}
+```
+
+### Deprecation Strategy
+
+#### Deprecation Phases
+1. **Mark Deprecated**: Add [Obsolete] attribute with migration path
+2. **Warning Period**: Log usage, notify in dev builds
+3. **Enforcement**: Fail in dev/test, warn in production
+4. **Removal**: Delete after migration complete
+
+#### Safe Deprecation Example
+```csharp
+[Obsolete("Use IBlockMoveHandler instead. Will be removed in v2.0")]
+public interface ILegacyBlockHandler
+{
+    // Old interface
+}
+```
+
+### Backward Compatibility Patterns
+
+#### Save File Versioning
+```csharp
+public class SaveDataMigrator
+{
+    public SaveData Migrate(int fromVersion, SaveData data)
+    {
+        return fromVersion switch
+        {
+            1 => MigrateV1ToV2(data),
+            2 => MigrateV2ToV3(data),
+            _ => data
+        };
+    }
+}
+```
+
+---
+
 ## Decision Frameworks
 
-### Abstraction Decision
+### Abstraction Decision (Enhanced for Godot)
 ```
 Add abstraction when:
 - Multiple implementations exist/planned
 - External dependency needs isolation
 - Testing requires mocking
 - High probability of change
+- Godot API likely to change
+- Need to unit test without Godot
 
 Skip abstraction when:
 - Single implementation forever
 - Internal, stable component
 - YAGNI applies
+- Direct Godot node usage is simpler
+- Performance critical (marshalling overhead)
 ```
 
-### Pattern Selection
+### Pattern Selection (Godot Context)
 ```
 Choose pattern based on:
 1. Problem it solves
@@ -395,9 +684,12 @@ Choose pattern based on:
 3. Maintenance cost
 4. Consistency with codebase
 5. Complexity vs benefit
+6. Godot integration requirements
+7. Performance implications (C#/Godot boundary)
+8. Memory management considerations
 ```
 
-### Technology Adoption
+### Technology Adoption (Godot Ecosystem)
 ```
 Adoption criteria:
 - Solves real problem
@@ -405,6 +697,24 @@ Adoption criteria:
 - Community is active
 - License is compatible
 - Cost is justified
+- Compatible with Godot's architecture
+- Doesn't conflict with GDScript interop
+- Performance acceptable with marshalling
+```
+
+### Godot-Specific Decision Points
+```
+Node vs Object:
+- Use Node when: Need scene tree features, visual editing, signals
+- Use Object when: Pure logic, unit testing, performance critical
+
+Signal vs Event:
+- Use Signal when: Node-to-node in same scene, UI binding
+- Use Event when: Cross-scene, domain events, testability needed
+
+Scene vs Code:
+- Use Scene when: Visual layout, designer collaboration, prefabs
+- Use Code when: Dynamic generation, complex logic, testing
 ```
 
 ---
@@ -480,3 +790,57 @@ Recommended actions:
 - [Action 2]
 
 Technical debt items created."
+
+---
+
+## BlockLife-Specific Architecture Context (NEW)
+
+### Current Architecture State
+- **Pattern**: Clean Architecture + Vertical Slice Architecture (VSA)
+- **Reference Implementation**: `src/Features/Block/Move/` (Gold Standard)
+- **Core Framework**: Godot 4.4 + C# with LanguageExt.Core
+- **Testing**: xUnit + FluentAssertions + FsCheck + ArchUnitNET
+
+### Established Patterns in BlockLife
+1. **Command/Handler Pattern**: All state changes go through commands
+2. **Presenter Pattern**: Connects domain to Godot views
+3. **Notification Bridge**: Cross-cutting event propagation
+4. **Service Locator**: For Godot scene dependency injection
+5. **Fin<T> Monad**: Functional error handling throughout
+
+### Known Architecture Constraints
+- **No Static Events in Presenters**: Memory leak prevention
+- **No Godot Types in Domain**: Clean Architecture enforcement
+- **VSA Independence**: Features cannot reference each other
+- **Thread Safety**: All Godot operations on main thread
+- **Scene Lifecycle**: Proper cleanup in _ExitTree
+
+### Architecture Evolution Roadmap
+1. **Current Phase**: Establishing VSA patterns with Move Block
+2. **Next Phase**: Cross-slice event system
+3. **Future**: Multiplayer architecture layers
+4. **Long-term**: Plugin architecture for modding
+
+### Critical Architecture Decisions Made
+- **ADR-001**: Use VSA over traditional layered
+- **ADR-002**: Presenter pattern for UI binding
+- **ADR-003**: Functional error handling with Fin<T>
+- **ADR-004**: Service locator for scene DI
+- **ADR-005**: Event bridges over static events
+- **ADR-006**: Command pattern for all mutations
+- **ADR-007**: Enhanced validation pattern
+
+### Architecture Debt Tracking
+Check `Docs/Backlog/Backlog.md` for TD items related to:
+- Architecture violations
+- Pattern inconsistencies
+- Performance bottlenecks
+- Memory management issues
+- Threading concerns
+
+### Architecture Metrics to Track
+- **VSA Independence**: Zero cross-slice references
+- **Layer Purity**: 100% Godot-free domain
+- **Test Coverage**: >80% for business logic
+- **Memory Leaks**: Zero static event subscriptions
+- **Performance**: <16ms frame time (60 FPS)

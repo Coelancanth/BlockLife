@@ -31,6 +31,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Testing strategies and patterns
 - Reference implementations
 
+## 📅 CRITICAL: Date Accuracy Protocol
+**MANDATORY**: Always use `bash date` command for current dates. LLMs (including Claude) don't know the actual date.
+- **When creating documents**: Use `date +"%Y_%m_%d"` for filenames
+- **When updating Backlog**: Use `date +"%Y-%m-%d"` for timestamps
+- **When archiving**: Use `date +"%Y-Q$((($(date +%-m)-1)/3+1))"` for quarters
+- **Full Protocol**: [DATE_ACCURACY_PROTOCOL.md](Docs/Workflows/Orchestration-System/DATE_ACCURACY_PROTOCOL.md)
+
 ## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING IS MANDATORY
 
 ### ⚠️ STOP! After ANY development action, you MUST trigger agents

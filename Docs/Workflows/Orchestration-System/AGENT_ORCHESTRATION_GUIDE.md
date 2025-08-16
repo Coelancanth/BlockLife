@@ -12,6 +12,10 @@ Claude Code (main agent) is the orchestrator who:
 3. **Triggers** appropriate agents
 4. **Synthesizes** responses
 
+## 📅 CRITICAL: Date Accuracy Protocol
+**MANDATORY**: Always use `bash date` command for current dates. LLMs don't know the actual date.
+See [DATE_ACCURACY_PROTOCOL.md](DATE_ACCURACY_PROTOCOL.md) for implementation details.
+
 ---
 
 ## 📢 Transparency Mode (Early Stage)

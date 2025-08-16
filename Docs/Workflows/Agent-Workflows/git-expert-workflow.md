@@ -7,7 +7,65 @@ Define safe procedures for the Git Expert agent to handle complex version contro
 
 ## Core Workflow Actions
 
-### 1. Resolve Complex Merge Conflicts
+### 1. Smart Commit with Auto-Branch Selection
+
+**Trigger**: "Commit", "git time", or any commit request
+
+**Automated Workflow**:
+
+1. **Analyze Context**
+   ```bash
+   # Check current branch
+   current_branch=$(git branch --show-current)
+   
+   # If on main, MUST create feature branch
+   if [ "$current_branch" = "main" ]; then
+       # Trigger auto-selection
+       → Run Branch Auto-Selection (Section 3)
+   fi
+   ```
+
+2. **Auto-Select Branch (if needed)**
+   ```
+   Steps:
+   1. Read Backlog.md for active work items
+   2. Analyze git diff for change scope
+   3. Determine optimal branch type
+   4. Create branch with smart naming
+   5. Show reasoning to user
+   ```
+
+3. **Example Auto-Selection Flow**
+   ```
+   User: "commit these changes"
+   
+   Git-Expert: 
+   🤖 Analyzing context...
+   
+   📊 Detected:
+   - Currently on: main (PROTECTED)
+   - Active work: TD_006 (Advanced Logger)
+   - Changes: 3 files in src/Infrastructure/Logging/
+   - Type: Technical improvement
+   
+   🎯 Creating branch: refactor/td006-advanced-logger
+   
+   ✅ Switched to new branch
+   → Proceeding with commit...
+   ```
+
+4. **Proceed with Commit**
+   ```bash
+   # Standard commit flow continues
+   git add [files]
+   git commit -m "[message]"
+   ```
+
+**Integration with Backlog**: Auto-selection always checks Backlog.md first for context.
+
+---
+
+### 2. Resolve Complex Merge Conflicts
 
 **Trigger**: "Merge conflict help" or "Can't resolve conflict"
 
@@ -159,88 +217,254 @@ Backup branch: conflict-backup-[timestamp]
 
 ---
 
-### 3. Design Branch Strategy
+### 3. Intelligent Branch Auto-Selection
+
+**Trigger**: "Git time", "Commit", "Create PR", or any git operation needing a branch
+
+**Purpose**: Automatically determine the optimal branch type and name based on context, reducing cognitive load and ensuring consistency.
+
+**Auto-Selection Workflow**:
+
+#### Phase 1: Context Gathering
+
+1. **Read Backlog Status**
+   ```bash
+   # Check current work items in Backlog.md
+   # Parse active work items and their status
+   # Identify work item type (VS_, BF_, TD_, HF_)
+   ```
+
+2. **Analyze Current State**
+   ```bash
+   # Current branch
+   git branch --show-current
+   
+   # Changed files
+   git diff --name-only
+   git diff --stat
+   
+   # Change scope
+   git diff --numstat | wc -l  # Number of changes
+   ```
+
+3. **Scope Classification**
+   ```
+   Single File Changes:
+   - < 50 lines: minor fix
+   - > 50 lines: focused feature
+   
+   Multi-File Changes:
+   - Same directory: feature work
+   - Cross-directory: refactor or architecture
+   - Only docs: documentation update
+   - Only tests: test enhancement
+   ```
+
+#### Phase 2: Intelligent Branch Selection Algorithm
+
+```python
+def select_branch_type(context):
+    """
+    Auto-select branch based on comprehensive context
+    """
+    
+    # Priority 1: Work Item Type Mapping
+    if work_item_type == "HF_":
+        return "hotfix/[description]"  # Critical production fix
+    elif work_item_type == "VS_":
+        return "feat/[description]"     # Vertical Slice feature
+    elif work_item_type == "BF_":
+        return "fix/[description]"      # Bug fix
+    elif work_item_type == "TD_":
+        return "refactor/[description]" # Tech debt
+    
+    # Priority 2: Change Scope Analysis
+    elif only_docs_changed:
+        return "docs/[description]"
+    elif only_tests_changed:
+        return "test/[description]"
+    elif ci_files_changed:
+        return "chore/ci-[description]"
+    
+    # Priority 3: Completion Status
+    elif work_item_status == "90% complete":
+        return "fix/final-[description]"  # Finishing touches
+    elif work_item_status == "starting":
+        return "feat/[description]"       # New work
+    
+    # Priority 4: Conservative Default
+    else:
+        return "feat/[description]"  # Safe default
+```
+
+#### Phase 3: Smart Branch Naming
+
+1. **Extract Context Clues**
+   ```
+   From Work Item:
+   - VS_001_User_Authentication → feat/user-authentication
+   - BF_003_Login_Crash → fix/login-crash
+   - TD_010_Refactor_Services → refactor/services
+   
+   From Changed Files:
+   - src/Features/Auth/* → feat/auth-enhancement
+   - tests/* → test/coverage-improvement
+   - Docs/* → docs/update-guides
+   ```
+
+2. **Generate Descriptive Name**
+   ```
+   Rules:
+   - Use kebab-case
+   - Max 50 characters
+   - Include work item ID if available
+   - Be specific but concise
+   
+   Examples:
+   - feat/vs001-user-authentication
+   - fix/bf003-login-crash-resolution
+   - refactor/td010-service-consolidation
+   ```
+
+#### Phase 4: Transparent Communication
+
+**Always explain the auto-selection reasoning:**
+
+```markdown
+🤖 Branch Auto-Selection Analysis:
+
+📊 Context Detected:
+- Work Item: VS_001 (User Authentication)
+- Status: 30% complete
+- Changed Files: 5 files in src/Features/Auth/
+- Change Scope: 150 lines added, 20 modified
+- File Types: C# implementation + tests
+
+🎯 Recommendation: `feat/vs001-user-authentication`
+
+📝 Reasoning:
+- VS_ work item → feature branch
+- Active feature development (30% complete)
+- Focused changes in single feature area
+- Includes both implementation and tests
+
+✅ Proceed with this branch? (Y/n)
+```
+
+#### Phase 5: Override Capabilities
+
+**User Control Points:**
+
+1. **Pre-Selection Confirmation**
+   ```
+   "I detected you're working on VS_001. Should I create:
+   → feat/vs001-user-authentication (recommended)
+   → Or specify custom: _____"
+   ```
+
+2. **Override Commands**
+   ```bash
+   # Force specific branch type
+   --branch-type=hotfix
+   
+   # Custom naming
+   --branch-name=my-custom-name
+   
+   # Skip auto-selection
+   --no-auto-select
+   ```
+
+3. **Context Hints**
+   ```
+   User can provide hints:
+   - "This is urgent" → hotfix/
+   - "Just cleaning up" → chore/
+   - "Experimental work" → experiment/
+   ```
+
+### 4. Branch Strategy Management
 
 **Trigger**: "Setup branching strategy" or "How should we branch?"
 
-**Input Required**:
-- Team size
-- Release cadence
-- Environment structure
-- CI/CD requirements
+**BlockLife Standard Strategy** (Auto-Applied):
 
-**Steps**:
+```
+Branch Types & Auto-Selection Rules:
+├── main (protected)
+│   └── Never work directly here
+├── feat/* (features)
+│   └── Auto-selected for: VS_ items, new functionality
+├── fix/* (bug fixes)
+│   └── Auto-selected for: BF_ items, issue resolution
+├── hotfix/* (critical fixes)
+│   └── Auto-selected for: HF_ items, production issues
+├── refactor/* (code improvement)
+│   └── Auto-selected for: TD_ items, cleanup work
+├── docs/* (documentation)
+│   └── Auto-selected when: only *.md files changed
+├── test/* (test improvements)
+│   └── Auto-selected when: only test files changed
+└── chore/* (maintenance)
+    └── Auto-selected for: CI/CD, dependencies, configs
+```
 
-1. **Analyze Requirements**
-   ```
-   Consider:
-   - Release frequency
-   - Hotfix needs
-   - Feature complexity
-   - Team coordination
-   ```
+**Auto-Selection Integration Points:**
 
-2. **Select Strategy**
-   ```
-   Options:
-   
-   Git Flow (complex projects):
-   - main (production)
-   - develop (integration)
-   - feature/* (features)
-   - release/* (releases)
-   - hotfix/* (urgent fixes)
-   
-   GitHub Flow (simple):
-   - main (stable)
-   - feature branches
-   - PR-based integration
-   
-   GitLab Flow (environments):
-   - main (development)
-   - pre-production
-   - production
-   ```
-
-3. **Document Workflow**
-   ```markdown
-   # Branch Strategy
-   
-   ## Branch Types
-   - main: Production-ready code
-   - feat/*: New features
-   - fix/*: Bug fixes
-   - hotfix/*: Critical production fixes
-   
-   ## Workflow
-   1. Create feature branch from main
-   2. Develop and test
-   3. Create PR for review
-   4. Merge to main after approval
-   5. Deploy from main
-   
-   ## Protection Rules
-   - main: Requires PR + review
-   - No direct commits to main
-   - Must pass CI/CD
-   ```
-
-4. **Setup Branch Protection**
+1. **Commit Workflow**
    ```bash
-   # GitHub CLI example
-   gh repo edit --default-branch main
-   gh api repos/:owner/:repo/branches/main/protection \
-     --method PUT \
-     --field required_status_checks='{"strict":true,"contexts":["continuous-integration"]}' \
-     --field enforce_admins=true \
-     --field required_pull_request_reviews='{"required_approving_review_count":1}'
+   # User says "commit this"
+   # Git-expert automatically:
+   1. Analyzes changes
+   2. Checks Backlog.md
+   3. Suggests branch
+   4. Creates if needed
+   5. Commits with context
    ```
 
-**Output**: Branch strategy documentation and setup
+2. **PR Creation**
+   ```bash
+   # User says "create PR"
+   # Git-expert automatically:
+   1. Determines target branch
+   2. Generates PR title from branch
+   3. Links work items
+   4. Fills PR template
+   ```
+
+3. **Branch Switching**
+   ```bash
+   # User says "work on user auth"
+   # Git-expert automatically:
+   1. Finds VS_001 in Backlog
+   2. Checks existing branches
+   3. Creates/switches to feat/vs001-user-auth
+   ```
+
+**Safety Protocols for Auto-Selection:**
+
+1. **Never Auto-Select for:**
+   - Direct commits to main
+   - Force push operations
+   - History rewriting
+   - Tag creation
+
+2. **Always Confirm for:**
+   - Hotfix branches (critical path)
+   - Branch deletion
+   - Merge operations
+   - Release branches
+
+3. **Fail-Safe Defaults:**
+   ```
+   If uncertain → feat/ (safest option)
+   If multiple work items → ask user
+   If no context → request clarification
+   If high risk → require explicit confirmation
+   ```
 
 ---
 
-### 4. Manage Releases and Tags
+### 5. Manage Releases and Tags
 
 **Trigger**: "Create release" or "Tag version"
 
@@ -300,7 +524,7 @@ Backup branch: conflict-backup-[timestamp]
 
 ---
 
-### 5. Recover Lost Work
+### 6. Recover Lost Work
 
 **Trigger**: "Lost commits" or "Accidentally deleted"
 
@@ -361,7 +585,7 @@ Backup branch: conflict-backup-[timestamp]
 
 ---
 
-### 6. Optimize Repository
+### 7. Optimize Repository
 
 **Trigger**: "Repository too large" or "Git is slow"
 
@@ -419,6 +643,86 @@ Backup branch: conflict-backup-[timestamp]
    ```
 
 **Output**: Optimized repository with size reduction
+
+---
+
+## Auto-Selection Edge Cases & Error Handling
+
+### Complex Scenarios
+
+1. **Multiple Active Work Items**
+   ```
+   Detected: VS_001 (40%), BF_003 (60%), TD_005 (20%)
+   
+   Resolution:
+   - Ask user: "Which work item are these changes for?"
+   - Or analyze file paths to match work item scope
+   - Default to most recently updated item
+   ```
+
+2. **Mixed Change Types**
+   ```
+   Detected: Code + Docs + Tests + CI changes
+   
+   Resolution:
+   - Determine primary change (most lines)
+   - Use primary type for branch
+   - Note: "Mixed changes detected, using [type] based on primary focus"
+   ```
+
+3. **No Backlog Context**
+   ```
+   Situation: No active work items found
+   
+   Resolution:
+   - Analyze git diff for intent
+   - Ask user for clarification
+   - Suggest creating work item first
+   ```
+
+4. **Continuing Existing Work**
+   ```
+   Detected: Already on feat/user-auth branch
+   
+   Resolution:
+   - Stay on current branch
+   - Continue with commit
+   - Note: "Continuing work on existing branch"
+   ```
+
+### Auto-Selection Failures
+
+**Graceful Degradation Path:**
+
+```
+1. Try auto-selection
+   ↓ (fails)
+2. Provide smart suggestions based on partial data
+   ↓ (user rejects)
+3. Ask for explicit branch type
+   ↓ (user unsure)
+4. Use safe default (feat/) with descriptive name
+```
+
+**Common Failure Modes:**
+
+1. **Can't Read Backlog**
+   ```
+   Fallback: Analyze git diff only
+   Message: "Unable to read Backlog, analyzing changes..."
+   ```
+
+2. **Ambiguous Changes**
+   ```
+   Fallback: List options for user
+   Message: "Changes could be [feat/fix/refactor], please specify:"
+   ```
+
+3. **No Changes Detected**
+   ```
+   Fallback: Prevent empty commit
+   Message: "No changes detected. Nothing to commit."
+   ```
 
 ---
 
@@ -578,3 +882,56 @@ Recovered to: [branch-name]
 Verification: [Tests pass/Code compiles]
 
 Lost work restored - please verify contents."
+
+---
+
+## Branch Auto-Selection Quick Reference
+
+### Work Item Type → Branch Mapping
+```
+HF_xxx → hotfix/xxx     (Critical production fixes)
+VS_xxx → feat/xxx       (Vertical Slice features)
+BF_xxx → fix/xxx        (Bug fixes)
+TD_xxx → refactor/xxx   (Technical debt)
+```
+
+### File Type → Branch Mapping
+```
+Only *.md changed → docs/xxx
+Only tests/* changed → test/xxx
+Only .github/* changed → chore/ci-xxx
+Mixed changes → Analyze primary focus
+```
+
+### Smart Naming Examples
+```
+VS_001_User_Auth → feat/vs001-user-auth
+BF_003_Login_Crash → fix/bf003-login-crash
+TD_010_Refactor_Services → refactor/td010-services
+HF_001_Critical_Memory_Leak → hotfix/hf001-memory-leak
+```
+
+### User Override Commands
+```
+"use hotfix" → Forces hotfix/ prefix
+"call it experimental-feature" → Uses custom name
+"skip auto" → Disables auto-selection
+"what branch?" → Shows auto-selection analysis
+```
+
+### Auto-Selection Decision Tree
+```
+Is there an active work item?
+├─ YES → Use work item type
+├─ NO → Check file changes
+    ├─ Docs only? → docs/
+    ├─ Tests only? → test/
+    ├─ CI only? → chore/
+    └─ Mixed/Code → feat/ (default)
+```
+
+### Safety Rules
+- **NEVER** auto-select for operations on main
+- **ALWAYS** confirm before creating hotfix branches
+- **DEFAULT** to feat/ when uncertain
+- **EXPLAIN** reasoning for every auto-selection

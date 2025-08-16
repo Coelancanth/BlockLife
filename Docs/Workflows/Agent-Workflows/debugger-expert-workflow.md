@@ -1,71 +1,84 @@
-# Debugger Expert Workflow
+# Debugger Expert Workflow - Godot/C# Specialist
 
 ## Purpose
-Define systematic procedures for the Debugger Expert agent to diagnose and resolve complex bugs, especially those involving race conditions, state synchronization, and architectural issues.
+Define systematic procedures for the Debugger Expert agent to diagnose and resolve complex bugs in Godot/C# applications, specializing in node lifecycle issues, signal problems, thread safety, MVP pattern debugging, and Clean Architecture boundary violations in the Godot context.
 
 ---
 
 ## Core Workflow Actions
 
-### 1. Diagnose Bug Systematically
+### 1. Diagnose Godot/C# Bug Systematically
 
-**Trigger**: "Debug this issue" or "I'm stuck on this bug"
+**Trigger**: "Debug this issue" or "I'm stuck on this bug" or "Node not working"
 
 **Input Required**:
 - Bug symptoms/behavior
-- When it started occurring
-- Reproduction steps (if known)
-- Error messages or logs
+- Scene structure and node hierarchy
+- When it occurs (scene load, scene change, runtime)
+- Error messages from Godot console
+- C# stack traces
 - What's been tried already
 
 **Steps**:
 
-1. **Gather Initial Evidence**
+1. **Gather Godot-Specific Evidence**
    ```
-   Questions to ask:
-   - What exactly happens vs what should happen?
-   - When did this last work correctly?
-   - What changed between working and broken?
-   - How frequently does it occur?
-   - Any error messages or stack traces?
-   ```
-
-2. **Form Initial Hypotheses**
-   ```
-   Based on symptoms, likely causes:
-   - Race condition (intermittent failures)
-   - State corruption (inconsistent behavior)
-   - Memory leak (degradation over time)
-   - Integration issue (works in isolation)
-   - Configuration problem (environment specific)
+   Critical questions for Godot bugs:
+   - Does it happen in _Ready() or _EnterTree()?
+   - Is it related to scene changes or node disposal?
+   - Are signals connected/disconnected properly?
+   - Is it a main thread vs async thread issue?
+   - Does the node exist in the scene tree when accessed?
+   - Are there GodotObject disposal/reference issues?
    ```
 
-3. **Design Diagnostic Tests**
+2. **Form Godot-Aware Hypotheses**
+   ```
+   Common Godot/C# issues by symptom:
+   - "Object reference not set" → Node disposed or not ready
+   - "Can't change state while flushing queries" → Thread safety issue
+   - Signal not firing → Weak reference or disposal race
+   - Intermittent failures → Scene tree timing or async issues
+   - Memory growing → Static event subscriptions to Godot nodes
+   - "Node not found" → Scene not loaded or wrong path
+   ```
+
+3. **Design Godot Diagnostic Tests**
    ```csharp
-   // Add strategic logging
-   _logger.Information("State before: {State}", currentState);
-   await Operation();
-   _logger.Information("State after: {State}", newState);
+   // Check node lifecycle state
+   GD.Print($"Node ready: {IsNodeReady()}");
+   GD.Print($"In tree: {IsInsideTree()}");
+   GD.Print($"Scene root: {GetTree()?.Root?.Name}");
    
-   // Add assertions
-   Debug.Assert(invariant, "Invariant violated");
+   // Verify thread context
+   GD.Print($"Main thread: {OS.IsMainThread()}");
+   GD.Print($"Thread ID: {Thread.CurrentThread.ManagedThreadId}");
    
-   // Add breakpoints at key locations
+   // Check signal connections
+   GD.Print($"Signal connections: {GetSignalConnectionList(signalName).Count}");
+   
+   // Add Godot-safe assertions
+   if (!IsInstanceValid(node))
+       GD.PrintErr("Node is disposed but still referenced!");
    ```
 
-4. **Isolate the Problem**
+4. **Isolate Godot-Specific Problems**
    ```
-   Binary search approach:
-   1. Does it happen in unit tests? → Code logic issue
-   2. Does it happen in integration tests? → Integration issue
-   3. Does it happen under load? → Concurrency issue
-   4. Does it happen in production only? → Environment issue
+   Godot debugging hierarchy:
+   1. Does it work in a minimal scene? → Complex scene issue
+   2. Does it work without C# scripts? → C# integration issue
+   3. Does it work with CallDeferred? → Thread timing issue
+   4. Does it work without autoloads? → Singleton lifecycle issue
+   5. Does it work in editor vs export? → Build configuration issue
    ```
 
-5. **Identify Root Cause**
+5. **Identify Godot Root Cause**
    ```
-   Not just "View doesn't update"
-   But "Presenter not subscribed because Initialize() not called due to early disposal"
+   Not just "Node is null"
+   But "Presenter disposed during scene change before view unsubscribed from bridge event"
+   
+   Not just "Signal not received"
+   But "Signal emitted before node entered tree, lost due to weak reference"
    ```
 
 **Output Format**:
@@ -89,7 +102,168 @@ REGRESSION TEST:
 
 ---
 
-### 2. Debug Notification Pipeline
+### 2. Debug Godot Node Lifecycle Issues
+
+**Trigger**: "Node is null" or "Object disposed" or "Scene change breaks things"
+
+**Steps**:
+
+1. **Map Node Lifecycle Flow**
+   ```
+   Scene Load → _EnterTree() → _Ready() → Active
+                     ↓              ↓         ↓
+              Can access      Can setup   Full function
+               parent          children    available
+   
+   Scene Exit → _ExitTree() → Dispose() → Freed
+                    ↓            ↓          ↓
+               Unsubscribe   Clean up   No access
+   ```
+
+2. **Common Godot Lifecycle Bugs**
+   ```csharp
+   // BUG: Accessing child in _EnterTree
+   public override void _EnterTree()
+   {
+       var child = GetNode<Node>("Child"); // ❌ Child not ready!
+   }
+   
+   // FIX: Use _Ready for child access
+   public override void _Ready()
+   {
+       var child = GetNode<Node>("Child"); // ✅ Child exists
+   }
+   
+   // BUG: Not checking node validity
+   private Node? _cached;
+   private void UseNode()
+   {
+       _cached.Position = Vector2.Zero; // ❌ May be disposed!
+   }
+   
+   // FIX: Always validate Godot objects
+   private void UseNode()
+   {
+       if (IsInstanceValid(_cached))
+           _cached.Position = Vector2.Zero; // ✅ Safe
+   }
+   ```
+
+3. **Scene Change Debugging**
+   ```csharp
+   // Check disposal order during scene change
+   public override void _ExitTree()
+   {
+       GD.Print($"[{Name}] Exiting tree");
+       // Unsubscribe from ALL events here
+       SomeBridge.Event -= OnEvent;
+       base._ExitTree();
+   }
+   
+   protected override void Dispose(bool disposing)
+   {
+       GD.Print($"[{Name}] Disposing: {disposing}");
+       if (disposing)
+       {
+           // Clean up C# resources
+           _subscription?.Dispose();
+       }
+       base.Dispose(disposing);
+   }
+   ```
+
+4. **Autoload/Singleton Issues**
+   ```csharp
+   // BUG: Autoload holds reference to freed nodes
+   public partial class GameManager : Node
+   {
+       private List<Node> _nodes = new(); // ❌ Keeps freed nodes!
+   }
+   
+   // FIX: Use weak references or clean up
+   public partial class GameManager : Node
+   {
+       private List<WeakReference> _nodes = new();
+       
+       private void CleanupFreedNodes()
+       {
+           _nodes.RemoveAll(wr => !IsInstanceValid(wr.Target as Node));
+       }
+   }
+   ```
+
+**Output**: Lifecycle violation identified with proper fix
+
+---
+
+### 3. Debug Godot Signal Issues
+
+**Trigger**: "Signal not working" or "Events not firing in Godot"
+
+**Steps**:
+
+1. **Verify Signal Flow**
+   ```gdscript
+   # Check signal is declared
+   [Signal]
+   public delegate void MySignalEventHandler(int value);
+   
+   # Check signal is emitted
+   EmitSignal(SignalName.MySignal, 42);
+   
+   # Check connection exists
+   node.Connect(SignalName.MySignal, Callable.From<int>(OnSignal));
+   ```
+
+2. **Common Signal Problems**
+   ```csharp
+   // BUG: Connecting to disposed node
+   public override void _Ready()
+   {
+       var temp = new Node();
+       temp.Connect("signal", Callable.From(OnSignal));
+       temp.QueueFree(); // ❌ Connection lost!
+   }
+   
+   // BUG: Not disconnecting on disposal
+   public override void _ExitTree()
+   {
+       // ❌ Forgot to disconnect!
+   }
+   
+   // FIX: Proper signal lifecycle
+   private Node? _signalSource;
+   
+   public override void _Ready()
+   {
+       _signalSource = GetNode<Node>("Source");
+       _signalSource.Connect("signal", Callable.From(OnSignal));
+   }
+   
+   public override void _ExitTree()
+   {
+       if (IsInstanceValid(_signalSource))
+           _signalSource.Disconnect("signal", Callable.From(OnSignal));
+   }
+   ```
+
+3. **Bridge Pattern Signal Issues**
+   ```csharp
+   // BUG: Static event with Godot nodes
+   public static event Action<Node>? NodeEvent; // ❌ Keeps nodes alive!
+   
+   // FIX: Use data instead of nodes
+   public static event Action<NodeData>? DataEvent; // ✅ No node refs
+   
+   // Or use weak events
+   private static readonly WeakEvent<NodeEventArgs> _nodeEvent = new();
+   ```
+
+**Output**: Signal connection issue resolved
+
+---
+
+### 4. Debug Notification Pipeline
 
 **Trigger**: "View not updating" or "Events not working"
 
@@ -151,81 +325,228 @@ REGRESSION TEST:
 
 ---
 
-### 3. Debug Race Conditions
+### 5. Debug Godot Thread Safety Issues
 
-**Trigger**: "Intermittent failures" or "Works sometimes"
+**Trigger**: "Can't change state while flushing" or "Random crashes" or "Works in editor, not in build"
 
 **Steps**:
 
-1. **Reproduce Under Load**
+1. **Understand Godot Threading Model**
+   ```
+   Main Thread (Godot):
+   - All node operations
+   - Scene tree modifications
+   - Physics processing
+   - Rendering
+   
+   Worker Threads (C#):
+   - Async/await continuations
+   - Task.Run operations
+   - Background services
+   
+   RULE: Never touch Godot objects from worker threads!
+   ```
+
+2. **Identify Thread Violations**
    ```csharp
-   [Test]
-   public async Task StressTest_ConcurrentOperations()
+   // BUG: Modifying node from async continuation
+   public async Task LoadDataAsync()
    {
-       var tasks = Enumerable.Range(0, 100)
-           .Select(_ => Task.Run(async () => 
-           {
-               await PerformOperation();
-           }))
-           .ToArray();
+       var data = await FetchDataAsync();
+       _label.Text = data; // ❌ Not on main thread!
+   }
+   
+   // FIX: Use CallDeferred for thread safety
+   public async Task LoadDataAsync()
+   {
+       var data = await FetchDataAsync();
+       CallDeferred(nameof(UpdateLabel), data); // ✅ Runs on main thread
+   }
+   
+   private void UpdateLabel(string data)
+   {
+       _label.Text = data;
+   }
+   ```
+
+3. **Common Godot Thread Bugs**
+   ```csharp
+   // BUG: Accessing scene tree from Task
+   Task.Run(() =>
+   {
+       var node = GetNode<Node>("Path"); // ❌ Crash!
+   });
+   
+   // BUG: Signal from wrong thread
+   Task.Run(() =>
+   {
+       EmitSignal("SomeSignal"); // ❌ Thread violation!
+   });
+   
+   // FIX: Proper async pattern with Godot
+   public async Task ProcessAsync()
+   {
+       // Do async work
+       var result = await ComputeAsync();
+       
+       // Return to main thread for Godot operations
+       await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+       
+       // Now safe to touch nodes
+       UpdateNodeWithResult(result); // ✅ Main thread
+   }
+   ```
+
+4. **MVP Thread Safety Pattern**
+   ```csharp
+   // Presenter handles threading boundary
+   public class BlockPresenter : BasePresenter
+   {
+       public async Task HandleCommandAsync()
+       {
+           // Domain work on any thread
+           var result = await _mediator.Send(command);
            
-       await Task.WhenAll(tasks);
-       // Check for corruption
+           // Marshal to main thread for view update
+           if (!OS.IsMainThread())
+           {
+               CallDeferred(nameof(UpdateView), result);
+           }
+           else
+           {
+               UpdateView(result);
+           }
+       }
+       
+       private void UpdateView(Result result)
+       {
+           // Safe to update Godot nodes here
+           _view.UpdateDisplay(result);
+       }
    }
    ```
 
-2. **Identify Shared State**
+5. **Debug Thread Issues**
    ```csharp
-   // Look for:
-   - Static variables
-   - Singleton services
-   - Shared collections
-   - Cache instances
+   // Add thread diagnostics
+   GD.Print($"Thread: {Thread.CurrentThread.ManagedThreadId}");
+   GD.Print($"Main: {OS.IsMainThread()}");
    
-   // Add thread-safety checks:
-   private readonly object _lock = new();
-   lock (_lock)
+   // Use thread-safe assertions
+   Debug.Assert(OS.IsMainThread(), "Must be on main thread!");
+   
+   // Add defensive checks
+   if (!OS.IsMainThread())
    {
-       // Critical section
+       GD.PrintErr("Thread violation detected!");
+       CallDeferred(nameof(SafeMethod));
+       return;
    }
    ```
 
-3. **Check Async Patterns**
-   ```csharp
-   // Common issues:
-   
-   // ❌ Fire and forget
-   Task.Run(() => DoWork());
-   
-   // ❌ Blocking on async
-   var result = DoWorkAsync().Result;
-   
-   // ❌ Missing await
-   DoWorkAsync(); // No await!
-   
-   // ✅ Proper async
-   await DoWorkAsync();
-   ```
-
-4. **Add Synchronization**
-   ```csharp
-   // Use thread-safe collections
-   ConcurrentDictionary<K, V>
-   ConcurrentQueue<T>
-   
-   // Use async synchronization
-   SemaphoreSlim
-   AsyncLock
-   
-   // Use immutable data
-   public record State(int Value);
-   ```
-
-**Output**: Race condition identified with fix
+**Output**: Thread safety violation fixed with proper marshalling
 
 ---
 
-### 4. Debug State Synchronization
+### 6. Debug Clean Architecture Violations in Godot
+
+**Trigger**: "Godot dependency in domain" or "Architecture test failing" or "Boundary violation"
+
+**Steps**:
+
+1. **Identify Layer Violations**
+   ```
+   Domain Layer (Pure C#):
+   ❌ NEVER: using Godot;
+   ❌ NEVER: Node, Vector2, Transform2D
+   ✅ ONLY: System types, LanguageExt, domain types
+   
+   Application Layer (Commands/Queries):
+   ❌ NEVER: Godot types in commands/queries
+   ✅ BRIDGE: Notification handlers can reference bridges
+   
+   Presentation Layer (Godot-aware):
+   ✅ CAN: Use all Godot types
+   ✅ MUST: Convert between domain ↔ Godot types
+   ```
+
+2. **Common Architecture Bugs**
+   ```csharp
+   // BUG: Godot type in domain
+   public record Block(Vector2 Position); // ❌ Godot in domain!
+   
+   // FIX: Use domain type
+   public record Block(Position Position); // ✅ Domain type
+   public record Position(float X, float Y); // ✅ Pure C#
+   
+   // BUG: Domain service using Godot
+   public class BlockService
+   {
+       public void Move(Node node) // ❌ Node in domain!
+       {
+           node.Position = Vector2.Zero;
+       }
+   }
+   
+   // FIX: Domain service uses domain types
+   public class BlockService
+   {
+       public Block Move(Block block, Position newPos) // ✅ Pure domain
+       {
+           return block with { Position = newPos };
+       }
+   }
+   ```
+
+3. **Debug Presenter Boundary**
+   ```csharp
+   // Presenter is the boundary guardian
+   public class BlockPresenter : BasePresenter
+   {
+       // ✅ CORRECT: Convert at boundary
+       private void OnBlockMoved(BlockMovedData data)
+       {
+           // Domain → Godot conversion
+           var godotPos = new Vector2(data.Position.X, data.Position.Y);
+           _view.MoveBlock(godotPos);
+       }
+       
+       // ❌ WRONG: Leaking Godot to domain
+       private async Task MoveBlock(Vector2 position)
+       {
+           await _mediator.Send(new MoveCommand(position)); // ❌ Godot in command!
+       }
+       
+       // ✅ CORRECT: Convert before sending
+       private async Task MoveBlock(Vector2 position)
+       {
+           var domainPos = new Position(position.X, position.Y);
+           await _mediator.Send(new MoveCommand(domainPos)); // ✅ Domain type
+       }
+   }
+   ```
+
+4. **Verify with Architecture Tests**
+   ```csharp
+   // Run architecture fitness tests
+   dotnet test --filter "FullyQualifiedName~ArchitectureFitnessTests"
+   
+   // Common failures and fixes:
+   "Domain should not reference Godot"
+   → Remove all using Godot from domain
+   
+   "Commands should not contain Godot types"
+   → Convert to domain types before command
+   
+   "Handlers should not reference presentation"
+   → Use notification + bridge pattern
+   ```
+
+**Output**: Architecture violation fixed with proper boundaries
+
+---
+
+### 7. Debug State Synchronization
 
 **Trigger**: "State corruption" or "Phantom entities"
 
@@ -371,61 +692,108 @@ REGRESSION TEST:
 
 ---
 
-## Debugging Patterns Reference
+## Godot Debugging Patterns Reference
 
-### Systematic Approach Template
+### Godot-Specific Debugging Approach
 ```
-1. REPRODUCE
-   - Get minimal reproduction
-   - Verify consistently reproducible
+1. CHECK LIFECYCLE
+   - Is node in tree?
+   - Is node ready?
+   - Is object valid?
    
-2. ISOLATE
-   - Binary search to component
-   - Remove unrelated code
+2. CHECK THREADING
+   - Main thread for Godot ops?
+   - CallDeferred for cross-thread?
+   - Async marshalling correct?
    
-3. DIAGNOSE
-   - Form hypothesis
-   - Test hypothesis
-   - Gather evidence
+3. CHECK SIGNALS
+   - Signal connected?
+   - Node still valid?
+   - Proper disconnection?
    
-4. FIX
-   - Implement minimal fix
-   - Verify fix works
+4. CHECK ARCHITECTURE
+   - Domain pure C#?
+   - Conversions at boundary?
+   - No Godot leakage?
    
 5. PREVENT
-   - Add regression test
-   - Document lesson learned
+   - Add Godot-aware test
+   - Document pattern
 ```
 
-### Common Fix Patterns
+### Common Godot Fix Patterns
 
-**Race Condition Fix**:
+**Node Lifecycle Fix**:
 ```csharp
-// Before: Unsafe
-private List<Item> _items = new();
+// Before: Unsafe access
+var child = GetNode("Child");
+
+// After: Validated access
+if (HasNode("Child") && IsInstanceValid(GetNode("Child")))
+    var child = GetNode("Child");
+```
+
+**Thread Safety Fix**:
+```csharp
+// Before: Direct modification
+_label.Text = asyncResult;
 
 // After: Thread-safe
-private ConcurrentBag<Item> _items = new();
+CallDeferred(nameof(UpdateLabel), asyncResult);
 ```
 
-**Event Leak Fix**:
+**Signal Memory Fix**:
 ```csharp
-// Before: Strong reference
-public static event Action Event;
+// Before: Strong reference to nodes
+public static event Action<Node> NodeEvent;
 
-// After: Weak reference
-private static readonly WeakEvent<EventArgs> _event = new();
+// After: Data only
+public static event Action<NodeData> DataEvent;
 ```
 
-**State Sync Fix**:
+**Architecture Boundary Fix**:
 ```csharp
-// Before: Multiple sources
-services.AddSingleton<IService1, ServiceImpl>();
-services.AddSingleton<IService2, ServiceImpl>();
+// Before: Godot in domain
+public record Block(Vector2 Position);
 
-// After: Single source
-services.AddSingleton<ServiceImpl>();
-services.AddSingleton<IService1>(p => p.GetRequiredService<ServiceImpl>());
+// After: Pure domain
+public record Block(Position Position);
+public record Position(float X, float Y);
+```
+
+### Godot Debugging Tools
+
+**Remote Debugger**:
+- Enable in Project Settings
+- Connect to running game
+- Inspect live node tree
+- Monitor performance
+
+**Scene Dock Inspector**:
+- View node properties
+- Check signal connections
+- Verify node paths
+- Monitor lifecycle
+
+**Godot Profiler**:
+- Frame time analysis
+- Script performance
+- Memory usage
+- Thread activity
+
+**C# Debugging in Godot**:
+```csharp
+// Use GD.Print for Godot console
+GD.Print($"Debug: {value}");
+GD.PrintErr($"Error: {error}");
+
+// Check thread context
+if (!OS.IsMainThread())
+    GD.PrintErr("Not on main thread!");
+
+// Validate objects
+if (!IsInstanceValid(node))
+    GD.PrintErr("Invalid node reference!");
 ```
 
 ---
@@ -444,44 +812,71 @@ Before marking diagnosis complete:
 
 ## Response Templates
 
-### When bug diagnosed:
+### When Godot bug diagnosed:
 "🔍 Bug Diagnosed: [Issue Name]
 
-ROOT CAUSE: [Specific technical cause]
-EVIDENCE: [How we determined this]
+ROOT CAUSE: [e.g., "Presenter accessing node after _ExitTree()"]
+GODOT CONTEXT: [e.g., "Happens during scene transition"]
+THREAD: [Main/Worker thread issue if relevant]
 
 REPRODUCTION:
-1. [Step]
-2. [Step]
+1. [e.g., "Load scene with presenter"]
+2. [e.g., "Trigger scene change while async operation pending"]
+3. [e.g., "Observe null reference when callback fires"]
 
 FIX:
-[Code changes needed]
-
-Location: [File:Line]
-Confidence: [High/Medium/Low]
-
-Regression test will prevent recurrence."
-
-### When more info needed:
-"🔍 Need more information:
-
-To diagnose, please provide:
-1. [Specific log or trace]
-2. [Reproduction step]
-3. [Configuration detail]
-
-This will help determine if it's a [hypothesis]."
-
-### When providing fix:
-"✅ Fix for [Issue]:
-
 ```csharp
-// Change this (line X)
-[old code]
-
-// To this
-[new code]
+// Add IsInstanceValid check before node access
+if (IsInstanceValid(_view))
+    _view.UpdateDisplay(data);
 ```
 
-This fixes the root cause by [explanation].
-Also created regression test to prevent recurrence."
+Location: [File:Line]
+Lifecycle Stage: [_Ready/_EnterTree/_ExitTree/Runtime]
+Confidence: [High/Medium/Low]
+
+Will add test to verify proper disposal handling."
+
+### When needing Godot-specific info:
+"🔍 Need Godot-specific information:
+
+To diagnose this Godot issue, please provide:
+1. Full Godot console output (errors and warnings)
+2. Scene structure (which nodes, their types, hierarchy)
+3. When it occurs (editor, runtime, build, scene change?)
+4. Thread ID from error (if async related)
+
+Also helpful:
+- Does it work with CallDeferred?
+- Does it work in _Ready vs _EnterTree?
+- Any autoloads involved?
+
+This will help determine if it's a [lifecycle/thread/signal] issue."
+
+### When providing Godot fix:
+"✅ Fix for Godot/C# Issue:
+
+```csharp
+// PROBLEM: Accessing Godot node from async continuation
+public async Task LoadAsync()
+{
+    var data = await FetchDataAsync();
+    _label.Text = data; // ❌ Not on main thread!
+}
+
+// SOLUTION: Marshal to main thread
+public async Task LoadAsync()
+{
+    var data = await FetchDataAsync();
+    CallDeferred(nameof(UpdateLabel), data); // ✅ Thread-safe
+}
+
+private void UpdateLabel(string data)
+{
+    if (IsInstanceValid(_label))
+        _label.Text = data;
+}
+```
+
+This ensures Godot operations happen on the main thread.
+Added IsInstanceValid check for disposal race conditions."

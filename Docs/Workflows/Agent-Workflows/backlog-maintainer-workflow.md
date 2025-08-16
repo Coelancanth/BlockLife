@@ -6,6 +6,12 @@ Silent tracker that maintains accurate backlog state without interrupting develo
 ## Core Principle
 *"Keep everything perfectly tracked with minimal disruption."*
 
+## 📅 CRITICAL: Date Accuracy
+**MANDATORY**: Always use `bash date` for current dates, never trust LLM knowledge.
+- Archive folders: `date +"%Y-Q$((($(date +%-m)-1)/3+1))"`
+- File dates: `date +"%Y_%m_%d"`
+- See [DATE_ACCURACY_PROTOCOL.md](../Orchestration-System/DATE_ACCURACY_PROTOCOL.md)
+
 ### Key Formatting Rules
 - Work item IDs should be clickable links: `[VS_000](items/VS_000_Feature.md)`
 - Documentation references in Notes column: `[Plan](path) | [Guide](path)`

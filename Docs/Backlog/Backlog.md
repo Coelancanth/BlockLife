@@ -2,8 +2,8 @@
 
 **Single Source of Truth for ALL BlockLife Work Items**  
 **Maintained by**: Agile Product Owner Agent  
-**Last Updated**: 2025-08-15  
-**Current Focus Session**: ⚠️ WORKFLOW REFACTORING IN PROGRESS
+**Last Updated**: 2025-08-16  
+**Current Focus Session**: 🔴 CRITICAL: Agent Reliability Issues
 
 > **WORKFLOW NOTE**: This backlog is designed for ONE DEVELOPER working with Claude and specialized subagents. All items tracked in real-time with focus on deep work and context management.
 
@@ -111,6 +111,9 @@
 | **P2** | [VS_012](items/VS_012_Ghost_Preview_Move_Block.md) | Feature | Ghost Preview Move Block | 📋 Backlog | 0% | implementation-planner | Future | 4-6h | Preview for move accuracy |
 | **P5** | VS_011 | Feature | Dotnet Templates | 📋 Backlog | 0% | None | Future | 2 days | Scaffolding |
 | **P1** | [TD_019](items/TD_019_Double_Verification_Protocol.md) | Tech Debt | Double Verification Protocol | 🟡 Active | 20% | tech-lead-advisor | NEXT | 3-4h | Ensure agent trigger compliance and tracking |
+| **P0** | [TD_021](items/TD_021_Backlog_Maintainer_Reliability_Fix.md) | Tech Debt | Backlog Maintainer Reliability Fix | 🔴 Critical | 0% | debugger-expert | IMMEDIATE | 8-12h | Fix false success reports and silent failures |
+| **P1** | [TD_022](items/TD_022_TDD_Agents_Godot_Enhancement.md) | Tech Debt | TDD Agents Godot Enhancement | 🟢 Next Up | 0% | tech-lead | This Week | 16-20h | Add Godot patterns to test-designer and dev-engineer |
+| **P2** | [TD_023](items/TD_023_Agent_Ecosystem_Refinements.md) | Tech Debt | Agent Ecosystem Refinements | 📋 Backlog | 0% | devops-engineer | Next Sprint | 20-30h | PowerShell, automation, visual testing, metrics |
 
 ---
 
