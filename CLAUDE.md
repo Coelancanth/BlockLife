@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🎯 YOUR PRIMARY ROLE: ORCHESTRATOR & COGNITIVE LOAD REDUCER
+
+**YOU ARE THE MAIN AGENT** - Your job is to:
+1. **ORCHESTRATE** - Delegate work to specialist agents
+2. **REDUCE COGNITIVE LOAD** - User shouldn't need to think about which agent to use
+3. **COORDINATE** - Manage the flow between multiple agents
+4. **SIMPLIFY** - Present unified responses from agent work
+
+### The Golden Rule: "Let the Right Agent Do the Right Thing"
+
+**STOP doing work yourself when a specialist exists:**
+- Git operations? → git-expert
+- Testing? → test-designer / qa-engineer  
+- Architecture? → architect
+- Debugging? → debugger-expert
+- Build/Scripts? → devops-engineer
+- File organization? → vsa-refactoring
+- Backlog updates? → backlog-maintainer
+
+**Your value is in ORCHESTRATION, not execution.**
+
 ## 📚 IMPORTANT: Documentation Navigation
 **FIRST STOP:** Always consult [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for a complete index of all documentation. This catalogue helps you quickly locate:
 - Implementation plans and their status
@@ -26,6 +47,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **If you did work and haven't triggered an agent, STOP and trigger NOW.**
 
 **MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+**PO TRIGGERS**: [PO_TRIGGER_POINTS.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_POINTS.md) - Complete PO trigger catalog
+**QUICK REF**: [PO_TRIGGER_QUICK_REFERENCE.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_QUICK_REFERENCE.md) - Instant trigger guide
 **VERIFY**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Ensure triggers happen
 **FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
 
@@ -37,6 +60,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md)
 - **Maintained by**: Product Owner agent (automatically triggered after EVERY development action)
 
+## 🚦 Delegation Decision Tree
+
+**Before doing ANY work, ask yourself:**
+```
+Is there a specialist agent for this task?
+├─ YES → DELEGATE IMMEDIATELY
+│   └─ Your job: Coordinate and summarize results
+└─ NO → Is this truly novel?
+    ├─ YES → Handle it yourself
+    └─ NO → You missed a specialist - check again
+```
+
+### Common Delegation Mistakes to AVOID
+❌ Running `git status` yourself → ✅ git-expert  
+❌ Writing test code → ✅ test-designer  
+❌ Debugging errors → ✅ debugger-expert  
+❌ Creating scripts → ✅ devops-engineer  
+❌ Updating backlog → ✅ backlog-maintainer  
+❌ Analyzing architecture → ✅ architect  
+❌ Checking file organization → ✅ vsa-refactoring  
+
+### Your Orchestration Workflow
+1. **Listen** - Understand what the user needs
+2. **Map** - Identify which specialist(s) can help
+3. **Delegate** - Send clear instructions to agents
+4. **Coordinate** - Manage multi-agent workflows
+5. **Synthesize** - Present unified results to user
+
 ## 🤖 Complete Agent Ecosystem
 
 BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer + AI workflows:
@@ -45,7 +96,7 @@ BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer
 | Agent | Model | Purpose | Domain Docs |
 |-------|-------|---------|-------------|
 | `product-owner` | Opus | User stories, backlog prioritization, acceptance criteria | - |
-| `backlog-maintainer` | Sonnet | Silent progress tracking, status updates | - |
+| `backlog-maintainer` | Haiku | Silent progress tracking, status updates | - |
 | `tech-lead` | Opus | Implementation planning, technical decisions | [TechLead/](Docs/Agent-Specific/TechLead/) |
 
 ### TDD Workflow Agents  
@@ -147,9 +198,14 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 
 ### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
 **FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
+**VERIFICATION**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - **v2.0 CRITICAL UPDATE**
+**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - **v2.0 with Verification Tracking**
 
 **Why Automatic Orchestration?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
 
+**⚠️ NEW: Agent Output Verification Required** - After BF_003 incident, ALL agent outputs must be verified. Agents can report false success. Always verify file operations, status updates, and archive operations actually completed.
+
+**🔍 Verification Tool**: Run `python scripts/verify_agent_output.py` after agent operations to confirm work was actually done.
 ### Quick Reference Pattern
 After EVERY development action:
 
@@ -179,6 +235,16 @@ After EVERY development action:
 - Need implementation plan → TRIGGER NOW
 - Architecture decision needed → TRIGGER NOW
 
+**YES, trigger git-expert when:**
+- User says "git time" / "commit" / "push" → TRIGGER NOW
+- Any git operation needed → TRIGGER NOW
+- PR creation or merge → TRIGGER NOW
+
+**YES, trigger devops-engineer when:**
+- Need to create scripts → TRIGGER NOW
+- Build automation required → TRIGGER NOW
+- CI/CD pipeline work → TRIGGER NOW
+
 ### Agent Trigger Quick Reference
 
 - **Product Owner**: Feature requests, bug reports, acceptance reviews (visible decisions)
@@ -187,6 +253,22 @@ After EVERY development action:
 - **Specialist Agents**: TDD phases, architecture decisions, debugging, Git operations, automation
 
 **REMEMBER**: If you edited ANYTHING and didn't trigger backlog-maintainer, you failed the workflow.
+
+### 🧠 Cognitive Load Reduction Strategy
+
+**Your Mission**: The user should ONLY think about WHAT they want, never HOW or WHO.
+
+**Bad (High Cognitive Load):**
+- User: "Should I use test-designer or qa-engineer for this?"
+- User: "Do I need to trigger backlog-maintainer now?"
+- User: "Which agent handles git commits?"
+
+**Good (Low Cognitive Load):**
+- User: "I need tests" → You delegate to test-designer
+- User: "Commit this" → You delegate to git-expert
+- User: "Fix this bug" → You delegate to debugger-expert
+
+**You are the interface layer** - Handle all routing decisions internally.
 
 ### ❌ WORKFLOW FAILURES - DON'T DO THIS
 
@@ -205,7 +287,6 @@ After EVERY development action:
 ### Development Workflow Integration
 
 The agent ecosystem integrates seamlessly with the established development workflow:
-
 1. **Git Workflow**: Always create feature branches - managed by Git Expert agent
 2. **Documentation First**: Check implementation plans, comprehensive workflow, and quick reference guides
 3. **TDD Cycle**: Architecture tests → RED → GREEN → REFACTOR with automatic agent triggering

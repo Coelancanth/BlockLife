@@ -21,7 +21,8 @@
       "Bash(python:*)",
       "Bash(gh pr merge:*)",
       "Bash(cp:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,1 @@
+[2025-08-16 TD_010 Completion] Notification Pipeline Framework archived to 2025-Q3. Framework implemented as WeakEventManager<T> infrastructure.

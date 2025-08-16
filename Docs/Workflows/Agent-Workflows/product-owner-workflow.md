@@ -235,6 +235,9 @@ Push back on low-value or poorly-timed features.
 ## Integration Points
 
 ### Triggers Product Owner
+**📋 COMPREHENSIVE TRIGGER DOCUMENTATION**: See [PO_TRIGGER_POINTS.md](../Orchestration-System/PO_TRIGGER_POINTS.md) for complete catalog of ALL trigger patterns, priority rules, and edge cases.
+
+Quick summary:
 - User has new feature idea
 - Work needs acceptance review
 - Weekly planning session

@@ -1,7 +1,9 @@
-# Orchestration Feedback System
+# Orchestration Feedback System v2.0
 
 ## Purpose
-Track and improve Claude Code's orchestration performance by capturing when triggers are missed, wrong agents are used, or workflows aren't followed.
+Track and improve Claude Code's orchestration performance by capturing when triggers are missed, wrong agents are used, workflows aren't followed, or **agents report false success** (NEW in v2.0).
+
+**🚨 CRITICAL UPDATE**: After BF_003 incident, we now track agent verification failures where agents claim success but didn't actually complete the work.
 
 ---
 
@@ -37,6 +39,18 @@ Track and improve Claude Code's orchestration performance by capturing when trig
 **Correction needed**: [How to fix]
 ```
 
+### Verification Failure Report (NEW)
+```markdown
+## VERIFICATION FAILURE: [Date/Time]
+**Agent**: [Which agent]
+**Claimed**: "[What agent reported]"
+**Reality**: [What actually happened]
+**Verification Method**: [How we checked]
+**Evidence**: [File paths, command outputs]
+**Root Cause**: [Path error, logic bug, etc.]
+**Trust Impact**: [Agent trust level adjustment]
+```
+
 ---
 
 ## 📊 Feedback Categories
@@ -65,6 +79,14 @@ Track and improve Claude Code's orchestration performance by capturing when trig
 - **Wrong Format**: Didn't follow announcement pattern
 - **Missing Context**: Announcement lacked detail
 
+### 5. Verification Issues (NEW)
+- **False Success**: Agent claimed success but work not done
+- **Partial Completion**: Some work done, not all
+- **Wrong Location**: Work done in wrong place
+- **Silent Failure**: No error reported when failed
+- **Path Mismatch**: Used wrong paths in operations
+- **No Verification**: Agent didn't check own work
+
 ---
 
 ## 🔄 Feedback Commands
@@ -76,6 +98,8 @@ Use these commands to report issues quickly:
 - **"Wrong agent!"** - I used the wrong agent for the task
 - **"No announcement!"** - I triggered without announcing
 - **"Workflow broken!"** - Agent didn't follow its workflow
+- **"Agent lied!"** - Agent reported success but didn't do the work (NEW)
+- **"Verify failed!"** - Verification found agent output incorrect (NEW)
 
 ### Detailed Reports
 - **"Bug: [description]"** - Detailed issue report
@@ -96,12 +120,22 @@ Track orchestration quality over time:
 - Correct agent selection: X/Y (%)
 - Workflow compliance: X/Y (%)
 - Announcement compliance: X/Y (%)
+- **Verification success: X/Y (%)** (NEW)
 
 ### Issues Found
 - Missed triggers: [count]
 - Wrong agents: [count]
 - Workflow failures: [count]
 - No announcements: [count]
+- **False successes: [count]** (NEW)
+- **Verification failures: [count]** (NEW)
+
+### Agent Trust Levels (NEW)
+| Agent | Trust | Failures | Last Verified |
+|-------|-------|----------|---------------|
+| backlog-maintainer | MEDIUM | 1 | BF_003 |
+| tech-lead | HIGH | 0 | - |
+| product-owner | HIGH | 0 | - |
 
 ### Patterns to Add/Fix
 1. [Pattern that needs adding]
@@ -137,6 +171,22 @@ Track orchestration quality over time:
 ## 📝 Feedback Log
 
 Keep a running log of issues and improvements:
+
+### 2025-08-16 Session (v2.0 Update)
+- 🚨 **CRITICAL BUG**: BF_003 - Backlog-maintainer false success on archiving
+- ✅ **Fixed**: Archive path mismatch in workflow
+- ✅ **Added**: Double Verification Protocol v2.0
+- ✅ **Created**: Agent verification automation script
+- ✅ **Enhanced**: Feedback system with verification tracking
+- 📊 **Metrics**: 5/5 items verified successfully after fix
+
+#### VERIFICATION FAILURE: BF_003 Archive Operation (2025-08-16)
+**Agent**: backlog-maintainer
+**Claimed**: "✓ Archived 5 completed items"
+**Reality**: 0 files actually moved
+**Root Cause**: Path mismatch - missing `/completed/` in archive path
+**Fix**: Updated workflow paths and added verification steps
+**Trust Impact**: backlog-maintainer moved to MEDIUM trust
 
 ### 2025-08-15 Session
 - ✅ **Fixed**: Added mandatory orchestration guide reading
@@ -287,10 +337,44 @@ Each feedback item should result in:
 
 ---
 
+## 🔍 Verification Integration (NEW in v2.0)
+
+### Automatic Verification Triggers
+After these agent actions, verification MUST run:
+- Archive operations → `python scripts/verify_agent_output.py archive`
+- Status updates to Complete → `python scripts/verify_agent_output.py status`
+- File creation/moves → `python scripts/verify_agent_output.py file`
+- Build claims → Check artifacts exist
+- Test success claims → Re-run tests independently
+
+### Trust Level Adjustments
+```python
+# After verification failure:
+if verification_failed:
+    agent_trust[agent_name] = "LOW"
+    require_verification = "ALWAYS"
+    
+# After successful verifications:
+if consecutive_successes >= 10:
+    agent_trust[agent_name] = "MEDIUM"
+if consecutive_successes >= 50:
+    agent_trust[agent_name] = "HIGH"
+```
+
+### Verification Feedback Loop
+1. Agent performs action
+2. Verification runs automatically
+3. Results logged to feedback system
+4. Trust levels adjusted
+5. Patterns updated if needed
+
 ## 🔗 Integration Points
 
 This feedback system integrates with:
 - **AGENT_ORCHESTRATION_GUIDE.md** - Update patterns
+- **DOUBLE_VERIFICATION_PROTOCOL.md** - Verification procedures (NEW)
+- **AGENT_VERIFICATION_CHECKLIST.md** - Quick verification commands (NEW)
+- **verify_agent_output.py** - Automated verification tool (NEW)
 - **CLAUDE.md** - Critical updates
 - **Backlog** - Track improvement items
 - **Workflows** - Refine procedures

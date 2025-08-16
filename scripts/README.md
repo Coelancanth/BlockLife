@@ -87,13 +87,56 @@ python scripts/sync_documentation_status.py --dry-run
 - Validates internal documentation links
 - Provides comprehensive status reporting
 
+### 📁 Archive Naming Migration (`migrate_archive_naming.py`)
+**Purpose**: Migrate archived work items from old naming to new standardized convention  
+**Reduces Cognitive Load**: Automates complex naming conversions with intelligent tag detection
+
+```bash
+# Preview migration (recommended first step)
+python scripts/migrate_archive_naming.py --dry-run Docs/Backlog/archive/completed/2025-Q1
+
+# Migrate with specific completion date
+python scripts/migrate_archive_naming.py Docs/Backlog/archive/completed/2025-Q1 --date 2025-01-15
+
+# Verbose mode for debugging
+python scripts/migrate_archive_naming.py --verbose --dry-run /path/to/archive
+
+# Get help
+python scripts/migrate_archive_naming.py --help
+```
+
+**What it does**:
+- Detects files using old vs new naming convention automatically
+- Analyzes file content to intelligently determine appropriate tags
+- Converts descriptions to kebab-case format
+- Orders tags by priority for consistent search patterns
+- Creates comprehensive migration logs with before/after tracking
+- Supports dry-run mode for safe previewing
+
+**Migration Example**:
+```
+Old: TD_012_Dynamic_PO_Pattern_Implementation.md
+New: 2025_01_15-TD_012-orchestration-pattern-[refactor][workflow][automation][completed].md
+```
+
+**Tag System**: Priority-ordered tags enable powerful searches:
+- Type: `[bug]` `[feature]` `[refactor]` `[docs]` (first)
+- Impact: `[critical]` `[dataloss]` `[security]` (second)  
+- Area: `[core]` `[ui]` `[workflow]` `[fileops]` (third)
+- Status: `[resolved]` `[completed]` `[partial]` (last)
+
 ## 🚀 Quick Setup Guide
 
 ### 1. Install Dependencies
 ```bash
-# All scripts use Python standard library - no additional dependencies required
-python --version  # Ensure Python 3.7+ is available
+# Install required packages for rich formatting and CLI tools
+pip install -r scripts/requirements.txt
+
+# Verify Python version (3.8+ recommended)
+python --version
 ```
+
+**Note**: Most scripts use Python standard library only, but the migration tool requires `click` and `rich` for enhanced CLI experience.
 
 ### 2. Setup Git Workflow Enforcement (Recommended First Step)
 ```bash
@@ -109,6 +152,15 @@ dotnet build BlockLife.sln
 dotnet test tests/BlockLife.Core.Tests.csproj
 python scripts/collect_test_metrics.py --update-docs
 python scripts/sync_documentation_status.py
+```
+
+### 4. Archive Management (When Needed)
+```bash
+# Preview archive migrations before running
+python scripts/migrate_archive_naming.py --dry-run Docs/Backlog/archive/completed/2025-Q1
+
+# Run actual migration when ready
+python scripts/migrate_archive_naming.py Docs/Backlog/archive/completed/2025-Q1 --date 2025-01-15
 ```
 
 ## 🎯 Integration Points

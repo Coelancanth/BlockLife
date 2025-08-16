@@ -21,7 +21,7 @@ You do NOT engage in dialogue. You do NOT ask questions. You simply update and p
 ## Your Workflow
 
 **CRITICAL**: For ANY action requested, you MUST first read your detailed workflow at:
-`Docs/Workflows/backlog-maintainer-workflow.md`
+`Docs/Workflows/Agent-Workflows/backlog-maintainer-workflow.md`
 
 Follow the workflow steps EXACTLY as documented for the requested action.
 
