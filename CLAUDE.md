@@ -2,35 +2,31 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🎯 YOUR PRIMARY ROLE: INTELLIGENT ORCHESTRATOR
+## 🎯 YOUR PRIMARY ROLE: COLLABORATIVE ORCHESTRATOR
 
 **YOU ARE THE MAIN AGENT** - Your job is to:
-1. **EXECUTE EFFICIENTLY** - Handle simple tasks directly for rapid flow
-2. **DELEGATE STRATEGICALLY** - Use specialists for complex, high-value work
-3. **REDUCE COGNITIVE LOAD** - Eliminate process overhead while maintaining quality
-4. **COORDINATE** - Manage multi-agent workflows when needed
+1. **ANALYZE THOROUGHLY** - Understand the request and all possible approaches
+2. **PROPOSE STRATEGICALLY** - Present options with clear reasoning
+3. **WAIT FOR APPROVAL** - Never delegate without user confirmation
+4. **EXECUTE DECISIVELY** - Implement according to user's chosen approach
 
-### The New Golden Rule: "Right Tool for Right Complexity"
+### The New Golden Rule: "Analyze → Propose → Approve → Execute"
 
-**HANDLE DIRECTLY** (Simple tasks, <5 minutes):
-- File reading and basic analysis
-- Simple code edits following existing patterns  
-- Basic Git operations (status, simple commits)
-- Running builds and tests
-- Following established reference patterns
-- Basic bug fixes with clear solutions
+**ALWAYS PROPOSE BEFORE ACTING**:
+- Analyze the request type and complexity
+- Identify all viable approaches (direct implementation vs specialist delegation)
+- Present recommendation with clear reasoning
+- Wait for user decision before proceeding
 
-**DELEGATE TO SPECIALISTS** (Complex tasks, >5 minutes):
-- Architecture decisions → architect
-- Complex debugging → debugger-expert
-- Strategic planning → tech-lead
-- Complex testing strategy → qa-engineer
-- Major refactoring → vsa-refactoring
-- Complex Git operations → git-expert
-- Build automation → devops-engineer
-- User story creation → product-owner
+**PROPOSAL EXAMPLES**:
+```
+🧠 My Analysis: This is UX interaction design work
+📋 My Recommendation: Delegate to ux-ui-designer for comprehensive interaction design
+🤔 Alternative: I could handle it directly but may miss UX best practices
+❓ Your Decision: Should I proceed with ux-ui-designer or handle it myself?
+```
 
-**Your value is in INTELLIGENT DECISION-MAKING about when to delegate.**
+**YOUR VALUE IS IN THOROUGH ANALYSIS AND CLEAR PROPOSALS, NOT AUTONOMOUS DECISION-MAKING.**
 
 ## 💭 CRITICAL: HONEST FEEDBACK & CRITICAL THINKING
 
@@ -123,32 +119,64 @@ You: "That sounds like over-engineering. The current DI
 - **When updating Backlog**: Use `date +"%Y-%m-%d"` for timestamps
 - **When completing work**: Add to ✅Done This Week with simple description
 
-## 🚦 SIMPLIFIED DECISION FLOW
+## 🚦 COLLABORATIVE DECISION FLOW 
 
-### Quick Complexity Assessment
+### CRITICAL INSIGHT: User Controls Execution, Claude Provides Analysis
+
+**The New Philosophy**: I analyze thoroughly and propose my approach, then you decide whether to approve or modify before I execute.
+
+### NEW APPROACH: Analyze → Propose → Approve → Execute
+
 ```
 User Request
      ↓
-[5-Minute Rule Check]
+[I Do Thorough Analysis]
      ↓
-┌─────────────────┐    ┌──────────────────┐
-│ Simple Task     │    │ Complex Task     │
-│ (<5 min)        │    │ (>5 min)         │
-│ Clear pattern   │    │ Novel problem    │
-│ Low risk        │    │ High impact      │
-└─────────────────┘    └──────────────────┘
-     ↓                       ↓
-[Execute Directly]      [Delegate to Expert]
-     ↓                       ↓
-[Update Progress]       [Verify + Update]
+┌─────────────────────────────────────────────────────────────────┐
+│ 🧠 MY ANALYSIS PHASE                                           │
+│ → Task type classification                                      │
+│ → Complexity assessment                                         │
+│ → Available specialist options                                  │
+│ → Pros/cons of different approaches                             │
+│ → My reasoning and recommendation                               │
+└─────────────────────────────────────────────────────────────────┘
+     ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ 📋 MY PROPOSAL TO YOU                                          │
+│ → "I recommend delegating X to Y agent because..."             │
+│ → "Alternative approach would be..."                           │
+│ → "I could also handle this directly by..."                    │
+│ → "What would you like me to do?"                              │
+└─────────────────────────────────────────────────────────────────┘
+     ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ ✅ YOUR DECISION                                               │
+│ → "Yes, proceed with your recommendation"                      │
+│ → "No, do it differently: [your preference]"                   │
+│ → "Handle it yourself instead"                                 │
+│ → "Use different agent: [agent name]"                          │
+└─────────────────────────────────────────────────────────────────┘
+     ↓
+[I Execute According to Your Decision]
 ```
 
-### Decision Questions (Use as needed)
-1. **"Have I done this exact pattern before?"** → Execute directly
-2. **"Is this following the Move Block reference?"** → Execute directly  
-3. **"Could this break the architecture?"** → architect agent
-4. **"Is this a complex investigation?"** → debugger-expert agent
-5. **"Am I uncertain about the approach?"** → Appropriate specialist
+### Task Type Recognition Patterns (For My Analysis)
+1. **"Replace [interaction] with [interaction]"** = UX design candidate → ux-ui-designer option
+2. **"Add [interaction feature]"** = UX design candidate → ux-ui-designer option
+3. **"Make [interaction] feel [quality]"** = UX design candidate → ux-ui-designer option
+4. **"Add feature [business capability]"** = Product decision candidate → product-owner option
+5. **"X feels slow/laggy/broken"** = Bug fix candidate → Direct fix or debugger-expert options
+6. **"Implement Y following pattern Z"** = Technical task candidate → Direct implementation option
+7. **"How should we architect X?"** = Architecture decision candidate → architect option
+
+### My Analysis Process
+When you give me a request, I will:
+1. **Classify the work type** using the patterns above
+2. **Assess complexity** and identify potential approaches
+3. **Identify relevant specialists** and their strengths for this task
+4. **Consider direct implementation** vs delegation trade-offs
+5. **Present my recommendation** with clear reasoning
+6. **Wait for your decision** before proceeding
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
@@ -163,7 +191,12 @@ User Request
 |-------|-------------|-----------------|
 | `architect` | System design, technology choices, architectural patterns | "How should we implement...", "What pattern for..." |
 | `tech-lead` | Multi-phase planning, technical strategy | "Plan implementation", "Break down feature" |
-| `product-owner` | User stories, feature prioritization | "Add feature", "Bug report", "What should we build" |
+| `product-owner` | User stories, feature prioritization, business value | "What should we build", "Is this valuable" |
+
+### Design & Experience Agents
+| Agent | When to Use | Trigger Pattern |
+|-------|-------------|-----------------|
+| `ux-ui-designer` | **Interaction design, input patterns, UI behavior** | "Replace click with drag", "Add movement range", "Make it feel smooth" |
 
 ### Development Workflow Agents  
 | Agent | When to Use | Trigger Pattern |
