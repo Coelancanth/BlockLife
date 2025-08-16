@@ -8,3 +8,8 @@
   * Adjusted completed items count
   * Moved items to archive/2025-Q3/
 - Maintained single source of truth principle ✓
+
+2025-08-16 [backlog-maintainer]: Archived additional work items
+- TD_021_Backlog_Maintainer_Reliability_Fix.md → 2025_08_16-TD_021-backlog-maintainer-reliability-fix-[workflow][completed].md
+- BF_005_Backlog_Maintainer_Archive_Operation_Failure.md → 2025_08_16-BF_005-backlog-maintainer-archive-operation-failure-[bug][resolved].md
+- BF_006_Backlog_Archive_Duplication_Issue.md → 2025_08_16-BF_006-backlog-archive-duplication-issue-[bug][resolved].md
