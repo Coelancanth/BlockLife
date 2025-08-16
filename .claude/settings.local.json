@@ -22,7 +22,9 @@
       "Bash(gh pr merge:*)",
       "Bash(cp:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(\".claude/manage-agent-config.sh\" set on)",
+      "Bash(\".claude/manage-agent-config.sh\" set off)"
     ],
     "deny": [],
     "ask": []

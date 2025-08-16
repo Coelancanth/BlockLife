@@ -1,1 +1,10 @@
-[2025-08-16 TD_010 Completion] Notification Pipeline Framework archived to 2025-Q3. Framework implemented as WeakEventManager<T> infrastructure.
+2025-08-16 [Backlog Maintainer] 
+- Archived completed work items:
+  * TD_016: Docs Shared Folder Reorganization
+  * TD_017: CLAUDE.md Workflow Documentation Improvement
+  * TD_018: Workflows Documentation Reorganization
+- Updated Backlog.md 
+  * Removed completed items from tracker
+  * Adjusted completed items count
+  * Moved items to archive/2025-Q3/
+- Maintained single source of truth principle ✓
