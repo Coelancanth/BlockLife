@@ -45,7 +45,7 @@ BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer
 | Agent | Model | Purpose | Domain Docs |
 |-------|-------|---------|-------------|
 | `product-owner` | Opus | User stories, backlog prioritization, acceptance criteria | - |
-| `backlog-maintainer` | Sonnet | Silent progress tracking, status updates | - |
+| `backlog-maintainer` | Haiku | Silent progress tracking, status updates | - |
 | `tech-lead` | Opus | Implementation planning, technical decisions | [TechLead/](Docs/Agent-Specific/TechLead/) |
 
 ### TDD Workflow Agents  
@@ -147,8 +147,14 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 
 ### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
 **FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
+**VERIFICATION**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - **v2.0 CRITICAL UPDATE**
+**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - **v2.0 with Verification Tracking**
 
 **Why Automatic Orchestration?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
+
+**⚠️ NEW: Agent Output Verification Required** - After BF_003 incident, ALL agent outputs must be verified. Agents can report false success. Always verify file operations, status updates, and archive operations actually completed.
+
+**🔍 Verification Tool**: Run `python scripts/verify_agent_output.py` after agent operations to confirm work was actually done.
 
 ### Quick Reference Pattern
 After EVERY development action:

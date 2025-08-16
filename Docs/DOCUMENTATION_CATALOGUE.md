@@ -89,7 +89,13 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - [Git_Workflow_Guide.md](Shared/Guides/Git_Workflow_Guide.md) - **MANDATORY** Git workflow ⭐⭐⭐⭐
 - [GdUnit4_Integration_Testing_Guide.md](Shared/Guides/GdUnit4_Integration_Testing_Guide.md) - Godot integration testing
 - [Debugging_Notification_Pipeline.md](Shared/Guides/Debugging_Notification_Pipeline.md) - Notification debugging guide
-- [Work_Item_Naming_Conventions.md](Shared/Guides/Work_Item_Naming_Conventions.md) - Backlog item naming
+
+### 📐 Style Standards & Conventions ([Shared/Core/Style-Standards/](Shared/Core/Style-Standards/))
+- [Work_Item_Naming_Conventions.md](Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md) - Active work item naming (VS_XXX, BF_XXX, etc.) ⭐⭐⭐
+- [Archive_Naming_Convention.md](Shared/Core/Style-Standards/Archive_Naming_Convention.md) - **NEW** Completed item archive naming with tags ⭐⭐⭐⭐
+  - Format: `YYYY_MM_DD-[ID]-description-[tag1][tag2][status].md`
+  - Enables powerful grep searching of completed work
+  - Used by backlog-maintainer when archiving items
 
 ## 🎯 Quick Reference by Role
 
@@ -118,6 +124,12 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 2. Check [Integration_Testing_Guide.md](Shared/Architecture/Integration_Testing_Guide.md) for GdUnit4
 3. Use [Agent-Specific/QA/](Agent-Specific/QA/) for testing strategies
 
+### For Backlog & Archive Management
+1. Active items: Follow [Work_Item_Naming_Conventions.md](Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md)
+2. Archiving: Use [Archive_Naming_Convention.md](Shared/Core/Style-Standards/Archive_Naming_Convention.md)
+3. Tag prioritization ensures grep-friendly searches
+4. Backlog-maintainer auto-applies naming when archiving
+
 ## 📊 Documentation Quality Ratings
 
 - ⭐⭐⭐⭐⭐ **CRITICAL** - Must read, production-validated
@@ -128,6 +140,8 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ## 🔄 Recent Changes
 
+- **NEW**: Archive Naming Convention with prioritized tags for grep searching (2025-08-16)
+- **UPDATED**: Backlog-maintainer workflow to use new archive naming format
 - **MAJOR**: Reorganized documentation structure with agent-specific ownership
 - **NEW**: Agent reference files for quick documentation discovery
 - **UPDATED**: All paths updated to new Shared/ structure

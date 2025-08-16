@@ -485,6 +485,63 @@ git push origin v1.0.0
 
 ---
 
+## Pull Request Template Requirements
+
+### PR Template Enforcement
+
+**Mandatory PR Template Sections**:
+
+When creating a Pull Request, the git-expert MUST include the following structured sections:
+
+```markdown
+## Changes
+
+[Concise summary of changes introduced by this PR]
+
+- List specific modifications
+- Highlight key implementation details
+- Reference related work items or issues
+
+## Testing
+
+### Verification Steps
+- [ ] Ran unit tests
+- [ ] Ran integration tests
+- [ ] Manually tested in [relevant environment]
+
+### Test Coverage
+- Lines added: [X]
+- Lines modified: [Y]
+- Test cases added: [Z]
+
+## Checklist
+
+### Code Quality
+- [ ] Code follows project style guidelines
+- [ ] Added/updated relevant documentation
+- [ ] No unnecessary changes
+
+### Review Readiness
+- [ ] PR is small and focused
+- [ ] All automated checks passing
+- [ ] Ready for detailed code review
+
+### Potential Impact
+- [ ] Backwards compatibility maintained
+- [ ] No known regressions
+- [ ] Performance implications considered
+```
+
+**Enforcement Criteria**:
+1. MUST have all three sections (Changes, Testing, Checklist)
+2. Each section MUST have at least 2-3 meaningful entries
+3. Checklist items MUST be actionable and checked off
+4. NO empty sections allowed
+
+**Failure Modes**:
+- Incomplete template will trigger automatic PR rejection
+- GitHub Actions will fail PR if template is not fully completed
+
 ## Response Templates
 
 ### When resolving conflicts:

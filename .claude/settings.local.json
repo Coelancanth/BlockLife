@@ -21,7 +21,15 @@
       "Bash(python:*)",
       "Bash(gh pr merge:*)",
       "Bash(cp:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(if [ -f \"Docs/Shared/Workflows/Development/Quick_Reference_Development_Checklist.md\" ])",
+      "Bash(then echo \"✅ Quick_Reference_Development_Checklist.md exists\")",
+      "Bash(else echo \"❌ Missing: Quick_Reference_Development_Checklist.md\")",
+      "Bash(fi)",
+      "Bash(if [ -f \"CLAUDE.md\" ])",
+      "Bash(then echo \"✅ CLAUDE.md exists\")",
+      "Bash(else echo \"❌ Missing: CLAUDE.md\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
