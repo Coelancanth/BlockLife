@@ -1,0 +1,17 @@
+# Python dependencies for BlockLife automation scripts
+# Install with: pip install -r scripts/requirements.txt
+
+# CLI framework with rich formatting
+click>=8.0.0
+
+# Rich terminal formatting and progress bars
+rich>=13.0.0
+
+# File system monitoring (for test_monitor.py and other watchers)
+watchdog>=3.0.0
+
+# YAML configuration support
+PyYAML>=6.0
+
+# Additional utilities for automation scripts
+pathlib2>=2.3.0  # Enhanced pathlib support for older Python versions

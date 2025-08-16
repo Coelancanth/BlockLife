@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build BlockLife.sln)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(dotnet run:*)",
+      "Bash(csc:*)",
+      "Bash(ErrorTest.exe)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(git add:*)",
+      "Bash(dotnet add:*)",
+      "Bash(mkdir:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:mikeschulze.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(powershell:*)",
+      "Bash(python:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(cp:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(\".claude/manage-agent-config.sh\" set on)",
+      "Bash(\".claude/manage-agent-config.sh\" set off)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head:*)",
+      "Bash(done)",
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(git rm:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\Docs",
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\.claude"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "powershell -ExecutionPolicy Bypass -File ~\\.claude\\claude-status.ps1",
+    "padding": 0
+  },
+  "outputStyle": "Explanatory"
+}

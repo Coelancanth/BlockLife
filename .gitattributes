@@ -1,0 +1,6 @@
+# Normalize EOL for all files that Git considers text files.
+* text=auto eol=lf
+
+# Explicit rules for source files
+*.cs text eol=lf
+*.md text eol=lf
