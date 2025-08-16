@@ -7,6 +7,7 @@ using BlockLife.Core.Features.Block.Commands;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Infrastructure.Services;
 using BlockLife.Godot.Features.Block.Placement;
+using BlockLife.Godot.Features.Block.Performance;
 using BlockLife.Godot.Scenes;
 using LanguageExt;
 using static LanguageExt.Prelude;
@@ -25,10 +26,14 @@ public partial class BlockInputManager : Node
     // Configurable key bindings
     [Export] public Key PlaceBlockKey { get; set; } = Key.Space;
     [Export] public Key InspectBlockKey { get; set; } = Key.I;
+    [Export] public float DragThreshold { get; set; } = 5.0f;
+    [Export] public float DoubleClickTime { get; set; } = 0.3f;
     
-    // Movement state
-    private Option<Guid> _selectedBlockId = None;
-    private Option<Vector2Int> _selectedBlockPosition = None;
+    // Drag & Drop state
+    private bool _isDragging = false;
+    private Option<Guid> _draggedBlockId = None;
+    private Option<Vector2Int> _dragStartPosition = None;
+    private Option<Vector2Int> _dragCurrentPosition = None;
     
     // Services
     private BlockManagementPresenter? _blockManagementPresenter;
@@ -42,9 +47,20 @@ public partial class BlockInputManager : Node
     // Subscriptions
     private IDisposable? _cellClickedSubscription;
     private IDisposable? _cellHoveredSubscription;
+    // TODO: Phase 2 - Add drag subscriptions
+    // private IDisposable? _dragStartedSubscription;
+    // private IDisposable? _dragMovedSubscription;
+    // private IDisposable? _dragEndedSubscription;
+    
+    // Drag timing (for future double-click detection)
+    private double _lastClickTime = 0.0;
     
     // Current hover position for placement and inspection
     private Option<Vector2Int> _currentHoverPosition = None;
+    
+    // Block selection state (for current click-based movement)
+    private Option<Guid> _selectedBlockId = None;
+    private Option<Vector2Int> _selectedBlockPosition = None;
     
     public override void _Ready()
     {
@@ -64,6 +80,12 @@ public partial class BlockInputManager : Node
                 // Subscribe to cell events for movement and hover tracking
                 _cellClickedSubscription = _interactionController.GridCellClicked.Subscribe(OnCellClicked);
                 _cellHoveredSubscription = _interactionController.GridCellHovered.Subscribe(OnCellHovered);
+                
+                // TODO: Subscribe to drag & drop events (Phase 2)
+                // _dragStartedSubscription = _interactionController.DragStarted.Subscribe(OnDragStarted);
+                // _dragMovedSubscription = _interactionController.DragMoved.Subscribe(OnDragMoved);
+                // _dragEndedSubscription = _interactionController.DragEnded.Subscribe(OnDragEnded);
+                
                 logger?.Information("BlockInputManager subscribed to grid interaction events");
             }
             else
@@ -71,35 +93,26 @@ public partial class BlockInputManager : Node
                 logger?.Warning("GridInteractionController not found - input will not work");
             }
             
-            // Get the presenter from the parent GridView
+            // Get the presenter from the parent GridView (no reflection needed!)
             if (gridView is GridView gv)
             {
-                var presenterField = typeof(GridView).GetField("_presenter", 
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                _blockManagementPresenter = presenterField?.GetValue(gv) as BlockManagementPresenter;
+                _blockManagementPresenter = gv.Presenter;
                 
                 if (_blockManagementPresenter != null)
                 {
-                    logger?.Information("Successfully obtained BlockManagementPresenter from GridView");
+                    logger?.Information("Successfully obtained BlockManagementPresenter from GridView - no reflection!");
                 }
             }
         }
         
-        // Get services via reflection from SceneRoot
+        // Get services directly from SceneRoot (no reflection needed!)
         var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
-        if (sceneRoot != null)
+        if (sceneRoot?.ServiceProvider != null)
         {
-            var serviceProviderField = typeof(SceneRoot).GetField("_serviceProvider",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var serviceProvider = serviceProviderField?.GetValue(sceneRoot) as IServiceProvider;
+            _mediator = sceneRoot.ServiceProvider.GetService<IMediator>();
+            _gridStateService = sceneRoot.ServiceProvider.GetService<IGridStateService>();
             
-            if (serviceProvider != null)
-            {
-                _mediator = serviceProvider.GetService<IMediator>();
-                _gridStateService = serviceProvider.GetService<IGridStateService>();
-                
-                logger?.Information("BlockInputManager services initialized successfully");
-            }
+            logger?.Information("BlockInputManager services initialized successfully - no reflection!");
         }
     }
     
@@ -185,17 +198,12 @@ public partial class BlockInputManager : Node
                         
                         if (_visualizationController != null)
                         {
-                            // Use reflection to access the private _blockNodes dictionary
-                            var blockNodesField = typeof(BlockVisualizationController).GetField("_blockNodes",
-                                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                            if (blockNodesField?.GetValue(_visualizationController) is System.Collections.Generic.Dictionary<Guid, Node2D> blockNodes)
+                            // Access block nodes directly (no reflection needed!)
+                            if (_visualizationController.BlockNodes.TryGetValue(block.Id, out var node))
                             {
-                                if (blockNodes.TryGetValue(block.Id, out var node))
-                                {
-                                    hasView = true;
-                                    viewPosition = node.Position;
-                                    isVisible = node.Visible;
-                                }
+                                hasView = true;
+                                viewPosition = node.Position;
+                                isVisible = node.Visible;
                             }
                         }
                         
@@ -273,6 +281,7 @@ public partial class BlockInputManager : Node
     /// </summary>
     private async void OnCellClicked(Vector2Int position)
     {
+        PerformanceProfiler.StartTimer("OnCellClicked_Total");
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
         
         // Only handle movement logic - no placement via clicks
@@ -286,7 +295,10 @@ public partial class BlockInputManager : Node
                     logger?.Information("🔄 Moving block {BlockId} from {FromPosition} to {ToPosition}", 
                         selectedId, fromPos, position);
                     
+                    PerformanceProfiler.StartTimer("MoveBlock_Pipeline");
                     await MoveBlockAsync(selectedId, position);
+                    PerformanceProfiler.StopTimer("MoveBlock_Pipeline", true);
+                    
                     await ClearSelectionAsync();
                 }
                 else
@@ -299,7 +311,10 @@ public partial class BlockInputManager : Node
             None: async () =>
             {
                 // No block selected - try to select block at clicked position
+                PerformanceProfiler.StartTimer("GetBlockAtPosition");
                 var blockAtPosition = await GetBlockAtPositionAsync(position);
+                PerformanceProfiler.StopTimer("GetBlockAtPosition");
+                
                 await blockAtPosition.Match(
                     Some: async blockId =>
                     {
@@ -314,6 +329,8 @@ public partial class BlockInputManager : Node
                 );
             }
         );
+        
+        PerformanceProfiler.StopTimer("OnCellClicked_Total", true);
     }
     
     private async Task SelectBlockAsync(Guid blockId, Vector2Int position)
@@ -359,8 +376,11 @@ public partial class BlockInputManager : Node
         
         try
         {
+            PerformanceProfiler.StartTimer("Mediator_Send_MoveBlock");
             var result = await _mediator.Send(command);
+            PerformanceProfiler.StopTimer("Mediator_Send_MoveBlock", true);
             
+            PerformanceProfiler.StartTimer("MoveBlock_ResultProcessing");
             await result.Match(
                 Succ: _ =>
                 {
@@ -373,6 +393,7 @@ public partial class BlockInputManager : Node
                     return Task.CompletedTask;
                 }
             );
+            PerformanceProfiler.StopTimer("MoveBlock_ResultProcessing");
         }
         catch (Exception ex)
         {

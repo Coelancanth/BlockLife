@@ -5,12 +5,18 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+- **BF_001**: Investigate view layer lag in block movement (performance issue despite 0-4ms commands)
+- **VS_004**: View layer debugging system with GDUnit4 integration (specialized debugging tools for UI/animation performance)
 - Fix critical bugs in Grid State
 - Complete Move Block feature (Phase 1) dependencies
 
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
+- **TD_005**: Debugger-expert agent workflow improvement (analyze evidence before implementing solutions)
+- **VS_001**: Block drag-and-drop interaction system (replace click-to-move)
+- **TD_003**: Block movement range validation and constraints  
+- **TD_004**: Block swap functionality for occupied positions
 - Implement Block Rotation system
 - Begin Save/Load system design
 - Animation queuing system implementation
@@ -31,6 +37,7 @@
 - ~~MAJOR: Documentation consolidation - 76 files → Essential Three system~~
 - ~~Workflow transformation - intelligent orchestration with complexity-based delegation~~
 - ~~CLAUDE.md update - added critical thinking mandate and over-engineering safeguards~~
+- **TD_002**: Block interaction reflection removal (eliminated initialization bottleneck)
 
 ## 🚧 Currently Blocked
 - Audio system implementation (external dependency: Godot 4.4)

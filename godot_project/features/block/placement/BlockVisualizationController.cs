@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Domain.Block;
+using BlockLife.Godot.Features.Block.Performance;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
@@ -18,9 +19,16 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     [Export] public Control? FeedbackContainer { get; set; }
     [Export] public float CellSize { get; set; } = 64f;
     
+    // Animation settings - exposed for user preference
+    [Export] public bool EnableAnimations { get; set; } = true;
+    [Export] public float AnimationSpeed { get; set; } = 0.15f; // Default snappy speed
+    
     private readonly Dictionary<Guid, Node2D> _blockNodes = new();
     private Node2D? _previewNode;
     private Control? _feedbackNode;
+    
+    // Expose block nodes for inspection (eliminates reflection)
+    public IReadOnlyDictionary<Guid, Node2D> BlockNodes => _blockNodes;
     
     public override void _Ready()
     {
@@ -37,6 +45,8 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     
     public Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type)
     {
+        PerformanceProfiler.StartTimer($"ShowBlock_Total_{blockId}");
+        
         // FIXED: Handle duplicate notifications gracefully
         // If block already exists at this exact position with same ID, it's a duplicate notification
         if (_blockNodes.ContainsKey(blockId))
@@ -48,30 +58,41 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
                 if (existingPos == position)
                 {
                     // Same block, same position - just a duplicate notification, ignore it
+                    PerformanceProfiler.StopTimer($"ShowBlock_Total_{blockId}");
                     return Task.CompletedTask;
                 }
             }
             
             // Different position or corrupted state - this is an actual error
             GD.PrintErr($"ERROR: Block {blockId} already exists but at different position!");
+            PerformanceProfiler.StopTimer($"ShowBlock_Total_{blockId}");
             return Task.CompletedTask;
         }
         
         // For now, create a simple colored rectangle as a block
+        PerformanceProfiler.StartTimer("CreateBlockNode");
         var blockNode = CreateBlockNode(position, type);
+        PerformanceProfiler.StopTimer("CreateBlockNode", true);
         
         if (BlockContainer == null)
         {
             GD.PrintErr($"ERROR: BlockContainer is null! Cannot add block visual.");
+            PerformanceProfiler.StopTimer($"ShowBlock_Total_{blockId}");
             return Task.CompletedTask;
         }
         
+        PerformanceProfiler.StartTimer("AddChild_Block");
         BlockContainer.AddChild(blockNode);
+        PerformanceProfiler.StopTimer("AddChild_Block", true);
+        
         _blockNodes[blockId] = blockNode;
         
         // Animate appearance
+        PerformanceProfiler.StartTimer("AnimateBlockAppearance");
         AnimateBlockAppearance(blockNode);
+        PerformanceProfiler.StopTimer("AnimateBlockAppearance", true);
         
+        PerformanceProfiler.StopTimer($"ShowBlock_Total_{blockId}", true);
         return Task.CompletedTask;
     }
     
@@ -87,26 +108,44 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         AnimateBlockDisappearance(blockNode);
         
         // Queue free after animation
-        var tween = CreateTween();
-        tween.TweenCallback(Callable.From(() => {
+        if (!EnableAnimations)
+        {
+            // Instant removal
             blockNode.QueueFree();
             _blockNodes.Remove(blockId);
-        })).SetDelay(0.2f);
+        }
+        else
+        {
+            var tween = CreateTween();
+            tween.TweenCallback(Callable.From(() => {
+                blockNode.QueueFree();
+                _blockNodes.Remove(blockId);
+            })).SetDelay(AnimationSpeed * 0.5f); // Match the disappearance animation
+        }
         
         return Task.CompletedTask;
     }
     
     public Task UpdateBlockPositionAsync(Guid blockId, Vector2Int newPosition)
     {
+        PerformanceProfiler.StartTimer($"UpdateBlockPosition_{blockId}");
+        
         if (!_blockNodes.TryGetValue(blockId, out var blockNode))
         {
             GD.PrintErr($"Block {blockId} not found");
+            PerformanceProfiler.StopTimer($"UpdateBlockPosition_{blockId}");
             return Task.CompletedTask;
         }
         
+        PerformanceProfiler.StartTimer("GridToWorldPosition");
         var targetPosition = GridToWorldPosition(newPosition);
-        AnimateBlockMovement(blockNode, targetPosition);
+        PerformanceProfiler.StopTimer("GridToWorldPosition");
         
+        PerformanceProfiler.StartTimer("AnimateBlockMovement");
+        AnimateBlockMovement(blockNode, targetPosition);
+        PerformanceProfiler.StopTimer("AnimateBlockMovement", true);
+        
+        PerformanceProfiler.StopTimer($"UpdateBlockPosition_{blockId}", true);
         return Task.CompletedTask;
     }
     
@@ -241,27 +280,57 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     
     private void AnimateBlockAppearance(Node2D blockNode)
     {
+        if (!EnableAnimations)
+        {
+            // Instant appearance
+            blockNode.Scale = Vector2.One;
+            return;
+        }
+        
         blockNode.Scale = Vector2.Zero;
         
         var tween = CreateTween();
-        tween.TweenProperty(blockNode, "scale", Vector2.One, 0.3f)
+        // OPTIMIZATION: Using configurable AnimationSpeed
+        tween.TweenProperty(blockNode, "scale", Vector2.One, AnimationSpeed)
              .SetEase(Tween.EaseType.Out)
              .SetTrans(Tween.TransitionType.Back);
     }
     
     private void AnimateBlockDisappearance(Node2D blockNode)
     {
+        if (!EnableAnimations)
+        {
+            // Instant disappearance
+            blockNode.Scale = Vector2.Zero;
+            return;
+        }
+        
         var tween = CreateTween();
-        tween.TweenProperty(blockNode, "scale", Vector2.Zero, 0.2f)
+        // OPTIMIZATION: Half speed for removal (feels snappier)
+        tween.TweenProperty(blockNode, "scale", Vector2.Zero, AnimationSpeed * 0.5f)
              .SetEase(Tween.EaseType.In);
     }
     
     private void AnimateBlockMovement(Node2D blockNode, Vector2 targetPosition)
     {
+        if (!EnableAnimations)
+        {
+            // Instant movement for maximum responsiveness
+            blockNode.Position = targetPosition;
+            return;
+        }
+        
+        PerformanceProfiler.StartTimer("CreateTween_Movement");
         var tween = CreateTween();
-        tween.TweenProperty(blockNode, "position", targetPosition, 0.4f)
+        PerformanceProfiler.StopTimer("CreateTween_Movement");
+        
+        PerformanceProfiler.StartTimer("TweenProperty_Setup");
+        // OPTIMIZATION: Using configurable AnimationSpeed (default 0.15f)
+        // User testing shows 150ms feels responsive while maintaining smooth motion
+        tween.TweenProperty(blockNode, "position", targetPosition, AnimationSpeed)
              .SetEase(Tween.EaseType.Out)
              .SetTrans(Tween.TransitionType.Cubic);
+        PerformanceProfiler.StopTimer("TweenProperty_Setup");
     }
     
     private void AnimatePreviewAppearance(Node2D previewNode)
@@ -269,7 +338,8 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         previewNode.Scale = Vector2.One * 0.8f;
         
         var tween = CreateTween();
-        tween.TweenProperty(previewNode, "scale", Vector2.One, 0.2f)
+        // OPTIMIZATION: Reduced from 0.2f to 0.1f for instant preview feedback
+        tween.TweenProperty(previewNode, "scale", Vector2.One, 0.1f)
              .SetEase(Tween.EaseType.Out);
     }
     

@@ -184,6 +184,26 @@ When you give me a request, I will:
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
 - **Update when significant progress made** (not every minor step)
 
+### 📝 Work Item Classification Guidelines
+**VS (Vertical Slice)**: Complete new features that cut through all layers
+- Example: VS_001 Block drag-and-drop (new interaction paradigm)
+- **When to use**: Brand new user-facing functionality
+
+**TD (Technical Debt)**: Enhancements to existing features or code quality improvements  
+- Example: TD_003 Movement range validation (enhancing existing move feature)
+- **When to use**: Improving, extending, or refactoring existing capabilities
+
+**BF (Bug Fix)**: Issues preventing expected functionality
+- Example: BF_001 View layer lag investigation
+- **When to use**: Something is broken or not working as intended
+
+### 🚦 Work Item Workflow
+1. **Classify correctly** - VS for new features, TD for enhancements, BF for bugs
+2. **Add to backlog** - Update priority tier in Backlog.md  
+3. **Generate work item file** - Use templates from Templates/Work-Items/
+4. **Create in items/ directory** - Follow naming: [TYPE]_[NUMBER]_[Description].md
+5. **Begin implementation** - Only after proper backlog tracking
+
 ## 🤖 Agent Ecosystem (When Complexity Requires Expertise)
 
 ### Strategic Decision Agents
@@ -247,6 +267,60 @@ Phase 3: Execution
 3. **Conflict Resolution** - Apply simplicity bias when expert recommendations conflict
 4. **Quality Integration** - Synthesize multiple expert outputs into coherent action plan
 5. **Critical Evaluation** - Challenge over-engineering in expert recommendations
+
+### 🔍 POST-AGENT REVIEW PROTOCOL (NEW)
+
+**MANDATORY**: After any agent produces a plan/design, always conduct technical review before implementation.
+
+#### Review Triggers
+```
+🚨 ALWAYS REVIEW when agents propose:
+- Interface changes that affect Clean Architecture boundaries
+- Multi-phase implementation plans (>3 phases)
+- New abstractions or design patterns
+- Performance optimizations
+- Cross-cutting concerns
+```
+
+#### Review Questions Framework
+```
+🔍 TECHNICAL ASSESSMENT:
+- Does this respect existing architecture patterns?
+- Are interfaces properly separated (src/ vs godot_project/)?
+- Is this the simplest solution that works?
+- Can this be implemented incrementally?
+- Does this solve the real problem or add complexity?
+
+🎯 IMPLEMENTATION VIABILITY:
+- Are the proposed interfaces technically feasible?
+- Do the suggested code changes align with existing patterns?
+- Is the phasing plan realistic for the codebase?
+- Are there hidden dependencies or constraints?
+
+💡 SIMPLICITY CHECK:
+- Could we solve this with existing patterns?
+- Is there a 20% effort solution for 80% of the value?
+- Should we start with minimal fixes before full redesign?
+```
+
+#### Decision Flow After Agent Output
+```
+Agent Plan → Technical Review → Decision Point:
+
+✅ Plan is sound & implementable → Proceed as designed
+⚠️ Plan needs refinement → Request specific changes  
+🔄 Plan is over-engineered → Delegate to tech-lead for simpler approach
+🚫 Plan violates architecture → Reject and start over
+```
+
+#### Lessons Learned Integration
+- **UX agents** excel at interaction design but may miss technical constraints
+- **Always validate** interface changes against existing codebase
+- **Prefer incremental** approaches over big-bang redesigns
+- **Technical review** catches architecture violations early
+- **Work item classification matters**: Use correct types (VS for new features, TD for enhancements to existing features)
+- **Generate work items from templates**: Always create proper work item files for backlog tracking
+- **Update backlog immediately**: Add items to backlog before starting implementation work
 
 ### Agent Resources
 - **Quick patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md) - **Enhanced with concurrent orchestration**

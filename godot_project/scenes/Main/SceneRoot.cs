@@ -33,6 +33,7 @@ public partial class SceneRoot : Node
     public static SceneRoot? Instance { get; private set; }
     public IPresenterFactory? PresenterFactory { get; private set; }
     public ILogger? Logger { get; private set; } // Expose logger for Views
+    public IServiceProvider? ServiceProvider => _serviceProvider; // Expose for dependency injection
     private IServiceProvider? _serviceProvider;
     private RichTextLabelSink? _richTextSink; // Store reference for proper disposal
 

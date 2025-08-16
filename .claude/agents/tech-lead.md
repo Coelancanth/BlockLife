@@ -1,7 +1,7 @@
 ---
 name: tech-lead
 description: "Senior technical expert who translates VS items into dev-engineer tasks. Expert in C#, Godot, VSA, and Clean Architecture. Breaks down features into implementation phases."
-model: opus
+model: sonnet
 color: blue
 ---
 

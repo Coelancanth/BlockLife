@@ -20,8 +20,18 @@ public partial class GridInteractionController : Control, IGridInteractionView
     private readonly Subject<Vector2Int> _cellHovered = new();
     private readonly Subject<Vector2Int> _cellExited = new();
     
+    // Drag Streams (Phase 1 Foundation)
+    private readonly Subject<Vector2Int> _dragStarted = new();
+    private readonly Subject<Vector2Int> _dragMoved = new();
+    private readonly Subject<Vector2Int> _dragEnded = new();
+    
     private Option<Vector2Int> _hoveredCell = None;
     private bool _isInputEnabled = true;
+    
+    // Drag state (Phase 1 Foundation)
+    private Vector2 _dragStartMousePos;
+    private bool _isDragging = false;
+    private const float DRAG_THRESHOLD = 5.0f;
     
     public override void _Ready()
     {
@@ -49,13 +59,47 @@ public partial class GridInteractionController : Control, IGridInteractionView
         
         switch (@event)
         {
-            case InputEventMouseButton mouseButton when mouseButton.Pressed && mouseButton.ButtonIndex == MouseButton.Left:
-                // Trace: Mouse click detected at position
-                HandleMouseClick(mouseButton.Position);
+            case InputEventMouseButton mouseButton when mouseButton.ButtonIndex == MouseButton.Left:
+                if (mouseButton.Pressed)
+                {
+                    _dragStartMousePos = mouseButton.Position;
+                    // Emit potential drag start (let presenter decide)
+                    var gridPos = ScreenToGridPositionInternal(mouseButton.Position);
+                    if (IsValidGridPosition(gridPos))
+                    {
+                        _dragStarted.OnNext(gridPos);
+                        // Still handle click for backward compatibility
+                        HandleMouseClick(mouseButton.Position);
+                    }
+                }
+                else if (_isDragging)
+                {
+                    // Drag ended
+                    var gridPos = ScreenToGridPositionInternal(mouseButton.Position);
+                    if (IsValidGridPosition(gridPos))
+                        _dragEnded.OnNext(gridPos);
+                    _isDragging = false;
+                }
                 break;
                 
             case InputEventMouseMotion mouseMotion:
+                // Handle regular hover motion
                 HandleMouseMotion(mouseMotion.Position);
+                
+                // Handle drag detection and movement
+                if (mouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
+                {
+                    if (!_isDragging && mouseMotion.Position.DistanceTo(_dragStartMousePos) > DRAG_THRESHOLD)
+                    {
+                        _isDragging = true;
+                    }
+                    if (_isDragging)
+                    {
+                        var gridPos = ScreenToGridPositionInternal(mouseMotion.Position);
+                        if (IsValidGridPosition(gridPos))
+                            _dragMoved.OnNext(gridPos);
+                    }
+                }
                 break;
         }
     }
@@ -65,6 +109,11 @@ public partial class GridInteractionController : Control, IGridInteractionView
         _cellClicked.Dispose();
         _cellHovered.Dispose();
         _cellExited.Dispose();
+        
+        // Dispose drag streams
+        _dragStarted.Dispose();
+        _dragMoved.Dispose();
+        _dragEnded.Dispose();
     }
     
     public override void _Notification(int what)
@@ -142,6 +191,11 @@ public partial class GridInteractionController : Control, IGridInteractionView
     public IObservable<Vector2Int> GridCellClicked => _cellClicked.AsObservable();
     public IObservable<Vector2Int> GridCellHovered => _cellHovered.AsObservable();
     public IObservable<Vector2Int> GridCellExited => _cellExited.AsObservable();
+    
+    // Drag Events (Phase 1 Foundation)
+    public IObservable<Vector2Int> DragStarted => _dragStarted.AsObservable();
+    public IObservable<Vector2Int> DragMoved => _dragMoved.AsObservable();
+    public IObservable<Vector2Int> DragEnded => _dragEnded.AsObservable();
     
     public bool IsInputEnabled
     {
