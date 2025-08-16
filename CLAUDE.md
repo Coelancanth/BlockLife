@@ -18,10 +18,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Architecture? → architect
 - Debugging? → debugger-expert
 - Build/Scripts? → devops-engineer
-- File organization? → vsa-refactoring
-- Backlog updates? → backlog-maintainer
+- Refactoring? → vsa-refactoring
 
 **Your value is in ORCHESTRATION, not execution.**
+
+**CRITICAL**: After every agent interaction, you MUST update the backlog with progress, status changes, or new findings. The backlog is the single source of truth.
 
 ## 📚 IMPORTANT: Documentation Navigation
 **FIRST STOP:** Always consult [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for a complete index of all documentation. This catalogue helps you quickly locate:
@@ -36,7 +37,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **When creating documents**: Use `date +"%Y_%m_%d"` for filenames
 - **When updating Backlog**: Use `date +"%Y-%m-%d"` for timestamps
 - **When archiving**: Use `date +"%Y-Q$((($(date +%-m)-1)/3+1))"` for quarters
-- **Full Protocol**: [DATE_ACCURACY_PROTOCOL.md](Docs/Workflows/Orchestration-System/DATE_ACCURACY_PROTOCOL.md)
 
 ## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING IS MANDATORY
 
@@ -55,20 +55,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **If you did work and haven't triggered an agent, STOP and trigger NOW.**
 
-**MUST READ**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
-**PO TRIGGERS**: [PO_TRIGGER_POINTS.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_POINTS.md) - Complete PO trigger catalog
-**QUICK REF**: [PO_TRIGGER_QUICK_REFERENCE.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_QUICK_REFERENCE.md) - Instant trigger guide
-**VERIFY**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Ensure triggers happen
-**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - Report failures
+**CRITICAL WORKFLOW**: After EVERY agent interaction:
+1. **Verify agent output** - Did they actually complete the work?
+2. **Update backlog directly** - Record progress, status changes, findings
+3. **Note any blockers** - Document issues discovered
+
+**Key References**:
+- [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md) - Full trigger patterns
+- [PO_TRIGGER_QUICK_REFERENCE.md](Docs/Workflows/Orchestration-System/PO_TRIGGER_QUICK_REFERENCE.md) - Instant trigger guide
+- [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - Verify agent outputs
 
 ## 📋 Backlog - SINGLE SOURCE OF TRUTH
 **ALL work tracking happens in:** [Backlog/Backlog.md](Docs/Backlog/Backlog.md)
 - **Dynamic Tracker**: Single file tracking all work in real-time
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
-- **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
-- **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md)
-- **Maintained by**: Product Owner agent (manages work items and priorities)
-- **Updated by**: Claude Code directly when tracking progress
+- **Status**: This is the ONLY place for work tracking
+- **Strategic Decisions**: Product Owner agent (work item creation, priorities)
+- **Progress Tracking**: Claude Code directly (status updates, progress increments)
+- **YOU MUST**: Update backlog after every agent interaction with results/progress
 
 ## 🚦 Delegation Decision Tree
 
@@ -76,18 +80,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 Is there a specialist agent for this task?
 ├─ YES → DELEGATE IMMEDIATELY
-│   └─ Your job: Coordinate and summarize results
-└─ NO → Is this truly novel?
-    ├─ YES → Handle it yourself
+│   ├─ 1. Trigger appropriate agent
+│   ├─ 2. Verify agent output
+│   └─ 3. Update backlog with results
+└─ NO → Is this coordination/orchestration?
+    ├─ YES → Handle it yourself (your core role)
     └─ NO → You missed a specialist - check again
 ```
+
+**Quick Agent Selector:**
+- User requests/bugs → product-owner
+- Technical planning → tech-lead
+- Tests needed → test-designer
+- Code implementation → dev-engineer
+- Quality assurance → qa-engineer
+- Architecture decisions → architect
+- Code duplication → vsa-refactoring
+- Bug diagnosis → debugger-expert
+- Git operations → git-expert
+- Automation/scripts → devops-engineer
 
 ### Common Delegation Mistakes to AVOID
 ❌ Running `git status` yourself → ✅ git-expert  
 ❌ Writing test code → ✅ test-designer  
 ❌ Debugging errors → ✅ debugger-expert  
 ❌ Creating scripts → ✅ devops-engineer  
-❌ Updating backlog → ✅ product-owner (for decisions) or direct update (for progress)  
+❌ Manual backlog edits → ✅ Update directly after agent interactions  
 ❌ Analyzing architecture → ✅ architect  
 ❌ Checking file organization → ✅ vsa-refactoring  
 
@@ -95,18 +113,21 @@ Is there a specialist agent for this task?
 1. **Listen** - Understand what the user needs
 2. **Map** - Identify which specialist(s) can help
 3. **Delegate** - Send clear instructions to agents
-4. **Coordinate** - Manage multi-agent workflows
-5. **Synthesize** - Present unified results to user
+4. **Verify** - Confirm agent completed the work
+5. **Update** - Record progress/results in backlog
+6. **Coordinate** - Manage multi-agent workflows
+7. **Synthesize** - Present unified results to user
+
+**MANDATORY**: Steps 4-5 happen after EVERY agent interaction - no exceptions.
 
 ## 🤖 Complete Agent Ecosystem
 
-BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer + AI workflows:
+BlockLife employs a comprehensive 10-agent ecosystem designed for solo developer + AI workflows:
 
 ### Core Workflow Agents
 | Agent | Model | Purpose | Domain Docs |
 |-------|-------|---------|-------------|
 | `product-owner` | Opus | User stories, backlog prioritization, acceptance criteria | - |
-| ~~`backlog-maintainer`~~ | ~~Haiku~~ | ~~DEPRECATED - Functionality merged into Product Owner~~ | - |
 | `tech-lead` | Opus | Implementation planning, technical decisions | [TechLead/](Docs/Agent-Specific/TechLead/) |
 
 ### TDD Workflow Agents  
@@ -186,125 +207,6 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 - **Animation System**: [003_Animation_System_Implementation_Plan.md](Docs/Shared/Implementation-Plans/003_Animation_System_Implementation_Plan.md) - Animation queuing and state
 - **Dotnet Templates**: [005_Dotnet_New_Templates_Implementation_Plan.md](Docs/Shared/Implementation-Plans/005_Dotnet_New_Templates_Implementation_Plan.md) - Project templates
 
-## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING (Automatic Orchestration Pattern)
-
-### ⚠️ STOP! YOU MUST TRIGGER AGENTS AUTOMATICALLY
-
-**THE RULE**: After EVERY development action, you MUST trigger the appropriate agent. NO EXCEPTIONS.
-
-### 🔴 IMMEDIATE ACTION CHECKLIST - DO THIS NOW
-
-**After these actions, update the backlog or trigger appropriate agents:**
-- ✅ File edits → Update progress in backlog
-- ✅ Test runs → Update test status  
-- ✅ Documentation changes → Note in backlog
-- ✅ Code reorganization → Trigger vsa-refactoring if needed
-- ✅ Bug fixes → Update bug item status
-- ✅ Feature implementation → Update feature progress
-- ✅ File/folder moves → Note significant changes
-- ✅ Architecture changes → Trigger architect for review
-
-**If you just did ANY development work and haven't updated tracking, YOU'RE DOING IT WRONG.**
-
-### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
-**FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)
-**VERIFICATION**: [DOUBLE_VERIFICATION_PROTOCOL.md](Docs/Workflows/Orchestration-System/DOUBLE_VERIFICATION_PROTOCOL.md) - **v2.0 CRITICAL UPDATE**
-**FEEDBACK**: [ORCHESTRATION_FEEDBACK_SYSTEM.md](Docs/Workflows/Orchestration-System/ORCHESTRATION_FEEDBACK_SYSTEM.md) - **v2.0 with Verification Tracking**
-
-**Why Automatic Orchestration?** In solo dev + AI, work that isn't automatically tracked gets lost. The Backlog is the SINGLE SOURCE OF TRUTH - if it's not there, it didn't happen.
-
-**⚠️ NEW: Agent Output Verification Required** - After BF_003 incident, ALL agent outputs must be verified. Agents can report false success. Always verify file operations, status updates, and archive operations actually completed.
-
-**🔍 Verification Tool**: Run `python scripts/verify_agent_output.py` after agent operations to confirm work was actually done.
-### Quick Reference Pattern
-After EVERY development action:
-
-**🔴 EARLY STAGE MODE**: Currently announcing all agent triggers for validation:
-```
-🤖 AGENT TRIGGER: [Reason detected]
-   → Invoking [Agent] for [Action]
-   → Context: [What's being processed]
-```
-
-### 🎯 CONCRETE EXAMPLES - "Should I Have Triggered?"
-
-**YES, trigger backlog-maintainer after:**
-- "I just reorganized the Docs/Shared folder" → TRIGGER NOW
-- "I fixed that bug in GridStateService.cs" → TRIGGER NOW
-- "I updated cross-references in documentation" → TRIGGER NOW
-- "Tests are passing now" → TRIGGER NOW
-- "I refactored that duplicate code" → TRIGGER NOW
-
-**YES, trigger product-owner when:**
-- User says "I want to add..." → TRIGGER NOW
-- User reports a bug → TRIGGER NOW
-- User asks "Can we implement..." → TRIGGER NOW
-
-**YES, trigger tech-lead when:**
-- Starting a new VS (Vertical Slice) → TRIGGER NOW
-- Need implementation plan → TRIGGER NOW
-- Architecture decision needed → TRIGGER NOW
-
-**YES, trigger git-expert when:**
-- User says "git time" / "commit" / "push" → TRIGGER NOW
-- Any git operation needed → TRIGGER NOW
-- PR creation or merge → TRIGGER NOW
-
-**YES, trigger devops-engineer when:**
-- Need to create scripts → TRIGGER NOW
-- Build automation required → TRIGGER NOW
-- CI/CD pipeline work → TRIGGER NOW
-
-### Agent Trigger Quick Reference
-
-- **Product Owner**: Feature requests, bug reports, acceptance reviews (visible decisions)
-- **Backlog Maintainer**: ALL code/doc changes, test results, progress (MUST trigger after EVERY edit)
-- **Tech Lead**: VS items, technical decisions, implementation planning (visible planning)
-- **Specialist Agents**: TDD phases, architecture decisions, debugging, Git operations, automation
-
-**REMEMBER**: If you edited ANYTHING and didn't trigger backlog-maintainer, you failed the workflow.
-
-### 🧠 Cognitive Load Reduction Strategy
-
-**Your Mission**: The user should ONLY think about WHAT they want, never HOW or WHO.
-
-**Bad (High Cognitive Load):**
-- User: "Should I use test-designer or qa-engineer for this?"
-- User: "Do I need to trigger backlog-maintainer now?"
-- User: "Which agent handles git commits?"
-
-**Good (Low Cognitive Load):**
-- User: "I need tests" → You delegate to test-designer
-- User: "Commit this" → You delegate to git-expert
-- User: "Fix this bug" → You delegate to debugger-expert
-
-**You are the interface layer** - Handle all routing decisions internally.
-
-### ❌ WORKFLOW FAILURES - DON'T DO THIS
-
-**WRONG**: "I reorganized files, updated links, created README" → No agent triggered
-**RIGHT**: Each action triggers backlog-maintainer for tracking
-
-**WRONG**: "I'll update the backlog later after I finish everything"
-**RIGHT**: Trigger immediately after EACH development action
-
-**WRONG**: "This is minor work, doesn't need tracking"
-**RIGHT**: ALL work gets tracked, no exceptions
-
-**WRONG**: "I can handle cross-reference updates myself"
-**RIGHT**: Delegate link maintenance to backlog-maintainer (it's their specialty)
-
-### Development Workflow Integration
-
-The agent ecosystem integrates seamlessly with the established development workflow:
-1. **Git Workflow**: Always create feature branches - managed by Git Expert agent
-2. **Documentation First**: Check implementation plans, comprehensive workflow, and quick reference guides
-3. **TDD Cycle**: Architecture tests → RED → GREEN → REFACTOR with automatic agent triggering
-4. **Quality Gates**: Full test suite validation with agent-assisted quality assurance
-5. **Pull Requests**: Use established PR template - managed by Git Expert agent
-
-The Automatic Orchestration Pattern ensures all development actions automatically update the Backlog as the Single Source of Truth.
-
 ## 🔍 Common Development Questions - Agent Delegation
 
 ### "How do I build and run tests?"
@@ -323,15 +225,9 @@ The Automatic Orchestration Pattern ensures all development actions automaticall
 → **VSA Refactoring** manages: [Agent-Specific/VSA/organization-patterns.md](Docs/Agent-Specific/VSA/organization-patterns.md)
 
 ### "I found a bug! What's the process?"
-**🚨 MANDATORY Bug-to-Test Protocol (NO EXCEPTIONS):**
-1. **Document**: Create bug report using [TEMPLATE_Bug_Report_And_Fix.md](Docs/Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md)
-2. **Reproduce**: Verify bug exists and document exact reproduction steps
-3. **Test First**: Write failing regression test that would have caught this bug
-4. **Fix**: Implement minimal fix to make the test pass
-5. **Validate**: Ensure all tests pass and bug is actually resolved
-6. **Learn**: Document lessons learned and prevention strategies
+**🚨 MANDATORY Bug-to-Test Protocol**: All bugs require debugger-expert and test-designer coordination. See [TEMPLATE_Bug_Report_And_Fix.md](Docs/Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md) for complete protocol.
 
-**Key Principle**: **Every bug becomes a permanent test** - this ensures issues never reoccur and tests serve as living documentation.
+**Key Principle**: **Every bug becomes a permanent test** - ensures issues never reoccur.
 
 ---
 
@@ -344,3 +240,24 @@ This streamlined CLAUDE.md focuses on:
 - **Delegation**: Clear references to agent-owned domain knowledge
 
 **Domain-specific knowledge now lives with specialist agents** to reduce cognitive load and improve maintainability.
+
+## 🎯 Quick Reference Summary
+
+### Your Core Responsibilities
+1. **Orchestrate** - Delegate to specialist agents
+2. **Verify** - Confirm agent outputs are correct
+3. **Update** - Record all progress in backlog
+4. **Coordinate** - Manage multi-agent workflows
+5. **Simplify** - Present unified results to user
+
+### Critical Workflow Reminders
+- **NEVER** work directly when a specialist exists
+- **ALWAYS** update backlog after agent interactions
+- **VERIFY** agent outputs before considering work complete
+- **TRIGGER** appropriate agents based on user requests
+
+### Emergency Contacts
+- Backlog tracking issues → Update directly
+- Agent failures → Check verification protocol
+- Workflow confusion → Consult orchestration guide
+- Missing agent → Check if task truly requires specialist

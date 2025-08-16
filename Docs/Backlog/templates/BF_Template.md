@@ -1,85 +1,78 @@
 # BF_XXX: [Bug Description]
 
-**Status**: Backlog
-**Severity**: [Critical/High/Medium/Low]
-**Priority**: TBD
-**Size**: [S/M/L] ([1-5] days)
-**Sprint**: TBD
-**Found In**: [Version/Commit/Date]
+**Type**: Bug Fix  
+**Priority**: [🔥 Critical | 📈 Important | 💡 Ideas]  
+**Severity**: [Critical/High/Medium/Low]  
+**Status**: [Not Started | In Progress | Done]  
+**Found In**: [Version/Commit/Date]  
 **Reported By**: [Agent/Tester/User]
 
-## Problem Description
-[Clear description of the bug and its impact]
+---
 
-## Reproduction Steps
+## 🐛 Problem Description
+[Clear description of the bug and its impact on users/system]
+
+**Impact**: [How does this affect the user experience or system functionality?]
+
+---
+
+## 🔍 Reproduction Steps
 1. [Step 1]
-2. [Step 2]
+2. [Step 2] 
 3. [Step 3]
-4. Expected: [What should happen]
-5. Actual: [What actually happens]
+4. **Expected**: [What should happen]
+5. **Actual**: [What actually happens]
 
-## Root Cause Analysis
-- Component affected: [Component name]
-- Cause: [Technical explanation]
-- Why it wasn't caught: [Testing gap analysis]
+---
 
-## Fix Approach
+## 🎯 Root Cause & Fix
+**Component Affected**: [Which part of the system]
 
-### Code Changes
-- File: `[file path]`
-  - Change: [Description]
-- File: `[file path]`
-  - Change: [Description]
+**Root Cause**: [Brief technical explanation]
 
-### Affected Components
-- Commands: [List if any]
-- Handlers: [List if any]
-- Presenters: [List if any]
-- Views: [List if any]
+**Fix Approach**: [How to resolve it]
 
-## Test Requirements
+**Files to Change**: 
+- `[file path]` - [What needs to change]
+- `[file path]` - [What needs to change]
 
-### Regression Test
-```csharp
-[Test]
-public void Should_[TestName]_When_[Condition]()
-{
-    // Test that would have caught this bug
-}
-```
+---
 
-### Additional Tests
-- [ ] Unit test for fix
-- [ ] Integration test for scenario
-- [ ] Stress test if performance-related
-- [ ] Property test if invariant-related
+## 🧪 Testing Requirements
+**Regression Test**: [Test that would have caught this bug]
 
-## Acceptance Criteria
-- [ ] Bug no longer reproducible
-- [ ] Regression test passes
-- [ ] No new issues introduced
+**Additional Testing**:
+- [ ] Unit test for the fix
+- [ ] Integration test for the scenario
+- [ ] Verify no new issues introduced
+
+---
+
+## ✅ Acceptance Criteria
+- [ ] Bug no longer reproducible following original steps
+- [ ] Regression test passes consistently
+- [ ] No new failures in related functionality
 - [ ] Performance not degraded
 
-## Verification Steps
-1. [How to verify fix works]
-2. [Additional verification]
-3. [Edge cases to check]
+---
 
-## Risk Assessment
-- **Regression risk**: [Low/Medium/High]
-- **Related areas**: [List areas that might be affected]
-- **Testing needed**: [Specific test scenarios]
+## 📝 Progress & Notes
 
-## Definition of Done
-- [ ] Root cause identified
-- [ ] Fix implemented
-- [ ] Regression test added
-- [ ] All tests passing
-- [ ] Code reviewed
-- [ ] Verified in test environment
+**Current Status**: [Brief update on investigation/fix progress]
 
-## References
-- Original feature: [VS_XXX if applicable]
-- Bug report: [Link to detailed report]
-- Related bugs: [List if any]
-- Architecture stress test: [Link if found by stress test]
+**Agent Updates**:
+- [Date] - [Agent]: [Brief note about progress/findings]
+- [Date] - [Agent]: [Additional updates]
+
+**Blockers**: [Anything preventing progress]
+
+---
+
+## 📚 References
+- **Original Feature**: [VS_XXX if this relates to a specific feature]
+- **Related Bugs**: [Links to similar issues]
+- **Discovery Context**: [How was this found? Stress test? User report?]
+
+---
+
+*Focus on fixing the issue and preventing recurrence through testing.*

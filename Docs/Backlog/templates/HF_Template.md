@@ -1,111 +1,92 @@
 # HF_XXX: [Critical Issue Description]
 
-**Status**: URGENT - In Progress
-**Severity**: CRITICAL
-**Priority**: P0 - Immediate
-**Incident Time**: [DateTime]
+**Type**: Hotfix  
+**Priority**: 🔥 CRITICAL  
+**Status**: [Not Started | In Progress | Done]  
+**Severity**: [Critical/High]  
+**Incident Time**: [DateTime]  
 **Reported By**: [Source]
-**Assigned To**: [Developer]
 
-## 🚨 CRITICAL ISSUE
+---
 
-### Impact
-- **Users affected**: [Number/Percentage]
-- **Functionality broken**: [What's not working]
-- **Data loss risk**: [Yes/No]
-- **Workaround available**: [Yes/No - Details]
+## 🚨 **CRITICAL ISSUE**
 
-## Problem Description
-[Brief, clear description of what's broken]
+**Problem**: [Brief, clear description of what's broken]
 
-## Immediate Symptoms
-- [ ] [Symptom 1]
-- [ ] [Symptom 2]
-- [ ] [Symptom 3]
+**Impact**: 
+- **Functionality affected**: [What's not working]
+- **Users affected**: [Scope of impact]
+- **Data/corruption risk**: [Yes/No - details]
 
-## Root Cause (If Known)
-- Component: [Specific component]
-- Cause: [Technical explanation]
-- Introduced: [When/Which commit]
+**Workaround Available**: [Yes/No - brief description]
 
-## Emergency Fix
+---
 
-### Quick Fix (Temporary)
-```csharp
-// Immediate patch to stop bleeding
-[Code snippet]
-```
+## 🔍 **Root Cause & Fix**
 
-### Proper Fix (Permanent)
-```csharp
-// Long-term solution
-[Code snippet]
-```
+**Component**: [Which part of the system]
 
-## Rollback Plan
-If fix fails:
-1. [Rollback step 1]
-2. [Rollback step 2]
-3. [Fallback to version X]
+**Cause**: [Technical explanation if known]
 
-## Testing
+**Fix Approach**: [How to resolve immediately]
 
-### Smoke Test (Immediate)
-- [ ] [Critical path 1 works]
-- [ ] [Critical path 2 works]
-- [ ] [No data corruption]
+**Files to Change**: 
+- `[file path]` - [Emergency change needed]
+- `[file path]` - [Additional changes]
 
-### Full Test (Post-fix)
-- [ ] Regression test for issue
-- [ ] Related functionality tests
-- [ ] Performance validation
-- [ ] Edge case validation
+---
 
-## Communication
+## 🧪 **Testing & Deployment**
 
-### Stakeholder Updates
-- [ ] Team notified
-- [ ] Users notified (if needed)
-- [ ] Status page updated
-- [ ] Post-mortem scheduled
+**Immediate Smoke Test**:
+- [ ] Critical functionality works
+- [ ] No data corruption
+- [ ] No new failures
 
-### Status Updates
-- [Time]: Issue identified
-- [Time]: Root cause found
-- [Time]: Fix deployed to test
-- [Time]: Fix validated
-- [Time]: Fix deployed to production
-- [Time]: Issue resolved
+**Rollback Plan**: [How to revert if fix fails]
 
-## Verification
+**Deployment Strategy**: [How to deploy safely]
+
+---
+
+## ✅ **Resolution Criteria**
 - [ ] Issue no longer reproducible
+- [ ] Critical functionality restored
 - [ ] No side effects introduced
-- [ ] Monitoring shows normal behavior
-- [ ] Users confirmed resolution
+- [ ] Proper fix (not just temporary patch)
 
-## Post-Incident
+---
 
-### Lessons Learned
-- Why it happened: [Analysis]
-- Why not caught earlier: [Gap analysis]
-- Prevention measures: [What to implement]
+## 📝 **Incident Timeline & Notes**
 
-### Follow-up Actions
-- [ ] Add regression test
-- [ ] Update monitoring/alerts
-- [ ] Documentation update
-- [ ] Process improvement
-- [ ] Full post-mortem document
+**Status Updates**:
+- [Time] - Issue identified: [Brief description]
+- [Time] - Root cause found: [Brief description]
+- [Time] - Fix deployed: [Brief description]
+- [Time] - Resolution verified: [Brief description]
 
-## Definition of Resolution
-- [ ] Service restored
-- [ ] Root cause fixed (not just patched)
-- [ ] Tests added
-- [ ] Monitoring improved
-- [ ] Post-mortem completed
+**Agent Updates**:
+- [Date] - [Agent]: [Brief note about progress/findings]
+- [Date] - [Agent]: [Additional updates]
 
-## References
-- Incident report: [Link]
-- Related bugs: [BF_XXX if any]
-- Monitoring dashboard: [Link]
-- Post-mortem: [Link when complete]
+---
+
+## 🔄 **Post-Incident Actions**
+
+**Immediate Follow-up**:
+- [ ] Add regression test to prevent recurrence
+- [ ] Update monitoring/alerts if applicable
+- [ ] Create BF_XXX for proper long-term fix (if hotfix is temporary)
+
+**Lessons Learned**: [Brief note on what went wrong and how to prevent]
+
+---
+
+## 📚 **References**
+- **Related Issues**: [BF_XXX items if this creates follow-up work]
+- **Incident Context**: [How was this discovered?]
+- **Original Feature**: [VS_XXX if this relates to specific functionality]
+
+---
+
+*Emergency response protocol: Fix first, understand second, prevent third.*

@@ -8,15 +8,15 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### Essential Documents
 1. **CLAUDE.md** - Root-level agent instructions and project overview
-2. **[Git_Workflow_Guide.md](Shared/Guides/Git_Workflow_Guide.md)** - 🚨 **MANDATORY** Git branch workflow (READ FIRST)
-3. **[Comprehensive_Development_Workflow.md](Shared/Guides/Comprehensive_Development_Workflow.md)** - MANDATORY TDD+VSA workflow to follow
-4. **[Quick_Reference_Development_Checklist.md](Shared/Guides/Quick_Reference_Development_Checklist.md)** - Daily task checklist
-5. **[Architecture_Guide.md](Shared/Architecture/Architecture_Guide.md)** - Core architectural principles
+2. **[Git_Workflow_Guide.md](Shared/Workflows/Git-And-CI/Git_Workflow_Guide.md)** - 🚨 **MANDATORY** Git branch workflow (READ FIRST)
+3. **[Comprehensive_Development_Workflow.md](Shared/Workflows/Development/Comprehensive_Development_Workflow.md)** - MANDATORY TDD+VSA workflow to follow
+4. **[Quick_Reference_Development_Checklist.md](Shared/Workflows/Development/Quick_Reference_Development_Checklist.md)** - Daily task checklist
+5. **[Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md)** - Core architectural principles
 
 ### Reference Implementation
 - **Move Block Feature** (`src/Features/Block/Move/`) - GOLD STANDARD implementation
 - **Tests**: `tests/BlockLife.Core.Tests/Features/Block/Move/`
-- **Documentation**: [002_Move_Block_Feature_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/002_Move_Block_Feature_Implementation_Plan.md)
+- **Documentation**: [002_Move_Block_Feature_Implementation_Plan.md](Shared/Implementation/Reference-Plans/002_Move_Block_Feature_Implementation_Plan.md)
 
 ## 🤖 Agent Ecosystem Documentation
 
@@ -29,7 +29,6 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### Agent Reference Files
 - **[Agent-References/architect-references.md](Agent-References/architect-references.md)** - Documentation guide for Architect agent
-- **[Agent-References/backlog-maintainer-references.md](Agent-References/backlog-maintainer-references.md)** - Documentation guide for Backlog Maintainer agent
 - **[Agent-References/debugger-expert-references.md](Agent-References/debugger-expert-references.md)** - Documentation guide for Debugger Expert agent
 - **[Agent-References/dev-engineer-references.md](Agent-References/dev-engineer-references.md)** - Documentation guide for Dev Engineer agent
 - **[Agent-References/devops-references.md](Agent-References/devops-references.md)** - Documentation guide for DevOps Engineer agent
@@ -42,7 +41,7 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 
 ### Agent Workflows
 - **[Workflows/](Workflows/)** - All agent workflow files and orchestration guides
-- **[Workflows/AGENT_ORCHESTRATION_GUIDE.md](Workflows/AGENT_ORCHESTRATION_GUIDE.md)** - Master orchestration documentation
+- **[Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md](Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)** - Master orchestration documentation
 
 ## 📂 Shared Documentation Structure
 
@@ -51,21 +50,21 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - All work items (VS, HF, TD, BF) tracked here
 - This is the **ONLY** place for work tracking
 
-### 🏗️ Architecture Documentation ([Shared/Architecture/](Shared/Architecture/))
-- [Architecture_Guide.md](Shared/Architecture/Architecture_Guide.md) - Core principles, Clean Architecture, MVP pattern ⭐⭐⭐
-- [Standard_Patterns.md](Shared/Architecture/Standard_Patterns.md) - **VALIDATED** architectural patterns ⭐⭐⭐
-- [Architecture_FAQ.md](Shared/Architecture/Architecture_FAQ.md) - Frequently asked questions ⭐⭐
-- [Integration_Testing_Guide.md](Shared/Architecture/Integration_Testing_Guide.md) - GdUnit4 testing architecture
-- [Test_Guide.md](Shared/Architecture/Test_Guide.md) - Four-pillar testing strategy
-- [Property_Based_Testing_Guide.md](Shared/Architecture/Property_Based_Testing_Guide.md) - FsCheck patterns
+### 🏗️ Architecture Documentation ([Shared/Core/Architecture/](Shared/Core/Architecture/))
+- [Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md) - Core principles, Clean Architecture, MVP pattern ⭐⭐⭐
+- [Standard_Patterns.md](Shared/Core/Architecture/Standard_Patterns.md) - **VALIDATED** architectural patterns ⭐⭐⭐
+- [Architecture_FAQ.md](Shared/Core/Architecture/Architecture_FAQ.md) - Frequently asked questions ⭐⭐
+- [Integration_Testing_Guide.md](Shared/Core/Architecture/Integration_Testing_Guide.md) - GdUnit4 testing architecture
+- [Test_Guide.md](Shared/Core/Architecture/Test_Guide.md) - Four-pillar testing strategy
+- [Property_Based_Testing_Guide.md](Shared/Core/Architecture/Property_Based_Testing_Guide.md) - FsCheck patterns
 
 ### 📝 Implementation Planning (Embedded in VS Items)
 - **Current Approach**: Implementation planning embedded within VS items via `Docs/Backlog/templates/VS_Template.md`
 - **Tech Lead Section**: Each VS item contains "🏗️ Implementation Plan" section owned by Tech Lead
-- **Archived Reference**: [Shared/Architecture/Reference-Implementations/](Shared/Architecture/Reference-Implementations/) - Historical implementation plans for reference
-  - [000_Vertical_Slice_Architecture_Plan.md](Shared/Architecture/Reference-Implementations/000_Vertical_Slice_Architecture_Plan.md) - VSA patterns (archived)
-  - [001_F1_Block_Placement_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/001_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Reference)
-  - [002_Move_Block_Feature_Implementation_Plan.md](Shared/Architecture/Reference-Implementations/002_Move_Block_Feature_Implementation_Plan.md) - ✅ **COMPLETED** (Reference)
+- **Archived Reference**: [Shared/Implementation/Reference-Plans/](Shared/Implementation/Reference-Plans/) - Historical implementation plans for reference
+  - [000_Vertical_Slice_Architecture_Plan.md](Shared/Implementation/Reference-Plans/000_Vertical_Slice_Architecture_Plan.md) - VSA patterns (archived)
+  - [001_F1_Block_Placement_Implementation_Plan.md](Shared/Implementation/Reference-Plans/001_F1_Block_Placement_Implementation_Plan.md) - ✅ **PRODUCTION READY** (Reference)
+  - [002_Move_Block_Feature_Implementation_Plan.md](Shared/Implementation/Reference-Plans/002_Move_Block_Feature_Implementation_Plan.md) - ✅ **COMPLETED** (Reference)
 - **Live Planning**: Check `Docs/Backlog/items/VS_*.md` files for current embedded implementation plans
 
 ### 🧠 Living Wisdom System ([Living-Wisdom/](Living-Wisdom/)) - **STRATEGIC KNOWLEDGE BASE** ⭐⭐⭐⭐⭐
@@ -79,27 +78,27 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 - **Resolved/**: Completed incident reports (archived by date)
 - **Archive/**: Historical incidents (organized by quarter)
 
-### 🏛️ Architecture Decision Records ([Shared/ADRs/](Shared/ADRs/))
-- [ADR_007_Enhanced_Functional_Validation_Pattern.md](Shared/ADRs/ADR_007_Enhanced_Functional_Validation_Pattern.md) - Functional validation patterns
-- [ADR_008_Anchor_Based_Rule_Engine_Architecture.md](Shared/ADRs/ADR_008_Anchor_Based_Rule_Engine_Architecture.md) - Rule engine architecture
+### 🏛️ Architecture Decision Records ([Shared/Core/ADRs/](Shared/Core/ADRs/))
+- [ADR_007_Enhanced_Functional_Validation_Pattern.md](Shared/Core/ADRs/ADR_007_Enhanced_Functional_Validation_Pattern.md) - Functional validation patterns
+- [ADR_008_Anchor_Based_Rule_Engine_Architecture.md](Shared/Core/ADRs/ADR_008_Anchor_Based_Rule_Engine_Architecture.md) - Rule engine architecture
 
 ### 📖 Development Guides ([Shared/Guides/](Shared/Guides/))
-- [Comprehensive_Development_Workflow.md](Shared/Guides/Comprehensive_Development_Workflow.md) - **MANDATORY** TDD+VSA workflow ⭐⭐⭐⭐⭐
-- [Quick_Reference_Development_Checklist.md](Shared/Guides/Quick_Reference_Development_Checklist.md) - Daily checklist ⭐⭐⭐
-- [Git_Workflow_Guide.md](Shared/Guides/Git_Workflow_Guide.md) - **MANDATORY** Git workflow ⭐⭐⭐⭐
+- [Comprehensive_Development_Workflow.md](Shared/Workflows/Development/Comprehensive_Development_Workflow.md) - **MANDATORY** TDD+VSA workflow ⭐⭐⭐⭐⭐
+- [Quick_Reference_Development_Checklist.md](Shared/Workflows/Development/Quick_Reference_Development_Checklist.md) - Daily checklist ⭐⭐⭐
+- [Git_Workflow_Guide.md](Shared/Workflows/Git-And-CI/Git_Workflow_Guide.md) - **MANDATORY** Git workflow ⭐⭐⭐⭐
 - [GdUnit4_Integration_Testing_Guide.md](Shared/Guides/GdUnit4_Integration_Testing_Guide.md) - Godot integration testing
 - [Debugging_Notification_Pipeline.md](Shared/Guides/Debugging_Notification_Pipeline.md) - Notification debugging guide
-- [Work_Item_Naming_Conventions.md](Shared/Guides/Work_Item_Naming_Conventions.md) - Backlog item naming
+- [Work_Item_Naming_Conventions.md](Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md) - Backlog item naming
 
 ## 🎯 Quick Reference by Role
 
 ### For New Features
 1. Check [Backlog.md](Backlog/Backlog.md) for current priorities
-2. Read [Comprehensive_Development_Workflow.md](Shared/Guides/Comprehensive_Development_Workflow.md)
-3. Create feature branch using [Git_Workflow_Guide.md](Shared/Guides/Git_Workflow_Guide.md)
+2. Read [Comprehensive_Development_Workflow.md](Shared/Workflows/Development/Comprehensive_Development_Workflow.md)
+3. Create feature branch using [Git_Workflow_Guide.md](Shared/Workflows/Git-And-CI/Git_Workflow_Guide.md)
 4. Use embedded planning: Tech Lead adds "🏗️ Implementation Plan" section to VS item
 5. Follow Move Block reference implementation pattern
-6. Use [Quick_Reference_Development_Checklist.md](Shared/Guides/Quick_Reference_Development_Checklist.md)
+6. Use [Quick_Reference_Development_Checklist.md](Shared/Workflows/Development/Quick_Reference_Development_Checklist.md)
 
 ### For Bug Fixes
 1. Use [TEMPLATE_Bug_Report_And_Fix.md](Shared/Post-Mortems/TEMPLATE_Bug_Report_And_Fix.md)
@@ -108,14 +107,14 @@ This catalogue provides a comprehensive index of all documentation, helping AI a
 4. Follow bug-to-test protocol (mandatory)
 
 ### For Architecture Questions
-1. Start with [Architecture_Guide.md](Shared/Architecture/Architecture_Guide.md)
-2. Check [Architecture_FAQ.md](Shared/Architecture/Architecture_FAQ.md)
-3. Review [Standard_Patterns.md](Shared/Architecture/Standard_Patterns.md)
+1. Start with [Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md)
+2. Check [Architecture_FAQ.md](Shared/Core/Architecture/Architecture_FAQ.md)
+3. Review [Standard_Patterns.md](Shared/Core/Architecture/Standard_Patterns.md)
 4. Consult [Agent-Specific/Architect/](Agent-Specific/Architect/) for detailed patterns
 
 ### For Testing Questions
-1. Review [Test_Guide.md](Shared/Architecture/Test_Guide.md) for four-pillar strategy
-2. Check [Integration_Testing_Guide.md](Shared/Architecture/Integration_Testing_Guide.md) for GdUnit4
+1. Review [Test_Guide.md](Shared/Core/Architecture/Test_Guide.md) for four-pillar strategy
+2. Check [Integration_Testing_Guide.md](Shared/Core/Architecture/Integration_Testing_Guide.md) for GdUnit4
 3. Use [Agent-Specific/QA/](Agent-Specific/QA/) for testing strategies
 
 ## 📊 Documentation Quality Ratings

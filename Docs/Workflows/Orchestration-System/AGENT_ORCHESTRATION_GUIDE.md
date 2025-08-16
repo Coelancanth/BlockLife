@@ -1,7 +1,9 @@
 # Agent Orchestration Guide
 
 ## Purpose
-This document defines WHEN and HOW Claude Code triggers specialized agents to maintain the Automatic Orchestration Pattern.
+This document defines WHEN and HOW Claude Code triggers specialized agents, verifies their outputs, and updates the backlog directly to maintain the current orchestration workflow.
+
+**Integration**: This guide works with [CLAUDE.md](../../CLAUDE.md) which defines the overall orchestration pattern and the [DOUBLE_VERIFICATION_PROTOCOL.md](DOUBLE_VERIFICATION_PROTOCOL.md) which ensures agent outputs are verified.
 
 ---
 
@@ -10,7 +12,9 @@ Claude Code (main agent) is the orchestrator who:
 1. **Detects** trigger conditions
 2. **Announces** agent invocations (during early stage)
 3. **Triggers** appropriate agents
-4. **Synthesizes** responses
+4. **Verifies** agent outputs
+5. **Updates** backlog directly with results
+6. **Synthesizes** responses
 
 ## 📅 CRITICAL: Date Accuracy Protocol
 **MANDATORY**: Always use `bash date` command for current dates. LLMs don't know the actual date.
@@ -135,15 +139,18 @@ This helps validate the pattern is working correctly.
 | **Pattern Creation** | "standardize pattern", "create base class" | "♻️ VSA REFACTOR: Creating pattern" | Extract common patterns |
 | **3+ Slice Rule** | Code appears in 3+ feature slices | "♻️ VSA REFACTOR: Auto-detected duplication" | Suggest extraction |
 
-### Backlog Updates (Direct Management)
+### Post-Agent Verification and Backlog Updates (Critical Workflow)
 
 | Update Condition | Detection Pattern | Action | Who Updates |
 |-------------------|-------------------|--------|-------------|
+| **Agent Completes Work** | After any agent invocation | 1. Verify output<br>2. Update backlog with results | Claude Code directly |
 | **Code Written** | After Edit/Write on .cs/.py/.js | Update progress +40% | Claude Code directly |
 | **Tests Written** | After Edit/Write on test files | Update progress +15% | Claude Code directly |
 | **Tests Pass** | "dotnet test" with "Passed!" | Update progress +15% | Claude Code directly |
 | **PR Created** | "gh pr create" command | Status → In Review | Git Expert agent |
 | **PR Merged** | "gh pr merge" command | Archive completed item | Product Owner agent |
+
+**CRITICAL**: After EVERY agent interaction, Claude Code must verify the agent actually completed the reported work, then update the backlog with verified results.
 
 ---
 
@@ -152,9 +159,10 @@ This helps validate the pattern is working correctly.
 If automatic triggering misses something, you can request:
 
 - **"Trigger PO for [action]"** - Manually invoke Product Owner
-- **"Update backlog progress"** - Manually trigger maintainer
-- **"Check backlog status"** - Force synchronization
+- **"Update backlog progress"** - Update backlog directly with current status
+- **"Check backlog status"** - Verify backlog matches actual system state
 - **"Show PO decision"** - Get strategic input
+- **"Verify agent output"** - Check if agent actually completed reported work
 
 ## 🐛 Feedback Commands
 
@@ -181,7 +189,7 @@ print("   → Task: [What to automate]")
 response = Task(
     description="DevOps automation",
     prompt=f"""
-    Read workflow: Docs/Workflows/devops-engineer-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/devops-engineer-workflow.md
     Execute: {automation_type}
     
     Task to automate: {task_description}
@@ -209,7 +217,7 @@ print("   → Issue: [Git problem]")
 response = Task(
     description="Git operation assistance",
     prompt=f"""
-    Read workflow: Docs/Workflows/git-expert-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/git-expert-workflow.md
     Execute: {git_operation}
     
     Current situation: {problem_description}
@@ -236,14 +244,14 @@ print("   → Context: [Decision needed]")
 response = Task(
     description="Architectural decision",
     prompt=f"""
-    Read workflow: Docs/Workflows/architect-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/architect-workflow.md
     Execute: {decision_type}
     
     Context: {problem_context}
     Constraints: {constraints}
     Quality attributes: {quality_requirements}
     
-    Current architecture: Docs/1_Architecture/
+    Current architecture: Docs/Shared/Core/Architecture/
     Reference: src/Features/Block/Move/
     
     Create ADR with decision rationale.
@@ -266,7 +274,7 @@ print("   → Symptoms: [What's happening]")
 response = Task(
     description="Debug complex issue",
     prompt=f"""
-    Read workflow: Docs/Workflows/debugger-expert-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/debugger-expert-workflow.md
     Execute: Systematic debugging
     
     Symptoms: {bug_description}
@@ -294,7 +302,7 @@ print("   → Context: [Requirement to test]")
 response = Task(
     description="Create failing unit test",
     prompt=f"""
-    Read workflow: Docs/Workflows/test-designer-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/test-designer-workflow.md
     Execute: Create failing test (RED phase)
     
     Requirement: {user_requirement}
@@ -321,7 +329,7 @@ print("   → Context: [Test to make pass]")
 response = Task(
     description="Implement code to pass test",
     prompt=f"""
-    Read workflow: Docs/Workflows/dev-engineer-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/dev-engineer-workflow.md
     Execute: Make test pass (GREEN phase)
     
     Failing test: {test_code}
@@ -348,7 +356,7 @@ print("   → Context: [What's being tested]")
 response = Task(
     description="Quality assurance testing",
     prompt=f"""
-    Read workflow: Docs/Workflows/qa-engineer-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/qa-engineer-workflow.md
     Execute: {action}
     
     Feature to test: {feature_path}
@@ -377,7 +385,7 @@ print("   → Context: [What's being evaluated]")
 response = Task(
     description="Product Owner evaluation",
     prompt=f"""
-    Read workflow: Docs/Workflows/product-owner-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/product-owner-workflow.md
     Execute: {action}
     Context: {context}
     """,
@@ -397,10 +405,10 @@ print("   → Context: [What's being planned]")
 response = Task(
     description="Technical planning",
     prompt=f"""
-    Read workflow: Docs/Workflows/tech-lead-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/tech-lead-workflow.md
     Execute: {action}
     VS Item: {vs_path}
-    Architecture: Docs/1_Architecture/Architecture_Guide.md
+    Architecture: Docs/Shared/Core/Architecture/Architecture_Guide.md
     Reference: src/Features/Block/Move/
     """,
     subagent_type="tech-lead"
@@ -419,7 +427,7 @@ print("   → Context: [What's being refactored]")
 response = Task(
     description="VSA refactoring action",
     prompt=f"""
-    Read workflow: Docs/Workflows/vsa-refactoring-workflow.md
+    Read workflow: Docs/Workflows/Agent-Workflows/vsa-refactoring-workflow.md
     Execute: {action}
     
     Current slice structure: src/Features/
@@ -438,24 +446,44 @@ print("♻️ VSA REFACTORING RESULTS:")
 print(synthesize(response))
 ```
 
-### Silent Maintainer Pattern
+
+---
+
+## 🔍 Mandatory Post-Agent Verification Workflow
+
+### Critical Step: Verify and Update After EVERY Agent
+
+After **every single agent interaction**, Claude Code MUST:
+
+1. **Verify Agent Output**
+   - Did the agent actually complete what it reported?
+   - Are files created/moved/modified as claimed?
+   - Are status changes reflected in the actual system?
+
+2. **Update Backlog Directly**
+   - Record verified progress in Backlog.md
+   - Note any blockers or issues discovered
+   - Update work item status based on verified results
+
+3. **Document Issues**
+   - If agent reported success but didn't complete work, create bug report
+   - Note any unexpected findings or complications
+   - Update agent trust levels if necessary
+
+### Example Verification Pattern
 ```python
-# Claude Code announces but output is minimal
-print("🤖 MAINTAINER: [Silent update type]")
+# After any agent invocation:
+response = Task(..., subagent_type="any-agent")
 
-Task(
-    description="Update backlog",
-    prompt=f"""
-    Read workflow: Docs/Workflows/backlog-maintainer-workflow.md
-    Execute: {action}
-    Context: {context}
-    Silent operation - return only confirmation
-    """,
-    subagent_type="backlog-maintainer"
-)
-
-# No output shown unless error
+# MANDATORY verification step
+if verify_agent_actually_completed_work(response):
+    update_backlog_with_verified_results(response)
+else:
+    create_bug_report_for_false_success(response)
+    handle_agent_failure_cleanup()
 ```
+
+**Reference**: See [DOUBLE_VERIFICATION_PROTOCOL.md](DOUBLE_VERIFICATION_PROTOCOL.md) for detailed verification procedures.
 
 ---
 
@@ -493,7 +521,7 @@ analyze_context():
 
 ## 📊 Progress Calculation Rules
 
-### Backlog Maintainer Progress Increments
+### Claude Code Direct Backlog Update Increments
 | Event | Progress | Notes |
 |-------|----------|-------|
 | Architecture tests written | +10% | First step in TDD |
@@ -504,6 +532,7 @@ analyze_context():
 | Documentation | +5% | Final step |
 
 **Total**: 100% across full TDD cycle
+**Updated by**: Claude Code directly after verifying each milestone
 
 ---
 
@@ -517,6 +546,9 @@ During early stage, validate each trigger:
 - [ ] Was the context sufficient?
 - [ ] Did the agent follow its workflow?
 - [ ] Was the result properly integrated?
+- [ ] Did Claude Code verify the agent output?
+- [ ] Was the backlog updated with verified results?
+- [ ] Were any blockers or issues documented?
 
 ---
 
@@ -585,4 +617,7 @@ All agent-specific workflows are in: `Docs/Workflows/Agent-Workflows/`
 - Integration points are documented
 
 ### Implementation Status
-See **TD_014** in Backlog for Agent Architecture Pattern Update status
+- **Current Version**: Aligned with 10-agent ecosystem (backlog-maintainer removed)
+- **Integration**: Works with CLAUDE.md orchestration workflow
+- **Verification**: Integrated with DOUBLE_VERIFICATION_PROTOCOL.md
+- **Last Updated**: 2025-08-16 - Comprehensive alignment with current system

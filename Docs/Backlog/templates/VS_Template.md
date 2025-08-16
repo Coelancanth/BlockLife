@@ -1,207 +1,84 @@
 # VS_XXX: [Feature Name]
 
-**Status**: Ready  
-**Priority**: TBD  
-**Size**: [S/M/L] ([1-5] days)  
-**Domain**: [Block/Inventory/Grid/UI/etc.]  
-**Progress**: 0%
+**Type**: Vertical Slice  
+**Priority**: [🔥 Critical | 📈 Important | 💡 Ideas]  
+**Size**: [Small | Medium | Large]  
+**Status**: [Not Started | In Progress | Done]  
+**Domain**: [Block/Inventory/Grid/UI/etc.]
 
 ---
 
-## 📋 User Story *(Product Owner)*
-As a [player/developer]  
-I want [specific functionality]  
-So that [value/benefit]
+## 📋 What & Why *(Product Owner)*
 
-### Business Context
-- **Value Proposition**: [Why is this important?]
-- **User Impact**: [Who benefits and how?]
-- **Strategic Alignment**: [How does this fit product vision?]
+**User Story**: As a [player/developer] I want [specific functionality] so that [value/benefit]
+
+**Value Proposition**: [Why is this important? What problem does it solve?]
+
+**Success Criteria**: [How do we know this is successful?]
 
 ---
 
-## 🏗️ Implementation Plan *(Tech Lead)*
+## 🏗️ Implementation Notes *(Tech Lead)*
 
-### Technical Approach
-- **Architecture Pattern**: [VSA slice, follows Move Block pattern]
-- **Complexity Assessment**: [Simple/Medium/Complex - reasoning]
-- **Integration Points**: [What systems does this touch?]
+**Architecture Pattern**: Follow `src/Features/Block/Move/` as gold standard
 
-### Implementation Phases
-```
-Phase 1: Core Domain Logic (TDD RED → GREEN)
-├── Commands & validation rules
-├── Handlers & business logic
-├── Unit tests (architecture + unit)
-└── Domain entities/DTOs
+**Key Components**:
+- Commands: [Brief description]
+- Handlers: [Brief description] 
+- Presenters: [Brief description]
+- Views: [Brief description]
 
-Phase 2: Notification & Integration
-├── Notifications & bridges
-├── Service interfaces
-├── DI registration
-└── Integration points
+**Integration Points**: [What systems does this connect to?]
 
-Phase 3: Presentation Layer
-├── Presenter implementation
-├── View interfaces
-├── Godot scene integration
-└── Integration tests
-
-Phase 4: Validation & Polish
-├── Stress testing
-├── Error handling validation
-├── Documentation
-└── Performance verification
-```
-
-### Technical Decisions
-- **Data Flow**: [Command → Handler → State → Notification → Presenter → View]
-- **Error Handling**: [Fin<T> pattern with specific error codes]
-- **State Management**: [Which services handle state?]
-- **Testing Strategy**: [What tests at each level?]
-
-### Risk Assessment
-- **Technical Risks**: [What could go wrong technically?]
-- **Dependencies**: [What must be done first?]
-- **Complexity Factors**: [What makes this challenging?]
-- **Mitigation**: [How to reduce risk?]
-
----
-
-## 🎯 Vertical Slice Components *(Reference)*
-
-### Commands
-- `[CommandName] { Properties }`
-- Validation rules:
-  - [Rule 1]
-  - [Rule 2]
-
-### Handlers  
-- `[HandlerName]` → Returns `Fin<Result>`
-- Business logic:
-  - [Step 1]
-  - [Step 2]
-- Error cases:
-  - [Error case 1]  
-  - [Error case 2]
-
-### Queries (if needed)
-- `[QueryName]` → Returns `[DataType]`
-
-### Notifications
-- `[NotificationName] { Properties }`
-- Published when: [Condition]
-- Subscribers: [List of presenters]
-
-### Domain/DTOs
-- `[EntityName]`: [Description]
-- Properties:
-  - [Property 1]
-  - [Property 2]
-
-### Presenters
-- `[PresenterName]`
-- Subscribes to: [Notifications]
-- Updates view: [View interface methods]
-
-### Views
-- Interface: `I[ViewName]`
-- Methods:
-  - `Method1(params)`
-  - `Method2(params)`
-- Godot implementation: `godot_project/features/[domain]/[feature]/`
+**Risks/Concerns**: [Technical challenges, dependencies, or blockers]
 
 ---
 
 ## ✅ Acceptance Criteria *(Product Owner)*
 - [ ] Given [context], When [action], Then [outcome]
-- [ ] Given [context], When [action], Then [outcome]  
 - [ ] Given [context], When [action], Then [outcome]
-
-### Success Metrics
-- **Functional**: [How do we know it works?]
-- **Performance**: [Any performance requirements?]
-- **User Experience**: [What makes this successful from user perspective?]
+- [ ] [Additional criteria as needed]
 
 ---
 
-## 🧪 Test Strategy *(QA Engineer + Test Designer)*
+## 🧪 Testing Approach *(Test Designer + QA Engineer)*
 
-### Architecture Tests *(Already Exist)*
-- [ ] Commands are immutable records
-- [ ] Handlers return Fin<T>
-- [ ] No Godot dependencies in Core
+**Unit Tests**: 
+- [ ] Command validation
+- [ ] Handler success/error paths
+- [ ] Core business logic
 
-### Unit Tests *(Test Designer → Dev Engineer)*
-- [ ] Command validation tests
-- [ ] Handler success path tests  
-- [ ] Handler error path tests
-- [ ] Query tests (if applicable)
-
-### Property Tests *(Test Designer)*
-- [ ] [Invariant 1]: [Description]
-- [ ] [Invariant 2]: [Description]
-
-### Integration Tests *(QA Engineer)*  
+**Integration Tests**:
 - [ ] Full vertical slice flow
-- [ ] UI interaction to state change
-- [ ] Notification pipeline verification
-- [ ] Stress testing with concurrent operations
+- [ ] UI to state change verification
+- [ ] Stress testing (if needed)
 
 ---
 
-## 🔄 Dependencies & Integration
-- **Depends on**: [List other VS/features that must be completed first]
-- **Blocks**: [List dependent VS/features waiting for this]
-- **Service Dependencies**: [What services does this need?]
-- **Integration Points**: [Where does this connect to existing systems?]
+## 🔄 Dependencies
+- **Depends on**: [Other work items that must be done first]
+- **Blocks**: [Work items waiting for this to complete]
 
 ---
 
-## 📚 Implementation References
-- **Gold Standard**: `src/Features/Block/Move/` (ALWAYS reference this)
-- **Similar Pattern**: [Other feature if applicable]
-- **Architecture Patterns**: [Reference to specific architectural patterns]
-- **Special Considerations**: [Any unique aspects or gotchas]
+## 📝 Implementation Progress & Notes
+
+**Current Status**: [Brief update on current state]
+
+**Agent Updates**:
+- [Date] - [Agent]: [Brief note about progress/findings/blockers]
+- [Date] - [Agent]: [Additional updates]
+
+**Blockers**: [Current issues preventing progress]
+
+**Next Steps**: [What needs to happen next]
 
 ---
 
-## ✅ Definition of Done *(Quality Gates)*
-- [ ] **Architecture**: All architecture fitness tests pass
-- [ ] **Unit Tests**: Comprehensive test coverage with TDD approach
-- [ ] **Integration**: End-to-end testing with GdUnit4  
-- [ ] **Performance**: Stress testing with 100+ concurrent operations
-- [ ] **Code Quality**: Follows BlockLife patterns, no compiler warnings
-- [ ] **Documentation**: Agent-specific docs updated if new patterns
-- [ ] **Review**: PR approved following established template
-- [ ] **Deployment**: Successfully integrated without breaking existing features
+## 📚 References
+- **Gold Standard**: `src/Features/Block/Move/` 
+- **Related Work**: [Links to related VS items, bugs, or documentation]
 
 ---
 
-## 📋 Progress Tracking *(Auto-Updated by Backlog Maintainer)*
-
-### Progress Increments
-- **Architecture tests written**: +10%
-- **Unit tests written (RED)**: +15%  
-- **Implementation (GREEN)**: +40%
-- **Tests passing**: +15%
-- **Integration tests**: +15%
-- **Documentation**: +5%
-
-### Milestone Markers
-- [ ] **Phase 1 Complete**: Core domain logic implemented
-- [ ] **Phase 2 Complete**: Notification integration working
-- [ ] **Phase 3 Complete**: UI integration functional  
-- [ ] **Phase 4 Complete**: Validation and polish finished
-
----
-
-## 🔗 References
-- **ADR**: [Link to architectural decision record if exists]
-- **Bug Report**: [Link if this addresses a specific bug]  
-- **Design Context**: [Link to design documentation if exists]
-- **Reference Implementation**: [Link to similar completed feature]
-
----
-
-*This VS item follows the embedded implementation planning approach where Tech Lead adds detailed technical planning directly within the work item rather than separate implementation plan documents.*
+*Simple, maintainable, actually used. Focus on what matters for getting work done.*

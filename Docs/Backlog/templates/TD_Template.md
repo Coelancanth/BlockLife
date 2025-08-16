@@ -1,96 +1,81 @@
 # TD_XXX: [Tech Debt Description]
 
-**Status**: Backlog
-**Priority**: TBD
-**Size**: [S/M/L] ([1-5] days)
-**Sprint**: TBD
-**Debt Type**: [Performance/Maintainability/Security/Architecture]
+**Type**: Technical Debt  
+**Priority**: [🔥 Critical | 📈 Important | 💡 Ideas]  
+**Category**: [Performance/Maintainability/Security/Architecture]  
+**Status**: [Not Started | In Progress | Done]  
 **Impact**: [High/Medium/Low]
 
-## Problem Description
-[What technical debt exists and why it's problematic]
+---
 
-## Current State
-- Location: `[file/component/system]`
-- Issue: [Technical description]
-- Impact on development: [How it slows/complicates work]
-- Risk if not addressed: [What could go wrong]
+## 🔧 The Problem
+**What's Wrong**: [Clear description of the technical debt]
 
-## Proposed Solution
+**Where**: `[file/component/system]`
 
-### Refactoring Approach
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+**Why It Matters**: [How does this slow development or create risk?]
 
-### Code Changes
-- File: `[file path]`
-  - Current: [Current approach]
-  - Proposed: [New approach]
-  - Benefit: [Why it's better]
+**Cost of Delay**: [What happens if we don't fix this?]
 
-### Architecture Changes (if any)
-- Pattern change: [From X to Y]
-- Dependency updates: [List changes]
-- Interface modifications: [List changes]
+---
 
-## Benefits
-- **Performance**: [Improvement expected]
-- **Maintainability**: [How it helps]
-- **Testability**: [Testing improvements]
-- **Developer Experience**: [DX improvements]
+## 💡 The Solution
+**Approach**: [Brief description of how to fix it]
 
-## Migration Strategy
-- [ ] Can be done incrementally: [Yes/No]
-- [ ] Backward compatible: [Yes/No]
-- [ ] Feature flag needed: [Yes/No]
-- Migration steps:
-  1. [Step 1]
-  2. [Step 2]
+**Key Changes**:
+- `[file path]` - [What needs to change]
+- `[file path]` - [What needs to change]
 
-## Test Requirements
+**Benefits**: [Why this improvement is worth the effort]
 
-### Existing Tests
-- [ ] All existing tests must pass
-- [ ] Performance benchmarks before/after
+---
 
-### New Tests
-- [ ] Unit tests for refactored code
-- [ ] Integration tests for new patterns
-- [ ] Architecture tests for new constraints
+## 🧪 Testing & Migration
+**Migration Strategy**: [Incremental? Big bang? Feature flagged?]
 
-## Acceptance Criteria
-- [ ] Code follows new pattern
+**Testing Requirements**:
+- [ ] All existing tests continue to pass
+- [ ] New tests for refactored code
+- [ ] Performance validation (if applicable)
+
+**Rollback Plan**: [How to revert if something goes wrong]
+
+---
+
+## ✅ Acceptance Criteria
+- [ ] Technical debt eliminated or significantly reduced
 - [ ] No functionality regression
-- [ ] Performance improved/maintained
-- [ ] Documentation updated
-- [ ] Team trained on new approach
+- [ ] Code follows current standards/patterns
+- [ ] Performance maintained or improved
 
-## Risk Assessment
-- **Breaking changes**: [List potential breaks]
-- **Performance risk**: [Could it get worse?]
-- **Rollback plan**: [How to revert if needed]
+---
 
-## Measurement
-- Metric 1: [What to measure]
-- Metric 2: [What to measure]
-- Success criteria: [Specific targets]
+## 🔄 Dependencies & Impact
+**Depends On**: [Other work that must be done first]
 
-## Dependencies
-- Must complete before: [List dependent work]
-- Can be done alongside: [List compatible work]
-- Blocks: [What this enables]
+**Blocks**: [What this enables or unblocks]
 
-## Definition of Done
-- [ ] Refactoring complete
-- [ ] All tests passing
-- [ ] Performance validated
-- [ ] Code reviewed by tech lead
-- [ ] Documentation updated
-- [ ] Team notified of changes
+**Side Effects**: [What else might this affect?]
 
-## References
-- Related ADR: [Architecture decisions]
-- Original implementation: [VS_XXX if applicable]
-- Tech debt analysis: [Link to analysis]
-- Similar refactoring: [Previous similar work]
+---
+
+## 📝 Progress & Notes
+
+**Current Status**: [Brief update on progress]
+
+**Agent Updates**:
+- [Date] - [Agent]: [Brief note about progress/findings]
+- [Date] - [Agent]: [Additional updates]
+
+**Blockers**: [Current issues preventing progress]
+
+---
+
+## 📚 References
+- **Related ADR**: [Architecture decision records]
+- **Original Feature**: [VS_XXX if this relates to specific functionality]
+- **Similar Work**: [Links to related refactoring or debt items]
+
+---
+
+*Focus on improving code quality and development velocity.*
