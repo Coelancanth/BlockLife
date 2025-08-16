@@ -83,6 +83,7 @@ public async Task FeatureName_Scenario_ExpectedOutcome()
 - [ ] **Build succeeds** (`dotnet build`)
 - [ ] **Integration test** (if UI changes)
 - [ ] **Manual verification** (run the game)
+- [ ] **Bug prevention check** (see checklist below)
 
 ### Phase 4: Completion
 - [ ] **Create Pull Request**
@@ -194,6 +195,40 @@ tests/BlockLife.Integration.Tests/Features/[Feature]/
 2. **Work on 📈 Important** - Current sprint focus
 3. **Consider 💡 Ideas** - When other tiers are empty
 4. **Update progress** - Move items as they progress
+
+## 🛡️ Bug Prevention Checklist
+
+### Before Committing (Critical Checks)
+- [ ] **Property stability**: Do properties return stable values on multiple accesses?
+- [ ] **Validation enforcement**: Are business rules validated before state changes?
+- [ ] **DI registration**: Do all registered services have resolvable dependencies?
+- [ ] **Notification uniqueness**: Is each notification published exactly once?
+- [ ] **Error consistency**: Are error messages and codes consistent across handlers?
+
+### Common Patterns to Avoid
+```csharp
+// ❌ Unstable property values
+public Guid Id => Guid.NewGuid(); // New value each time!
+
+// ❌ Missing validation
+await _service.ChangeState(input); // No validation!
+
+// ❌ Presenter as MediatR handler
+public class MyPresenter : INotificationHandler<Event> // DI conflict!
+
+// ❌ Multiple notification sources
+// Both handler AND manager publishing same notification
+
+// ❌ Direct state access
+_someStaticValue = newValue; // No validation or tracking!
+```
+
+### Bug-to-Test Protocol
+1. **Write failing test** that reproduces the bug
+2. **Verify test fails** (confirms bug reproduction)  
+3. **Fix the code** with minimal change
+4. **Verify test passes** (confirms fix works)
+5. **Add to regression suite** (prevents reoccurrence)
 
 ## 🔧 Essential Commands
 
