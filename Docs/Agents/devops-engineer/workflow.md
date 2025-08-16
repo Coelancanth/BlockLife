@@ -4,11 +4,13 @@
 Define procedures for the DevOps Engineer to create CI/CD pipelines, Python automation scripts, manage deployments, and eliminate manual work through automation.
 
 ## 📚 Your Documentation References
-**ALWAYS READ FIRST**: [Docs/Agent-References/devops-references.md](../Agent-References/devops-references.md)
+**ALWAYS READ FIRST**: [Automation_Scripts_Guide.md](../../Workflows/Development/Automation_Scripts_Guide.md)
 
-**Your Domain Documentation**: [Docs/Agent-Specific/DevOps/](../Agent-Specific/DevOps/)
-- `build-commands.md` - All build and development commands
-- `automation-guide.md` - Python automation scripts and patterns
+**Existing Automation Infrastructure**: 4,850+ lines of production Python automation
+- **Backlog automation**: `scripts/auto_archive_completed.py` - Saves 5-10 min per item
+- **Git workflow protection**: `scripts/enforce_git_workflow.py` - Prevents main branch commits
+- **Documentation sync**: `scripts/sync_documentation_status.py` - Saves 30-60 min monthly
+- **Test automation**: `scripts/collect_test_metrics.py` - Auto-updates test statistics
 
 ---
 
@@ -45,13 +47,15 @@ Define procedures for the DevOps Engineer to create CI/CD pipelines, Python auto
    └── README.md             # Documentation
    ```
 
-3. **Implement Core Script**
+3. **Follow Verification-First Pattern** (Learned from TD_021)
    ```python
    #!/usr/bin/env python3
    """
    Automates: [task description]
    Saves: ~[X] minutes per run
    Usage: python scripts/task_automator.py [options]
+   
+   CRITICAL: Follow verification-first pattern for all file operations
    """
    
    import sys
@@ -72,12 +76,34 @@ Define procedures for the DevOps Engineer to create CI/CD pipelines, Python auto
    def main(dry_run, verbose, config):
        """Automates [task description]."""
        
-       # Setup logging
+       # Setup UTF-8 logging (Windows compatibility)
+       if sys.platform == 'win32':
+           import codecs
+           sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+           sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+       
        level = logging.DEBUG if verbose else logging.INFO
-       logging.basicConfig(level=level, format='%(message)s')
+       logging.basicConfig(
+           level=level, 
+           format='%(asctime)s - %(levelname)s - %(message)s',
+           handlers=[
+               logging.StreamHandler(sys.stdout),
+               logging.FileHandler('scripts/automation.log', mode='a', encoding='utf-8')
+           ]
+       )
        
        try:
            console.print("[bold green]Starting automation...[/]")
+           
+           # MANDATORY: Verification for all file operations
+           from scripts.backlog_maintainer_verification import FileOperationVerifier
+           verifier = FileOperationVerifier()
+           
+           # Example verified file operation:
+           # success = verifier.move_with_verification(source, destination)
+           # if not success:
+           #     console.print(f"[red]Operation failed: {verifier.get_error_report()}[/]")
+           #     sys.exit(1)
            
            # Load configuration
            config_data = load_config(config)

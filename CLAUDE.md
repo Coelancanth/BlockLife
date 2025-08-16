@@ -97,14 +97,26 @@ You: "That sounds like over-engineering. The current DI
 
 **Remember: Simplicity is sophistication. Your job is to help build the RIGHT solution, not just ANY solution.**
 
-## 📚 STREAMLINED DOCUMENTATION: The Essential Three
+## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
-**START HERE for 90% of your needs:**
-1. **[Agent_Quick_Reference.md](Docs/Agent_Quick_Reference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and templates
-2. **[Development_Workflows.md](Docs/Development_Workflows.md)** ⭐⭐⭐⭐⭐ - Complete workflows and checklists  
-3. **[Architecture_Guide.md](Docs/Shared/Core/Architecture/Architecture_Guide.md)** ⭐⭐⭐⭐ - Core architectural principles
+**START HERE for 95% of your needs:**
+1. **[Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)** ⭐⭐⭐⭐⭐ - All agent patterns, templates, and **lessons learned**
+2. **[Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)** ⭐⭐⭐⭐⭐ - Complete workflows and checklists  
+3. **[Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)** ⭐⭐⭐⭐ - Core architectural principles
+4. **[Templates/](Docs/Templates/)** ⭐⭐⭐⭐ - Work item templates and documentation templates
 
-**Navigation**: [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for specialized knowledge.
+**Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
+
+## 🎯 DOCUMENTATION REORGANIZATION (2025-08-16)
+
+**Major structural improvements:**
+- **User Journey Organization** - Docs organized by frequency of access and user intent
+- **Quick-Start folder** - Essential Four documents front-loaded for maximum productivity
+- **Logical grouping** - Workflows/, Architecture/, Testing/, Templates/ for clear navigation
+- **Reduced cognitive load** - From multiple navigation decisions to direct access
+- **Preserved specialized knowledge** - All advanced docs organized by purpose, not document type
+
+**Result: Essential Four documents in Quick-Start/ with intuitive folder structure for specialized needs.**
 
 ## 📅 CRITICAL: Date Accuracy Protocol
 **MANDATORY**: Always use `bash date` command for current dates. LLMs don't know the actual date.
@@ -168,8 +180,45 @@ User Request
 | `git-expert` | Complex Git operations, merge conflicts | "Git conflict", "Repository issue", "Complex merge" |
 | `devops-engineer` | Build automation, CI/CD, scripting | "Automate process", "Build scripts", "CI/CD pipeline" |
 
+### Concurrent Agent Orchestration
+**Use for complex problems requiring multiple expert perspectives:**
+
+#### Parallel Investigation Pattern
+```
+Complex Issue → Multiple simultaneous expert analysis
+
+debugger-expert: Root cause analysis
+architect: Architecture review  
+qa-engineer: Stress testing design
+
+→ Main Agent synthesizes findings
+```
+
+#### Multi-Phase Development Pattern  
+```
+Phase 1: Concurrent Planning
+├─ product-owner → User stories
+└─ architect → Technical design
+
+Phase 2: Concurrent Implementation Prep
+├─ test-designer → Test strategy  
+└─ tech-lead → Implementation plan
+
+Phase 3: Execution
+└─ dev-engineer → Implementation
+```
+
+#### Orchestration Responsibilities
+1. **Task Decomposition** - Break complex requests into independent parallel concerns
+2. **Context Packaging** - Ensure each agent has complete domain information
+3. **Conflict Resolution** - Apply simplicity bias when expert recommendations conflict
+4. **Quality Integration** - Synthesize multiple expert outputs into coherent action plan
+5. **Critical Evaluation** - Challenge over-engineering in expert recommendations
+
 ### Agent Resources
-- **Quick patterns**: [Agent_Quick_Reference.md](Docs/Agent_Quick_Reference.md)
+- **Quick patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md) - **Enhanced with concurrent orchestration**
+- **Work item templates**: [Templates/Work-Items/](Docs/Templates/Work-Items/) - VS, BF, TD, HF templates
+- **Documentation templates**: [Templates/Documentation/](Docs/Templates/Documentation/) - Post-mortem analysis
 - **Detailed procedures**: [Agents/[agent]/workflow.md](Docs/Agents/) (when needed)
 
 ## Project Overview
@@ -213,8 +262,39 @@ gh pr create --title "feat: title" --body "description"
 4. **Always**: Bug becomes permanent test
 
 ### For Architecture Questions
-1. **Check [Architecture_Guide.md](Docs/Shared/Core/Architecture/Architecture_Guide.md)** first
+1. **Check [Architecture_Guide.md](Docs/Core/Architecture/Architecture_Guide.md)** first
 2. **If unclear**: architect agent for decisions
+
+## 🤖 Automation Integration (4,850+ Lines of Python)
+
+**Comprehensive automation eliminates manual friction and reduces cognitive load:**
+
+### Essential Automation Commands
+```bash
+# Backlog management (saves 5-10 min per completed item)
+python scripts/auto_archive_completed.py
+python scripts/verify_backlog_archive.py
+
+# Git workflow protection (prevents main branch commits)
+python scripts/setup_git_hooks.py  # One-time setup
+python scripts/enforce_git_workflow.py --validate-branch
+
+# Documentation automation (saves 30-60 min monthly)
+python scripts/sync_documentation_status.py
+python scripts/collect_test_metrics.py --update-docs
+
+# Test monitoring and automation
+python scripts/test_monitor.py  # Background monitoring
+```
+
+### DevOps Agent Integration
+When complexity requires automation:
+- **Manual process >5 minutes** → Use devops-engineer agent
+- **Repetitive workflow steps** → Create verification-first scripts
+- **Error-prone operations** → Add automatic rollback capabilities
+- **Documentation drift** → Implement sync automation
+
+**See**: [Automation_Scripts_Guide.md](Docs/Workflows/Development/Automation_Scripts_Guide.md)
 
 ## 🔧 Essential Commands (Use Directly)
 ```bash
@@ -227,6 +307,10 @@ git status
 
 # Run game
 dotnet run --project godot_project
+
+# Create work items from templates
+cp Docs/Templates/Work-Items/VS_Template.md Docs/Backlog/items/VS_XXX_Feature_Name.md
+cp Docs/Templates/Work-Items/BF_Template.md Docs/Backlog/items/BF_XXX_Bug_Name.md
 ```
 
 ## 🎯 Success Metrics
@@ -235,6 +319,8 @@ dotnet run --project godot_project
 - Simple tasks completed in <5 minutes
 - Clear patterns followed without hesitation  
 - Agents used for genuine expertise needs
+- **Lessons learned applied** from Agent Quick Reference
+- Templates accessed from unified location
 - Backlog updated with meaningful progress
 
 ### Process Overhead Indicators (Bad)

@@ -20,7 +20,8 @@
    - Is there precedent in current architecture?
 
 2. **If new decision needed**:
-   - Read `Docs/Agents/architect/references.md` for context
+   - Review existing ADRs in `Docs/Architecture/Core/ADRs/`
+   - Check Architecture Guide: `Docs/Quick-Start/Architecture_Guide.md`
    - Evaluate 2-3 options maximum
    - Choose based on: simplicity, team knowledge, future flexibility
 
@@ -39,7 +40,7 @@
    ```
 
 ### Outputs
-- Simple ADR in `Docs/Architecture/ADRs/`
+- Simple ADR in `Docs/Architecture/Core/ADRs/`
 - Clear implementation guidance
 - Migration path if needed
 

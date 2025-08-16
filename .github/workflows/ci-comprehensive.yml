@@ -237,9 +237,10 @@ jobs:
         
         # Check for required documentation files
         required_docs=(
-          "Docs/Shared/Workflows/Development/Comprehensive_Development_Workflow.md"
-          "Docs/Shared/Workflows/Development/Quick_Reference_Development_Checklist.md"
-          "Docs/Shared/Core/Architecture/Architecture_Guide.md"
+          "Docs/Quick-Start/Development_Workflows.md"
+          "Docs/Quick-Start/Agent_Quick_Reference.md"
+          "Docs/Quick-Start/Architecture_Guide.md"
+          "Docs/Workflows/Development/Essential_Development_Workflow.md"
           "CLAUDE.md"
         )
         
@@ -255,7 +256,7 @@ jobs:
     - name: 📋 Check Implementation Plans
       run: |
         echo "📋 Checking implementation plans"
-        ls -la Docs/Shared/Implementation/Reference-Plans/ || echo "❌ Reference implementations directory missing"
+        ls -la Docs/Architecture/Reference-Implementations/ || echo "❌ Reference implementations directory missing"
         ls -la Docs/Backlog/items/ || echo "❌ Active implementation plans directory missing"
 
   # Final Summary Job

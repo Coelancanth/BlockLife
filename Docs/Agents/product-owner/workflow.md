@@ -59,11 +59,11 @@ Evaluate new feature ideas and create structured user stories if valuable.
 
 5. **User Story Creation** (if approved)
    ```
-   - Use template: Docs/Backlog/templates/VS_Template.md
+   - Use template: Docs/Templates/Work-Items/VS_Template.md
    - Break into smallest valuable increment
    - Write clear acceptance criteria (min 3)
    - Define success metrics
-   - Save to: Docs/Backlog/items/VS_XXX-description-[feature][priority][area][pending].md
+   - Save to: Docs/Backlog/items/VS_XXX_Feature_Name.md
    - Update main backlog: Docs/Backlog/Backlog.md
    ```
 
