@@ -26,6 +26,7 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     private readonly Dictionary<Guid, Node2D> _blockNodes = new();
     private Node2D? _previewNode;
     private Control? _feedbackNode;
+    private bool _firstTweenCreated = false; // Track first-time tween creation
     
     // Expose block nodes for inspection (eliminates reflection)
     public IReadOnlyDictionary<Guid, Node2D> BlockNodes => _blockNodes;
@@ -40,6 +41,32 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         if (FeedbackContainer == null)
         {
             GD.PrintErr("FeedbackContainer is not assigned!");
+        }
+        
+        // Pre-warm Godot Tween system to prevent first-time initialization delay
+        PreWarmTweenSystem();
+    }
+    
+    /// <summary>
+    /// Pre-warms the Godot Tween system to prevent ~289ms first-time initialization cost.
+    /// Part of BF_001 fix for eliminating first-move lag.
+    /// </summary>
+    private void PreWarmTweenSystem()
+    {
+        try
+        {
+            // Create and immediately kill a tween to trigger subsystem initialization
+            var warmupTween = CreateTween();
+            warmupTween.Kill();
+            
+            // Mark that we've already created our first tween
+            _firstTweenCreated = true;
+            
+            GD.Print("[BlockVisualizationController] Tween system pre-warmed");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Failed to pre-warm Tween system: {ex.Message}");
         }
     }
     
@@ -320,9 +347,26 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             return;
         }
         
+        // Phase 2 Instrumentation: Deep profiling of tween operations
         PerformanceProfiler.StartTimer("CreateTween_Movement");
+        PerformanceProfiler.StartTimer("CreateTween_FirstTime_Check");
+        var isFirstTween = _firstTweenCreated == false;
+        PerformanceProfiler.StopTimer("CreateTween_FirstTime_Check");
+        
+        if (isFirstTween)
+        {
+            PerformanceProfiler.StartTimer("CreateTween_FirstTime");
+            _firstTweenCreated = true;
+        }
+        
         var tween = CreateTween();
-        PerformanceProfiler.StopTimer("CreateTween_Movement");
+        
+        if (isFirstTween)
+        {
+            PerformanceProfiler.StopTimer("CreateTween_FirstTime", true);
+        }
+        
+        PerformanceProfiler.StopTimer("CreateTween_Movement", true);
         
         PerformanceProfiler.StartTimer("TweenProperty_Setup");
         // OPTIMIZATION: Using configurable AnimationSpeed (default 0.15f)
@@ -330,7 +374,7 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         tween.TweenProperty(blockNode, "position", targetPosition, AnimationSpeed)
              .SetEase(Tween.EaseType.Out)
              .SetTrans(Tween.TransitionType.Cubic);
-        PerformanceProfiler.StopTimer("TweenProperty_Setup");
+        PerformanceProfiler.StopTimer("TweenProperty_Setup", true);
     }
     
     private void AnimatePreviewAppearance(Node2D previewNode)
