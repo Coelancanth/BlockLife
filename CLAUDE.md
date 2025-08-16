@@ -40,16 +40,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 🚨 CRITICAL: AUTOMATIC AGENT TRIGGERING IS MANDATORY
 
-### ⚠️ STOP! After ANY development action, you MUST trigger agents
+### ⚠️ STOP! After ANY development action, you MUST trigger the appropriate agents
 
-**THE IRON RULE**: Edit/Write/Test/Move/Fix ANYTHING = Trigger backlog-maintainer IMMEDIATELY
+**THE IRON RULE**: Development actions require immediate agent delegation
 
 **Quick Check - Did you just:**
-- Edit a file? → TRIGGER backlog-maintainer NOW
-- Run tests? → TRIGGER backlog-maintainer NOW  
-- Fix a bug? → TRIGGER backlog-maintainer NOW
-- Move/rename files? → TRIGGER backlog-maintainer NOW
-- Update documentation? → TRIGGER backlog-maintainer NOW
+- Start a feature? → TRIGGER product-owner for user story
+- Need a plan? → TRIGGER tech-lead for implementation strategy  
+- Write tests? → TRIGGER test-designer (RED phase)
+- Need implementation? → TRIGGER dev-engineer (GREEN phase)
+- Complete work? → TRIGGER qa-engineer for integration tests
+- Find a bug? → TRIGGER debugger-expert for diagnosis
+- Need Git help? → TRIGGER git-expert for version control
 
 **If you did work and haven't triggered an agent, STOP and trigger NOW.**
 
@@ -65,7 +67,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Work Item Types**: VS (Vertical Slice), BF (Bug Fix), TD (Tech Debt), HF (Hotfix)
 - **Status**: This is the ONLY place for work tracking (0_Global_Tracker is DEPRECATED)
 - **Naming Convention**: [Work_Item_Naming_Conventions.md](Docs/Shared/Core/Style-Standards/Work_Item_Naming_Conventions.md)
-- **Maintained by**: Product Owner agent (automatically triggered after EVERY development action)
+- **Maintained by**: Product Owner agent (manages work items and priorities)
+- **Updated by**: Claude Code directly when tracking progress
 
 ## 🚦 Delegation Decision Tree
 
@@ -84,7 +87,7 @@ Is there a specialist agent for this task?
 ❌ Writing test code → ✅ test-designer  
 ❌ Debugging errors → ✅ debugger-expert  
 ❌ Creating scripts → ✅ devops-engineer  
-❌ Updating backlog → ✅ backlog-maintainer  
+❌ Updating backlog → ✅ product-owner (for decisions) or direct update (for progress)  
 ❌ Analyzing architecture → ✅ architect  
 ❌ Checking file organization → ✅ vsa-refactoring  
 
@@ -103,7 +106,7 @@ BlockLife employs a comprehensive 11-agent ecosystem designed for solo developer
 | Agent | Model | Purpose | Domain Docs |
 |-------|-------|---------|-------------|
 | `product-owner` | Opus | User stories, backlog prioritization, acceptance criteria | - |
-| `backlog-maintainer` | Haiku | Silent progress tracking, status updates | - |
+| ~~`backlog-maintainer`~~ | ~~Haiku~~ | ~~DEPRECATED - Functionality merged into Product Owner~~ | - |
 | `tech-lead` | Opus | Implementation planning, technical decisions | [TechLead/](Docs/Agent-Specific/TechLead/) |
 
 ### TDD Workflow Agents  
@@ -189,19 +192,19 @@ BlockLife is a C# Godot 4.4 game implementing a strict Clean Architecture with M
 
 **THE RULE**: After EVERY development action, you MUST trigger the appropriate agent. NO EXCEPTIONS.
 
-### 🔴 IMMEDIATE TRIGGER CHECKLIST - DO THIS NOW
+### 🔴 IMMEDIATE ACTION CHECKLIST - DO THIS NOW
 
-**After ANY of these actions, IMMEDIATELY trigger backlog-maintainer:**
-- ✅ File edits (Edit/Write/MultiEdit tools used)
-- ✅ Test runs (passing OR failing)  
-- ✅ Documentation changes
-- ✅ Code reorganization or refactoring
-- ✅ Bug fixes applied
-- ✅ Feature implementation progress
-- ✅ File/folder reorganization
-- ✅ Cross-reference updates
+**After these actions, update the backlog or trigger appropriate agents:**
+- ✅ File edits → Update progress in backlog
+- ✅ Test runs → Update test status  
+- ✅ Documentation changes → Note in backlog
+- ✅ Code reorganization → Trigger vsa-refactoring if needed
+- ✅ Bug fixes → Update bug item status
+- ✅ Feature implementation → Update feature progress
+- ✅ File/folder moves → Note significant changes
+- ✅ Architecture changes → Trigger architect for review
 
-**If you just did ANY development work and haven't triggered an agent, YOU'RE DOING IT WRONG.**
+**If you just did ANY development work and haven't updated tracking, YOU'RE DOING IT WRONG.**
 
 ### ⚠️ MANDATORY: READ ORCHESTRATION GUIDE
 **FULL DETAILS**: [AGENT_ORCHESTRATION_GUIDE.md](Docs/Workflows/Orchestration-System/AGENT_ORCHESTRATION_GUIDE.md)

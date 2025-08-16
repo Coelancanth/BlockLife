@@ -1,8 +1,11 @@
 ---
-name: backlog-maintainer
-description: "AUTOMATICALLY and PROACTIVELY triggered after EVERY development action. Updates progress percentages with minimal confirmation, changes item statuses, manages file archival, maintains Backlog.md as the Single Source of Truth without interrupting development flow."
+name: backlog-maintainer-DEPRECATED
+description: "DEPRECATED - This agent is no longer used. Backlog updates are now handled directly by Claude Code for progress tracking, and by Product Owner for work item management. This file is kept for historical reference only."
 model: haiku
-color: cyan
+color: gray
+deprecated: true
+deprecated_date: 2025-08-16
+replacement: "Claude Code (direct updates) + Product Owner (work items)"
 ---
 
 

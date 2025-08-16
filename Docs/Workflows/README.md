@@ -9,8 +9,8 @@
 Individual workflow definitions for each of the 11 specialized agents in the BlockLife ecosystem.
 
 **Core Workflow Agents:**
-- `product-owner-workflow.md` - User story creation, backlog prioritization
-- `backlog-maintainer-workflow.md` - Silent progress tracking, link maintenance  
+- `product-owner-workflow.md` - User story creation, backlog prioritization, work item management
+- ~~`backlog-maintainer-workflow.md`~~ - **DEPRECATED** - Moved to `archived/` folder  
 - `tech-lead-workflow.md` - Implementation planning, technical decisions
 
 **TDD Workflow Agents:**
@@ -67,7 +67,7 @@ Documentation of the Automatic Orchestration Pattern that ensures all developmen
 ### 🔴 IMMEDIATE TRIGGERS REQUIRED
 
 **After ANY code/doc changes:**
-→ Trigger `backlog-maintainer` NOW
+→ Update backlog progress directly
 
 **When user requests features:**
 → Trigger `product-owner` NOW
@@ -90,7 +90,7 @@ Documentation of the Automatic Orchestration Pattern that ensures all developmen
 
 ### 2. **Agents Have Specialties**
 - Don't do work that belongs to a specialist agent
-- Example: Link updates → backlog-maintainer (not manual work)
+- Example: Feature evaluation → product-owner (not manual decision)
 - Example: Git conflicts → git-expert (not general debugging)
 
 ### 3. **Workflows Are Prescriptive**
@@ -119,20 +119,20 @@ Documentation of the Automatic Orchestration Pattern that ensures all developmen
 2. Story becomes VS → `tech-lead` creates plan
 3. Tests needed → `test-designer` writes failing tests
 4. Implementation → `dev-engineer` makes tests pass
-5. Every edit → `backlog-maintainer` tracks progress
+5. Every edit → Claude Code updates progress directly
 
 ### Bug Fix Flow
 1. User reports bug → `product-owner` creates BF item
 2. Complex debugging → `debugger-expert` diagnoses
 3. Fix implemented → `dev-engineer` applies fix
 4. Tests added → `qa-engineer` ensures no regression
-5. Every step → `backlog-maintainer` tracks progress
+5. Every step → Claude Code updates progress directly
 
 ### Documentation Update Flow
 1. Docs need update → Direct work (no special agent)
-2. Files reorganized → `backlog-maintainer` tracks
-3. Links need fixing → `backlog-maintainer` handles
-4. Cross-references → `backlog-maintainer` maintains
+2. Files reorganized → Update backlog progress
+3. Links need fixing → Fix directly and note in backlog
+4. Cross-references → Update directly
 
 ## ⚠️ Common Mistakes to Avoid
 

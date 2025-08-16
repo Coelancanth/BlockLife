@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 """
+[DEPRECATED - 2025-08-16]
+This script was created for the now-deprecated backlog-maintainer agent.
+The backlog-maintainer agent is no longer used in the workflow.
+Backlog updates are now handled directly by Claude Code for progress tracking.
+
+Original purpose:
 Backlog Maintainer Verification System
 Ensures file operations are ACTUALLY verified, not just reported.
 

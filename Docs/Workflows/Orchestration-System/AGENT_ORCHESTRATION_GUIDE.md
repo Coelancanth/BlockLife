@@ -135,15 +135,15 @@ This helps validate the pattern is working correctly.
 | **Pattern Creation** | "standardize pattern", "create base class" | "♻️ VSA REFACTOR: Creating pattern" | Extract common patterns |
 | **3+ Slice Rule** | Code appears in 3+ feature slices | "♻️ VSA REFACTOR: Auto-detected duplication" | Suggest extraction |
 
-### Backlog Maintainer Triggers (Silent but Announced)
+### Backlog Updates (Direct Management)
 
-| Trigger Condition | Detection Pattern | Announcement | Action |
-|-------------------|-------------------|--------------|--------|
-| **Code Written** | After Edit/Write on .cs/.py/.js | "🤖 MAINTAINER: Updating progress (code)" | +40% progress |
-| **Tests Written** | After Edit/Write on test files | "🤖 MAINTAINER: Updating progress (tests)" | +15% progress |
-| **Tests Pass** | "dotnet test" with "Passed!" | "🤖 MAINTAINER: Updating progress (tests pass)" | +15% progress |
-| **PR Created** | "gh pr create" command | "🤖 MAINTAINER: Changing status (PR)" | Status → In Review |
-| **PR Merged** | "gh pr merge" command | "🤖 MAINTAINER: Archiving completed item" | Move to archive |
+| Update Condition | Detection Pattern | Action | Who Updates |
+|-------------------|-------------------|--------|-------------|
+| **Code Written** | After Edit/Write on .cs/.py/.js | Update progress +40% | Claude Code directly |
+| **Tests Written** | After Edit/Write on test files | Update progress +15% | Claude Code directly |
+| **Tests Pass** | "dotnet test" with "Passed!" | Update progress +15% | Claude Code directly |
+| **PR Created** | "gh pr create" command | Status → In Review | Git Expert agent |
+| **PR Merged** | "gh pr merge" command | Archive completed item | Product Owner agent |
 
 ---
 
