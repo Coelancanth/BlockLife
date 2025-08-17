@@ -78,6 +78,183 @@ public async Task Method_Scenario_ExpectedOutcome()
 }
 ```
 
+## LanguageExt Testing Patterns 🔧
+
+### Core Concepts You Must Know
+- **Everything returns `Either<Error, T>`** - Success or failure, no exceptions
+- **`Option<T>` for nullable values** - Some or None, no nulls
+- **`Eff<T>` and `Aff<T>` for effects** - Must be run to get results
+- **Pattern matching over if/else** - Use Match for exhaustive handling
+- **Immutable collections** - `Lst<T>`, `Map<K,V>`, `Seq<T>` instead of List/Dictionary
+
+### Testing Either Results
+```csharp
+// ✅ GOOD - Explicit success assertion with value check
+result.Should().BeSuccess(); // Custom FluentAssertion
+result.IfSucc(value => value.Id.Should().Be(expectedId));
+
+// ✅ GOOD - Pattern matching for comprehensive testing
+result.Match(
+    Succ: value => {
+        value.Should().NotBeNull();
+        value.State.Should().Be(ExpectedState.Active);
+    },
+    Fail: error => Assert.Fail($"Expected success but got: {error.Message}")
+);
+
+// ✅ GOOD - Testing failure cases
+var result = await handler.Handle(invalidCommand);
+result.Should().BeFailure();
+result.IfFail(error => {
+    error.Code.Should().Be("VALIDATION_ERROR");
+    error.Message.Should().Contain("Invalid input");
+});
+
+// ❌ BAD - Don't use try-catch for functional code
+try { 
+    var result = await handler.Handle(command);
+} catch { /* This won't catch Either failures! */ }
+```
+
+### Testing Option Values
+```csharp
+// Testing Some case
+var option = repository.FindById(id);
+option.Should().BeSome(); // Custom assertion
+option.IfSome(entity => {
+    entity.Name.Should().Be("Expected");
+    entity.IsActive.Should().BeTrue();
+});
+
+// Testing None case
+var missing = repository.FindById(nonExistentId);
+missing.Should().BeNone();
+
+// Pattern matching for Option
+option.Match(
+    Some: value => value.Should().BeEquivalentTo(expected),
+    None: () => Assert.Fail("Expected value but got None")
+);
+```
+
+### Testing Effects (Eff/Aff)
+```csharp
+// Eff<T> - Synchronous effects
+[Test]
+public void EffectOperation_ValidInput_Success()
+{
+    var effect = service.CreateEffect(input);
+    var result = effect.Run(); // Must run to get result
+    
+    result.Match(
+        Succ: value => value.Should().Be(expected),
+        Fail: error => Assert.Fail($"Effect failed: {error}")
+    );
+}
+
+// Aff<T> - Asynchronous effects
+[Test]
+public async Task AsyncEffect_ValidInput_Success()
+{
+    var effect = service.CreateAsyncEffect(input);
+    var result = await effect.Run(); // Async run
+    
+    result.Should().BeSuccess();
+    result.IfSucc(value => value.Should().NotBeNull());
+}
+```
+
+### Testing Validation Errors
+```csharp
+// Your codebase uses specific error types
+[Test]
+public async Task Validation_InvalidInput_ReturnsSpecificError()
+{
+    var command = new MoveBlockCommand(-1, -1, BlockId.Empty);
+    var result = await handler.Handle(command);
+    
+    result.Should().BeFailure();
+    result.IfFail(error => {
+        // Test specific error type
+        error.Should().BeOfType<ValidationError>();
+        var validationError = error as ValidationError;
+        validationError.Field.Should().Be("Position");
+        validationError.Reason.Should().Be("Out of bounds");
+    });
+}
+
+// Testing multiple validation errors
+result.IfFail(error => {
+    if (error is CompositeError composite) {
+        composite.Errors.Should().HaveCount(3);
+        composite.Errors.Should().Contain(e => e.Code == "INVALID_POSITION");
+    }
+});
+```
+
+### Testing Collections
+```csharp
+// Lst<T> - Immutable list
+var items = service.GetItems();
+items.Count.Should().Be(5);
+items.Head.Should().Be(firstItem); // Safe head access
+items.Find(x => x.Id == targetId).Should().BeSome();
+
+// Map<K,V> - Immutable dictionary
+var map = service.GetConfiguration();
+map.Find("key").Should().BeSome();
+map["key"].Should().Be("value"); // Throws if missing
+map.TryFind("missing").Should().BeNone(); // Safe access
+
+// Seq<T> - Lazy sequence
+var sequence = service.GetLazySequence();
+sequence.Take(5).ToList().Should().HaveCount(5);
+```
+
+### Testing Domain Events with Functional Types
+```csharp
+[Test]
+public async Task Command_Success_PublishesWrappedEvent()
+{
+    var result = await handler.Handle(command);
+    
+    // Events might be wrapped in Either
+    var eventResult = eventStore.GetLastEvent();
+    eventResult.Should().BeSuccess();
+    eventResult.IfSucc(evt => {
+        evt.Should().BeOfType<BlockMovedEvent>();
+        evt.As<BlockMovedEvent>().NewPosition.Should().Be(expectedPos);
+    });
+}
+```
+
+### Common Assertion Helpers (Add to test base)
+```csharp
+public static class FunctionalAssertions
+{
+    public static void ShouldBeSuccess<T>(this Either<Error, T> result, T expected = default)
+    {
+        result.IsSucc.Should().BeTrue("Expected success but was failure");
+        if (expected != null)
+            result.IfSucc(v => v.Should().Be(expected));
+    }
+    
+    public static void ShouldBeFailure<T>(this Either<Error, T> result, string errorCode = null)
+    {
+        result.IsFail.Should().BeTrue("Expected failure but was success");
+        if (errorCode != null)
+            result.IfFail(e => e.Code.Should().Be(errorCode));
+    }
+    
+    public static void ShouldBeSome<T>(this Option<T> option, T expected = default)
+    {
+        option.IsSome.Should().BeTrue("Expected Some but was None");
+        if (expected != null)
+            option.IfSome(v => v.Should().Be(expected));
+    }
+}
+```
+
 ### Integration Test Pattern (GdUnit4)
 ```csharp
 [TestSuite]
@@ -198,6 +375,12 @@ tests/GdUnit4/Features/[Feature]/
 
 You understand:
 - **BlockLife architecture** - Clean Architecture, CQRS, MVP
+- **LanguageExt functional patterns**:
+  - Railway-oriented programming with `Either<Error, T>`
+  - Option types replacing nullables
+  - Immutable data structures (`Lst<T>`, `Map<K,V>`, `Seq<T>`)
+  - Effect types (`Eff<T>`, `Aff<T>`) for controlled side effects
+  - Pattern matching for exhaustive case handling
 - **Testing frameworks** - NUnit, GdUnit4, FluentAssertions
 - **Common failure patterns** - from post-mortems
 - **Performance requirements** - 60fps, <16ms operations
@@ -218,6 +401,13 @@ Study these examples:
 - **Brittle tests** - coupling to implementation details
 - **Slow tests** - unnecessary delays or heavy operations
 - **Test interdependence** - tests affecting each other
+
+### LanguageExt-Specific Pitfalls
+- **Forgetting to Run effects** - `Eff` and `Aff` must be `.Run()` to execute
+- **Using try-catch for Either** - Either failures aren't exceptions
+- **Null checks on Option** - Option can't be null, check `IsSome`/`IsNone`
+- **Mutating immutable collections** - Operations return new collections
+- **Ignoring pattern exhaustiveness** - Always handle both Success and Failure cases
 
 ## Success Metrics
 
