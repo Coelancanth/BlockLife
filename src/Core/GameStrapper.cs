@@ -181,6 +181,11 @@ public static class GameStrapper
         var loggerConfig = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(masterSwitch)
             .Enrich.FromLogContext()
+            // Filter out pre-warming messages
+            .Filter.ByExcluding(evt => 
+                evt.Properties.ContainsKey("PreWarm") || 
+                evt.Properties.ContainsKey("SourceContext") && 
+                evt.Properties["SourceContext"].ToString().Contains("PreWarm"))
             .WriteTo.Sink(godotConsoleSink);
 
         foreach (var (category, levelSwitch) in categorySwitches)
@@ -221,6 +226,11 @@ public static class GameStrapper
                 .MinimumLevel.Is(defaultLevel)
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Application", "BlockLife")
+                // Filter out pre-warming messages
+                .Filter.ByExcluding(evt => 
+                    evt.Properties.ContainsKey("PreWarm") || 
+                    evt.Properties.ContainsKey("SourceContext") && 
+                    evt.Properties["SourceContext"].ToString().Contains("PreWarm"))
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}");
 
             // Apply category-specific levels

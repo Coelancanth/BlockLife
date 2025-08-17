@@ -127,6 +127,40 @@ Reported → Investigating → Fix Proposed → Fix Applied → Verified
 8. **CI/CD gates**: All tests must pass locally (`./scripts/build.ps1 test`) before commit
 9. **PR requirements**: CI must pass on GitHub before merge
 
+## 🔧 Build Error Troubleshooting
+
+### Common Build Errors & Solutions
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| **"Type or namespace not found"** | Wrong namespace assumption | Run `Grep "class ClassName"` to find actual location |
+| **"Ambiguous reference between X and Y"** | Multiple types with same name | Add type alias: `using LangError = LanguageExt.Common.Error;` |
+| **"Cannot convert lambda expression"** | Match branches return different types | Ensure all branches return same type (e.g., `Unit.Default`) |
+| **"Error is an ambiguous reference"** | Godot.Error vs LanguageExt.Error | Use fully qualified: `LanguageExt.Common.Error.New()` |
+
+### Prevention Checklist
+Before building after refactoring:
+- [ ] Verified namespaces with `Grep "class ClassName"`
+- [ ] Added type aliases for any ambiguous types
+- [ ] Checked all Match branches return consistent types
+- [ ] Ran `./scripts/build.ps1 build` locally first
+- [ ] Fixed any namespace conflicts with type aliases
+
+### Quick Commands
+```bash
+# Find where a class is actually defined
+Grep "class PlaceBlockCommand" src/
+
+# Find all usages of a type
+Grep "PlaceBlockCommand" --type cs
+
+# Build locally before committing
+./scripts/build.ps1 build
+
+# Run tests to verify
+./scripts/build.ps1 test
+```
+
 ## Templates
 
 - `Docs/Workflow/Templates/VerticalSlice_Template.md` - Features

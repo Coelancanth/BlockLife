@@ -62,7 +62,7 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             // Mark that we've already created our first tween
             _firstTweenCreated = true;
             
-            GD.Print("[BlockVisualizationController] Tween system pre-warmed");
+            // Silent pre-warming - no need to log this
         }
         catch (Exception ex)
         {
