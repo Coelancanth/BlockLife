@@ -158,6 +158,53 @@ BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP patter
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
+## 🧠 MCP Tools: Semantic Code Analysis (PREFERRED)
+
+**ALWAYS use MCP tools for code understanding and analysis:**
+
+### Primary MCP Tools (Use These First)
+```bash
+# Understanding code structure
+mcp__serena__get_symbols_overview    # Get file overview before deep diving
+mcp__serena__find_symbol            # Find specific classes/methods/functions
+mcp__serena__search_for_pattern     # Search for patterns across codebase
+
+# Code modification 
+mcp__serena__replace_symbol_body    # Replace entire methods/classes
+mcp__serena__insert_after_symbol    # Add new code after symbols
+mcp__serena__insert_before_symbol   # Add imports, new methods before symbols
+
+# Analysis and navigation
+mcp__serena__find_referencing_symbols  # Find where code is used
+mcp__serena__read_file              # Read specific files efficiently
+```
+
+### MCP vs Standard Tools Decision Tree
+```
+🎯 Need to understand code structure? → Use mcp__serena__get_symbols_overview
+🎯 Looking for specific function/class? → Use mcp__serena__find_symbol  
+🎯 Need to modify entire method/class? → Use mcp__serena__replace_symbol_body
+🎯 Want to see file contents? → Use mcp__serena__read_file
+🎯 Searching for patterns? → Use mcp__serena__search_for_pattern
+
+❌ Only use standard Read/Glob/Grep tools when MCP tools don't fit the need
+```
+
+### MCP Efficiency Rules
+- **Start with symbols overview** - Never read entire files blindly
+- **Use symbol-based editing** - More precise than regex replacements  
+- **Leverage search patterns** - Find candidates before diving deep
+- **Memory system** - Store project knowledge for future sessions
+
+### Why MCP Tools Are Superior
+✅ **Semantic understanding** - Knows about classes, methods, functions  
+✅ **Efficient reading** - Only reads what you need  
+✅ **Precise editing** - Symbol-level modifications  
+✅ **Context awareness** - Understands code relationships  
+✅ **Memory persistence** - Remembers project patterns
+
+**Rule**: Always try MCP tools first. Fall back to standard tools only when MCP doesn't support your specific need.
+
 ## 🚦 Quality Gates & CI/CD
 
 **MANDATORY before committing:**
