@@ -63,7 +63,7 @@ public class BlockMovementNotificationBridge : INotificationHandler<BlockMovedNo
     /// </summary>
     public async Task Handle(BlockMovedNotification notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("BlockMovementNotificationBridge.Handle called for BlockMoved from {FromPosition} to {ToPosition}",
+        _logger.LogDebug("BlockMovementNotificationBridge.Handle called for BlockMoved from {FromPosition} to {ToPosition}",
             notification.FromPosition, notification.ToPosition);
 
         // Invoke weak event manager (thread-safe)

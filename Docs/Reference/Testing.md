@@ -103,6 +103,63 @@ tests/
 - **Deterministic** - same result every run
 - **Meaningful** - tests actual behavior, not implementation
 
+## Logging Guidelines for Tests
+
+### Log Level Usage
+
+**When to use each level:**
+
+| Level | Use For | Examples | Performance Impact |
+|-------|---------|----------|-------------------|
+| **Error** | Unrecoverable failures | Exception caught, critical assertion failed | None |
+| **Warning** | Recoverable issues | Missing optional config, retry needed, degraded mode | None |
+| **Information** | Key lifecycle events | Test suite started/completed, major phase transitions | Minimal |
+| **Debug** | Diagnostic details | Test step completed, state changes, decision points | Moderate |
+| **Verbose/Trace** | Everything else | Method entry/exit, variable values, loop iterations | HIGH |
+
+### Best Practices
+
+1. **In Test Code:**
+   ```csharp
+   // ✅ GOOD - Important test lifecycle
+   _logger.Information("Starting stress test with {ThreadCount} threads", 100);
+   
+   // ❌ BAD - Too verbose for Information
+   _logger.Information("Loop iteration {i}", i);  // Should be Trace
+   
+   // ✅ GOOD - Helpful diagnostic at Debug level
+   _logger.Debug("Command {CommandId} completed in {Ms}ms", id, elapsed);
+   ```
+
+2. **In Production Code Under Test:**
+   - Keep Information level SILENT unless it's a major event
+   - Use Debug for anything that helps diagnose issues
+   - Use Trace for ultra-verbose tracking (method entry/exit)
+
+3. **Performance Considerations:**
+   ```csharp
+   // Only log expensive operations at Trace level
+   if (_logger.IsEnabled(LogEventLevel.Verbose))
+   {
+       _logger.Verbose("Expensive serialization: {@Object}", complexObject);
+   }
+   ```
+
+### Common Anti-Patterns to Avoid
+
+❌ **Log Spam**: Every method call at Information level
+❌ **Missing Context**: "Operation failed" without details
+❌ **Wrong Level**: Debug info at Warning, errors at Debug
+❌ **Performance Logs**: Timing every operation at Information
+
+### Test Output Configuration
+
+For different test scenarios:
+- **CI/CD**: Information level (clean output)
+- **Local Development**: Debug level (helpful diagnostics)
+- **Troubleshooting**: Trace level (everything)
+- **Performance Tests**: Warning level (only problems)
+
 ## Reference Implementations
 
 - **Unit tests**: `tests/Features/Block/Move/MoveBlockCommandHandlerTests.cs`

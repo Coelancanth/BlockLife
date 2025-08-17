@@ -21,7 +21,7 @@ public partial class GridView : Control, IBlockManagementView
             switch (keyEvent.Keycode)
             {
                 case Key.F9:
-                    logger?.Information("F9 pressed - Printing performance report");
+                    logger?.Debug("F9 pressed - Printing performance report");
                     PerformanceProfiler.PrintReport();
                     GetViewport().SetInputAsHandled();
                     break;
@@ -31,7 +31,7 @@ public partial class GridView : Control, IBlockManagementView
                     if (VisualizationController != null)
                     {
                         VisualizationController.EnableAnimations = !VisualizationController.EnableAnimations;
-                        logger?.Information("F10 pressed - Animations {Status}", 
+                        logger?.Debug("F10 pressed - Animations {Status}", 
                             VisualizationController.EnableAnimations ? "ENABLED" : "DISABLED");
                     }
                     GetViewport().SetInputAsHandled();
@@ -45,7 +45,7 @@ public partial class GridView : Control, IBlockManagementView
                         var currentIndex = System.Array.IndexOf(speeds, VisualizationController.AnimationSpeed);
                         var nextIndex = (currentIndex + 1) % speeds.Length;
                         VisualizationController.AnimationSpeed = speeds[nextIndex];
-                        logger?.Information("F11 pressed - Animation speed set to {Speed}ms", 
+                        logger?.Debug("F11 pressed - Animation speed set to {Speed}ms", 
                             VisualizationController.AnimationSpeed * 1000);
                     }
                     GetViewport().SetInputAsHandled();
@@ -70,13 +70,13 @@ public partial class GridView : Control, IBlockManagementView
     public override void _Ready()
     {
         var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-        logger?.Information("GridView _Ready called");
+        logger?.Debug("GridView _Ready called");
         
         // Initialize performance profiler
         if (logger != null)
         {
             PerformanceProfiler.Initialize(logger);
-            logger?.Information("Performance profiler initialized");
+            logger?.Debug("Performance profiler initialized");
         }
         
         // Validate required components
@@ -95,7 +95,7 @@ public partial class GridView : Control, IBlockManagementView
         {
             _presenter = sceneRoot.CreatePresenterFor<BlockManagementPresenter, IBlockManagementView>(this);
             _presenter?.Initialize();
-            logger?.Information("GridView presenter created and initialized successfully");
+            logger?.Debug("GridView presenter created and initialized successfully");
         }
         else
         {
@@ -139,7 +139,7 @@ public partial class GridView : Control, IBlockManagementView
         IsInitialized = true;
         
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-        logger?.Information("GridView initialized with size {GridWidth}x{GridHeight}", gridSize.X, gridSize.Y);
+        logger?.Debug("GridView initialized with size {GridWidth}x{GridHeight}", gridSize.X, gridSize.Y);
         await Task.CompletedTask;
     }
     

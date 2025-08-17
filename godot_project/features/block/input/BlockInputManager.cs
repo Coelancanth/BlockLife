@@ -65,7 +65,7 @@ public partial class BlockInputManager : Node
     public override void _Ready()
     {
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-        logger?.Information("BlockInputManager ready - Place: {PlaceKey}, Inspect: {InspectKey}", 
+        logger?.Debug("BlockInputManager ready - Place: {PlaceKey}, Inspect: {InspectKey}", 
             PlaceBlockKey, InspectBlockKey);
         
         // Pre-warm Serilog message templates to prevent 282ms first-time delay
@@ -104,7 +104,7 @@ public partial class BlockInputManager : Node
                 // _dragMovedSubscription = _interactionController.DragMoved.Subscribe(OnDragMoved);
                 // _dragEndedSubscription = _interactionController.DragEnded.Subscribe(OnDragEnded);
                 
-                logger?.Information("BlockInputManager subscribed to grid interaction events");
+                logger?.Debug("BlockInputManager subscribed to grid interaction events");
             }
             else
             {
@@ -118,7 +118,7 @@ public partial class BlockInputManager : Node
                 
                 if (_blockManagementPresenter != null)
                 {
-                    logger?.Information("Successfully obtained BlockManagementPresenter from GridView - no reflection!");
+                    logger?.Debug("Successfully obtained BlockManagementPresenter from GridView - no reflection!");
                 }
             }
         }
@@ -130,7 +130,7 @@ public partial class BlockInputManager : Node
             _mediator = sceneRoot.ServiceProvider.GetService<IMediator>();
             _gridStateService = sceneRoot.ServiceProvider.GetService<IGridStateService>();
             
-            logger?.Information("BlockInputManager services initialized successfully - no reflection!");
+            logger?.Debug("BlockInputManager services initialized successfully - no reflection!");
         }
     }
     
@@ -161,7 +161,7 @@ public partial class BlockInputManager : Node
         if (_currentHoverPosition.IsSome)
         {
             var position = _currentHoverPosition.Match(Some: p => p, None: () => new Vector2Int(0, 0));
-            logger?.Information("🔨 Placing block at {Position} via {Key} key", position, PlaceBlockKey);
+            logger?.Debug("Placing block at {Position} via {Key} key", position, PlaceBlockKey);
             
             if (_mediator != null)
             {
@@ -172,7 +172,7 @@ public partial class BlockInputManager : Node
                 result.Match(
                     Succ: _ =>
                     {
-                        logger?.Information("✅ Block placed successfully at {Position}", position);
+                        logger?.Debug("Block placed successfully at {Position}", position);
                     },
                     Fail: error =>
                     {
@@ -187,7 +187,7 @@ public partial class BlockInputManager : Node
         }
         else
         {
-            logger?.Information("No position hovered - move cursor over grid to place block");
+            logger?.Debug("No position hovered - move cursor over grid to place block");
         }
     }
     
@@ -201,7 +201,7 @@ public partial class BlockInputManager : Node
         if (_currentHoverPosition.IsSome)
         {
             var position = _currentHoverPosition.Match(Some: p => p, None: () => new Vector2Int(0, 0));
-            logger?.Information("🔍 Inspecting position {Position}", position);
+            logger?.Debug("Inspecting position {Position}", position);
             
             if (_gridStateService != null)
             {
@@ -226,19 +226,19 @@ public partial class BlockInputManager : Node
                         }
                         
                         // Print comprehensive block information
-                        logger?.Information("📋 BLOCK INFO at {Position}:", position);
-                        logger?.Information("   BlockId: {BlockId}", block.Id);
-                        logger?.Information("   Type: {BlockType}", block.Type);
-                        logger?.Information("   Position: {Position}", block.Position);
-                        logger?.Information("   CreatedAt: {CreatedAt}", block.CreatedAt);
-                        logger?.Information("   LastModifiedAt: {LastModifiedAt}", block.LastModifiedAt);
-                        logger?.Information("   Has View: {HasView}", hasView);
+                        logger?.Debug("BLOCK INFO at {Position}:", position);
+                        logger?.Debug("   BlockId: {BlockId}", block.Id);
+                        logger?.Debug("   Type: {BlockType}", block.Type);
+                        logger?.Debug("   Position: {Position}", block.Position);
+                        logger?.Debug("   CreatedAt: {CreatedAt}", block.CreatedAt);
+                        logger?.Debug("   LastModifiedAt: {LastModifiedAt}", block.LastModifiedAt);
+                        logger?.Debug("   Has View: {HasView}", hasView);
                         if (hasView)
                         {
-                            logger?.Information("   View Position: ({X}, {Y})", viewPosition.X, viewPosition.Y);
-                            logger?.Information("   View Visible: {IsVisible}", isVisible);
+                            logger?.Debug("   View Position: ({X}, {Y})", viewPosition.X, viewPosition.Y);
+                            logger?.Debug("   View Visible: {IsVisible}", isVisible);
                         }
-                        logger?.Information("   Is Occupied: True");
+                        logger?.Debug("   Is Occupied: True");
                         
                         // Also print to Godot console for easy copying
                         GD.Print($"=== BLOCK INSPECTION ===");
@@ -257,9 +257,9 @@ public partial class BlockInputManager : Node
                     },
                     None: () =>
                     {
-                        logger?.Information("📋 EMPTY POSITION at {Position}:", position);
-                        logger?.Information("   No block present");
-                        logger?.Information("   Is Valid Position: {IsValid}", _gridStateService.IsValidPosition(position));
+                        logger?.Debug("EMPTY POSITION at {Position}:", position);
+                        logger?.Debug("   No block present");
+                        logger?.Debug("   Is Valid Position: {IsValid}", _gridStateService.IsValidPosition(position));
                         
                         GD.Print($"=== POSITION INSPECTION ===");
                         GD.Print($"Position: ({position.X}, {position.Y})");
@@ -276,7 +276,7 @@ public partial class BlockInputManager : Node
         }
         else
         {
-            logger?.Information("No position hovered - move cursor over grid to inspect");
+            logger?.Debug("No position hovered - move cursor over grid to inspect");
         }
     }
     
@@ -350,7 +350,7 @@ public partial class BlockInputManager : Node
                     PerformanceProfiler.StopTimer("V3_Match_SelectedPosition");
                     
                     PerformanceProfiler.StartTimer("V3_Log_MoveAttempt");
-                    logger?.Information("🔄 Moving block {BlockId} from {FromPosition} to {ToPosition}", 
+                    logger?.Debug("Moving block {BlockId} from {FromPosition} to {ToPosition}", 
                         selectedId, fromPos, position);
                     PerformanceProfiler.StopTimer("V3_Log_MoveAttempt");
                     
@@ -400,7 +400,7 @@ public partial class BlockInputManager : Node
                 await blockAtPosition.Match(
                     Some: async blockId =>
                     {
-                        logger?.Information("✋ Selected block {BlockId} at position {Position}", blockId, position);
+                        logger?.Debug("Selected block {BlockId} at position {Position}", blockId, position);
                         
                         PerformanceProfiler.StartTimer("SelectBlockAsync");
                         await SelectBlockAsync(blockId, position);
@@ -434,7 +434,7 @@ public partial class BlockInputManager : Node
         _selectedBlockPosition = Some(position);
         
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-        logger?.Information("Block {BlockId} selected for movement at position {Position}", blockId, position);
+        logger?.Debug("Block {BlockId} selected for movement at position {Position}", blockId, position);
         
         await Task.CompletedTask;
     }
@@ -483,7 +483,7 @@ public partial class BlockInputManager : Node
                 Succ: _ =>
                 {
                     PerformanceProfiler.StartTimer("MoveBlock_SuccessLogging");
-                    logger2?.Information("✅ Successfully moved block {BlockId} to {ToPosition}", blockId, toPosition);
+                    logger2?.Debug("Successfully moved block {BlockId} to {ToPosition}", blockId, toPosition);
                     PerformanceProfiler.StopTimer("MoveBlock_SuccessLogging");
                     return Task.CompletedTask;
                 },
@@ -549,13 +549,13 @@ public partial class BlockInputManager : Node
                 Guid.Empty, Vector2Int.Zero, Vector2Int.One);
             
             // Pre-warm other structured logging templates
-            preWarmLogger.Information("✅ Successfully moved block {BlockId} to {ToPosition}", 
+            preWarmLogger.Debug("Successfully moved block {BlockId} to {ToPosition}", 
                 Guid.Empty, Vector2Int.Zero);
             
             preWarmLogger.Information("✋ Selected block {BlockId} at position {Position}", 
                 Guid.Empty, Vector2Int.Zero);
             
-            preWarmLogger.Warning("❌ Failed to move block {BlockId}: {Error}", 
+            preWarmLogger.Debug("Failed to move block {BlockId}: {Error}", 
                 Guid.Empty, "test");
             
             // Pre-warm inspect output templates
@@ -584,7 +584,7 @@ public partial class BlockInputManager : Node
         
         try
         {
-            logger?.Information("Pre-warming async/await machinery...");
+            logger?.Debug("Pre-warming async/await machinery...");
             
             // Time the first async operation
             PerformanceProfiler.StartTimer("PreWarm_AsyncAwait_First");
@@ -611,7 +611,7 @@ public partial class BlockInputManager : Node
             await Task.Delay(1); // Small delay to ensure state machine runs
             var verifyTime = PerformanceProfiler.StopTimer("PreWarm_AsyncAwait_Verify");
             
-            logger?.Information("✅ Async/await machinery pre-warmed (first: {FirstMs}ms, optionMatch: {OptionMs}ms, verify: {VerifyMs}ms)",
+            logger?.Debug("Async/await machinery pre-warmed (first: {FirstMs}ms, optionMatch: {OptionMs}ms, verify: {VerifyMs}ms)",
                 firstTime, optionMatchTime, verifyTime);
             
             // If any operation took >100ms, we found the culprit!
@@ -661,7 +661,7 @@ public partial class BlockInputManager : Node
         
         try
         {
-            logger?.Information("Pre-warming Godot Tween subsystem...");
+            logger?.Debug("Pre-warming Godot Tween subsystem...");
             
             // Create and immediately destroy a tween to trigger JIT compilation
             // This moves the ~289ms initialization cost to startup time
@@ -685,7 +685,7 @@ public partial class BlockInputManager : Node
             }
             else
             {
-                logger?.Information("✅ Godot Tween subsystem pre-warmed successfully (verification: {Ms}ms)", verifyTime);
+                logger?.Debug("Godot Tween subsystem pre-warmed successfully (verification: {Ms}ms)", verifyTime);
             }
         }
         catch (Exception ex)

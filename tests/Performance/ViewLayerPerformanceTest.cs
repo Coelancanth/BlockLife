@@ -25,7 +25,8 @@ public class ViewLayerPerformanceTest
     public async Task BlockMovementAnimation_ShouldCompleteWithinTargetTime()
     {
         // Arrange
-        var targetMs = 150; // Our new animation speed target
+        var animationMs = 150; // Animation speed for each operation
+        var targetMs = animationMs * 2; // Two animations: show + update position
         var tolerance = 50; // Allow some variance for system performance
         
         // Create a mock visualization controller
@@ -49,7 +50,7 @@ public class ViewLayerPerformanceTest
         _output.WriteLine($"Block movement completed in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"Target: {targetMs}ms (+/- {tolerance}ms)");
         
-        // Visual update should complete near our animation time
+        // Visual update should complete near our combined animation time
         Assert.InRange(stopwatch.ElapsedMilliseconds, 0, targetMs + tolerance);
     }
     
