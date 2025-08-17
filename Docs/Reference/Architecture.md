@@ -84,6 +84,43 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
 ```
 **Rule**: All dependencies through constructor - no service locator pattern.
 
+### 6. **Error Handling Context**
+```csharp
+// ✅ Business Logic: Use Fin<T> for domain errors
+public async Task<Fin<Unit>> Handle(PlaceBlockCommand request)
+{
+    var validation = await _validator.Validate(request);
+    if (validation.IsFail) return validation;
+    
+    var result = await _service.PlaceBlock(request.Position);
+    if (result.IsFail) return result;
+    
+    // NO try-catch in business logic!
+    return Unit.Default;
+}
+
+// ✅ Infrastructure: Use try-catch for stability
+public static Task PreWarmSystem()
+{
+    try
+    {
+        // Optional optimization that shouldn't crash app
+        var tween = CreateTween();
+        tween?.Kill();
+    }
+    catch (Exception ex)
+    {
+        _logger?.Warning(ex, "Pre-warm failed, continuing");
+        return Task.CompletedTask;
+    }
+}
+
+// ✅ Type Aliases: Prevent namespace conflicts
+using LangError = LanguageExt.Common.Error;
+using GodotError = Godot.Error;
+```
+**Rule**: Infrastructure can use try-catch for stability. Business logic must use `Fin<T>` for errors.
+
 ## 🏗️ Standard Patterns
 
 ### Command Handler Template

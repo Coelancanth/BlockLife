@@ -22,6 +22,24 @@
 - **Fix**: Use production SceneRoot service provider in integration tests
 - *Lesson from*: Integration test architecture investigation (2025-08-14)
 
+#### Build Error Prevention Patterns
+- **ALWAYS verify namespace locations** - Use Grep/Glob before assuming
+- **Symptom**: "Type or namespace could not be found"
+- **Fix**: `Grep "class ClassName"` to find actual location
+- *Lesson from*: BlockInputManager refactoring (2025-08-17)
+
+#### Type Alias Best Practices
+- **USE type aliases for ambiguous types** in mixed frameworks
+- **Symptom**: "Ambiguous reference between X and Y"
+- **Fix**: `using LangError = LanguageExt.Common.Error;`
+- *Lesson from*: Godot.Error vs LanguageExt.Error conflict (2025-08-17)
+
+#### Lambda Type Consistency
+- **ENSURE all Match branches return same type**
+- **Symptom**: "Cannot convert lambda expression"
+- **Fix**: All branches must return Unit.Default or same type
+- *Lesson from*: Option<T>.Match pattern usage (2025-08-17)
+
 ## 💻 Dev Engineer Agent
 
 ### Command Handler Template
