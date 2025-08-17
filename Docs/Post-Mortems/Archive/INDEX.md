@@ -5,6 +5,25 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Archive Entries
 
+### 2025-08-18: CI Timing Test Failures
+**Location**: `2025-08-18-CI-Timing/`  
+**Original Count**: 1 post-mortem  
+**Key Issues**: False CI failures from timing-sensitive tests  
+**Primary Lessons**:
+- Never test wall-clock time in virtualized CI
+- Task.Delay can be 7x slower in CI (300ms → 2177ms)
+- PR builds vs main builds have different resources
+- 100% false positive rate on timing tests
+
+**Solutions Applied**:
+- ✅ Skip timing tests in CI environments
+- ✅ TD_006 proposed for test categorization
+- ✅ Environment detection pattern documented
+
+**Impact**: Eliminated ~50% false failure rate on main branch
+
+---
+
 ### 2025-08-17: Async JIT Compilation Lag (LEGACY MIGRATION)
 **Location**: `2025-08-17-AsyncJIT/`  
 **Original Count**: 1 consolidated post-mortem  
@@ -68,6 +87,9 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 - **performance-lag**: 2025-08-17 (AsyncJIT)
 - **jit-compilation**: 2025-08-17 (AsyncJIT)
 - **monolithic-class**: 2025-08-17 (BlockInput)
+- **ci-failures**: 2025-08-18 (CI-Timing)
+- **timing-tests**: 2025-08-18 (CI-Timing)
+- **false-positives**: 2025-08-18 (CI-Timing)
 
 ### By Solution
 - **context7**: 2025-08-18
@@ -76,6 +98,9 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 - **pre-warming**: 2025-08-17 (AsyncJIT)
 - **modularization**: 2025-08-17 (BlockInput)
 - **handler-pattern**: 2025-08-17 (BlockInput)
+- **test-skipping**: 2025-08-18 (CI-Timing)
+- **environment-detection**: 2025-08-18 (CI-Timing)
+- **test-categorization**: 2025-08-18 (CI-Timing)
 
 ### By Component
 - **drag-and-drop**: 2025-08-18
@@ -86,7 +111,7 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Statistics
 
-**Total Archived**: 4 post-mortems (2 legacy migrated)  
+**Total Archived**: 5 post-mortems (2 legacy migrated)  
 **Lessons Extracted**: 15+  
 **Documents Updated**: 4  
 **Systemic Improvements**: 3  

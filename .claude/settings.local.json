@@ -41,5 +41,10 @@
       "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\.claude"
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
   "outputStyle": "Explanatory"
 }

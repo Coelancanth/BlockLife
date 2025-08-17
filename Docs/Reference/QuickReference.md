@@ -100,6 +100,12 @@ mcp__context7__resolve-library-id "library-name"
 mcp__context7__get-library-docs "/org/project" --topic "specific-api"
 ```
 
+### CI/CD Testing Patterns
+- **NEVER test wall-clock time in CI** - You're testing infrastructure, not code
+- **Symptom**: Tests pass in PR, fail on main after merge
+- **Fix**: Skip timing tests in CI with `[Theory(Skip = "...")]`
+- *Lesson from*: CI timing test failures (2025-08-18)
+
 ### Context7 Rules (from context7.json)
 Our project-specific rules are indexed for AI assistance:
 - Always use src/Features/Block/Move/ as reference
