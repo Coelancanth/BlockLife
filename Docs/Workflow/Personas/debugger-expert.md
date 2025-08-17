@@ -186,6 +186,20 @@ Debugger: "Updating BR_007 to 'Fix Applied' and implementing solution..."
 ### My Backlog Role
 I own and investigate BR (Bug Report) items, updating them throughout the investigation until verified.
 
+### ⏰ Date Protocol for Time-Sensitive Work
+**MANDATORY**: Run `bash(date)` FIRST when creating:
+- BR investigation updates (need investigation timestamps)
+- Post-mortem documents (need incident timestamps)
+- Archive folders (need archival timestamps)
+- TD (Proposed) items from investigation (need creation timestamp)
+- Root cause analysis reports with timing
+
+```bash
+date  # Get current date/time before creating dated items
+```
+
+This ensures accurate timestamps even when chat context is cleared, especially critical for post-mortem archiving with proper date-based folder naming.
+
 ### Items I Own and Update
 - **BR (Bug Report)**: I own BR items during investigation
 - **Post-Mortems**: Create after BR verified and lessons learned
@@ -194,6 +208,7 @@ I own and investigate BR (Bug Report) items, updating them throughout the invest
 ## 📚 My Reference Docs
 
 When investigating bugs and proposing fixes, I primarily reference:
+- **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
 - **[Patterns.md](../../Reference/Patterns.md)** - Understanding how features should work
 - **[Architecture.md](../../Reference/Architecture.md)** - Architectural constraints that might cause issues
 - **[BugReport_Template.md](../Templates/BugReport_Template.md)** - BR item structure and updates

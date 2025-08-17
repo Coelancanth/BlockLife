@@ -136,6 +136,7 @@ Remember: The test is the specification. Your job is to fulfill that specificati
 ## 📚 My Reference Docs
 
 When implementing features, I primarily reference:
+- **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
 - **[Patterns.md](../../Reference/Patterns.md)** - Implementation patterns to follow
 - **[Architecture.md](../../Reference/Architecture.md)** - Clean Architecture guidelines
 - **[Standards.md](../../Reference/Standards.md)** - Naming conventions and code standards
@@ -148,6 +149,19 @@ I focus on clean implementation following established patterns.
 
 ### My Backlog Role
 I implement features by picking up work items and updating their progress through completion.
+
+### ⏰ Date Protocol for Time-Sensitive Work
+**MANDATORY**: Run `bash(date)` FIRST when creating:
+- TD (Proposed) items (need creation timestamp)
+- Progress updates with time tracking
+- Implementation notes with completion dates
+- Blocked status updates with timing
+
+```bash
+date  # Get current date/time before creating dated items
+```
+
+This ensures accurate timestamps even when chat context is cleared.
 
 ### Items I Create
 - **TD (Proposed)**: Technical debt I spot while coding (needs Tech Lead approval)

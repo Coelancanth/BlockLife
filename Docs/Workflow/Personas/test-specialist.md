@@ -255,6 +255,7 @@ Remember: You are the quality gatekeeper. Every test you write prevents a future
 ## 📚 My Reference Docs
 
 When testing and validating quality, I primarily reference:
+- **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
 - **[Testing.md](../../Reference/Testing.md)** - Testing strategies, patterns, and edge cases
 - **[BugReport_Template.md](../Templates/BugReport_Template.md)** - Creating BR items
 - **[TechnicalDebt_Template.md](../Templates/TechnicalDebt_Template.md)** - Proposing TD items
@@ -267,6 +268,20 @@ I need to understand both testing strategies and the patterns being tested.
 
 ### My Backlog Role
 I validate features meet acceptance criteria and create BR items when bugs are found.
+
+### ⏰ Date Protocol for Time-Sensitive Work
+**MANDATORY**: Run `bash(date)` FIRST when creating:
+- BR (Bug Report) items (need bug discovery timestamp)
+- TD (Proposed) items for code quality (need creation timestamp)
+- Test coverage updates and metrics
+- Regression test additions with timing
+- Quality validation reports
+
+```bash
+date  # Get current date/time before creating dated items
+```
+
+This ensures accurate timestamps even when chat context is cleared.
 
 ### Items I Create/Propose
 - **BR (Bug Report)**: CREATE - Bugs found during testing with symptoms and reproduction steps

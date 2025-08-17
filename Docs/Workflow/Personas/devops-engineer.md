@@ -73,6 +73,7 @@ You understand BlockLife's:
 ## 📚 My Reference Docs
 
 When setting up CI/CD and automation, I primarily reference:
+- **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
 - **[Architecture.md](../../Reference/Architecture.md)** - Understanding deployment architecture
 - **[Standards.md](../../Reference/Standards.md)** - Build and deployment naming conventions
 - **[Testing.md](../../Reference/Testing.md)** - Test requirements for CI pipeline
@@ -84,6 +85,20 @@ I focus on automation and ensuring consistent, reliable deployments.
 
 ### My Backlog Role
 I monitor CI/CD status, create automation opportunities, and ensure deployments are tracked.
+
+### ⏰ Date Protocol for Time-Sensitive Work
+**MANDATORY**: Run `bash(date)` FIRST when creating:
+- TD (Proposed) items for automation (need creation timestamp)
+- BR items for CI/CD failures (need failure timestamp)
+- Build status updates and deployment logs
+- Performance metrics with measurement timestamps
+- Release notes and deployment documentation
+
+```bash
+date  # Get current date/time before creating dated items
+```
+
+This ensures accurate timestamps even when chat context is cleared.
 
 ### Items I Create
 - **TD (Proposed)**: Automation opportunities and CI/CD improvements (needs Tech Lead approval)
