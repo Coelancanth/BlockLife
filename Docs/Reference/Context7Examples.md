@@ -1,13 +1,15 @@
 # Context7 Usage Examples for BlockLife
 
-## ✅ Available Libraries (Verified)
+## ✅ Available Libraries in Context7 Service (Verified)
 
-All our critical libraries are already in Context7:
+**Context7-Indexed Libraries** (Use with MCP tools):
 - **LanguageExt**: `/louthy/language-ext` (Trust Score: 9.4)
 - **MediatR**: `/jbogard/mediatr` (Trust Score: 10.0) 
 - **Godot**: `/godotengine/godot` (Trust Score: 9.9)
+- **🆕 Claude Code**: `/websites/docs_anthropic_com-en-docs-claude-code` (Trust Score: 7.5, 440 snippets)
+- **🆕 ccstatusline**: `/sirmalloc/ccstatusline` (Trust Score: 7, 28 snippets)
 
-No library submission needed - start querying immediately!
+**✅ Complete Coverage**: All our automation tools are now in Context7!
 
 ## Quick Start
 Context7 provides instant documentation access through MCP tools. Use these examples to prevent the bugs we've encountered in post-mortems.
@@ -194,5 +196,144 @@ The goal isn't to query everything, but to query strategically when:
 - Before major implementations
 - When something "should work" but doesn't
 
+## 🚀 Claude Code & ccstatusline Integration Examples
+
+### 8. Custom Slash Commands (NEW!) ✅ NOW IN CONTEXT7
+
+**Problem Prevention**: Understanding Claude Code slash command frontmatter and configuration
+
+**Context7 Query** (Claude Code now indexed in Context7):
+```bash
+# Query Claude Code custom command documentation via Context7
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "custom commands frontmatter allowed_tools bash integration"
+```
+
+**What You'll Learn**:
+- Frontmatter metadata format (`---description:`, `allowed_tools:`)
+- Command parameter handling
+- Bash tool integration patterns
+- Project vs global command scope
+
+**Real Example From Our System**:
+```markdown
 ---
-*Context7 integration configured in `/context7.json` - our rules and patterns are indexed for AI assistance*
+description: "Display current active persona for status line integration"
+allowed_tools: ["bash"]
+---
+
+# Read current persona state, default to 'none' if not set
+cat .claude/current-persona 2>/dev/null || echo "none"
+```
+
+### 9. ccstatusline Configuration ✅ NOW IN CONTEXT7
+
+**Problem Prevention**: Understanding ccstatusline config syntax and custom commands
+
+**Context7 Query** (ccstatusline now indexed in Context7):
+```bash
+# Query ccstatusline configuration documentation via Context7
+mcp__context7__get-library-docs "/sirmalloc/ccstatusline" --topic "configuration statusLines custom commands local vs global"
+```
+
+**What You'll Learn**:
+- Local vs global configuration precedence
+- Custom command integration syntax
+- Status line item types (git-branch, model, custom)
+- Color and styling options
+
+**Real Example From Our System**:
+```json
+{
+  "statusLines": [
+    {
+      "items": [
+        {
+          "type": "custom",
+          "command": "/persona/current",
+          "label": "Persona",
+          "icon": "👤"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 10. MCP Tool Integration ✅ NOW IN CONTEXT7
+
+**Problem Prevention**: Understanding Claude Code MCP (Model Context Protocol) tools
+
+**Context7 Query** (Claude Code MCP docs now indexed in Context7):
+```bash
+# Query MCP integration documentation via Context7
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "MCP server integration tool discovery Context7"
+```
+
+**What You'll Learn**:
+- How MCP tools appear as slash commands
+- Tool discovery and registration
+- Context7 MCP integration patterns
+- Custom tool development
+
+## Updated Quick Reference Queries
+
+### DevOps & Automation Queries ✅ ALL NOW IN CONTEXT7
+```bash
+# Claude Code settings and configuration
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "settings local configuration statusLine permissions"
+
+# ccstatusline custom commands  
+mcp__context7__get-library-docs "/sirmalloc/ccstatusline" --topic "custom commands configuration examples project global"
+
+# Slash command syntax
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "slash commands frontmatter allowed_tools"
+```
+
+### Core Framework Queries (Unchanged)
+```bash
+# LanguageExt Error handling
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Error Fin Option Match"
+
+# MediatR patterns  
+mcp__context7__get-library-docs "/jbogard/MediatR" --topic "IRequestHandler INotificationHandler"
+
+# Godot C# specifics
+mcp__context7__get-library-docs "/godotengine/godot" --topic "GodotObject Node2D C#"
+```
+
+## Updated Integration Workflow
+
+### Before Configuring Automation Tools
+1. Check existing patterns in `.claude/commands/` and `.claude/settings.local.json`
+2. If creating custom commands → Query Claude Code slash command docs
+3. If configuring status line → Query ccstatusline documentation
+4. If using MCP tools → Query MCP integration documentation
+
+### DevOps Automation Scenarios ✅ ALL NOW IN CONTEXT7
+```bash
+# Before creating persona commands
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "bash tools integration custom commands state management"
+
+# Before configuring ccstatusline
+mcp__context7__get-library-docs "/sirmalloc/ccstatusline" --topic "project global configuration precedence troubleshooting detection"
+
+# Before debugging status line issues
+mcp__context7__get-library-docs "/websites/docs_anthropic_com-en-docs-claude-code" --topic "statusLine command execution working directory troubleshooting"
+```
+
+## Documentation Coverage Update
+
+**🎉 COMPLETE CONTEXT7 COVERAGE ACHIEVED!**
+
+**Context7 MCP service now covers our entire stack**:
+- ✅ **Core Libraries**: LanguageExt, MediatR, Godot, xUnit
+- ✅ **🆕 Automation Tools**: Claude Code (440 snippets), ccstatusline (28 snippets)
+
+**Single-Tool Strategy**:
+- **Use Context7 MCP tools for everything**: All our libraries and tools are indexed!
+- **No more WebFetch needed**: Complete documentation through one unified interface
+
+**🚫 Zero assumption bugs across our complete automation stack!**
+
+---
+*Context7 integration configured in `/context7.json` - our rules, patterns, and automation tools are indexed for AI assistance*
