@@ -24,6 +24,12 @@ You believe in Infrastructure as Code and automating everything that happens mor
 
 ## CI/CD Pipeline Expertise
 
+### Current Infrastructure
+- **Build Scripts**: `scripts/build.ps1` (Windows), `scripts/build.sh` (Linux/Mac)
+- **CI Pipeline**: GitHub Actions (`.github/workflows/ci.yml`)
+- **Commands**: `build`, `test`, `clean`, `run`, `all`
+- **Quality Gates**: All PRs must pass CI before merge
+
 
 ## Your Outputs
 

@@ -158,6 +158,28 @@ BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP patter
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
+## 🚦 Quality Gates & CI/CD
+
+**MANDATORY before committing:**
+```bash
+# Windows
+./scripts/build.ps1 test    # Must pass all tests
+
+# Linux/Mac  
+./scripts/build.sh test     # Must pass all tests
+```
+
+**Build Commands:**
+- `build` - Build the solution
+- `test` - Run all tests (REQUIRED before commit)
+- `clean` - Clean build artifacts
+- `all` - Clean, build, and test
+
+**CI/CD Pipeline:**
+- GitHub Actions runs on every PR and push
+- All tests must pass for PR to be mergeable
+- Use feature branches, never commit directly to main
+
 ## ⚠️ CRITICAL: Git Workflow Requirements
 
 **🚫 NEVER WORK DIRECTLY ON MAIN BRANCH**
@@ -293,4 +315,36 @@ git checkout main
 git branch -D my-broken-branch     # Delete local branch
 git pull                            # Get fresh main
 git checkout -b feat/fresh-start   # Try again
+```
+
+## 📦 PR Merge Strategy
+
+### Default: Squash and Merge
+When merging PRs to main, use **Squash and merge** by default:
+```bash
+# Via GitHub UI: Select "Squash and merge" 
+# Via CLI:
+gh pr merge --squash --delete-branch
+```
+
+### When to Squash (90% of PRs)
+- ✅ Feature implementations with multiple WIP commits
+- ✅ Bug fixes with trial-and-error commits
+- ✅ Any PR with "fix typo", "oops", "wip" commits
+
+**Result**: Clean main history with one commit per feature
+
+### When NOT to Squash (Rare)
+- ❌ Large refactors with meaningful intermediate steps
+- ❌ Multi-part features where each commit is valuable
+- ❌ When specifically preserving attribution
+
+**Example squashed commit message**:
+```
+feat: add block rotation with Q/E keys (#23)
+
+- Implemented rotation logic in BlockRotationService
+- Added Q/E keybindings
+- Updated tests for rotation validation
+- Fixed edge cases for boundary blocks
 ```

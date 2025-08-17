@@ -31,13 +31,17 @@ Ready for Dev      (back to Product Owner)
     ↓
 Dev Engineer implements (Status: In Progress)
     ↓
+[Runs ./scripts/build.ps1 test locally]
+    ↓
+Creates PR → CI/CD runs automatically
+    ↓
 Test Specialist validates (Status: Testing)
     ↓
 [Checks functionality AND code quality]
     ↓                    ↓
 Passes                Quality Issues
     ↓                    ↓
-DevOps deploys      Proposes TD item
+CI passes & merged   Proposes TD item
     ↓                    ↓
 (Status: Done)      (Continues testing)
 ```
@@ -120,6 +124,8 @@ Reported → Investigating → Fix Proposed → Fix Applied → Verified
 5. **User approves fixes** - Debugger can't autonomously fix
 6. **Single source**: `Docs/Workflow/Backlog.md`
 7. **Quality gates**: Test Specialist blocks if untestable, proposes TD if messy
+8. **CI/CD gates**: All tests must pass locally (`./scripts/build.ps1 test`) before commit
+9. **PR requirements**: CI must pass on GitHub before merge
 
 ## Templates
 
