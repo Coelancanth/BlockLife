@@ -226,16 +226,26 @@ mcp__context7__get-library-docs "/godotengine/godot" --topic "Node2D C#"
 
 **MANDATORY for ALL changes:**
 ```bash
-# Always start with branch
+# 1. ALWAYS sync with latest main first (CRITICAL!)
+git fetch origin
+git checkout main && git pull origin main
+
+# 2. Create your feature branch FROM UPDATED MAIN
 git checkout -b feat/your-feature-name
 
-# Work, commit, push
+# 3. Work, commit, push
 git add . && git commit -m "feat: description"
 git push -u origin feat/your-feature-name
 
-# Create PR
+# 4. Create PR
 gh pr create --title "feat: title" --body "description"
 ```
+
+**⚠️ NEVER SKIP STEP 1** - Starting from outdated main causes:
+- Merge conflicts
+- Duplicate work (fixing already-fixed bugs)
+- CI failures
+- Wasted developer time
 
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)
@@ -247,8 +257,9 @@ gh pr create --title "feat: title" --body "description"
 
 ### The Daily Workflow (90% of your needs)
 ```bash
-# Start fresh work
-git checkout main && git pull
+# Start fresh work (ALWAYS sync first!)
+git fetch origin
+git checkout main && git pull origin main
 git checkout -b feat/what-im-building
 
 # Save your progress
@@ -352,9 +363,10 @@ chore:    # Maintenance tasks (deps, configs)
 ### 🔥 Emergency Escape Hatch
 ```bash
 # "I've completely broken everything and want to start over"
+git fetch origin                   # Get latest refs
 git checkout main
 git branch -D my-broken-branch     # Delete local branch
-git pull                            # Get fresh main
+git pull origin main               # Get fresh main
 git checkout -b feat/fresh-start   # Try again
 ```
 
