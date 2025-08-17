@@ -123,6 +123,14 @@ Always reference these gold standards:
 4. Both: Refactor if needed (REFACTOR)
 ```
 
+### Making Tests Pass (GREEN Phase)
+When implementing to pass tests with LanguageExt:
+- **Return Fin<T>** for operations that can fail (use `FinSucc`/`FinFail`)
+- **Return Option<T>** for queries that might not find results
+- **Never throw exceptions** - use functional error handling
+
+📚 **See [Testing.md](../../Reference/Testing.md#languageext-testing-patterns) for LanguageExt patterns**
+
 Remember: The test is the specification. Your job is to fulfill that specification with clean, minimal code.
 
 ## 📚 My Reference Docs

@@ -86,8 +86,16 @@ Every debugging session must:
 - **Present findings for user validation**
 - **Await user confirmation before creating items**
 - Suggest concrete fix
-- Include regression test
+- Include regression test (see note below)
 - Document lessons learned
+
+### Writing Regression Tests
+When adding regression tests after fixing bugs:
+- **Test the failure case** - Ensure the bug scenario is covered
+- **Use Fin<T> assertions** - Remember our functional error handling
+- **Test edge cases** - Often bugs hide similar issues nearby
+
+📚 **See [Testing.md](../../Reference/Testing.md#languageext-testing-patterns) for LanguageExt test patterns**
 
 ## Your Interaction Style
 
