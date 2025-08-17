@@ -28,28 +28,50 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### ~~BR_001: Complete BlockInputManager Refactoring~~ ✅ DONE
+**Status**: Completed
+**Size**: S (4h actual) 
+**Branch**: feat/blockinputmanager-refactoring
+**Completed**: 2025-08-17
+
+**What Was Done**: 
+- Refactored 700+ line monolith into focused components
+- Modularized input handling for better maintainability
+- All tests passing, ready for merge
+
+**Unblocked**: VS_001 can now proceed
+
 
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_001: Complete Drag-to-Move Block System
-**Status**: Ready
-**Size**: L (2-3 days)
-**Technical Lead**: @Tech Lead approved
+### VS_001: Complete Drag-to-Move Block System (Replaces Click-Then-Move)
+**Status**: Phase 1 Backend Complete 🔧 | UI Integration Needed
+**Size**: L (2 days)
+**Tech Lead**: Approved ✓
+**Branch**: feat/drag-to-move-blocks
+**Depends On**: ~~BlockInputManager refactoring~~ ✅ DONE
 
-**Description**: Complete, shippable drag-and-drop movement system with range constraints and swap capability.
+**Description**: Complete, shippable drag-and-drop movement system that REPLACES the current click-then-move pattern. Provides more intuitive interaction with range constraints and swap capability.
 
 **Vertical Slice Scope**:
-- **UI Layer**: Mouse/touch drag interactions with visual feedback
+- **UI Layer**: Mouse drag interactions with visual feedback
 - **Command Layer**: DragBlockCommand, SwapBlocksCommand
 - **Logic Layer**: Movement validation, range checking, swap detection
 - **Data Layer**: Update block positions, maintain grid state
 
 **Implementation Phases** (can ship after any phase):
-1. **Phase 1 - Basic Drag** (shippable):
-   - Drag blocks to empty cells
-   - Visual feedback during drag
-   - Cancel on ESC/right-click
+1. **Phase 1 - Basic Drag** 🔧 **BACKEND COMPLETE** | **UI PENDING**:
+   - ✅ Backend: Commands/handlers implemented (StartDrag, CompleteDrag, CancelDrag)
+   - ✅ Backend: DragStateService tracking drag state
+   - ✅ Backend: IDragView interface defined
+   - ✅ Backend: All unit tests passing (9/9 tests)
+   - ⏳ **UI TODO**: Create Godot DragView implementation
+   - ⏳ **UI TODO**: Wire up mouse input events (down/move/up)
+   - ⏳ **UI TODO**: Implement visual feedback (ghost block, valid/invalid indicators)
+   - ⏳ **UI TODO**: Connect ESC/right-click for cancel
+   - ⏳ **UI TODO**: Register DragPresenter with PresenterFactory
+   - ⏳ **UI TODO**: Integration testing in game
    
 2. **Phase 2 - Range Limits** (shippable enhancement):
    - Add movement range validation (default: 3 cells)
@@ -62,23 +84,50 @@
    - Validate swap against both block ranges
 
 **Acceptance Criteria**:
-- [ ] Complete drag-to-move flow works end-to-end
-- [ ] Range constraints properly enforced
-- [ ] Swap mechanics feel intuitive
-- [ ] Mobile touch support included
-- [ ] All existing tests pass
+- [x] Phase 1: Basic drag-to-move flow implemented (backend complete, needs UI integration)
+- [ ] Phase 2: Range constraints properly enforced (ready to enable)
+- [ ] Phase 3: Swap mechanics feel intuitive (commands ready to implement)
+- [x] All existing tests pass (9 new drag tests + all previous tests passing)
+- [ ] Performance validated (no frame drops during drag) - needs UI testing
 
-**Dependencies**: None - complete vertical slice
+**Tech Lead Implementation Notes**:
+- **REPLACES click-then-move**: Remove/deprecate existing click selection for movement
+- Copy patterns from `src/Features/Block/Move/` as reference
+- Use `Fin<Unit>` for all command results
+- Implement `DragStateService` for tracking drag state
+- Follow MVP pattern with `IDragView` and `DragPresenter`
+- Test-first approach for each phase
+- Consider migration path: Phase 1 can coexist, Phase 2+ should fully replace
+
+**Phase 1 Completion Notes** (2025-08-18):
+- ✅ Backend fully implemented following Move Block patterns
+- ✅ Commands: StartDrag, CompleteDrag, CancelDrag
+- ✅ DragStateService maintains single drag state
+- ✅ IDragView interface defines UI contract
+- ✅ DragPresenter coordinates view/command interaction
+- ✅ Services registered in GameStrapper
+- **Next Step**: Create Godot view implementing IDragView for UI integration
 
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_001: [Proposed] Extract Input System to Separate Feature Module
-**Tech Lead Notes**: After implementing drag-and-drop, we should consider extracting all input handling into a dedicated Feature module following our Clean Architecture pattern. This would centralize input state management and make it easier to add new interaction modes.
+### TD_001: Extract Input System to Separate Feature Module
+**Status**: Approved ✓
+**Size**: M (4-6 hours)
+**Priority**: Ideas (after VS_001)
+**Tech Lead**: Valid architectural improvement. Implement after VS_001 to understand full requirements.
 
-### TD_002: [Proposed] Performance Optimization for Drag Visualization
-**Tech Lead Notes**: Once drag-and-drop is working, profile the performance impact of continuous visual updates during drag operations. May need to implement throttling or frame-skipping for lower-end devices.
+**Approach**:
+- Create `src/Features/Input/` module
+- Extract common input handling patterns
+- Centralize input state management
+- Follow existing feature module structure
+
+### TD_002: [Deferred] Performance Optimization for Drag Visualization
+**Status**: Not Approved ❌
+**Tech Lead**: Premature optimization. No performance issues identified yet.
+**Action**: Only revisit if profiling shows actual performance problems during VS_001 implementation.
 
 
 ## 🚧 Currently Blocked
