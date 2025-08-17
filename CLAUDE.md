@@ -277,7 +277,10 @@ gh pr create --title "feat: title" --body "description"
 #### "I forgot to create a branch!"
 ```bash
 git stash                          # Save uncommitted work
-git checkout -b feat/proper-name  # Create branch now
+git fetch origin                   # Get latest refs
+git checkout main                  # Switch to main
+git pull origin main               # Update main
+git checkout -b feat/proper-name  # Create branch from updated main
 git stash pop                      # Restore your work
 ```
 
@@ -316,10 +319,11 @@ git add -A && git commit
 #### "I need to update my branch with main!"
 ```bash
 # Preferred - keeps history clean:
-git fetch origin main:main && git rebase main
+git fetch origin
+git rebase origin/main
 
 # Alternative if rebase gets messy:
-git merge main
+git merge origin/main
 ```
 
 #### "I committed to the wrong branch!"
