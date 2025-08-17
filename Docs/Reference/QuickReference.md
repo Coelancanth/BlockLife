@@ -40,6 +40,74 @@
 - **Fix**: All branches must return Unit.Default or same type
 - *Lesson from*: Option<T>.Match pattern usage (2025-08-17)
 
+## 📚 Context7 Documentation Integration
+
+### What is Context7?
+MCP-powered documentation service that provides instant access to library docs while coding. **Prevents assumption-based bugs by verifying APIs before implementation.**
+
+### Critical Libraries to Query
+
+#### LanguageExt Documentation
+```bash
+# Before using Error handling:
+mcp__context7__resolve-library-id "LanguageExt"
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Error"
+
+# Common gotchas resolved:
+- Error.Message returns code only (use ToString() for full)
+- Fin<T> patterns for command handlers
+- Option<T>.Match branch consistency
+```
+
+#### MediatR Documentation  
+```bash
+# Before implementing handlers:
+mcp__context7__resolve-library-id "MediatR"
+mcp__context7__get-library-docs "/jbogard/MediatR" --topic "handler registration"
+
+# Common gotchas resolved:
+- Auto-discovery includes ALL IRequestHandler implementations
+- Presenters should NOT implement INotificationHandler
+- Pipeline behavior registration
+```
+
+#### Godot C# API
+```bash
+# Before using Godot classes:
+mcp__context7__resolve-library-id "Godot"
+mcp__context7__get-library-docs "/godotengine/godot" --topic "C# Node"
+
+# Common gotchas resolved:
+- Node lifecycle methods
+- Signal connection patterns
+- Resource loading in C#
+```
+
+### When to Use Context7
+
+**MANDATORY Context7 checks:**
+- ❗ Before overriding base class methods
+- ❗ Before using unfamiliar framework APIs
+- ❗ When error messages reference unknown types
+- ❗ Before implementing interface methods
+
+**Query Pattern:**
+```bash
+# 1. Resolve library ID first
+mcp__context7__resolve-library-id "library-name"
+
+# 2. Get specific documentation
+mcp__context7__get-library-docs "/org/project" --topic "specific-api"
+```
+
+### Context7 Rules (from context7.json)
+Our project-specific rules are indexed for AI assistance:
+- Always use src/Features/Block/Move/ as reference
+- Use Fin<Unit> for error handling
+- Presenters need manual DI registration
+- Test with BlockBuilder not BlockFactory
+- Replace features properly: Build → Find → Disable → Test
+
 ## 💻 Dev Engineer Agent
 
 ### Command Handler Template

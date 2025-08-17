@@ -69,6 +69,14 @@ Debugger proposes fix (Status: Fix Proposed)
 User approves → Dev Engineer implements (Status: Fix Applied)
     ↓
 Test Specialist verifies (Status: Verified)
+    ↓
+[If significant bug]
+    ↓
+Debugger Expert creates post-mortem
+    ↓
+Debugger consolidates lessons → Updates docs
+    ↓
+Debugger AUTOMATICALLY archives (mandatory)
 ```
 
 ## Status Updates
@@ -78,7 +86,7 @@ Test Specialist verifies (Status: Verified)
 - **Tech Lead**: TD approval/rejection, adds estimates
 - **Dev Engineer**: In Progress → Done
 - **Test Specialist**: Testing status, creates BR for bugs, proposes TD for quality issues
-- **Debugger Expert**: BR investigation status
+- **Debugger Expert**: BR investigation status, post-mortem creation/consolidation/archiving
 - **DevOps**: Build/Deploy status
 - **Anyone**: Can propose TD items (Test Specialist commonly does during testing)
 
@@ -146,6 +154,17 @@ Before building after refactoring:
 - [ ] Ran `./scripts/build.ps1 build` locally first
 - [ ] Fixed any namespace conflicts with type aliases
 
+### Pre-Implementation Checklist (Context7 Integration)
+Before writing code with unfamiliar APIs:
+- [ ] **Query Context7 for framework documentation** (prevents assumption bugs)
+  - [ ] LanguageExt error handling patterns if using `Fin<T>` or `Error`
+  - [ ] MediatR handler registration if creating new handlers
+  - [ ] Godot lifecycle methods if overriding Node methods
+- [ ] **Verify methods exist** before overriding (`mcp__context7__get-library-docs`)
+- [ ] **Check DI registration requirements** for new services
+- [ ] **Review existing patterns** in `src/Features/Block/Move/`
+- [ ] **Map integration points** if replacing features (find ALL old code)
+
 ### Quick Commands
 ```bash
 # Find where a class is actually defined
@@ -161,11 +180,28 @@ Grep "PlaceBlockCommand" --type cs
 ./scripts/build.ps1 test
 ```
 
+## Post-Mortem Lifecycle (Debugger Expert Owns)
+
+**MANDATORY FLOW**: Create → Consolidate → Archive
+
+1. **Create** post-mortem for significant bugs (>30min fix or systemic issue)
+2. **Consolidate** lessons into:
+   - Framework gotchas → QuickReference.md
+   - Process improvements → Workflow.md
+   - API examples → Context7Examples.md
+3. **Archive AUTOMATICALLY** to `Post-Mortems/Archive/YYYY-MM-DD-Topic/`
+   - Run `date` command first for folder naming
+   - Include EXTRACTED_LESSONS.md
+   - Track with IMPACT_METRICS.md
+
+**Iron Rule**: "A post-mortem in active directory = Debugger Expert failure"
+
 ## Templates
 
 - `Docs/Workflow/Templates/VerticalSlice_Template.md` - Features
 - `Docs/Workflow/Templates/BugReport_Template.md` - Bugs  
 - `Docs/Workflow/Templates/TechnicalDebt_Template.md` - Tech Debt
+- `Docs/Post-Mortems/PostMortem_Template.md` - Post-mortems
 
 ---
 *This workflow ensures clear ownership and smooth handoffs through the development lifecycle.*

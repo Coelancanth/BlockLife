@@ -1,0 +1,45 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "BlockLife - Clean Architecture Godot Game",
+  "description": "C# Godot 4.4 game implementing Clean Architecture with MVP pattern, CQRS, and functional programming using LanguageExt.Core",
+  "folders": [
+    "Docs/Reference",
+    "Docs/Workflow", 
+    "Docs/Post-Mortems",
+    "src/Features/Block/Move"
+  ],
+  "excludeFolders": [
+    "bin",
+    "obj",
+    ".godot",
+    "node_modules",
+    ".git",
+    "Tests/bin",
+    "Tests/obj"
+  ],
+  "excludeFiles": [
+    "*.dll",
+    "*.exe",
+    "*.pdb",
+    "*.cache"
+  ],
+  "rules": [
+    "ALWAYS use src/Features/Block/Move/ as reference implementation for new features",
+    "Use Fin<Unit> for command error handling, never throw exceptions",
+    "Presenters require manual DI registration - do NOT implement INotificationHandler",
+    "Test utilities: Use BlockBuilder not BlockFactory",
+    "LanguageExt: Error.Message returns code only, use ToString() for full message",
+    "MediatR auto-discovers ALL handlers - be careful with interface implementations",
+    "PresenterBase lifecycle methods are Initialize/Dispose, NOT OnViewAttached/OnViewDetached",
+    "When replacing features: 1) Build new, 2) Find ALL old touchpoints, 3) Disable old, 4) Test old doesn't work",
+    "Always write negative tests - test what SHOULDN'T happen",
+    "Check existing patterns before implementing - don't assume methods exist",
+    "DragStateService is singleton - only one drag operation at a time",
+    "Use feature branches, never commit directly to main",
+    "Run './scripts/build.ps1 test' before committing",
+    "Commit messages: feat:, fix:, refactor:, test:, docs:, perf:, chore:",
+    "Complex bugs (>30min) need Debugger Expert persona",
+    "VS items for features, BR for bugs, TD for technical debt"
+  ],
+  "previousVersions": []
+}

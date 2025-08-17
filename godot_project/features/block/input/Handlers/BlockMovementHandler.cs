@@ -12,8 +12,9 @@ using Serilog;
 namespace BlockLife.Godot.Features.Block.Input.Handlers;
 
 /// <summary>
-/// Handles block movement via click-to-select and click-to-move pattern.
-/// First click selects a block, second click moves it to the target position.
+/// Handles block movement completion after drag operations.
+/// With drag-to-move system, this only handles placing blocks after dragging,
+/// not the initial selection (which is now handled by drag).
 /// </summary>
 public sealed class BlockMovementHandler
 {
@@ -35,7 +36,9 @@ public sealed class BlockMovementHandler
     }
     
     /// <summary>
-    /// Handles cell clicks for block selection and movement.
+    /// Handles cell clicks for block movement completion.
+    /// With drag-to-move, clicking on a block no longer selects it (drag does that).
+    /// This only handles placing a block that's already selected via drag.
     /// </summary>
     public async Task HandleCellClick(Vector2Int position)
     {
@@ -45,7 +48,13 @@ public sealed class BlockMovementHandler
         }
         else
         {
-            await HandleSelection(position);
+            // With drag-to-move, we no longer select blocks via click
+            // Just log that a click occurred on a block (drag handles selection)
+            var blockAtPosition = GetBlockAt(position);
+            blockAtPosition.IfSome(blockId =>
+                _logger?.Debug("Click on block {BlockId} at {Position} - use drag to move blocks", 
+                    blockId, position)
+            );
         }
     }
     
@@ -72,24 +81,7 @@ public sealed class BlockMovementHandler
         }
     }
     
-    private async Task HandleSelection(Vector2Int position)
-    {
-        var blockAtPosition = GetBlockAt(position);
-        
-        await blockAtPosition.Match(
-            Some: blockId =>
-            {
-                _logger?.Debug("Selected block {BlockId} at position {Position}", blockId, position);
-                _selectionManager.SelectBlock(blockId, position);
-                return Task.CompletedTask;
-            },
-            None: () =>
-            {
-                _logger?.Debug("No block at position {Position} to select", position);
-                return Task.CompletedTask;
-            }
-        );
-    }
+    // HandleSelection method removed - selection is now handled by drag-to-move
     
     private async Task MoveBlock(Guid blockId, Vector2Int toPosition)
     {

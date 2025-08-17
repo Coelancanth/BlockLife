@@ -29,6 +29,8 @@ How did this slip through:
 - [ ] Inadequate type constraints
 - [ ] Documentation gap
 - [ ] Code review miss
+- [ ] Didn't query Context7 for API documentation
+- [ ] Assumed method/behavior without verification
 
 ### Impact Analysis
 - **Scope**: Which layers affected (Core/Presentation/Infrastructure)
@@ -48,6 +50,8 @@ How did this slip through:
 - [ ] Add specific test case
 - [ ] Update style guide rule
 - [ ] Add compiler warning/analyzer
+- [ ] Document API gotcha in QuickReference.md
+- [ ] Add Context7 query example for this scenario
 
 #### Systemic Changes
 - [ ] Architectural constraint to enforce

@@ -140,6 +140,15 @@ public static class GameStrapper
         services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
 
+        // --- Drag Services (VS_001) ---
+        services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
+            BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
+        
+        // Drag command handlers
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.StartDragCommandHandler>();
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CompleteDragCommandHandler>();
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CancelDragCommandHandler>();
+
         // --- Validation Rules ---
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsValidRule, BlockLife.Core.Features.Block.Placement.Rules.PositionIsValidRule>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsEmptyRule, BlockLife.Core.Features.Block.Placement.Rules.PositionIsEmptyRule>();
@@ -331,6 +340,15 @@ public static class GameStrapper
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
         services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
+
+        // --- Drag Services (VS_001) ---
+        services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
+            BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
+        
+        // Drag command handlers
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.StartDragCommandHandler>();
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CompleteDragCommandHandler>();
+        services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CancelDragCommandHandler>();
 
         // --- Validation Rules ---
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsValidRule,
