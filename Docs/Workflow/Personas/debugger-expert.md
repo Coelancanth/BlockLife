@@ -232,3 +232,83 @@ I need deep understanding of implementation to find root causes.
 - Location: `Docs/Workflow/Backlog.md`
 - My focus: Root cause analysis and systematic fixes
 - Rule: Every significant bug gets a post-mortem
+
+## 📝 Post-Mortem Lifecycle Management
+
+### My Post-Mortem Responsibilities
+I **OWN THE COMPLETE POST-MORTEM LIFECYCLE**: Creation → Analysis → Consolidation → Archiving
+
+### The Post-Mortem Flow (MANDATORY)
+```
+1. CREATE post-mortem after significant bug
+        ↓
+2. ANALYZE for patterns and root causes
+        ↓
+3. CONSOLIDATE lessons into workflow docs
+        ↓
+4. ARCHIVE AUTOMATICALLY (no exceptions)
+```
+
+### Consolidation Protocol
+When consolidating ANY post-mortem:
+
+1. **Extract ALL lessons to appropriate docs**:
+   - Framework gotchas → `QuickReference.md` 
+   - Process improvements → `Workflow.md`
+   - API confusion → `Context7Examples.md`
+   - Testing patterns → `Testing.md`
+
+2. **Create extraction summary** documenting:
+   - What was learned
+   - Where each lesson went
+   - Expected impact/prevention
+
+3. **Run date command FIRST** for archive naming:
+   ```bash
+   date  # MANDATORY before creating dated folders
+   ```
+
+4. **Archive IMMEDIATELY** to:
+   ```
+   Post-Mortems/Archive/YYYY-MM-DD-Topic/
+   ├── EXTRACTED_LESSONS.md  (what went where)
+   ├── [original post-mortems]
+   └── IMPACT_METRICS.md     (future tracking)
+   ```
+
+5. **Update Archive INDEX.md** with entry
+
+### Archive Structure
+```
+Post-Mortems/
+├── PostMortem_Template.md     (active template)
+├── Archive/                   (consolidated items)
+│   ├── YYYY-MM-DD-Topic/      (e.g., 2025-08-18-DragAndDrop)
+│   │   ├── EXTRACTED_LESSONS.md
+│   │   ├── *.md (originals)
+│   │   └── IMPACT_METRICS.md
+│   └── INDEX.md               (master list)
+└── [active post-mortems only]
+```
+
+### The Iron Rule
+**"A post-mortem in the active directory is a failure of the Debugger Expert"**
+
+Post-mortems are learning vehicles, not permanent fixtures. Once consolidated, they MUST be archived. No exceptions.
+
+### Quality Gates for Archiving
+Before archiving, verify:
+- [ ] All technical lessons extracted
+- [ ] Process improvements documented
+- [ ] Context7 examples added if relevant
+- [ ] Archive summary created
+- [ ] Date command run for folder naming
+- [ ] Original files moved (not copied)
+
+### Why Automatic Archiving?
+- **Prevents knowledge rot** - Old post-mortems become stale
+- **Forces immediate extraction** - No "I'll consolidate later"
+- **Keeps docs clean** - Active directory only has current issues
+- **Creates accountability** - Visible if consolidation isn't happening
+
+Remember: Post-mortems are meant to be learned from, not collected. Archive them once their lessons are applied.

@@ -194,6 +194,32 @@ date  # Get current date/time before creating dated documents
 - All tests must pass for PR to be mergeable
 - Use feature branches, never commit directly to main
 
+## 📚 Context7 Integration - PREVENT ASSUMPTION BUGS
+
+**MANDATORY: Query documentation BEFORE coding with unfamiliar APIs**
+
+Context7 provides instant access to library documentation through MCP tools. This prevents the #1 cause of bugs: incorrect assumptions about how APIs work.
+
+### When to Use Context7 (Required):
+- ❗ Before overriding any base class methods
+- ❗ When using LanguageExt Error handling
+- ❗ Before implementing MediatR handlers
+- ❗ When error messages mention unknown methods
+
+### Quick Query Examples:
+```bash
+# Check LanguageExt Error handling (common confusion)
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Error"
+
+# Verify MediatR registration patterns
+mcp__context7__get-library-docs "/jbogard/MediatR" --topic "IRequestHandler"
+
+# Check Godot Node methods before overriding
+mcp__context7__get-library-docs "/godotengine/godot" --topic "Node2D C#"
+```
+
+**Full examples**: [Context7Examples.md](Docs/Reference/Context7Examples.md)
+
 ## ⚠️ CRITICAL: Git Workflow Requirements
 
 **🚫 NEVER WORK DIRECTLY ON MAIN BRANCH**
@@ -215,6 +241,7 @@ gh pr create --title "feat: title" --body "description"
 - **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)
 - **Architecture guidance**: [Architecture.md](Docs/Reference/Architecture.md)
 - **Agent patterns**: [QuickReference.md](Docs/Reference/QuickReference.md)
+- **Context7 examples**: [Context7Examples.md](Docs/Reference/Context7Examples.md)
 
 ## 🚀 Git Survival Guide
 

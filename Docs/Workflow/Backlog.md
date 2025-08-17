@@ -45,6 +45,23 @@
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
+### ~~TD_003: Verify Context7 Library Access~~ ✅ DONE
+**Status**: Completed
+**Size**: S (15 minutes actual)
+**Tech Lead**: Verified - All critical libraries already available!
+
+**What Was Done**: 
+- ✅ LanguageExt available (/louthy/language-ext, Trust: 9.4)
+- ✅ MediatR available (/jbogard/mediatr, Trust: 10.0)
+- ✅ Godot available (/godotengine/godot, Trust: 9.9)
+- ✅ Verified queries work and return accurate documentation
+- ✅ Confirmed Error.Message behavior exactly as post-mortem discovered
+
+**Key Discovery**: Context7 query for LanguageExt Error confirmed:
+- Error properties don't include full message text
+- Must use ToString() or custom extraction for details
+- This validates our post-mortem findings!
+
 ### VS_001: Complete Drag-to-Move Block System (Replaces Click-Then-Move)
 **Status**: Phase 1 Complete ✅ | Ready for Phase 2
 **Size**: L (2 days)
@@ -113,6 +130,15 @@
 - ✅ All tests passing (114/128 total tests)
 - **Ready for**: Phase 2 (Range Limits) or runtime performance testing
 
+**Test Specialist Review** (2025-08-18):
+- ✅ Unit test coverage: 9/9 drag tests passing
+- ✅ Error paths properly tested
+- ⚠️ Missing integration tests (GdUnit4)
+- ⚠️ Missing stress tests for concurrent operations
+- ⚠️ Async void anti-pattern in DragPresenter (lines 62, 124, 159)
+- ⚠️ Thread safety risk in DragStateService
+- **Verdict**: APPROVED WITH OBSERVATIONS - Fix thread safety before production
+
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -133,6 +159,66 @@
 **Status**: Not Approved ❌
 **Tech Lead**: Premature optimization. No performance issues identified yet.
 **Action**: Only revisit if profiling shows actual performance problems during VS_001 implementation.
+
+### TD_003: Fix Async Void Anti-Pattern in DragPresenter (Proposed)
+**Status**: Proposed
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Found By**: Test Specialist during VS_001 Phase 1 review
+
+**What**: Replace async void event handlers with proper async patterns in DragPresenter
+**Why**: Async void methods swallow exceptions and can't be awaited, hiding failures
+**Location**: `src/Features/Block/Drag/Presenters/DragPresenter.cs` lines 62, 124, 159
+
+**Approach**:
+- Convert to async Task with try-catch error logging
+- Or use fire-and-forget pattern with proper error handling
+- Ensure exceptions are logged and don't crash the app
+
+**Done When**:
+- All async void methods replaced
+- Exceptions properly caught and logged
+- Tests verify error handling works
+
+### TD_004: Add Thread Safety to DragStateService (Proposed)
+**Status**: Proposed  
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Found By**: Test Specialist during VS_001 Phase 1 review
+
+**What**: Make DragStateService state mutations thread-safe
+**Why**: Check-and-set operations aren't atomic, could cause race conditions
+**Location**: `src/Features/Block/Drag/Services/DragStateService.cs` lines 32-36
+
+**Approach**:
+- Add lock around state mutations
+- Or use atomic operations with Interlocked
+- Ensure singleton access is thread-safe
+
+**Done When**:
+- State mutations are atomic
+- Stress test with 100 concurrent operations passes
+- No race conditions possible
+
+### TD_005: Add Missing Drag Integration Tests (Proposed)
+**Status**: Proposed
+**Size**: M (4-6 hours)  
+**Priority**: Important
+**Found By**: Test Specialist during VS_001 Phase 1 review
+
+**What**: Create GdUnit4 integration tests for drag operations
+**Why**: Only unit tests exist, need end-to-end validation before UI hookup
+
+**Approach**:
+- Create `tests/GdUnit4/Features/Block/Drag/DragIntegrationTest.cs`
+- Test complete drag flow from UI to state changes
+- Add stress test for concurrent drag attempts
+- Add performance test for 60fps requirement
+
+**Done When**:
+- Integration tests cover all drag scenarios
+- Stress test validates no race conditions
+- Performance test confirms <16ms operations
 
 
 ## 🚧 Currently Blocked
