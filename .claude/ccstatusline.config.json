@@ -1,0 +1,40 @@
+{
+  "statusLines": [
+    {
+      "items": [
+        {
+          "type": "custom",
+          "command": "/persona/current",
+          "label": "Persona",
+          "icon": "👤",
+          "color": "#FFD700"
+        },
+        {
+          "type": "text",
+          "content": "LOCAL",
+          "color": "#FF0000"
+        },
+        {
+          "type": "git-branch",
+          "icon": "🌿"
+        },
+        {
+          "type": "model",
+          "icon": "🤖"
+        },
+        {
+          "type": "session-duration",
+          "icon": "⏱️"
+        }
+      ],
+      "separator": " │ ",
+      "style": "powerline"
+    }
+  ],
+  "refreshInterval": 5000,
+  "colors": {
+    "primary": "#FFD700",
+    "secondary": "#87CEEB",
+    "accent": "#98FB98"
+  }
+}

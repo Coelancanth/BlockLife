@@ -242,6 +242,112 @@
 - Optional performance pipeline exists
 - No more timing-related CI failures
 
+### TD_007: Multi-Persona Git Worktree Workflow System (Proposed)
+**Status**: Proposed
+**Size**: XL (>3 days - needs detailed planning)
+**Priority**: Important
+**Found By**: Workflow analysis during branch cleanup 
+**Created**: 2025-08-18
+
+**What**: Implement Git worktree-based workflow system for multi-terminal persona development
+**Why**: Current workflow creates git state conflicts when multiple terminals embody different personas, causing lost work and confusion
+
+**Problem Statement**:
+- Multiple terminals sharing single .git causes branch switching conflicts
+- Persona work gets lost when other terminals change branches
+- Uncommitted changes disappear when switching contexts
+- No clear separation between persona work and feature development
+- Branch cleanup is dangerous without knowing what work exists in other terminals
+
+**Proposed Solution**: Git Worktree Persona Isolation
+- Each persona gets dedicated working directory with isolated git state
+- Shared repository for commits/branches, isolated working trees
+- Clean separation between persona context and feature work
+- Safe cleanup protocols that don't affect active persona work
+
+**Tech Lead Review Required**:
+- Is this architectural change worth the complexity?
+- How does this affect our current git workflow documentation?
+- What's the migration strategy for existing development?
+- Does this solve a real problem or add unnecessary overhead?
+
+**Detailed Planning Needed**:
+- Directory structure design
+- Setup automation scripts  
+- Integration with existing CLAUDE.md workflows
+- Documentation updates required
+- Training/onboarding for team
+- Cleanup and maintenance procedures
+
+**Next Steps**:
+1. Tech Lead architectural review and approval
+2. Create detailed implementation plan if approved
+3. Break into smaller, phased implementation tasks
+4. Update all workflow documentation
+
+### TD_008: Fix ccstatusline Git Branch Display Issue (Proposed)
+**Status**: Proposed
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Found By**: DevOps Engineer during status line configuration
+**Created**: 2025-08-18
+
+**What**: Fix ccstatusline showing "no git" instead of current branch in Claude Code status line
+**Why**: Developers lose git context awareness, affecting workflow efficiency and branch management
+
+**Problem Statement**:
+- ccstatusline displays "⎇ no git" instead of actual branch name
+- Working directory is correctly in git repository root
+- Git commands work normally but status line shows incorrect information
+- Affects situational awareness during development
+
+**Approach**:
+- Investigate ccstatusline git detection logic in Claude Code context
+- Test working directory resolution when executed via Claude settings
+- Fix path/environment issues preventing git repository detection
+- Verify git integration works in both global and local config modes
+
+**Done When**:
+- Status line shows correct git branch: "🌿 docs/improve-git-workflow-documentation"
+- Git branch updates when switching branches
+- Works consistently in Claude Code status line integration
+
+### TD_009: Refine Persona Command Implementation for Production (Proposed)
+**Status**: Proposed
+**Size**: M (4-6 hours)  
+**Priority**: Important
+**Found By**: DevOps Engineer during persona system testing
+**Created**: 2025-08-18
+
+**What**: Improve persona command system robustness and user experience
+**Why**: Current implementation works but needs refinement for reliable production automation
+
+**Current Issues**:
+- Local vs global config precedence unclear and inconsistent
+- No error handling for corrupted state files
+- Manual testing required to verify which config is active
+- Command output verbose for status line usage
+
+**Approach**:
+- Add config detection and validation to persona commands
+- Implement graceful error handling for missing/corrupted state files
+- Create diagnostic commands to show active configuration
+- Add silent mode for status line integration (no console output)
+- Document config precedence rules clearly
+
+**Technical Improvements**:
+- Add `--quiet` flag for status line usage
+- Validate .claude/current-persona file format
+- Add config source detection (global vs local)
+- Implement fallback behavior for missing configs
+
+**Done When**:
+- Commands work reliably regardless of config setup
+- Clear error messages for configuration issues
+- Silent mode works properly with ccstatusline
+- Documentation explains config precedence clearly
+- No false negatives in persona detection
+
 ## 🚧 Currently Blocked
 
 ---
