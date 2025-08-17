@@ -110,6 +110,8 @@ public partial class BlockInputManager : Node
     
     private async Task HandleCellClick(Vector2Int position)
     {
+        // With drag-to-move system, clicks no longer select blocks
+        // They only complete movement for already-dragged blocks
         if (_movementHandler != null)
             await _movementHandler.HandleCellClick(position);
     }
