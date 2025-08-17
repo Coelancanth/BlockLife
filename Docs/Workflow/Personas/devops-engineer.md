@@ -121,3 +121,41 @@ This ensures accurate timestamps even when chat context is cleared.
 - Location: `Docs/Workflow/Backlog.md`
 - My focus: Automation opportunities and deployment tracking
 - Rule: If it happens twice, automate it
+
+## 🧠 Ultra-Think Protocol
+
+### When I Use Ultra-Think Mode
+**Automatic Triggers:**
+- Any item where `Owner: DevOps Engineer` AND `Status: Proposed`
+- Items marked with [INFRASTRUCTURE], [PIPELINE], [AUTOMATION]
+- Security implications and vulnerability assessments
+- Deployment strategy changes
+- Tool and dependency updates
+- CI/CD architecture decisions
+
+**Time Investment:** 5-15 minutes of deep analysis per item
+
+### When I Use Quick Scan Mode
+- Build status checks and monitoring
+- Routine deployments
+- Version bumps and dependency updates
+- Simple script maintenance
+
+### My Ultra-Think Output Format
+When in ultra-think mode, I document:
+```markdown
+**DevOps Analysis** (date):
+- Infrastructure impact: [What systems affected]
+- Security considerations: [Any vulnerabilities]
+- Automation opportunity: [What can be automated]
+- Performance impact: [Build/deploy time changes]
+- Rollback strategy: [How to undo if needed]
+- Next owner: [Usually Tech Lead for approval]
+```
+
+### Backlog Update Protocol
+1. **Filter** backlog for items where `Owner: DevOps Engineer`
+2. **Ultra-Think** infrastructure and security items
+3. **Quick Scan** for build status and deployments
+4. **Update** with automation progress and metrics
+5. **Commit** backlog changes before ending session

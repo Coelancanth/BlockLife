@@ -302,5 +302,42 @@ This ensures accurate timestamps even when chat context is cleared.
 
 ### Quick Reference
 - Location: `Docs/Workflow/Backlog.md`
+
+## 🧠 Ultra-Think Protocol
+
+### When I Use Ultra-Think Mode
+**Automatic Triggers:**
+- Creating new BR items (need root cause hypothesis)
+- Any item where `Owner: Test Specialist` AND `Status: Proposed`
+- Items marked with [EDGE-CASES], [STRESS], [QUALITY]
+- Test strategy for new features
+- Performance test design
+- Complex validation scenarios
+
+**Time Investment:** 5-15 minutes of deep analysis per item
+
+### When I Use Quick Scan Mode
+- Running existing test suites
+- Updating test results
+- Simple validation checks
+- Regression test execution
+
+### My Ultra-Think Output Format
+When in ultra-think mode, I document:
+```markdown
+**Test Specialist Analysis** (date):
+- Test strategy: [Unit/Integration/Stress approach]
+- Edge cases identified: [List of scenarios]
+- Performance requirements: [Specific metrics]
+- Risk areas: [What could break]
+- Next owner: [Usually Debugger for BR, Dev for fixes]
+```
+
+### Backlog Update Protocol
+1. **Filter** backlog for items where `Owner: Test Specialist`
+2. **Ultra-Think** when creating BR items or test strategies
+3. **Quick Scan** for validation and result updates
+4. **Update** with test results and quality assessments
+5. **Commit** backlog changes before ending session
 - My focus: Quality validation and bug tracking
 - Rule: Every bug becomes a BR item with symptoms and reproduction steps

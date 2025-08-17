@@ -1,12 +1,69 @@
 # Backlog Workflow
 
-## Work Item Types & Ownership
+## 🧠 Owner-Based Ultra-Think Protocol
 
-| Type | Description | Creator | Owner | Example |
-|------|-------------|---------|-------|---------|
-| **VS** | Vertical Slice (Feature) | Product Owner | Dev Engineer | VS_001: Drag-and-drop blocks |
-| **BR** | Bug Report | Test Specialist | Debugger Expert | BR_007: Blocks disappear on click |
-| **TD** | Technical Debt | Anyone (propose) → Tech Lead (approve) | Dev Engineer | TD_003: Refactor grid service |
+### Core Principle
+Each backlog item has a **single Owner** who is responsible for decisions and progress. When embodying a persona:
+
+1. **Filter** for items you own
+2. **Ultra-Think** if Status=Proposed (automatic 5-15 min deep analysis)
+3. **Quick Scan** other owned items (<2 min updates)
+4. **Update** backlog with decisions
+5. **Reassign** owner when handing off
+
+### Ultra-Think Triggers
+- **Automatic**: Owner + Status=Proposed
+- **Markers**: [ARCHITECTURE], [ROOT-CAUSE], [SAFETY-CRITICAL], [COMPLEX]
+- **Output**: Decision rationale documented in item
+
+## 🎯 Strategic Prioritizer - The Meta Layer
+
+### When to Use the Strategic Prioritizer
+The Strategic Prioritizer is your **architectural advisor** that helps decide WHAT to work on:
+
+1. **Start of each work session**: "What should I work on today?"
+2. **After completing a task**: "What's next?"
+3. **When feeling overwhelmed**: "Help me focus"
+4. **Weekly planning**: "What's the strategic view?"
+
+### How the Prioritizer Works
+```
+embody strategic-prioritizer
+    ↓
+Scans ALL items (Backlog + Ideas + Archive)
+    ↓
+Analyzes with architectural knowledge
+    ↓
+Outputs Top 3 recommendations with reasoning
+    ↓
+You pick one and embody the owner persona
+```
+
+### The Prioritizer's Knowledge Evolution
+- **Learns from outcomes**: Updates velocity metrics
+- **Remembers failures**: Prevents repeated mistakes
+- **Tracks patterns**: Knows what works
+- **Resurrects items**: Brings back relevant archived work
+- **Maintains memory**: PrioritizerKnowledge.md is its brain
+
+### Integration with Workflow
+```
+Strategic Prioritizer: "Work on TD_003 next (Score: 95)"
+    ↓
+You: embody dev-engineer
+    ↓
+Dev Engineer: Implements TD_003
+    ↓
+Strategic Prioritizer: Learns from outcome, updates knowledge
+```
+
+## Work Item Types & Default Ownership
+
+| Type | Description | Creator | Initial Owner | Handoff Flow |
+|------|-------------|---------|---------------|---------------|
+| **VS** | Vertical Slice (Feature) | Product Owner | Product Owner → Tech Lead → Dev Engineer | Define → Break down → Implement |
+| **BR** | Bug Report | Test Specialist | Test Specialist → Debugger Expert | Discover → Investigate |
+| **TD** | Technical Debt | Anyone | Tech Lead → Dev Engineer | Review → Implement |
 
 ## The Flow
 
@@ -17,58 +74,68 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
                 (TD approve)            Debugger Expert (OWNS BR)
 ```
 
-## VS (Vertical Slice) Flow
+## VS (Vertical Slice) Flow with Ownership
 ```
-Product Owner creates VS (Status: Proposed)
-    ↓
+Product Owner creates VS (Status: Proposed, Owner: Product Owner)
+    ↓ [Ultra-Think: Define scope and value]
+Product Owner completes definition (Owner: Tech Lead)
+    ↓ [Ultra-Think: Architecture review]
 Tech Lead reviews (Status: Under Review)
     ↓
 [Validates: thin, independent, shippable]
     ↓                    ↓
 Approved               Needs Refinement
+(Owner: Dev Engineer)  (Owner: Product Owner)
     ↓                    ↓
-Ready for Dev      (back to Product Owner)
+Ready for Dev      (back to refine scope)
     ↓
 Dev Engineer implements (Status: In Progress)
-    ↓
+    ↓ [Quick Scan mode]
 [Runs ./scripts/build.ps1 test locally]
     ↓
-Creates PR → CI/CD runs automatically
+Creates PR → CI/CD runs (Owner: Test Specialist)
     ↓
 Test Specialist validates (Status: Testing)
-    ↓
+    ↓ [Ultra-Think if complex edge cases]
 [Checks functionality AND code quality]
     ↓                    ↓
 Passes                Quality Issues
-    ↓                    ↓
+    ↓                    (Owner: Tech Lead for TD)
 CI passes & merged   Proposes TD item
     ↓                    ↓
 (Status: Done)      (Continues testing)
 ```
 
-## TD (Tech Debt) Flow
+## TD (Tech Debt) Flow with Ownership
 ```
-Anyone proposes TD (Status: Proposed)
+Anyone proposes TD (Status: Proposed, Owner: Tech Lead)
 (Including Test Specialist during quality validation)
+    ↓ [Ultra-Think: Architecture review]
+Tech Lead reviews (automatic ultra-think trigger)
     ↓
-Tech Lead reviews
-    ↓
-Approved → Dev Engineer implements
+Approved                Rejected
+(Owner: Dev Engineer)   (Owner: Closed)
     ↓                  ↓
-Rejected (with reason)   Done
+Implements              Document reason
+    ↓
+(Status: Done)
 ```
 
-## BR (Bug) Flow
+## BR (Bug) Flow with Ownership
 ```
-Test Specialist creates BR (Status: Reported)
-    ↓
+Test Specialist creates BR (Status: Reported, Owner: Test Specialist)
+    ↓ [Quick assessment]
+Hands off to Debugger (Owner: Debugger Expert)
+    ↓ [Ultra-Think: Root cause analysis]
 Debugger Expert investigates (Status: Investigating)
-    ↓
+    ↓ [Deep investigation mode]
 Debugger proposes fix (Status: Fix Proposed)
     ↓
-User approves → Dev Engineer implements (Status: Fix Applied)
+User approves → (Owner: Dev Engineer)
     ↓
-Test Specialist verifies (Status: Verified)
+Dev Engineer implements (Status: Fix Applied)
+    ↓
+(Owner: Test Specialist) verifies
     ↓
 [If significant bug]
     ↓
@@ -79,15 +146,20 @@ Debugger consolidates lessons → Updates docs
 Debugger AUTOMATICALLY archives (mandatory)
 ```
 
-## Status Updates
+## Status Updates & Ownership
 
-### Who Updates What
-- **Product Owner**: Priority changes (🔥/📈/💡)
-- **Tech Lead**: TD approval/rejection, adds estimates
-- **Dev Engineer**: In Progress → Done
-- **Test Specialist**: Testing status, creates BR for bugs, proposes TD for quality issues
-- **Debugger Expert**: BR investigation status, post-mortem creation/consolidation/archiving
-- **DevOps**: Build/Deploy status
+### Who Updates What (Based on Ownership)
+- **Product Owner**: Creates VS, defines scope (owns until handed to Tech Lead)
+- **Tech Lead**: Reviews all Proposed items they own, approves/rejects TD
+- **Dev Engineer**: Updates items they own from Approved → In Progress → Done
+- **Test Specialist**: Creates BR, validates features they own
+- **Debugger Expert**: Owns all BR investigations (automatic ultra-think)
+- **DevOps**: Updates CI/CD status for items they own
+
+### Ownership Transfer Points
+- VS: Product Owner → Tech Lead → Dev Engineer → Test Specialist
+- BR: Test Specialist → Debugger Expert → Dev Engineer → Test Specialist
+- TD: Anyone → Tech Lead → Dev Engineer
 - **Anyone**: Can propose TD items (Test Specialist commonly does during testing)
 
 ### Status Progression

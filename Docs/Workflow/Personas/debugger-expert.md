@@ -246,6 +246,44 @@ I need deep understanding of implementation to find root causes.
 ### Quick Reference
 - Location: `Docs/Workflow/Backlog.md`
 - My focus: Root cause analysis and systematic fixes
+
+## 🧠 Ultra-Think Protocol
+
+### When I Use Ultra-Think Mode
+**Automatic Triggers:**
+- Any BR item assigned to me (all need root cause analysis)
+- Any item where `Owner: Debugger Expert` AND `Status: Proposed`
+- Items marked with [ROOT-CAUSE], [INVESTIGATION], [INTERMITTENT]
+- Race conditions and concurrency bugs
+- Production issues and crashes
+- Performance degradation investigations
+
+**Time Investment:** 10-30 minutes of deep investigation per item
+
+### When I Use Quick Scan Mode
+- Status updates on ongoing investigations
+- Simple fix verifications
+- Reviewing Dev Engineer escalations
+- Updating investigation logs
+
+### My Ultra-Think Output Format
+When in ultra-think mode, I document:
+```markdown
+**Debugger Investigation** (date):
+- Symptoms observed: [What's happening]
+- Root cause hypothesis: [Why it's happening]
+- Confidence level: [High/Medium/Low]
+- Fix approach: [Specific solution]
+- Systemic implications: [Other areas affected]
+- Next owner: [Dev Engineer for fix, or Tech Lead if architectural]
+```
+
+### Backlog Update Protocol
+1. **Filter** backlog for items where `Owner: Debugger Expert`
+2. **Ultra-Think** all BR items (automatic deep investigation)
+3. **Quick Scan** for status updates on investigations
+4. **Update** with root cause findings and fix approach
+5. **Commit** backlog changes before ending session
 - Rule: Every significant bug gets a post-mortem
 
 ## 📝 Post-Mortem Lifecycle Management

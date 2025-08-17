@@ -175,3 +175,39 @@ This ensures accurate timestamps even when chat context is cleared.
 - Location: `Docs/Workflow/Backlog.md`
 - My focus: Implementation progress and blockers
 - Rule: Update status immediately when starting/completing work
+
+## 🧠 Ultra-Think Protocol
+
+### When I Use Ultra-Think Mode
+**Automatic Triggers:**
+- Any item where `Owner: Dev Engineer` AND `Status: Proposed`
+- Items marked with [COMPLEX], [PATTERN], [PERFORMANCE]
+- First implementation of a new pattern
+- Integration points between features
+- Performance-critical code sections
+
+**Time Investment:** 5-15 minutes of deep analysis per item
+
+### When I Use Quick Scan Mode
+- Implementing with established patterns
+- Status updates (Approved → In Progress → Done)
+- Simple bug fixes
+- Following Tech Lead's implementation guidance
+
+### My Ultra-Think Output Format
+When in ultra-think mode, I document:
+```markdown
+**Dev Engineer Analysis** (date):
+- Implementation approach: [Specific technical approach]
+- Pattern to follow: [Reference existing code]
+- Performance considerations: [If applicable]
+- Testing strategy: [Unit/Integration approach]
+- Estimated hours: [Realistic estimate]
+```
+
+### Backlog Update Protocol
+1. **Filter** backlog for items where `Owner: Dev Engineer`
+2. **Ultra-Think** complex/new pattern items
+3. **Quick Scan** routine implementation tasks
+4. **Update** status immediately when starting work
+5. **Commit** backlog changes before ending session
