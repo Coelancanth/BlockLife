@@ -220,6 +220,27 @@
 - Stress test validates no race conditions
 - Performance test confirms <16ms operations
 
+### TD_006: Separate Performance Tests from CI Pipeline (Proposed)
+**Status**: Proposed
+**Size**: M (4-6 hours)
+**Priority**: Important
+**Found By**: DevOps Engineer during CI failure investigation
+
+**What**: Create separate test category for performance tests and exclude from main CI
+**Why**: Timing tests cause false failures in virtualized CI environments (100% false positive rate)
+**Related**: PostMortem_2025-01-17-CI-Timing-Tests.md
+
+**Approach**:
+- Add [Category("Performance")] to all timing-sensitive tests
+- Update CI workflow to exclude Performance category
+- Create optional performance test pipeline (non-blocking)
+- Add CI environment detection helper
+
+**Done When**:
+- Performance tests properly categorized
+- Main CI excludes timing tests
+- Optional performance pipeline exists
+- No more timing-related CI failures
 
 ## 🚧 Currently Blocked
 
