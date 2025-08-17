@@ -43,7 +43,7 @@ public partial class GridInteractionController : Control, IGridInteractionView
         Size = CustomMinimumSize;
         
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-        logger?.Information("GridInteractionController ready with size {GridWidth}x{GridHeight}, cell size {CellSize}", GridSize.X, GridSize.Y, CellSize);
+        logger?.Debug("GridInteractionController ready with size {GridWidth}x{GridHeight}, cell size {CellSize}", GridSize.X, GridSize.Y, CellSize);
         
         // Force initial draw of the grid
         QueueRedraw();
@@ -138,7 +138,7 @@ public partial class GridInteractionController : Control, IGridInteractionView
         {
             // Trace: Valid grid position, emitting cell clicked event
             var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
-            logger?.Information("🎯 Grid cell clicked at ({X}, {Y})", gridPosition.X, gridPosition.Y);
+            logger?.Verbose("Grid cell clicked at ({X}, {Y})", gridPosition.X, gridPosition.Y);
             _cellClicked.OnNext(gridPosition);
         }
         else

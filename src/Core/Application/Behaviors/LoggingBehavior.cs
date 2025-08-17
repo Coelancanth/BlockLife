@@ -72,7 +72,7 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         else
         {
             // Non-functional response types
-            _logger.Information("{RequestName} completed in {ElapsedMilliseconds}ms",
+            _logger.Debug("{RequestName} completed in {ElapsedMilliseconds}ms",
                 requestName, stopwatch.ElapsedMilliseconds);
         }
 
@@ -91,7 +91,7 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
                 finResult.Match(
                     Succ: _ =>
                     {
-                        _logger.Information("{RequestName} SUCCESS in {ElapsedMilliseconds}ms",
+                        _logger.Debug("{RequestName} SUCCESS in {ElapsedMilliseconds}ms",
                             requestName, elapsedMs);
                     },
                     Fail: error =>
@@ -124,7 +124,7 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
                 {
                     if (!isFail)
                     {
-                        _logger.Information("{RequestName} SUCCESS in {ElapsedMilliseconds}ms",
+                        _logger.Debug("{RequestName} SUCCESS in {ElapsedMilliseconds}ms",
                             requestName, elapsedMs);
                     }
                     else

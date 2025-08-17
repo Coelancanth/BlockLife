@@ -96,12 +96,12 @@ public class FirstMoveDelayRegressionTest : IDisposable
         var stopwatch = Stopwatch.StartNew();
         
         // Log with structured parameters (would normally cause 282ms delay)
-        _logger.Information("🔄 Moving block {BlockId} from {FromPosition} to {ToPosition}", 
+        _logger.Debug("Moving block {BlockId} from {FromPosition} to {ToPosition}", 
             blockId, new Vector2Int(5, 5), new Vector2Int(6, 6));
         
         var moveResult = await _mediator.Send(moveCommand);
         
-        _logger.Information("✅ Successfully moved block {BlockId} to {ToPosition}", 
+        _logger.Debug("Successfully moved block {BlockId} to {ToPosition}", 
             blockId, new Vector2Int(6, 6));
         
         stopwatch.Stop();
@@ -136,7 +136,7 @@ public class FirstMoveDelayRegressionTest : IDisposable
         var stopwatch = Stopwatch.StartNew();
         
         // This is the first complex structured log - triggers template compilation
-        freshLogger.Information("🔄 Moving block {BlockId} from {FromPosition} to {ToPosition}", 
+        freshLogger.Debug("Moving block {BlockId} from {FromPosition} to {ToPosition}", 
             blockId, new Vector2Int(3, 3), new Vector2Int(4, 4));
         
         stopwatch.Stop();
@@ -154,16 +154,16 @@ public class FirstMoveDelayRegressionTest : IDisposable
         var preWarmLogger = _logger.ForContext("PreWarm", true);
         
         // Pre-compile expensive templates
-        preWarmLogger.Information("🔄 Moving block {BlockId} from {FromPosition} to {ToPosition}", 
+        preWarmLogger.Debug("Moving block {BlockId} from {FromPosition} to {ToPosition}", 
             Guid.Empty, Vector2Int.Zero, Vector2Int.One);
         
-        preWarmLogger.Information("✅ Successfully moved block {BlockId} to {ToPosition}", 
+        preWarmLogger.Debug("Successfully moved block {BlockId} to {ToPosition}", 
             Guid.Empty, Vector2Int.Zero);
         
-        preWarmLogger.Information("✋ Selected block {BlockId} at position {Position}", 
+        preWarmLogger.Debug("Selected block {BlockId} at position {Position}", 
             Guid.Empty, Vector2Int.Zero);
         
-        preWarmLogger.Warning("❌ Failed to move block {BlockId}: {Error}", 
+        preWarmLogger.Debug("Failed to move block {BlockId}: {Error}", 
             Guid.Empty, "test");
     }
     

@@ -70,10 +70,10 @@ You: "That sounds like over-engineering. The current DI
 ## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
 **START HERE for 95% of your needs:**
-1. **[Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)** ⭐⭐⭐⭐⭐ - All agent patterns, templates, and **lessons learned**
-2. **[Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)** ⭐⭐⭐⭐⭐ - Complete workflows and checklists  
-3. **[Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)** ⭐⭐⭐⭐ - Core architectural principles
-4. **[Templates/](Docs/Templates/)** ⭐⭐⭐⭐ - Work item templates and documentation templates
+1. **[Workflow.md](Docs/Workflow/Workflow.md)** ⭐⭐⭐⭐⭐ - Complete development workflow  
+2. **[QuickReference.md](Docs/Reference/QuickReference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and **lessons learned**
+3. **[Architecture.md](Docs/Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
+4. **[Templates/](Docs/Workflow/Templates/)** ⭐⭐⭐⭐ - Work item templates
 
 **Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
 
@@ -105,11 +105,80 @@ You: "That sounds like over-engineering. The current DI
 - Research spikes
 ```
 
+## 🤖 Streamlined Persona System
+
+### Core Team (6 Essential Personas)
+When asked to embody a specific role, use these personas in `Docs/Workflow/Personas/`:
+
+1. **Product Owner** - Defines features (creates VS items)
+2. **Tech Lead** - Technical planning (breaks down, creates TD)
+3. **Dev Engineer** - Implementation (builds features)
+4. **Test Specialist** - All testing (unit, integration, stress)
+5. **Debugger Expert** - Complex issues (>30min investigations)
+6. **DevOps Engineer** - CI/CD and automation
+
+### Persona Flow
+```
+Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
+     (WHAT)       (HOW)       (BUILD)        (VERIFY)       (DEPLOY)
+                                 ↓               ↓
+                          Debugger Expert (FIX COMPLEX ISSUES)
+```
+
+### Backlog Protocol
+Each persona has embedded backlog responsibilities - no separate maintainer needed:
+- **Product Owner**: Creates VS items, sets priorities
+- **Tech Lead**: Reviews/approves TD proposals, breaks down work
+- **Dev Engineer**: Updates progress, can propose TD
+- **Test Specialist**: Creates BR items when bugs found
+- **Debugger Expert**: Owns BR items, can propose TD
+- **DevOps**: Monitors CI/CD, can propose TD
+- **Anyone**: Can propose TD items (Tech Lead approves)
+
+**Work Item Types**:
+- **VS (Vertical Slice)**: New features - Product Owner creates
+- **BR (Bug Report)**: Bug investigations - Test Specialist creates, Debugger owns
+- **TD (Technical Debt)**: Refactoring/improvements - Anyone proposes, Tech Lead approves
+
+**Notes**: 
+- Critical bugs are BR items with 🔥 priority
+- TD items start as "Proposed" and need Tech Lead approval to become actionable
+
+**Single Source of Truth**: `Docs/Workflow/Backlog.md`
+**Workflow Reference**: `Docs/Workflow/Workflow.md`
+
+### When to Use Personas
+- **Start fresh conversation** for each persona (don't switch mid-conversation)
+- **Be explicit**: "Act as Tech Lead" or "Use Debugger Expert persona"
+- **Let persona guide approach**: Each has specific mindset and responsibilities
+
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP pattern. Uses CQRS with functional programming (LanguageExt.Core) and pure C# core.
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
+
+## 🚦 Quality Gates & CI/CD
+
+**MANDATORY before committing:**
+```bash
+# Windows
+./scripts/build.ps1 test    # Must pass all tests
+
+# Linux/Mac  
+./scripts/build.sh test     # Must pass all tests
+```
+
+**Build Commands:**
+- `build` - Build the solution
+- `test` - Run all tests (REQUIRED before commit)
+- `clean` - Clean build artifacts
+- `all` - Clean, build, and test
+
+**CI/CD Pipeline:**
+- GitHub Actions runs on every PR and push
+- All tests must pass for PR to be mergeable
+- Use feature branches, never commit directly to main
 
 ## ⚠️ CRITICAL: Git Workflow Requirements
 
@@ -129,6 +198,153 @@ gh pr create --title "feat: title" --body "description"
 ```
 
 ### Quick Reference Resources
-- **Architecture guidance**: [Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)
-- **Development workflows**: [Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)
-- **Agent patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)
+- **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)
+- **Architecture guidance**: [Architecture.md](Docs/Reference/Architecture.md)
+- **Agent patterns**: [QuickReference.md](Docs/Reference/QuickReference.md)
+
+## 🚀 Git Survival Guide
+
+### The Daily Workflow (90% of your needs)
+```bash
+# Start fresh work
+git checkout main && git pull
+git checkout -b feat/what-im-building
+
+# Save your progress
+git add -A && git commit -m "feat: clear description"
+
+# Push to remote
+git push -u origin feat/what-im-building
+
+# Create PR (after push)
+gh pr create --title "feat: title" --body "description"
+```
+
+### 🚨 Panic Buttons (When Things Go Wrong)
+
+#### "I forgot to create a branch!"
+```bash
+git stash                          # Save uncommitted work
+git checkout -b feat/proper-name  # Create branch now
+git stash pop                      # Restore your work
+```
+
+#### "I messed up my last commit message!"
+```bash
+# If NOT pushed yet:
+git commit --amend -m "feat: better message"
+
+# If already pushed (use sparingly):
+git push --force-with-lease
+```
+
+#### "I need to undo my last commit!"
+```bash
+# Keep changes, just undo commit:
+git reset HEAD~1
+
+# Nuclear option - destroy commit and changes:
+git reset --hard HEAD~1
+```
+
+#### "I'm in merge conflict hell!"
+```bash
+# Accept all their changes:
+git checkout --theirs .
+git add -A && git commit
+
+# Accept all your changes:
+git checkout --ours .
+git add -A && git commit
+
+# Or manually fix conflicts in files, then:
+git add -A && git commit
+```
+
+#### "I need to update my branch with main!"
+```bash
+# Preferred - keeps history clean:
+git fetch origin main:main && git rebase main
+
+# Alternative if rebase gets messy:
+git merge main
+```
+
+#### "I committed to the wrong branch!"
+```bash
+# Get commit SHA first:
+git log -1 --format="%H"
+
+# Switch to correct branch:
+git checkout correct-branch
+git cherry-pick <commit-sha>
+
+# Remove from wrong branch:
+git checkout wrong-branch
+git reset HEAD~1 --hard
+```
+
+### 📝 Commit Message Quick Reference
+```bash
+feat:     # New feature
+fix:      # Bug fix
+refactor: # Code restructuring (no behavior change)
+test:     # Test additions/changes
+docs:     # Documentation only
+perf:     # Performance improvement
+chore:    # Maintenance tasks (deps, configs)
+```
+
+**Examples:**
+- `feat: add block rotation with Q/E keys`
+- `fix: prevent blocks from overlapping on placement`
+- `refactor: extract validation logic to separate service`
+- `test: add stress tests for concurrent block moves`
+
+### 🎯 Golden Rules
+1. **Never work directly on main** - Always branch
+2. **Commit often** - Small, focused commits > giant commits
+3. **Pull before branch** - Start from latest main
+4. **Write clear messages** - Your future self will thank you
+5. **When in doubt** - Ask before `--force` pushing
+
+### 🔥 Emergency Escape Hatch
+```bash
+# "I've completely broken everything and want to start over"
+git checkout main
+git branch -D my-broken-branch     # Delete local branch
+git pull                            # Get fresh main
+git checkout -b feat/fresh-start   # Try again
+```
+
+## 📦 PR Merge Strategy
+
+### Default: Squash and Merge
+When merging PRs to main, use **Squash and merge** by default:
+```bash
+# Via GitHub UI: Select "Squash and merge" 
+# Via CLI:
+gh pr merge --squash --delete-branch
+```
+
+### When to Squash (90% of PRs)
+- ✅ Feature implementations with multiple WIP commits
+- ✅ Bug fixes with trial-and-error commits
+- ✅ Any PR with "fix typo", "oops", "wip" commits
+
+**Result**: Clean main history with one commit per feature
+
+### When NOT to Squash (Rare)
+- ❌ Large refactors with meaningful intermediate steps
+- ❌ Multi-part features where each commit is valuable
+- ❌ When specifically preserving attribution
+
+**Example squashed commit message**:
+```
+feat: add block rotation with Q/E keys (#23)
+
+- Implemented rotation logic in BlockRotationService
+- Added Q/E keybindings
+- Updated tests for rotation validation
+- Fixed edge cases for boundary blocks
+```

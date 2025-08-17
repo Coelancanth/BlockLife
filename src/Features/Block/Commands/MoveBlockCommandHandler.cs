@@ -33,7 +33,7 @@ namespace BlockLife.Core.Features.Block.Commands
 
         public async Task<Fin<LanguageExt.Unit>> Handle(MoveBlockCommand request, CancellationToken cancellationToken)
         {
-            _logger.Information("Processing MoveBlockCommand for BlockId: {BlockId} to Position: {ToPosition}",
+            _logger.Debug("Processing MoveBlockCommand for BlockId: {BlockId} to Position: {ToPosition}",
                 request.BlockId, request.ToPosition);
 
             // Step 1: Get block
@@ -75,7 +75,7 @@ namespace BlockLife.Core.Features.Block.Commands
                 return FinFail<LanguageExt.Unit>(error);
             }
 
-            _logger.Information("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}",
+            _logger.Debug("Successfully moved block {BlockId} from {FromPosition} to {ToPosition}",
                 request.BlockId, fromPosition, request.ToPosition);
 
             return FinSucc(LanguageExt.Unit.Default);

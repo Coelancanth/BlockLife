@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore
+      run: dotnet restore BlockLife.sln
+      
+    - name: Build
+      run: dotnet build BlockLife.sln --no-restore --configuration Debug
+      
+    - name: Test
+      run: dotnet test BlockLife.sln --no-build --configuration Debug --verbosity normal --logger "console;verbosity=detailed"
+      
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Check Format
+      run: |
+        dotnet format BlockLife.sln --verify-no-changes --verbosity diagnostic || true
+        echo "Note: Format check is informational only"
+        
+    - name: Verify Scripts
+      run: |
+        echo "Checking build scripts exist..."
+        test -f scripts/build.sh || echo "Warning: build.sh not found"
+        test -f scripts/build.ps1 || echo "Warning: build.ps1 not found"

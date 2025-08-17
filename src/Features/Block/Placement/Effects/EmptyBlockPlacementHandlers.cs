@@ -89,7 +89,7 @@ public class BlockPlacementNotificationBridge :
 
     public async Task Handle(BlockPlacedNotification notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("BlockPlacementNotificationBridge.Handle called for BlockPlaced at {Position}", notification.Position);
+        _logger.LogDebug("BlockPlacementNotificationBridge.Handle called for BlockPlaced at {Position}", notification.Position);
 
         // Invoke weak event manager (thread-safe)
         await _blockPlacedManager.InvokeAsync(notification);
@@ -109,7 +109,7 @@ public class BlockPlacementNotificationBridge :
 
     public async Task Handle(BlockRemovedNotification notification, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("BlockPlacementNotificationBridge.Handle called for BlockRemoved at {Position}", notification.Position);
+        _logger.LogDebug("BlockPlacementNotificationBridge.Handle called for BlockRemoved at {Position}", notification.Position);
 
         // Invoke weak event manager (thread-safe)
         await _blockRemovedManager.InvokeAsync(notification);

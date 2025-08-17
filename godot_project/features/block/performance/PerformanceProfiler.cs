@@ -38,7 +38,7 @@ public static class PerformanceProfiler
         verifyTimer.Start();
         verifyTimer.Stop();
         
-        _logger?.Information("PerformanceProfiler pre-warmed in {InitMs}ms (verification: {VerifyMs}ms)", 
+        _logger?.Debug("PerformanceProfiler pre-warmed in {InitMs}ms (verification: {VerifyMs}ms)", 
             initTimer.ElapsedMilliseconds, verifyTimer.ElapsedMilliseconds);
         
         // Runtime assertion - if verification takes >10ms, pre-warming failed
@@ -91,8 +91,17 @@ public static class PerformanceProfiler
         if (logImmediately || elapsedMs > 16) // 16ms = 60fps frame budget
         {
             var warningLevel = elapsedMs > 33 ? "🔴" : elapsedMs > 16 ? "🟡" : "🟢";
-            _logger?.Information("{Level} {Operation} took {ElapsedMs}ms", 
-                warningLevel, operationName, elapsedMs);
+            // Use Debug for slow operations, Verbose for normal timings
+            if (elapsedMs > 33)
+            {
+                _logger?.Debug("{Level} {Operation} took {ElapsedMs}ms", 
+                    warningLevel, operationName, elapsedMs);
+            }
+            else
+            {
+                _logger?.Verbose("{Level} {Operation} took {ElapsedMs}ms", 
+                    warningLevel, operationName, elapsedMs);
+            }
         }
         
         return elapsedMs;
@@ -135,7 +144,7 @@ public static class PerformanceProfiler
     /// </summary>
     public static void PrintReport()
     {
-        _logger?.Information("===== PERFORMANCE REPORT =====");
+        _logger?.Debug("===== PERFORMANCE REPORT =====");
         
         foreach (var kvp in _timings.OrderByDescending(x => x.Value.Average()))
         {
@@ -151,11 +160,11 @@ public static class PerformanceProfiler
             
             var status = avg > 33 ? "❌ CRITICAL" : avg > 16 ? "⚠️ WARNING" : "✅ OK";
             
-            _logger?.Information("{Status} {Operation}: Avg={Avg:F1}ms, Min={Min}ms, Max={Max}ms, Count={Count}",
+            _logger?.Debug("{Status} {Operation}: Avg={Avg:F1}ms, Min={Min}ms, Max={Max}ms, Count={Count}",
                 status, operation, avg, min, max, count);
         }
         
-        _logger?.Information("==============================");
+        _logger?.Debug("==============================");
     }
     
     /// <summary>
@@ -165,7 +174,7 @@ public static class PerformanceProfiler
     {
         _timings.Clear();
         _activeTimers.Clear();
-        _logger?.Information("Performance profiler reset");
+        _logger?.Debug("Performance profiler reset");
     }
     
     /// <summary>
