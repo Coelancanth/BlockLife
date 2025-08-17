@@ -43,8 +43,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "powershell -ExecutionPolicy Bypass -File ~\\.claude\\claude-status.ps1",
-    "padding": 0
+    "command": "npx -y ccusage statusline"
   },
   "outputStyle": "Explanatory"
 }

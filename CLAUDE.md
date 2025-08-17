@@ -70,10 +70,10 @@ You: "That sounds like over-engineering. The current DI
 ## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
 **START HERE for 95% of your needs:**
-1. **[Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)** ⭐⭐⭐⭐⭐ - All agent patterns, templates, and **lessons learned**
-2. **[Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)** ⭐⭐⭐⭐⭐ - Complete workflows and checklists  
-3. **[Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)** ⭐⭐⭐⭐ - Core architectural principles
-4. **[Templates/](Docs/Templates/)** ⭐⭐⭐⭐ - Work item templates and documentation templates
+1. **[Workflow.md](Docs/Workflow/Workflow.md)** ⭐⭐⭐⭐⭐ - Complete development workflow  
+2. **[QuickReference.md](Docs/Reference/QuickReference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and **lessons learned**
+3. **[Architecture.md](Docs/Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
+4. **[Templates/](Docs/Workflow/Templates/)** ⭐⭐⭐⭐ - Work item templates
 
 **Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
 
@@ -105,6 +105,53 @@ You: "That sounds like over-engineering. The current DI
 - Research spikes
 ```
 
+## 🤖 Streamlined Persona System
+
+### Core Team (6 Essential Personas)
+When asked to embody a specific role, use these personas in `Docs/Workflow/Personas/`:
+
+1. **Product Owner** - Defines features (creates VS items)
+2. **Tech Lead** - Technical planning (breaks down, creates TD)
+3. **Dev Engineer** - Implementation (builds features)
+4. **Test Specialist** - All testing (unit, integration, stress)
+5. **Debugger Expert** - Complex issues (>30min investigations)
+6. **DevOps Engineer** - CI/CD and automation
+
+### Persona Flow
+```
+Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
+     (WHAT)       (HOW)       (BUILD)        (VERIFY)       (DEPLOY)
+                                 ↓               ↓
+                          Debugger Expert (FIX COMPLEX ISSUES)
+```
+
+### Backlog Protocol
+Each persona has embedded backlog responsibilities - no separate maintainer needed:
+- **Product Owner**: Creates VS items, sets priorities
+- **Tech Lead**: Reviews/approves TD proposals, breaks down work
+- **Dev Engineer**: Updates progress, can propose TD
+- **Test Specialist**: Creates BR items when bugs found
+- **Debugger Expert**: Owns BR items, can propose TD
+- **DevOps**: Monitors CI/CD, can propose TD
+- **Anyone**: Can propose TD items (Tech Lead approves)
+
+**Work Item Types**:
+- **VS (Vertical Slice)**: New features - Product Owner creates
+- **BR (Bug Report)**: Bug investigations - Test Specialist creates, Debugger owns
+- **TD (Technical Debt)**: Refactoring/improvements - Anyone proposes, Tech Lead approves
+
+**Notes**: 
+- Critical bugs are BR items with 🔥 priority
+- TD items start as "Proposed" and need Tech Lead approval to become actionable
+
+**Single Source of Truth**: `Docs/Workflow/Backlog.md`
+**Workflow Reference**: `Docs/Workflow/Workflow.md`
+
+### When to Use Personas
+- **Start fresh conversation** for each persona (don't switch mid-conversation)
+- **Be explicit**: "Act as Tech Lead" or "Use Debugger Expert persona"
+- **Let persona guide approach**: Each has specific mindset and responsibilities
+
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP pattern. Uses CQRS with functional programming (LanguageExt.Core) and pure C# core.
@@ -129,6 +176,6 @@ gh pr create --title "feat: title" --body "description"
 ```
 
 ### Quick Reference Resources
-- **Architecture guidance**: [Architecture_Guide.md](Docs/Quick-Start/Architecture_Guide.md)
-- **Development workflows**: [Development_Workflows.md](Docs/Quick-Start/Development_Workflows.md)
-- **Agent patterns**: [Agent_Quick_Reference.md](Docs/Quick-Start/Agent_Quick_Reference.md)
+- **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)
+- **Architecture guidance**: [Architecture.md](Docs/Reference/Architecture.md)
+- **Agent patterns**: [QuickReference.md](Docs/Reference/QuickReference.md)
