@@ -290,7 +290,8 @@ public class SimulationManagerThreadSafetyTests : IDisposable
 
     #region Performance Under Concurrent Load
 
-    [Fact(Skip = "Performance timing tests are unreliable in virtualized CI environments")]
+    [Fact]
+    [Trait("Category", "Performance")]
     public async Task ConcurrentOperations_ShouldMaintainPerformance()
     {
         // Arrange

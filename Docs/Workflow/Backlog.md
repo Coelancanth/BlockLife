@@ -59,51 +59,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_002: Investigate Severe Memory Leak - 49GB Usage
-**Status**: New
-**Owner**: Debugger Expert ← Dev Engineer (discovered)
-**Size**: L (investigation unknown)
-**Priority**: Critical 🔥
-**Created**: 2025-08-18 12:42 PM
-**Markers**: [PERFORMANCE] [BLOCKING] [ROOT-CAUSE]
-
-**What**: Investigate and fix memory leak causing 49GB RAM usage (77% of 64GB)
-**Why**: Blocking developer productivity, potential test runner crash, resource exhaustion
-
-**Symptoms Observed**:
-- Memory usage: ~49GB (77% of 64GB system RAM) reported
-- BUT: No single process using excessive memory (Godot: 1.2GB)
-- Suggests: File cache, closed processes, or already released
-- May be intermittent during heavy test runs
-
-**Initial Suspects** (Dev Engineer hypothesis):
-1. **Test Runner Memory Leaks**:
-   - Property-based tests running 100s of iterations
-   - ServiceProvider not disposed between tests
-   - Test fixtures holding references
-
-2. **Event Subscription Leaks**:
-   - DragPresenter events not unsubscribed (lines 43-46, 54-57)
-   - WeakEventManager issues
-   - View-Presenter circular references
-
-3. **Static Collections**:
-   - GridStateService might be accumulating state
-   - Logger buffering messages indefinitely
-   - MediatR handler caching
-
-**Immediate Actions Needed**:
-- [ ] Profile memory with dotMemory or PerfView
-- [ ] Check for IDisposable implementations missing Dispose calls
-- [ ] Audit event subscriptions for missing unsubscribe
-- [ ] Review static collections and caches
-- [ ] Check test cleanup methods
-
-**Success Criteria**:
-- Memory usage under 2GB during normal development
-- No memory growth during test runs
-- Clean memory release after test completion
-
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
@@ -206,34 +161,6 @@ interface IMovementShape {
 - Stress test validates no race conditions
 - Performance test confirms <16ms operations
 
-### TD_006: Separate Performance Tests from CI Pipeline [Score: 70/100]
-**Status**: Approved ✓
-**Owner**: DevOps Engineer
-**Size**: M (4-6 hours)
-**Priority**: Important
-**Found By**: DevOps Engineer during CI failure investigation
-
-**Tech Lead Decision** (2025-08-18):
-✅ APPROVED - Smart CI improvement, 100% false positive rate unacceptable
-- Add [Category("Performance")] attribute
-- Update CI workflow to exclude timing tests
-- Create optional performance pipeline
-
-**What**: Create separate test category for performance tests and exclude from main CI
-**Why**: Timing tests cause false failures in virtualized CI environments (100% false positive rate)
-**Related**: PostMortem_2025-01-17-CI-Timing-Tests.md
-
-**Approach**:
-- Add [Category("Performance")] to all timing-sensitive tests
-- Update CI workflow to exclude Performance category
-- Create optional performance test pipeline (non-blocking)
-- Add CI environment detection helper
-
-**Done When**:
-- Performance tests properly categorized
-- Main CI excludes timing tests
-- Optional performance pipeline exists
-- No more timing-related CI failures
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -380,6 +307,17 @@ interface IMovementShape {
 **Solution**: Created backlog-assistant subagent
 **Impact**: Saves 30 min per prioritization session
 **Usage**: `/task backlog-assistant "Maintain backlog"`
+
+### TD_006: Separate Performance Tests from CI Pipeline ✅ DONE
+**Completed**: 2025-08-18 (1.5 hours)
+**Owner**: DevOps Engineer
+**Solution**: Added [Trait("Category", "Performance")] to timing tests, excluded from CI
+**Impact**: Eliminated 100% false positive rate on timing tests in CI
+**Key Changes**:
+- 12 timing tests categorized with Performance trait
+- Main CI excludes via --filter "Category!=Performance"
+- Optional weekly performance pipeline created
+- Tests still runnable locally for developers
 
 ---
 

@@ -72,7 +72,8 @@ public class FirstMoveDelayRegressionTest : IDisposable
         _gridStateService = _serviceProvider.GetRequiredService<IGridStateService>();
     }
     
-    [Fact(Skip = "Performance timing tests are unreliable in virtualized CI environments")]
+    [Fact]
+    [Trait("Category", "Performance")]
     public async Task FirstMoveOperation_ShouldCompleteWithin100ms_AfterSerilogPreWarming()
     {
         // Arrange - Place a block
@@ -113,7 +114,8 @@ public class FirstMoveDelayRegressionTest : IDisposable
             "Serilog template compilation may not be properly pre-warmed.");
     }
     
-    [Fact(Skip = "Demonstration test - shows the issue when templates aren't pre-warmed")]
+    [Fact]
+    [Trait("Category", "Performance")]
     public async Task FirstMoveOperation_WithoutPreWarming_DemonstratesDelay()
     {
         // This test demonstrates the issue when templates aren't pre-warmed
