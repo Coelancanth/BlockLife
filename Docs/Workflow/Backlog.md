@@ -178,44 +178,6 @@ interface IMovementShape {
 - Centralize input state management
 - Follow existing feature module structure
 
-### TD_008: Fix ccstatusline Git Branch Display Issue [Score: 12/100]
-**Status**: Deferred ⏸️
-**Owner**: DevOps Engineer (when ready)
-**Size**: S (2-3 hours)
-**Priority**: Ideas
-**Found By**: DevOps Engineer during status line configuration
-**Created**: 2025-08-18
-
-**Tech Lead Decision** (2025-08-18):
-⏸️ DEFERRED - Nice-to-have convenience feature
-- Not blocking any real work
-- Developers can use `git status` for now
-
-**Strategic Prioritizer Decision** (2025-08-18):
-💡 CONFIRMED IN IDEAS - Score: 12/100
-- Pure convenience, no business value
-- Workaround exists (git status)
-- Keep for future quality-of-life improvements
-
-**What**: Fix ccstatusline showing "no git" instead of current branch in Claude Code status line
-**Why**: Developers lose git context awareness, affecting workflow efficiency and branch management
-
-**Problem Statement**:
-- ccstatusline displays "⎇ no git" instead of actual branch name
-- Working directory is correctly in git repository root
-- Git commands work normally but status line shows incorrect information
-- Affects situational awareness during development
-
-**Approach**:
-- Investigate ccstatusline git detection logic in Claude Code context
-- Test working directory resolution when executed via Claude settings
-- Fix path/environment issues preventing git repository detection
-- Verify git integration works in both global and local config modes
-
-**Done When**:
-- Status line shows correct git branch: "🌿 docs/improve-git-workflow-documentation"
-- Git branch updates when switching branches
-- Works consistently in Claude Code status line integration
 
 ### TD_009: Refine Persona Command Implementation for Production [Score: 40/100]
 **Status**: Approved ✓
