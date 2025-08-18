@@ -209,10 +209,10 @@ Debugger AUTOMATICALLY archives (mandatory)
 
 **VS Items:**
 ```
-Proposed → Under Review → Ready for Dev → In Progress → Testing → Done
-    ↓           ↓
-    ↓    Needs Refinement
-    ↓           ↓
+Proposed → Under Review → Ready for Dev → In Progress → Testing → Ready for Human Testing 👁️ → Done
+    ↓           ↓                                           ↓
+    ↓    Needs Refinement                                   ↓
+    ↓           ↓                                    (If unit tests fail)
     └───────────┘ (back to Product Owner)
 ```
 
@@ -229,6 +229,94 @@ Reported → Investigating → Fix Proposed → Fix Applied → Verified
                 ↓
         (Can loop back if fix fails)
 ```
+
+## 🧪 Testing Responsibilities Matrix
+
+### Clear Division: AI vs Human Testing
+
+| Test Type | AI Can Do ✅ | Human Must Do 👁️ | Why |
+|-----------|--------------|-------------------|-----|
+| **Unit Tests** | Write, run, validate | Review coverage | AI has full code access |
+| **Integration Tests** | Write, run, validate | Verify assumptions | AI can test code interactions |
+| **Property Tests** | Design properties, generate | Verify edge cases found | AI excels at invariant testing |
+| **E2E Visual Tests** | ❌ Generate test plans only | Execute in Godot | AI cannot see or click UI |
+| **Animation Tests** | ❌ Describe expected behavior | Verify smoothness | AI cannot perceive motion |
+| **User Experience** | ❌ Create test scenarios | Feel and validate | AI cannot judge "feels right" |
+| **Performance Tests** | Run benchmarks, analyze | Verify in-game feel | AI sees numbers, not stutters |
+
+### The Testing Handoff Protocol
+
+```mermaid
+graph LR
+    A[Dev Complete] --> B[AI: Run Unit/Integration Tests]
+    B --> C{All Pass?}
+    C -->|No| D[Fix & Retry]
+    C -->|Yes| E[AI: Generate E2E Checklist]
+    E --> F[Status: Ready for Human Testing 👁️]
+    F --> G[Human: Execute E2E Tests]
+    G --> H{Pass?}
+    H -->|No| I[Create BR Item]
+    H -->|Yes| J[Status: Done ✅]
+```
+
+### Human Testing Checklist Generation
+
+When Test Specialist marks an item as **"Ready for Human Testing 👁️"**, they generate:
+
+```markdown
+## E2E Testing Checklist: [Feature Name]
+Generated: [Date]
+Feature: [VS/BR/TD Number]
+
+### Setup
+- [ ] Ensure latest build from main
+- [ ] Clear any test data
+- [ ] Set window to 1920x1080
+
+### Core Functionality
+- [ ] **Test 1**: [Specific action]
+  - Click [specific button/area]
+  - Expected: [exact visual result]
+  - Edge case: [what might break]
+
+- [ ] **Test 2**: [Another action]
+  - Drag from [A] to [B]
+  - Expected: [animation description]
+  - Verify: [specific visual feedback]
+
+### Visual Validation
+- [ ] No flickering during [action]
+- [ ] Smooth animation at 60fps
+- [ ] Correct colors (#4169E1 for Work blocks)
+- [ ] Proper layering (UI on top)
+
+### Edge Cases
+- [ ] Spam-click [button] - should not break
+- [ ] Drag outside bounds - should snap back
+- [ ] Window resize - layout should adapt
+
+### Performance
+- [ ] FPS counter stays above 55
+- [ ] No memory leaks after 5 minutes
+- [ ] Responsive during rapid actions
+
+### Sign-off
+- [ ] All core tests passed
+- [ ] No visual glitches observed
+- [ ] Performance acceptable
+- [ ] Ready for production
+
+Tester: ________________
+Date: ________________
+```
+
+### Important Testing Rules
+
+1. **AI NEVER marks "Done"** without human E2E validation for UI features
+2. **Status "Ready for Human Testing 👁️"** = Unit tests pass, needs visual validation
+3. **Human test results** go in backlog item as comments
+4. **Failed E2E** creates BR item with exact reproduction steps
+5. **Test Specialist** generates checklist but doesn't execute visual tests
 
 ## Priority Tiers
 

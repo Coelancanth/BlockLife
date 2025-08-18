@@ -300,8 +300,9 @@ Would you like me to proceed with this plan, or would you prefer to adjust the p
 **Verification**: Each persona now presents options and waits for explicit user consent before proceeding
 
 ### BR_003: AI Cannot Perform E2E Visual Testing [Score: 85/100]
-**Status**: Investigation
-**Owner**: Tech Lead (workflow decision needed)
+**Status**: Done ✅
+**Owner**: Completed
+**Completed**: 2025-08-19
 **Size**: XS (documentation update)
 **Priority**: Important
 **Created**: 2025-08-19
@@ -346,8 +347,40 @@ AI assistants (Dev Engineer, Test Specialist personas) cannot actually run Godot
 **Done When**:
 - Workflow.md updated with clear AI/Human responsibilities
 - Persona descriptions clarified
-- No ambiguity about who performs visual testing  
-*Core features for current milestone, technical debt affecting velocity*
+- No ambiguity about who performs visual testing
+
+**Tech Lead Solution** (2025-08-19):
+✅ **COMPLETED** - Elegant solution with clear separation of responsibilities
+
+**Implementation**:
+1. **Added Testing Responsibilities Matrix** to Workflow.md
+   - Clear table: AI Can Do ✅ vs Human Must Do 👁️
+   - Explains WHY each limitation exists
+   - Visual flowchart of testing handoff protocol
+
+2. **New Status: "Ready for Human Testing 👁️"**
+   - Inserted into VS status progression flow
+   - Indicates unit tests pass, visual validation needed
+   - Clear handoff point between AI and human
+
+3. **Human Testing Checklist Generation**
+   - Test Specialist generates detailed E2E checklists
+   - Template includes: setup, functional, visual, edge cases, performance
+   - Checkboxes for human tester to follow
+   - Results documented in backlog
+
+4. **Updated Test Specialist Persona**
+   - Added prominent "AI Testing Limitations" section
+   - Clear list of what AI cannot do (see UI, click, animations)
+   - Focus on generating test plans for humans
+   - Checklist template and handoff protocol
+
+**Elegant Aspects**:
+- Leverages AI strengths (test generation) while respecting limitations
+- Creates smooth handoff with no ambiguity
+- Visual status indicator (👁️) makes human testing obvious
+- Checklists ensure thorough human validation
+- No false confidence from "AI tested" claims
 
 ### BR_001: Multi-Phase Items Incorrectly Archived Before Completion [Score: 85/100]
 **Status**: New
