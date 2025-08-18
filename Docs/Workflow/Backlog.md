@@ -76,6 +76,30 @@
 - **User Impact**: Players see they can move to corners but validation rejects it
 - **Root Cause**: Mismatch between visual feedback and actual validation logic
 
+**Immediate Fix Required** (2-3 hours):
+1. Fix DragView.ShowRangeIndicators to draw diamond shape matching Manhattan distance
+2. Update visual to show only valid positions (no corners at max range)
+3. Add test to prevent regression
+
+**Future Enhancement** (defer to later):
+```csharp
+interface IMovementShape {
+    bool IsValidMove(Vector2Int from, Vector2Int to);
+    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
+    void DrawShape(IRangeRenderer renderer); // Ensures visual matches logic
+}
+```
+
+**Revised Approach**:
+- **Phase 1** (NOW): Fix the bug - make visual match current Manhattan validation
+- **Phase 2** (LATER): If needed for different block types, implement shape system
+
+**Tech Lead Decision**:
+✅ APPROVED as CRITICAL BUG FIX
+- Fix visual/logic mismatch immediately
+- Defer shape system abstraction until actually needed
+- Principle: Fix bugs first, enhance later
+
 **Dev Engineer Implementation** (2025-08-18):
 ✅ **COMPLETED** - Fixed visual to match Manhattan distance validation
 - Modified DragView.cs:304-318 to store range center and distance
