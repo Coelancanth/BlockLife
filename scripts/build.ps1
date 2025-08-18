@@ -3,7 +3,7 @@
 
 param(
     [Parameter(Position=0)]
-    [ValidateSet('build', 'test', 'clean', 'run', 'all')]
+    [ValidateSet('build', 'test', 'test-only', 'clean', 'run', 'all')]
     [string]$Command = 'build'
 )
 
@@ -41,9 +41,21 @@ switch ($Command) {
     }
     
     'test' {
+        Write-Step "Building and running tests (safe default)"
+        Write-Host "  Building first to catch Godot compilation issues..." -ForegroundColor Yellow
+        Execute-Command "dotnet build BlockLife.sln --configuration Debug"
+        Write-Host "✓ Build successful" -ForegroundColor Green
         Write-Step "Running tests"
         Execute-Command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
+        Write-Host "✓ Build and test complete - safe to commit" -ForegroundColor Green
+    }
+    
+    'test-only' {
+        Write-Step "Running tests only (development iteration)"
+        Write-Host "  ⚠️  Note: This doesn't validate Godot compilation" -ForegroundColor Yellow
+        Execute-Command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
         Write-Host "✓ All tests passed" -ForegroundColor Green
+        Write-Host "  Remember to run 'test' (not 'test-only') before committing!" -ForegroundColor Yellow
     }
     
     'run' {

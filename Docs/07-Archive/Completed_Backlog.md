@@ -194,6 +194,30 @@
 **Unblocked**: Prevented work item loss, simplified backlog management, enforced architectural principles
 [METADATA: process-bug, workflow-improvement, thin-slice-principle, backlog-management, vertical-slices]
 
+### BR_001: Dev Engineer Must Run Build Before Committing ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 5 minutes actual (originally estimated XS)
+**Outcome**: Implemented multi-layer defense system preventing incomplete builds from being committed
+**Lessons**: Foolproof design beats relying on developer memory - architectural solutions prevent human error
+**Unblocked**: Eliminated risk of broken Godot compilation reaching repository, improved development confidence
+[METADATA: build-enforcement, git-hooks, developer-workflow, safety-critical, automation]
+
+### TD_015: Fix All Internal Documentation Links After Reorganization ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 2-3 hours as estimated
+**Outcome**: Scanned and fixed all internal documentation links after major structure reorganization
+**Lessons**: Documentation maintenance is critical after restructuring - broken links destroy user trust
+**Unblocked**: Restored navigation throughout documentation, enabled AI personas to reference correct paths
+[METADATA: documentation-maintenance, link-fixing, reorganization, technical-debt, user-experience]
+
+### TD_001: Extract Input System to Separate Feature Module ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 1 hour actual (revised down from estimated M/4-6 hours)
+**Outcome**: Simplified architecture by consolidating scattered input handlers without adding layers
+**Lessons**: Best architecture isn't the most "pure" - it's the simplest that solves the real problem
+**Unblocked**: Cleaner input handling structure without over-engineering
+[METADATA: architecture, input-system, simplification, anti-over-engineering]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*
