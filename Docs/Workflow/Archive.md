@@ -129,6 +129,21 @@
 **Unblocked**: Clean CI pipeline, optional performance monitoring
 [METADATA: ci-cd, performance-testing, test-categorization]
 
+### VS_001 Phase 2: Drag Range Limits ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 4-6 hours
+**Outcome**: Manhattan distance validation with visual feedback, comprehensive test suite (14 tests)
+**Lessons**: Following existing patterns accelerates feature development
+**Unblocked**: Strategic depth in block movement, prevents teleportation exploits
+[METADATA: drag-system, manhattan-distance, validation, strategic-gameplay]
+
+### TD_005: Add Missing Drag Integration Tests ❌ REJECTED
+**Rejected**: 2025-08-18
+**Reason**: Sufficient coverage with unit tests + manual E2E, integration tests would add maintenance burden without significant value
+**Alternative**: Pragmatic testing approach - unit tests for logic, manual E2E for UI integration
+[RESURRECT-IF: complex-integration-scenarios, automation-requirements, regression-issues]
+[METADATA: integration-testing, pragmatic-testing, cost-benefit-analysis]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*

@@ -22,6 +22,7 @@ public partial class BlockInputManager : Node
 {
     [Export] public Key PlaceBlockKey { get; set; } = Key.Space;
     [Export] public Key InspectBlockKey { get; set; } = Key.I;
+    [Export] public Key CycleBlockTypeKey { get; set; } = Key.Tab;
     
     private BlockSelectionManager? _selectionManager;
     private BlockPlacementHandler? _placementHandler;
@@ -41,8 +42,8 @@ public partial class BlockInputManager : Node
         InitializeServices();
         SubscribeToEvents();
         
-        _logger?.Debug("BlockInputManager initialized - Place: {PlaceKey}, Inspect: {InspectKey}", 
-            PlaceBlockKey, InspectBlockKey);
+        _logger?.Debug("BlockInputManager initialized - Place: {PlaceKey}, Inspect: {InspectKey}, Cycle: {CycleKey}", 
+            PlaceBlockKey, InspectBlockKey, CycleBlockTypeKey);
     }
     
     private void InitializeServices()
@@ -104,6 +105,11 @@ public partial class BlockInputManager : Node
         else if (keyEvent.Keycode == InspectBlockKey)
         {
             _inspectionHandler?.HandleInspectKey(_selectionManager?.CurrentHoverPosition ?? Option<Vector2Int>.None);
+            GetViewport().SetInputAsHandled();
+        }
+        else if (keyEvent.Keycode == CycleBlockTypeKey)
+        {
+            _placementHandler?.CycleBlockType();
             GetViewport().SetInputAsHandled();
         }
     }

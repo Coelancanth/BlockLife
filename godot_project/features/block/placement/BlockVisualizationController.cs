@@ -289,20 +289,25 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     
     private Color GetBlockColor(BlockType type)
     {
-        return type switch
-        {
-            BlockType.Basic => Colors.White,
-            BlockType.Work => Colors.Blue,
-            BlockType.Study => Colors.Purple,
-            BlockType.Relationship => Colors.Pink,
-            BlockType.Health => Colors.Green,
-            BlockType.Creativity => Colors.Orange,
-            BlockType.Fun => Colors.Yellow,
-            BlockType.CareerOpportunity => Colors.Cyan,
-            BlockType.Partnership => Colors.Magenta,
-            BlockType.Passion => Colors.Red,
-            _ => Colors.Gray
-        };
+        // Use the colors defined in the domain layer for consistency
+        var (r, g, b) = type.GetColorRGB();
+        return new Color(r / 255f, g / 255f, b / 255f);
+        
+        // Alternative implementation using switch for quick reference:
+        // return type switch
+        // {
+        //     BlockType.Basic => new Color(0.502f, 0.502f, 0.502f),      // Gray
+        //     BlockType.Work => new Color(0.255f, 0.412f, 0.882f),       // Royal Blue
+        //     BlockType.Study => new Color(0.196f, 0.804f, 0.196f),      // Lime Green
+        //     BlockType.Relationship => new Color(1.0f, 0.412f, 0.706f), // Hot Pink
+        //     BlockType.Health => new Color(1.0f, 0.388f, 0.278f),       // Tomato Red
+        //     BlockType.Creativity => new Color(0.576f, 0.439f, 0.859f), // Medium Purple
+        //     BlockType.Fun => new Color(1.0f, 0.843f, 0.0f),            // Gold
+        //     BlockType.CareerOpportunity => new Color(0.0f, 0.808f, 0.82f), // Dark Turquoise
+        //     BlockType.Partnership => new Color(1.0f, 0.078f, 0.576f),  // Deep Pink
+        //     BlockType.Passion => new Color(1.0f, 0.549f, 0.0f),        // Dark Orange
+        //     _ => new Color(1.0f, 1.0f, 1.0f)                           // White (fallback)
+        // };
     }
     
     private void AnimateBlockAppearance(Node2D blockNode)

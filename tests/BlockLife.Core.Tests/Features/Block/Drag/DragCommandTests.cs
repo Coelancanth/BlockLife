@@ -195,13 +195,13 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
         }
 
         [Fact]
-        public async Task CompleteDrag_ToOccupiedPosition_ShouldFail()
+        public async Task CompleteDrag_ToOccupiedPosition_WithinRange_ShouldSwapBlocks()
         {
             // Arrange
             var block1Id = Guid.NewGuid();
             var block2Id = Guid.NewGuid();
             var position1 = new Vector2Int(5, 5);
-            var position2 = new Vector2Int(7, 7);
+            var position2 = new Vector2Int(6, 6);  // Within range 3 (distance = 2)
             
             var block1 = new BlockBuilder()
                 .WithId(block1Id)
@@ -220,21 +220,128 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
             var startCommand = StartDragCommand.Create(block1Id, position1);
             await _mediator.Send(startCommand);
 
-            // Act - Try to drop on occupied position
+            // Act - Try to drop on occupied position (should swap)
             var completeCommand = CompleteDragCommand.Create(block1Id, position2);
             var result = await _mediator.Send(completeCommand);
 
             // Assert
-            result.IsFail.Should().BeTrue();
+            result.IsSucc.Should().BeTrue("blocks within range should swap");
+            _dragStateService.IsDragging.Should().BeFalse(); // Drag should be complete
+            
+            // Block1 should be at position2
+            var block1Check = _gridStateService.GetBlockAt(position2);
+            block1Check.IsSome.Should().BeTrue();
+            block1Check.Match(
+                Some: b => b.Id,
+                None: () => Guid.Empty
+            ).Should().Be(block1Id);
+            
+            // Block2 should be at position1
+            var block2Check = _gridStateService.GetBlockAt(position1);
+            block2Check.IsSome.Should().BeTrue();
+            block2Check.Match(
+                Some: b => b.Id,
+                None: () => Guid.Empty
+            ).Should().Be(block2Id);
+        }
+        
+        [Fact]
+        public async Task CompleteDrag_ToOccupiedPosition_OutOfRange_ShouldFail()
+        {
+            // Arrange
+            var block1Id = Guid.NewGuid();
+            var block2Id = Guid.NewGuid();
+            var position1 = new Vector2Int(5, 5);
+            var position2 = new Vector2Int(9, 9);  // Out of range (distance = 8)
+            
+            var block1 = new BlockBuilder()
+                .WithId(block1Id)
+                .WithPosition(position1)
+                .WithType(BlockType.Work)
+                .Build();
+            var block2 = new BlockBuilder()
+                .WithId(block2Id)
+                .WithPosition(position2)
+                .WithType(BlockType.Study)
+                .Build();
+            _gridStateService.PlaceBlock(block1);
+            _gridStateService.PlaceBlock(block2);
+            
+            // Start drag
+            var startCommand = StartDragCommand.Create(block1Id, position1);
+            await _mediator.Send(startCommand);
+
+            // Act - Try to drop on occupied position out of range
+            var completeCommand = CompleteDragCommand.Create(block1Id, position2);
+            var result = await _mediator.Send(completeCommand);
+
+            // Assert
+            result.IsFail.Should().BeTrue("target block cannot reach original position");
             _dragStateService.IsDragging.Should().BeFalse(); // Drag should be cancelled
             
-            // Block should still be at original position
+            // Both blocks should still be at original positions
             var block1Check = _gridStateService.GetBlockAt(position1);
             block1Check.IsSome.Should().BeTrue();
             block1Check.Match(
                 Some: b => b.Id,
                 None: () => Guid.Empty
             ).Should().Be(block1Id);
+            
+            var block2Check = _gridStateService.GetBlockAt(position2);
+            block2Check.IsSome.Should().BeTrue();
+            block2Check.Match(
+                Some: b => b.Id,
+                None: () => Guid.Empty
+            ).Should().Be(block2Id);
+        }
+
+        [Fact]
+        public async Task CompleteDrag_SwapAtMaxRange_ShouldSucceed()
+        {
+            // Arrange
+            var block1Id = Guid.NewGuid();
+            var block2Id = Guid.NewGuid();
+            var position1 = new Vector2Int(5, 5);
+            var position2 = new Vector2Int(5, 8);  // Exactly at range 3 (distance = 3)
+            
+            var block1 = new BlockBuilder()
+                .WithId(block1Id)
+                .WithPosition(position1)
+                .WithType(BlockType.Work)
+                .Build();
+            var block2 = new BlockBuilder()
+                .WithId(block2Id)
+                .WithPosition(position2)
+                .WithType(BlockType.Study)
+                .Build();
+            _gridStateService.PlaceBlock(block1);
+            _gridStateService.PlaceBlock(block2);
+            
+            // Start drag
+            var startCommand = StartDragCommand.Create(block1Id, position1);
+            await _mediator.Send(startCommand);
+
+            // Act - Swap at exact max range
+            var completeCommand = CompleteDragCommand.Create(block1Id, position2);
+            var result = await _mediator.Send(completeCommand);
+
+            // Assert
+            result.IsSucc.Should().BeTrue("blocks at exact max range should swap");
+            
+            // Verify swap occurred
+            var block1Check = _gridStateService.GetBlockAt(position2);
+            block1Check.IsSome.Should().BeTrue();
+            block1Check.Match(
+                Some: b => b.Id,
+                None: () => Guid.Empty
+            ).Should().Be(block1Id);
+            
+            var block2Check = _gridStateService.GetBlockAt(position1);
+            block2Check.IsSome.Should().BeTrue();
+            block2Check.Match(
+                Some: b => b.Id,
+                None: () => Guid.Empty
+            ).Should().Be(block2Id);
         }
 
         [Fact]

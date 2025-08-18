@@ -1,11 +1,13 @@
 using BlockLife.Core.Features.Block.Commands;
 using BlockLife.Core.Features.Block.Drag.Services;
 using BlockLife.Core.Features.Block.Drag.Effects;
+using BlockLife.Core.Features.Block.Effects;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
 using Serilog;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using static LanguageExt.Prelude;
@@ -85,19 +87,131 @@ namespace BlockLife.Core.Features.Block.Drag.Commands
                 return FinFail<LanguageExt.Unit>(error);
             }
 
-            // Step 5: Execute the move using existing MoveBlockCommand
-            var moveCommand = MoveBlockCommand.Create(request.BlockId, request.DropPosition);
-            var moveResult = await _mediator.Send(moveCommand, cancellationToken);
+            // Step 5: Check if target position is occupied (swap scenario)
+            var targetBlockOption = _gridStateService.GetBlockAt(request.DropPosition);
+            var isSwap = targetBlockOption.IsSome;
             
-            if (moveResult.IsFail)
+            if (isSwap)
             {
-                var error = moveResult.Match<Error>(
-                    Succ: _ => Error.New("UNKNOWN", "Unknown error"),
-                    Fail: e => e
+                // Step 5a: Handle swap operation
+                var targetBlock = targetBlockOption.Match(
+                    Some: b => b,
+                    None: () => throw new InvalidOperationException("Target block should exist")
                 );
-                _logger.Error("Failed to move block during drop: {Error}", error.Message);
-                _dragStateService.CancelDrag();
-                return FinFail<LanguageExt.Unit>(error);
+                
+                _logger.Debug("Performing swap between BlockId {DraggedBlock} and BlockId {TargetBlock}",
+                    request.BlockId, targetBlock.Id);
+                
+                // Validate that target block can reach the original position (swap is valid)
+                // We need to check if the target block at DropPosition can move to originalPosition
+                var targetDistance = Math.Abs(originalPosition.X - request.DropPosition.X) + 
+                                   Math.Abs(originalPosition.Y - request.DropPosition.Y);
+                
+                if (targetDistance > 3) // Using same max range as drag
+                {
+                    _logger.Warning("Target block cannot reach original position - swap invalid. Distance: {Distance}", targetDistance);
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(Error.New("INVALID_SWAP", 
+                        $"Target block at {request.DropPosition} cannot reach position {originalPosition} (distance: {targetDistance})"));
+                }
+                
+                // Execute swap using three steps to avoid collision
+                // Step 1: Get the dragged block data before removing it
+                var draggedBlockOption = _gridStateService.GetBlockById(request.BlockId);
+                if (draggedBlockOption.IsNone)
+                {
+                    _logger.Error("Could not find dragged block with ID {BlockId}", request.BlockId);
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(Error.New("BLOCK_NOT_FOUND", 
+                        $"Could not find dragged block with ID {request.BlockId}"));
+                }
+                
+                var draggedBlock = draggedBlockOption.Match(
+                    Some: b => b,
+                    None: () => throw new InvalidOperationException("Dragged block should exist")
+                );
+                
+                // Step 2: Remove dragged block from its original position
+                var removeResult = _gridStateService.RemoveBlock(request.BlockId);
+                if (removeResult.IsFail)
+                {
+                    var error = removeResult.Match<Error>(
+                        Succ: _ => Error.New("UNKNOWN", "Unknown error"),
+                        Fail: e => e
+                    );
+                    _logger.Error("Failed to remove dragged block during swap: {Error}", error.Message);
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(error);
+                }
+                
+                // Step 3: Move target block to original position (now empty)
+                // We use GridStateService directly instead of MoveBlockCommand to avoid double validation
+                var moveTargetResult = _gridStateService.MoveBlock(targetBlock.Id, originalPosition);
+                
+                if (moveTargetResult.IsFail)
+                {
+                    var error = moveTargetResult.Match<Error>(
+                        Succ: _ => Error.New("UNKNOWN", "Unknown error"),
+                        Fail: e => e
+                    );
+                    _logger.Error("Failed to move target block during swap: {Error}", error.Message);
+                    
+                    // Restore dragged block to original position
+                    _gridStateService.PlaceBlock(draggedBlock);
+                    
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(error);
+                }
+                
+                // Step 4: Place dragged block at target position (now empty)
+                var draggedBlockWithNewPosition = draggedBlock with { Position = request.DropPosition };
+                var placeResult = _gridStateService.PlaceBlock(draggedBlockWithNewPosition);
+                
+                if (placeResult.IsFail)
+                {
+                    var error = placeResult.Match<Error>(
+                        Succ: _ => Error.New("UNKNOWN", "Unknown error"),
+                        Fail: e => e
+                    );
+                    _logger.Error("Failed to place dragged block during swap: {Error}", error.Message);
+                    
+                    // Attempt to rollback target block move
+                    _gridStateService.MoveBlock(targetBlock.Id, request.DropPosition);
+                    
+                    // Restore dragged block to original position
+                    _gridStateService.PlaceBlock(draggedBlock);
+                    
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(error);
+                }
+                
+                // Step 5: Publish notifications for both block movements
+                // This ensures the view updates correctly for both blocks in the swap
+                var targetMovedNotification = BlockMovedNotification.Create(targetBlock.Id, request.DropPosition, originalPosition);
+                await _mediator.Publish(targetMovedNotification, cancellationToken);
+                
+                var draggedMovedNotification = BlockMovedNotification.Create(request.BlockId, originalPosition, request.DropPosition);
+                await _mediator.Publish(draggedMovedNotification, cancellationToken);
+                
+                _logger.Information("Successfully swapped blocks: {DraggedBlock} to {TargetPos}, {TargetBlock} to {OriginalPos}",
+                    request.BlockId, request.DropPosition, targetBlock.Id, originalPosition);
+            }
+            else
+            {
+                // Step 5b: Normal move (no swap)
+                var moveCommand = MoveBlockCommand.Create(request.BlockId, request.DropPosition);
+                var moveResult = await _mediator.Send(moveCommand, cancellationToken);
+                
+                if (moveResult.IsFail)
+                {
+                    var error = moveResult.Match<Error>(
+                        Succ: _ => Error.New("UNKNOWN", "Unknown error"),
+                        Fail: e => e
+                    );
+                    _logger.Error("Failed to move block during drop: {Error}", error.Message);
+                    _dragStateService.CancelDrag();
+                    return FinFail<LanguageExt.Unit>(error);
+                }
             }
 
             // Step 6: Complete the drag operation
@@ -131,11 +245,8 @@ namespace BlockLife.Core.Features.Block.Drag.Commands
                 return FinFail<LanguageExt.Unit>(Error.New("INVALID_POSITION", $"Position {dropPosition} is outside grid bounds"));
             }
 
-            // Check if target position is empty
-            if (!_gridStateService.IsPositionEmpty(dropPosition))
-            {
-                return FinFail<LanguageExt.Unit>(Error.New("POSITION_OCCUPIED", $"Position {dropPosition} is already occupied"));
-            }
+            // Note: We no longer fail if position is occupied - this enables swapping
+            // The swap logic is handled in the main Handle method
 
             return FinSucc(LanguageExt.Unit.Default);
         }
