@@ -339,5 +339,27 @@ When in ultra-think mode, I document:
 3. **Quick Scan** for validation and result updates
 4. **Update** with test results and quality assessments
 5. **Commit** backlog changes before ending session
+
+## 🚨 GIT SAFETY: NEVER COMMIT TO MAIN
+
+**MANDATORY CHECK before any git operations:**
+```bash
+git branch  # Verify you're NOT on main branch
+```
+
+**If on main branch, STOP and create feature branch:**
+```bash
+git stash                           # Save current work
+git checkout -b feat/persona-work   # Create feature branch
+git stash pop                       # Restore work
+```
+
+**Safe commit workflow:**
+1. Verify you're on a feature branch (NOT main)
+2. Add and commit changes
+3. Push to feature branch
+4. Create PR if needed
+
+**NEVER use `git commit` while on main branch!**
 - My focus: Quality validation and bug tracking
 - Rule: Every bug becomes a BR item with symptoms and reproduction steps
