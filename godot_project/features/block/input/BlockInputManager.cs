@@ -2,9 +2,7 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Godot.Features.Block.Input.Handlers;
 using BlockLife.Godot.Features.Block.Input.Infrastructure;
-using BlockLife.Godot.Features.Block.Input.State;
 using BlockLife.Godot.Features.Block.Placement;
 using BlockLife.Godot.Scenes;
 using LanguageExt;
@@ -16,18 +14,15 @@ namespace BlockLife.Godot.Features.Block.Input;
 
 /// <summary>
 /// Centralized input router for block operations.
-/// Delegates to specialized handlers for each input type.
+/// Now uses unified handler and extracted input mappings for cleaner architecture.
 /// </summary>
 public partial class BlockInputManager : Node
 {
-    [Export] public Key PlaceBlockKey { get; set; } = Key.Space;
-    [Export] public Key InspectBlockKey { get; set; } = Key.I;
-    [Export] public Key CycleBlockTypeKey { get; set; } = Key.Tab;
+    // Input configuration via resource (can be shared/saved)
+    [Export] private InputMappings? _inputMappings;
     
-    private BlockSelectionManager? _selectionManager;
-    private BlockPlacementHandler? _placementHandler;
-    private BlockInspectionHandler? _inspectionHandler;
-    private BlockMovementHandler? _movementHandler;
+    private UnifiedInputHandler? _unifiedHandler;
+    private InputStateManager? _stateManager;
     private ILogger? _logger;
     
     private IDisposable? _cellClickedSubscription;
@@ -35,6 +30,9 @@ public partial class BlockInputManager : Node
 
     public override async void _Ready()
     {
+        // Use default mappings if not configured in editor
+        _inputMappings ??= InputMappings.CreateDefault();
+        
         // Pre-warm input system components to prevent first-operation delays
         var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
         await InputSystemInitializer.Initialize(this, sceneRoot?.Logger);
@@ -42,8 +40,8 @@ public partial class BlockInputManager : Node
         InitializeServices();
         SubscribeToEvents();
         
-        _logger?.Debug("BlockInputManager initialized - Place: {PlaceKey}, Inspect: {InspectKey}, Cycle: {CycleKey}", 
-            PlaceBlockKey, InspectBlockKey, CycleBlockTypeKey);
+        _logger?.Debug("BlockInputManager initialized with mappings: {Mappings}", 
+            _inputMappings.GetMappingDescription());
     }
     
     private void InitializeServices()
@@ -66,11 +64,9 @@ public partial class BlockInputManager : Node
             return;
         }
         
-        // Initialize managers and handlers
-        _selectionManager = new BlockSelectionManager(_logger);
-        _placementHandler = new BlockPlacementHandler(mediator, _logger);
-        _inspectionHandler = new BlockInspectionHandler(gridStateService, _logger);
-        _movementHandler = new BlockMovementHandler(mediator, gridStateService, _selectionManager, _logger);
+        // Initialize state manager and unified handler
+        _stateManager = new InputStateManager(_logger);
+        _unifiedHandler = new UnifiedInputHandler(mediator, gridStateService, _stateManager, _logger);
     }
     
     private void SubscribeToEvents()
@@ -96,20 +92,23 @@ public partial class BlockInputManager : Node
     {
         if (@event is not InputEventKey { Pressed: true } keyEvent) 
             return;
+        
+        if (_inputMappings == null || _unifiedHandler == null)
+            return;
             
-        if (keyEvent.Keycode == PlaceBlockKey)
+        if (keyEvent.Keycode == _inputMappings.PlaceBlockKey)
         {
-            _placementHandler?.HandlePlaceKey(_selectionManager?.CurrentHoverPosition ?? Option<Vector2Int>.None);
+            _ = _unifiedHandler.HandlePlaceBlock();
             GetViewport().SetInputAsHandled();
         }
-        else if (keyEvent.Keycode == InspectBlockKey)
+        else if (keyEvent.Keycode == _inputMappings.InspectBlockKey)
         {
-            _inspectionHandler?.HandleInspectKey(_selectionManager?.CurrentHoverPosition ?? Option<Vector2Int>.None);
+            _unifiedHandler.HandleInspectBlock();
             GetViewport().SetInputAsHandled();
         }
-        else if (keyEvent.Keycode == CycleBlockTypeKey)
+        else if (keyEvent.Keycode == _inputMappings.CycleBlockTypeKey)
         {
-            _placementHandler?.CycleBlockType();
+            _unifiedHandler.CycleBlockType();
             GetViewport().SetInputAsHandled();
         }
     }
@@ -118,20 +117,21 @@ public partial class BlockInputManager : Node
     {
         // With drag-to-move system, clicks no longer select blocks
         // They only complete movement for already-dragged blocks
-        if (_movementHandler != null)
-            await _movementHandler.HandleCellClick(position);
+        if (_unifiedHandler != null)
+            await _unifiedHandler.HandleCellClick(position);
     }
     
     private void HandleCellHover(Vector2Int position)
     {
-        _selectionManager?.UpdateHoverPosition(position);
+        _unifiedHandler?.UpdateHoverPosition(position);
     }
     
     public override void _ExitTree()
     {
         _cellClickedSubscription?.Dispose();
         _cellHoveredSubscription?.Dispose();
-        _selectionManager?.Dispose();
+        _unifiedHandler?.Dispose();
+        _stateManager?.Dispose();
         base._ExitTree();
     }
 }

@@ -35,7 +35,6 @@ script = ExtResource("3_7qbr8")
 
 [node name="BlockInputManager" type="Node" parent="."]
 script = ExtResource("4_input")
-InspectBlockKey = 81
 
 [node name="DragView" type="Control" parent="."]
 anchors_preset = 0

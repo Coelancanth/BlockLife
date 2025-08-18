@@ -63,6 +63,43 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
+### BR_001: Dev Engineer Must Run Build Before Committing
+**Status**: New
+**Owner**: Dev Engineer
+**Size**: XS (5 minutes)
+**Priority**: Important
+**Created**: 2025-08-19
+**Found By**: Dev Engineer during TD_001 implementation
+
+**What**: Dev Engineer forgot to run full build before attempting to commit, only ran tests
+**Why**: Tests passing doesn't guarantee Godot compilation succeeds - could break the game
+
+**Root Cause**:
+- Workflow habit focused on unit tests only
+- Build script has both `test` and `build` commands, easy to forget one
+- No reminder in workflow to run full build
+
+**Impact**:
+- Could commit code that breaks Godot compilation
+- Other developers would pull broken code
+- CI would catch it but wastes time
+
+**Reproduction**:
+1. Make changes to Godot-specific code (godot_project/)
+2. Run only `./scripts/build.ps1 test`
+3. Tests pass but Godot compilation might fail
+4. Attempt to commit without running build
+
+**Fix**:
+- Update Dev Engineer workflow to ALWAYS run full build before commit
+- Consider adding pre-commit hook to enforce build
+- Add to CLAUDE.md as mandatory step
+
+**Done When**:
+- Workflow documentation updated
+- Dev Engineer checklist includes mandatory build step
+- Consider: pre-commit hook that runs build
+
 
 
 ## 💡 Ideas (Do Later)
@@ -82,15 +119,13 @@
 **Scope**:
 - Review all brainstormA/B/C.md files (Chinese content)
 - Extract key gameplay concepts and emotional themes
-- Create 5-10 concrete VS items from the best ideas
+- Merge them into gamevision
 - Preserve creative intent while ensuring technical feasibility
 - Prioritize based on player value and implementation complexity
 
 **Approach**:
 1. **Extract Core Concepts**: Identify the most impactful ideas from brainstorms
 2. **Validate Against Vision**: Ensure alignment with Game_Design_Vision.md
-3. **Create VS Items**: Transform each concept into thin, implementable slices
-4. **Maintain Traceability**: Link each VS back to source brainstorm section
 5. **Prioritize**: Rank by player impact and technical complexity
 
 **Examples to Extract**:
@@ -102,8 +137,6 @@
 
 **Done When**:
 - All brainstorm files reviewed and key concepts extracted
-- 5-10 new VS items created and added to backlog
-- Each VS item is ≤3 days of work (thin slices)
 - Priority and dependencies established
 - Creative intent preserved in specifications
 
@@ -230,17 +263,53 @@ public Property DoubleSwap_ReturnsToOriginal()
 - CI pipeline includes property test execution
 
 ### TD_001: Extract Input System to Separate Feature Module [Score: 45/100]
-**Status**: Approved ✓
+**Status**: Done ✅
 **Owner**: Dev Engineer
-**Size**: M (4-6 hours)
+**Size**: S (1 hour actual) - REVISED DOWN from M
+**Completed**: 2025-08-19
 **Priority**: Ideas (after VS_001)
-**Tech Lead Decision** (2025-08-18): Valid architectural improvement. Implement after VS_001 to understand full requirements.
+**Markers**: [ARCHITECTURE]
 
-**Approach**:
-- Create `src/Features/Input/` module
-- Extract common input handling patterns
-- Centralize input state management
-- Follow existing feature module structure
+**Tech Lead Ultra-Think Decision** (2025-08-19): 
+⚠️ **ARCHITECTURE CHALLENGE: Original design is over-engineered**
+
+After deep analysis of existing code, the proposed two-layer architecture adds unnecessary complexity. Current system already has clean separation via MediatR.
+
+**Problem Analysis**:
+- Current: `Godot Input → BlockInputManager → MediatR Command` (2 layers, works well)
+- Proposed: `Godot → Adapter → Domain Input → Router → Commands` (4 layers, over-engineered)
+- **Real Issue**: Input handlers are scattered across 4 classes with some duplication
+
+**Revised Simpler Solution**:
+```
+godot_project/features/block/input/
+├── BlockInputManager.cs        # Keep as central router (existing)
+├── InputMappings.cs            # Extract key bindings to config (new)
+├── InputStateManager.cs        # Track modifiers/modes (refactor from SelectionManager)
+└── UnifiedInputHandler.cs      # Consolidate 4 handlers into 1 (refactor)
+```
+
+**Why This is Better**:
+- **No new architectural layers** - MediatR already provides decoupling
+- **Solves actual problem** - Consolidates scattered handlers
+- **1-2 hours vs 4-6 hours** - Much simpler implementation
+- **Easier to debug** - Less indirection
+- **Follows YAGNI** - Don't add abstraction until needed
+
+**Implementation Approach**:
+1. Consolidate BlockPlacementHandler, BlockInspectionHandler, BlockMovementHandler into UnifiedInputHandler
+2. Extract key mappings to configuration class
+3. Keep sending commands via existing MediatR pattern
+4. Add tests for the consolidated handler
+
+**Tech Lead Rationale**:
+The best architecture isn't the most "pure" - it's the simplest that solves the real problem. Current MediatR pattern already provides testability and decoupling. Adding more layers just makes debugging harder without clear benefit.
+
+**Done When**:
+- Input handlers consolidated into single class
+- Key mappings extracted to configuration
+- Existing tests still pass
+- No new architectural layers added
 
 
 ### TD_009: Refine Persona Command Implementation for Production [Score: 40/100]
