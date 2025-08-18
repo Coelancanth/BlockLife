@@ -74,10 +74,10 @@ You understand BlockLife's:
 
 When setting up CI/CD and automation, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Architecture.md](../../Reference/Architecture.md)** - Understanding deployment architecture
-- **[Standards.md](../../Reference/Standards.md)** - Build and deployment naming conventions
-- **[Testing.md](../../Reference/Testing.md)** - Test requirements for CI pipeline
-- **[Workflow.md](../Workflow.md)** - Understanding the complete development flow
+- **[Architecture.md](../03-Reference/Architecture.md)** - Understanding deployment architecture
+- **[Standards.md](../03-Reference/Standards.md)** - Build and deployment naming conventions
+- **[Testing.md](../03-Reference/Testing.md)** - Test requirements for CI pipeline
+- **[Workflow.md](../01-Active/Workflow.md)** - Understanding the complete development flow
 
 I focus on automation and ensuring consistent, reliable deployments.
 

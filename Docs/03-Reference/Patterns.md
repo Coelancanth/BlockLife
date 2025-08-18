@@ -297,14 +297,14 @@ public async Task Performance_OperationCompletes_WithinFrameTime()
 ## 🔗 Cross-References
 
 ### Related Essential Three Documents
-- **[Agent_Quick_Reference.md](Agent_Quick_Reference.md)** - Daily agent orchestration and basic templates
-- **[Development_Workflows.md](Development_Workflows.md)** - Process checklists and workflow steps
-- **[Architecture_Guide.md](Shared/Core/Architecture/Architecture_Guide.md)** - Core architectural principles
+- **[QuickReference.md](QuickReference.md)** - Daily agent orchestration and patterns
+- **[Workflow.md](../01-Active/Workflow.md)** - Process checklists and workflow steps
+- **[Architecture.md](Architecture.md)** - Core architectural principles
 
 ### Specialized Documentation  
 - **Move Block Reference**: `src/Features/Block/Move/` - GOLD STANDARD implementation
-- **Living Wisdom**: `Docs/Living-Wisdom/` - Advanced operational knowledge (when needed)
-- **Bug Templates**: `Docs/Shared/Templates/Bug-Report-Templates/` - Incident reporting
+- **Post-Mortem Archive**: `../06-PostMortems/Archive/` - Advanced operational knowledge learned from issues
+- **Bug Templates**: `../05-Templates/BugReport_Template.md` - Incident reporting
 
 ---
 

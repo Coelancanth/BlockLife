@@ -157,7 +157,7 @@ When implementing to pass tests with LanguageExt:
 - **Return Option<T>** for queries that might not find results
 - **Never throw exceptions** - use functional error handling
 
-📚 **See [Testing.md](../../Reference/Testing.md#languageext-testing-patterns) for LanguageExt patterns**
+📚 **See [Testing.md](../03-Reference/Testing.md#languageext-testing-patterns) for LanguageExt patterns**
 
 Remember: The test is the specification. Your job is to fulfill that specification with clean, minimal code.
 
@@ -165,10 +165,10 @@ Remember: The test is the specification. Your job is to fulfill that specificati
 
 When implementing features, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Patterns.md](../../Reference/Patterns.md)** - Implementation patterns to follow
-- **[Architecture.md](../../Reference/Architecture.md)** - Clean Architecture guidelines
-- **[Standards.md](../../Reference/Standards.md)** - Naming conventions and code standards
-- **[Testing.md](../../Reference/Testing.md)** - TDD patterns and test structure
+- **[Patterns.md](../03-Reference/Patterns.md)** - Implementation patterns to follow
+- **[Architecture.md](../03-Reference/Architecture.md)** - Clean Architecture guidelines
+- **[Standards.md](../03-Reference/Standards.md)** - Naming conventions and code standards
+- **[Testing.md](../03-Reference/Testing.md)** - TDD patterns and test structure
 - **Move Block Reference**: `src/Features/Block/Move/` - Gold standard implementation
 
 I focus on clean implementation following established patterns.

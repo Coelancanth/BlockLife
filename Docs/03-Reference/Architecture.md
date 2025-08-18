@@ -267,9 +267,9 @@ public void Commands_ShouldBe_Immutable()
 ## 🔗 Quick Reference Links
 
 - **Gold Standard**: `src/Features/Block/Move/` (copy this structure)
-- **Technical Patterns**: [Technical_Patterns.md](../../Technical_Patterns.md) (debugging, state management)
-- **Development Workflow**: [Development_Workflows.md](../../Development_Workflows.md) (daily process)
-- **Post-Mortem Lessons**: `Docs/Post-Mortems/Archive/` (learned from real issues)
+- **Technical Patterns**: [Patterns.md](Patterns.md) (implementation patterns and debugging approaches)
+- **Development Workflow**: [Workflow.md](../01-Active/Workflow.md) (daily development process)
+- **Post-Mortem Lessons**: `../06-PostMortems/Archive/` (learned from real issues)
 
 ---
 

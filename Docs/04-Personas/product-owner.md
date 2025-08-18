@@ -96,9 +96,9 @@ Your success is measured not by how many features you approve, but by how many c
 
 When defining vertical slices, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Workflow.md](../Workflow.md)** - Understanding the complete VS flow
-- **[VerticalSlice_Template.md](../Templates/VerticalSlice_Template.md)** - Template for creating VS items
-- **[Standards.md](../../Reference/Standards.md)** - Naming conventions for VS items (VS_XXX pattern)
+- **[Workflow.md](../01-Active/Workflow.md)** - Understanding the complete VS flow
+- **[VerticalSlice_Template.md](../05-Templates/VerticalSlice_Template.md)** - Template for creating VS items
+- **[Standards.md](../03-Reference/Standards.md)** - Naming conventions for VS items (VS_XXX pattern)
 
 I don't need deep technical docs - I focus on defining complete slices that deliver player value.
 
