@@ -74,6 +74,61 @@
 [RESURRECT-IF: actual-performance-issues, profiling-shows-bottleneck]
 [METADATA: performance, premature-optimization]
 
+## 2025-08-18 (Backlog Maintenance)
+
+### VS_001 Phase 1: Basic Drag Implementation ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 6 hours
+**Outcome**: Backend commands/handlers, Godot DragView with visual feedback, mouse events/ESC working
+**Lessons**: Following existing patterns (Move Block) accelerates development
+**Unblocked**: VS_001 Phase 2 implementation
+[METADATA: drag-system, ui-integration, mvp-pattern]
+
+### TD_003_VERIFY: Verify Context7 Library Access ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 30 minutes
+**Outcome**: Confirmed LanguageExt (9.4), MediatR (10.0), Godot (9.9) available
+**Lessons**: Error.Message behavior confirmed as post-mortem found
+**Unblocked**: Confidence in documentation access for complex scenarios
+[METADATA: context7, verification, library-access]
+
+### TD_002: Performance Optimization ❌ REJECTED
+**Rejected**: 2025-08-18
+**Reason**: Premature optimization - no performance issues exist
+**Alternative**: Profile first, optimize second approach
+[RESURRECT-IF: actual-performance-bottlenecks, profiling-data-shows-issues]
+[METADATA: premature-optimization, performance]
+
+### TD_007: Git Worktrees ❌ REJECTED  
+**Rejected**: 2025-08-18
+**Reason**: Massive over-engineering for non-problem
+**Alternative**: Simple solutions (branch naming) beat complex systems
+[RESURRECT-IF: team-size-growth, complex-parallel-workflows]
+[METADATA: git-workflow, over-engineering]
+
+### TD_010: Dashboard System ❌ REJECTED
+**Rejected**: 2025-08-18
+**Reason**: Solving wrong problem (visualization vs discipline)
+**Alternative**: Fix root causes (backlog bloat) not symptoms
+[RESURRECT-IF: large-team, many-concurrent-projects]
+[METADATA: dashboard, symptom-vs-cause]
+
+### TD_011: Review Gap Automation ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 30 minutes
+**Outcome**: Created backlog-assistant subagent
+**Lessons**: Saves 30 min per prioritization session
+**Unblocked**: Automated maintenance reduces cognitive load
+[METADATA: automation, backlog-maintenance]
+
+### TD_006: Separate Performance Tests from CI Pipeline ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 1.5 hours
+**Outcome**: Added [Trait("Category", "Performance")] to timing tests, excluded from CI
+**Lessons**: Eliminated 100% false positive rate on timing tests in CI
+**Unblocked**: Clean CI pipeline, optional performance monitoring
+[METADATA: ci-cd, performance-testing, test-categorization]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*

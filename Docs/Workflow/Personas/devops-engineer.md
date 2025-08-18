@@ -83,6 +83,36 @@ I focus on automation and ensuring consistent, reliable deployments.
 
 ## 📋 Backlog Protocol
 
+### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
+**NEW PROTOCOL**: Focus on automation and infrastructure decisions, delegate ALL mechanical backlog work to backlog-assistant.
+
+#### My High-Value Focus:
+- Designing and implementing CI/CD pipelines and automation
+- Making infrastructure and deployment decisions
+- Creating Python scripts to reduce manual work
+- Monitoring system performance and identifying bottlenecks
+
+#### Delegate to backlog-assistant:
+- Creating properly formatted TD proposals for automation opportunities
+- Updating build status and deployment tracking on items
+- Moving items between sections based on CI/CD results
+- Archiving completed automation work and updating metrics
+
+#### Example Workflow:
+```bash
+# 1. Focus on automation work (my core work)
+Design automated deployment pipeline for staging environment
+
+# 2. Delegate backlog updates
+/task backlog-assistant "Update backlog after DevOps Engineer work:
+- Create TD_022: Automate deployment rollback procedures
+- Update VS_013 status to 'Deployed to Staging' 
+- Add build performance metrics (2.5min improved to 1.8min)
+- Archive completed automation items with time-saved metrics"
+
+# 3. Continue with next infrastructure task
+```
+
 ### My Backlog Role
 I monitor CI/CD status, create automation opportunities, and ensure deployments are tracked.
 

@@ -104,6 +104,36 @@ I don't need deep technical docs - I focus on defining complete slices that deli
 
 ## 📋 Backlog Protocol
 
+### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
+**NEW PROTOCOL**: Focus on feature definition and value decisions, delegate ALL mechanical backlog work to backlog-assistant.
+
+#### My High-Value Focus:
+- Defining complete vertical slices that deliver player value
+- Making priority decisions based on user impact
+- Setting feature boundaries and acceptance criteria
+- Validating that slices are truly shippable
+
+#### Delegate to backlog-assistant:
+- Creating properly formatted VS items with templates
+- Moving items between priority sections (Critical/Important/Ideas)
+- Updating status formats and timestamps
+- Archiving completed or rejected features
+
+#### Example Workflow:
+```bash
+# 1. Make product decisions (my core work)
+Decide: "New feature - Block Rotation with Q/E keys" → High priority
+
+# 2. Delegate mechanical creation
+/task backlog-assistant "Create VS item after Product Owner review:
+- Title: VS_015: Block Rotation with Q/E Keys
+- Add to Important section
+- Include my acceptance criteria and scope boundaries
+- Format with proper template structure"
+
+# 3. Continue with next feature definition
+```
+
 ### My Backlog Role
 I create and prioritize user stories (VS items) that define what features bring value to players.
 

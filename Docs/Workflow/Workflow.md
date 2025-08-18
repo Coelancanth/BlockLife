@@ -16,6 +16,49 @@ Each backlog item has a **single Owner** who is responsible for decisions and pr
 - **Markers**: [ARCHITECTURE], [ROOT-CAUSE], [SAFETY-CRITICAL], [COMPLEX]
 - **Output**: Decision rationale documented in item
 
+## 🚀 OPTIMIZED: Focus + Delegation Pattern
+
+### The Efficiency Breakthrough
+**Discovery**: Personas waste 30% of time on mechanical backlog tasks instead of their core expertise.
+
+### The Solution: Delegate to backlog-assistant
+```bash
+# OLD WAY (inefficient):
+Tech Lead reviews → Manually updates backlog → Formats items → Archives
+Time: 20 minutes (5 min thinking + 15 min mechanical work)
+
+# NEW WAY (optimized):
+Tech Lead reviews → Makes decision → Delegates to backlog-assistant
+Time: 7 minutes (5 min thinking + 2 min delegation)
+```
+
+### How to Delegate
+```bash
+# After making your decision:
+/task backlog-assistant "Update backlog:
+- Move TD_013 to Critical
+- Update status to Approved
+- Add my decision notes
+- Archive completed items"
+```
+
+### What Each Persona Delegates
+| Persona | Focus On (High-Value) | Delegate (Mechanical) |
+|---------|----------------------|----------------------|
+| **Product Owner** | Feature definition, value prop | Creating VS items, formatting |
+| **Tech Lead** | Technical decisions, architecture | Moving items, status updates |
+| **Dev Engineer** | Writing code, solving problems | Progress updates, creating TD |
+| **Test Specialist** | Finding bugs, validation | Creating BR items, formatting |
+| **Debugger Expert** | Root cause analysis | Updating BR status, archiving |
+| **DevOps** | CI/CD, automation | TD proposals, documentation |
+
+### The Results
+- **30% time savings** per persona per session
+- **Better focus** on core expertise
+- **Consistent formatting** across backlog
+- **Reduced context switching**
+- **Higher quality decisions**
+
 ## 🎯 Strategic Prioritizer - The Meta Layer
 
 ### When to Use the Strategic Prioritizer

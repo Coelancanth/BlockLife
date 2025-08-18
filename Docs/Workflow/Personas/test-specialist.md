@@ -266,6 +266,36 @@ I need to understand both testing strategies and the patterns being tested.
 
 ## 📋 Backlog Protocol
 
+### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
+**NEW PROTOCOL**: Focus on testing and quality validation, delegate ALL mechanical backlog work to backlog-assistant.
+
+#### My High-Value Focus:
+- Writing comprehensive tests (unit, integration, stress)
+- Validating features against acceptance criteria
+- Finding edge cases and potential failure scenarios
+- Assessing code quality impact on testing and maintenance
+
+#### Delegate to backlog-assistant:
+- Creating properly formatted BR items with symptoms and reproduction steps
+- Updating test coverage status and quality metrics
+- Moving items between sections based on test results
+- Creating TD proposals for code quality issues (needs Tech Lead approval)
+
+#### Example Workflow:
+```bash
+# 1. Focus on quality validation (my core work)
+Test VS_014 block placement - found edge case with boundary validation
+
+# 2. Delegate BR creation
+/task backlog-assistant "Create BR item after Test Specialist findings:
+- BR_025: Block placement fails at grid boundaries (Critical priority)
+- Add reproduction steps and symptoms
+- Assign to Debugger Expert for investigation
+- Update VS_014 status to 'Blocked' until fixed"
+
+# 3. Continue testing other features
+```
+
 ### My Backlog Role
 I validate features meet acceptance criteria and create BR items when bugs are found.
 

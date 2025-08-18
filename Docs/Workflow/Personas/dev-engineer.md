@@ -140,6 +140,35 @@ I focus on clean implementation following established patterns.
 
 ## 📋 Backlog Protocol
 
+### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
+**NEW PROTOCOL**: Focus on coding and implementation, delegate ALL mechanical backlog work to backlog-assistant.
+
+#### My High-Value Focus:
+- Writing clean, tested code that follows established patterns
+- Implementing features to pass TDD tests
+- Solving technical challenges and debugging issues
+- Making architectural decisions within approved patterns
+
+#### Delegate to backlog-assistant:
+- Updating work item statuses ("Not Started" → "In Progress" → "Ready for Review")
+- Creating properly formatted TD proposals when I spot technical debt
+- Moving items between sections and priority levels
+- Adding timestamps and progress notes to items
+
+#### Example Workflow:
+```bash
+# 1. Focus on implementation (my core work)
+Work on VS_012: Implement block rotation logic with proper error handling
+
+# 2. Delegate status management
+/task backlog-assistant "Update backlog after Dev Engineer progress:
+- Mark VS_012 as 'Ready for Review' with Test Specialist ownership
+- Create TD_020: Extract rotation validation logic (needs Tech Lead approval)
+- Add implementation notes and test coverage status"
+
+# 3. Continue with next implementation task
+```
+
 ### My Backlog Role
 I implement features by picking up work items and updating their progress through completion.
 
