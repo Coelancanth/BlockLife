@@ -56,23 +56,38 @@ Generated: [Use actual date/time from bash date command]
 ```
 
 ### 2. Archive Management
-Move items to the "## 📦 Archive" section within Backlog.md:
+Move completed/rejected items to Archive.md (NOT Backlog.md):
 
 **WHERE to move items:**
-- FROM: Any section (Critical/Important/Ideas/Blocked)
-- TO: The "## 📦 Archive" section at the bottom of Backlog.md
-- CREATE section if it doesn't exist with header: `## 📦 Archive`
+- FROM: Any section in Backlog.md (Critical/Important/Ideas/Blocked)
+- TO: `Docs/Workflow/Archive.md` file (separate from Backlog.md)
+- REMOVE the "## 📦 Archive" section from Backlog.md if it exists
 
 **WHAT to move:**
-- Items with Status = "Completed" or "Done" → Move entire item to Archive
-- Items with Status = "Rejected" → Move to Archive with rejection reason
-- Keep item formatting intact when moving
+- Items with Status = "Completed" or "Done" → Format and add to Archive.md
+- Items with Status = "Rejected" → Format with rejection reason in Archive.md
+- Transform to Archive.md format (see below)
 
-**HOW to move:**
-1. Copy the entire item (including all details)
-2. Remove from current section
-3. Add to Archive section with completion/rejection date
-4. Preserve all notes and decisions
+**HOW to format for Archive.md:**
+```markdown
+### [Type]_[Number]: Title ✅ COMPLETED
+**Completed**: [Today's date from bash]
+**Effort**: [Size field value or estimate]
+**Outcome**: [Brief summary from item description]
+**Lessons**: [Any key learnings]
+**Unblocked**: [What this enables]
+[METADATA: relevant, searchable, tags]
+```
+
+For rejected items:
+```markdown
+### [Type]_[Number]: Title ❌ REJECTED  
+**Rejected**: [Today's date from bash]
+**Reason**: [From rejection decision]
+**Alternative**: [What we did instead]
+[RESURRECT-IF: conditions-for-reconsideration]
+[METADATA: relevant, tags]
+```
 
 ### 3. Priority Scoring
 Calculate priority score (0-100) for each active item:
@@ -126,15 +141,18 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 
 1. **Run bash date** to get current timestamp
 2. **Read Backlog.md** from `Docs/Workflow/Backlog.md`
-3. **Apply all mechanical rules** (archive, score, detect gaps)
-4. **Update Backlog.md** with Edit/MultiEdit tools
-5. **Write ReviewGaps.md** to `Docs/Workflow/ReviewGaps.md`
-6. **Provide summary** of changes
+3. **Read Archive.md** from `Docs/Workflow/Archive.md` (to append completed items)
+4. **Apply all mechanical rules** (move to archive, score, detect gaps)
+5. **Update Backlog.md** with Edit/MultiEdit tools (remove completed/rejected)
+6. **Update Archive.md** with new completed/rejected items
+7. **Write ReviewGaps.md** to `Docs/Workflow/ReviewGaps.md`
+8. **Provide summary** of changes
 
 ## Output Requirements
 
 1. **Always update these files:**
-   - `Docs/Workflow/Backlog.md` (with your changes)
+   - `Docs/Workflow/Backlog.md` (remove completed/rejected items)
+   - `Docs/Workflow/Archive.md` (append completed/rejected items)
    - `Docs/Workflow/ReviewGaps.md` (complete regeneration)
 
 2. **Provide summary in response:**
@@ -166,23 +184,27 @@ Backlog cleaned and scored. ReviewGaps.md updated.
 # Step 1: Get date
 bash date  # Returns: "Mon, Aug 18, 2025 8:30:00 AM"
 
-# Step 2: Read backlog
+# Step 2: Read both files
 Read Docs/Workflow/Backlog.md
+Read Docs/Workflow/Archive.md
 
 # Step 3: Apply rules
-- Find TD_003 with Status="Completed" → Move to Archive section
-- Find TD_007 with Status="Rejected" → Move to Archive section  
+- Find TD_003 with Status="Completed" → Format for Archive.md
+- Find TD_007 with Status="Rejected" → Format for Archive.md
 - Calculate scores for active items
 - Find items in "Proposed" created before Aug 15 → Flag as stale
 
-# Step 4: Update backlog
-MultiEdit to move completed items and add scores
+# Step 4: Update Backlog.md
+MultiEdit to remove completed/rejected items and add scores
 
-# Step 5: Generate ReviewGaps.md
+# Step 5: Update Archive.md  
+Edit to append newly completed/rejected items with proper formatting
+
+# Step 6: Generate ReviewGaps.md
 Write complete report to Docs/Workflow/ReviewGaps.md
 
-# Step 6: Summarize
-"Moved 2 items to archive, scored 8 active items, found 3 review gaps"
+# Step 7: Summarize
+"Moved 2 items to Archive.md, scored 8 active items, found 3 review gaps"
 ```
 
 You are mechanical and consistent. You prepare the backlog for strategic analysis.

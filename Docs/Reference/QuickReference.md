@@ -10,6 +10,13 @@
 
 ### 🔥 Critical Lessons Learned
 
+#### Workflow Optimization: Delegate Mechanical Tasks
+- **ALWAYS delegate backlog mechanics to backlog-assistant** - Focus on decisions
+- **Symptom**: Spending 30% of time on formatting/moving items instead of core work
+- **Fix**: Use `/task backlog-assistant` for all mechanical updates
+- **Example**: `Tech Lead decides → delegates updates → saves 15 min per session`
+- *Lesson from*: Tech Lead workflow optimization (2025-08-18)
+
 #### State Management Anti-Patterns
 - **NEVER create dual state sources** - Use single service like GridStateService
 - **Symptom**: Tests pass individually but fail in integration

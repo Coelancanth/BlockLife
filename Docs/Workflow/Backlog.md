@@ -59,6 +59,46 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### TD_013: Fix Drag Range Visual/Logic Mismatch [Score: 80/100]
+**Status**: Approved ✓ 
+**Owner**: Dev Engineer ← Tech Lead (approved)
+**Size**: S (2-3 hours for immediate fix)
+**Priority**: Critical (visual/logic mismatch is a bug)
+**Created**: 2025-08-18
+**Markers**: [BUG] [UX-CRITICAL]
+
+**What**: Fix visual/logic mismatch - visual shows square but validation uses diamond
+**Why**: CRITICAL BUG - UI shows invalid moves as valid, breaking user trust
+
+**Tech Lead Analysis** (2025-08-18):
+- **CRITICAL BUG FOUND**: Visual indicator draws square (DragView.cs:310-313) but validation uses Manhattan/diamond (DragStateService.cs:104-105)
+- **User Impact**: Players see they can move to corners but validation rejects it
+- **Root Cause**: Mismatch between visual feedback and actual validation logic
+
+**Immediate Fix Required** (2-3 hours):
+1. Fix DragView.ShowRangeIndicators to draw diamond shape matching Manhattan distance
+2. Update visual to show only valid positions (no corners at max range)
+3. Add test to prevent regression
+
+**Future Enhancement** (defer to later):
+```csharp
+interface IMovementShape {
+    bool IsValidMove(Vector2Int from, Vector2Int to);
+    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
+    void DrawShape(IRangeRenderer renderer); // Ensures visual matches logic
+}
+```
+
+**Revised Approach**:
+- **Phase 1** (NOW): Fix the bug - make visual match current Manhattan validation
+- **Phase 2** (LATER): If needed for different block types, implement shape system
+
+**Tech Lead Decision**:
+✅ APPROVED as CRITICAL BUG FIX
+- Fix visual/logic mismatch immediately
+- Defer shape system abstraction until actually needed
+- Principle: Fix bugs first, enhance later
+
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
@@ -92,48 +132,6 @@
 - Detect drop on occupied cell
 - Swap both blocks with animation
 - Validate swap against both block ranges
-
-### TD_013: Refactor Range Validation to Shape-Based System [Score: 80/100]
-**Status**: Proposed 
-**Owner**: Tech Lead (for approval) ← Dev Engineer (proposed)
-**Size**: M (6-8 hours)
-**Priority**: Important (blocks Phase 3 and future movement patterns)
-**Created**: 2025-08-18
-**Markers**: [ARCHITECTURE] [EXTENSIBILITY]
-
-**What**: Replace hard-coded range validation with extensible shape system
-**Why**: Current Manhattan distance is just one shape - need flexibility for different movement patterns
-
-**Dev Engineer Analysis** (2025-08-18):
-- **Current Issue**: IsWithinDragRange uses hard-coded Manhattan distance
-- **Opportunity**: Create IMovementShape interface with implementations
-- **Enables**: Diamond (Manhattan), Square (Chebyshev), Cross, L-shape, Custom patterns
-- **Impact**: More intuitive, extensible, game-design friendly
-
-**Proposed Approach**:
-```csharp
-interface IMovementShape {
-    bool IsValidMove(Vector2Int from, Vector2Int to);
-    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
-}
-```
-- DiamondShape: Manhattan distance (current)
-- SquareShape: Chebyshev distance 
-- CrossShape: Cardinal directions only
-- Custom shapes for special blocks
-
-**Benefits**:
-- Each block type can have different movement patterns
-- Visual indicators match actual movement shape
-- Extensible without changing core logic
-- Better game design flexibility
-
-**Risks**:
-- More complex than simple range check
-- Need to update UI shape rendering
-- Test complexity increases
-
-**Recommendation**: Implement BEFORE Phase 3 since swap mechanics will depend on movement shapes
 
 ### TD_005: Add Missing Drag Integration Tests [Score: 75/100]
 **Status**: Approved ✓
@@ -223,63 +221,6 @@ interface IMovementShape {
 
 ## 🚧 Currently Blocked
 *None*
-
-## 📦 Archive
-*Completed items - moved here to keep backlog clean*
-
-### VS_001 Phase 1: Basic Drag Implementation ✅ DONE
-**Completed**: 2025-08-18
-- Backend: All commands/handlers implemented
-- UI: Godot DragView with visual feedback
-- Integration: Mouse events, ESC/cancel working
-- Tests: 9/9 drag tests passing
-- Ready for Phase 2 implementation
-
-### TD_003: Verify Context7 Library Access ✅ DONE
-**Completed**: 2025-08-18
-- ✅ LanguageExt available (/louthy/language-ext, Trust: 9.4)
-- ✅ MediatR available (/jbogard/mediatr, Trust: 10.0)
-- ✅ Godot available (/godotengine/godot, Trust: 9.9)
-- Key Discovery: Error.Message behavior confirmed as post-mortem found
-
-### BR_001: Complete BlockInputManager Refactoring ✅ DONE
-**Completed**: 2025-08-17
-- Refactored 700+ line monolith into focused components
-- Unblocked VS_001
-
-### REJECTED ITEMS (Preserved for Learning)
-
-### TD_002: Performance Optimization ❌ REJECTED
-**Rejected**: 2025-08-18
-**Reason**: Premature optimization - no performance issues exist
-**Learning**: Profile first, optimize second
-
-### TD_007: Git Worktrees ❌ REJECTED  
-**Rejected**: 2025-08-18
-**Reason**: Massive over-engineering for non-problem
-**Learning**: Simple solutions (branch naming) beat complex systems
-
-### TD_010: Dashboard System ❌ REJECTED
-**Rejected**: 2025-08-18
-**Reason**: Solving wrong problem (visualization vs discipline)
-**Learning**: Fix root causes (backlog bloat) not symptoms
-
-### TD_011: Review Gap Automation ✅ IMPLEMENTED
-**Completed**: 2025-08-18 (30 minutes)
-**Solution**: Created backlog-assistant subagent
-**Impact**: Saves 30 min per prioritization session
-**Usage**: `/task backlog-assistant "Maintain backlog"`
-
-### TD_006: Separate Performance Tests from CI Pipeline ✅ DONE
-**Completed**: 2025-08-18 (1.5 hours)
-**Owner**: DevOps Engineer
-**Solution**: Added [Trait("Category", "Performance")] to timing tests, excluded from CI
-**Impact**: Eliminated 100% false positive rate on timing tests in CI
-**Key Changes**:
-- 12 timing tests categorized with Performance trait
-- Main CI excludes via --filter "Category!=Performance"
-- Optional weekly performance pipeline created
-- Tests still runnable locally for developers
 
 ---
 
