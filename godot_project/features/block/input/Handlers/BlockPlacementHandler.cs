@@ -17,6 +17,20 @@ public sealed class BlockPlacementHandler
     private readonly IMediator _mediator;
     private readonly ILogger? _logger;
     
+    // Current block type for placement - can be cycled through
+    private BlockType _currentBlockType = BlockType.Work;
+    
+    // Array of available block types for easy testing
+    private readonly BlockType[] _availableTypes = new[]
+    {
+        BlockType.Work,      // Royal Blue
+        BlockType.Study,     // Lime Green
+        BlockType.Health,    // Tomato Red
+        BlockType.Fun,       // Gold
+        BlockType.Basic      // Gray
+    };
+    private int _currentTypeIndex = 0;
+    
     public BlockPlacementHandler(IMediator mediator, ILogger? logger)
     {
         _mediator = mediator;
@@ -32,7 +46,7 @@ public sealed class BlockPlacementHandler
         await hoverPosition.Match(
             Some: async position =>
             {
-                _logger?.Debug("Placing block at {Position}", position);
+                _logger?.Debug("Placing {BlockType} block at {Position}", _currentBlockType, position);
                 await PlaceBlockAt(position);
             },
             None: () =>
@@ -43,15 +57,34 @@ public sealed class BlockPlacementHandler
         );
     }
     
+    /// <summary>
+    /// Cycles to the next available block type for placement.
+    /// Useful for testing different block types and swap mechanic.
+    /// </summary>
+    public void CycleBlockType()
+    {
+        _currentTypeIndex = (_currentTypeIndex + 1) % _availableTypes.Length;
+        _currentBlockType = _availableTypes[_currentTypeIndex];
+        _logger?.Information("Switched to placing {BlockType} blocks (Color: {Color})", 
+            _currentBlockType.GetDisplayName(), 
+            _currentBlockType.GetColorHex());
+    }
+    
+    /// <summary>
+    /// Gets the current block type that will be placed.
+    /// </summary>
+    public BlockType CurrentBlockType => _currentBlockType;
+    
     private async Task PlaceBlockAt(Vector2Int position)
     {
-        var command = new PlaceBlockCommand(position, BlockType.Basic);
+        var command = new PlaceBlockCommand(position, _currentBlockType);
         var result = await _mediator.Send(command);
         
         result.Match(
-            Succ: _ => _logger?.Information("Block placed successfully at {Position}", position),
-            Fail: error => _logger?.Warning("Failed to place block at {Position}: {Error}", 
-                position, error.Message)
+            Succ: _ => _logger?.Information("{BlockType} block placed successfully at {Position}", 
+                _currentBlockType.GetDisplayName(), position),
+            Fail: error => _logger?.Warning("Failed to place {BlockType} block at {Position}: {Error}", 
+                _currentBlockType.GetDisplayName(), position, error.Message)
         );
     }
 }

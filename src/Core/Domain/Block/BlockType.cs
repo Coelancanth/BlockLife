@@ -126,5 +126,43 @@ namespace BlockLife.Core.Domain.Block
             BlockType.Passion => 20,
             _ => 1
         };
+
+        /// <summary>
+        /// Gets the color hex code for visual representation of this block type.
+        /// Colors chosen for clarity and visual distinction.
+        /// </summary>
+        public static string GetColorHex(this BlockType blockType) => blockType switch
+        {
+            BlockType.Basic => "#808080",           // Gray
+            BlockType.Work => "#4169E1",            // Royal Blue
+            BlockType.Study => "#32CD32",           // Lime Green
+            BlockType.Relationship => "#FF69B4",     // Hot Pink
+            BlockType.Health => "#FF6347",          // Tomato Red
+            BlockType.Creativity => "#9370DB",       // Medium Purple
+            BlockType.Fun => "#FFD700",             // Gold
+            BlockType.CareerOpportunity => "#00CED1", // Dark Turquoise
+            BlockType.Partnership => "#FF1493",      // Deep Pink
+            BlockType.Passion => "#FF8C00",         // Dark Orange
+            _ => "#FFFFFF"                          // White (fallback)
+        };
+
+        /// <summary>
+        /// Gets RGB color values for this block type (0-255 range).
+        /// Useful for Godot Color construction.
+        /// </summary>
+        public static (byte r, byte g, byte b) GetColorRGB(this BlockType blockType) => blockType switch
+        {
+            BlockType.Basic => (128, 128, 128),           // Gray
+            BlockType.Work => (65, 105, 225),             // Royal Blue
+            BlockType.Study => (50, 205, 50),             // Lime Green
+            BlockType.Relationship => (255, 105, 180),     // Hot Pink
+            BlockType.Health => (255, 99, 71),            // Tomato Red
+            BlockType.Creativity => (147, 112, 219),       // Medium Purple
+            BlockType.Fun => (255, 215, 0),               // Gold
+            BlockType.CareerOpportunity => (0, 206, 209),  // Dark Turquoise
+            BlockType.Partnership => (255, 20, 147),       // Deep Pink
+            BlockType.Passion => (255, 140, 0),           // Dark Orange
+            _ => (255, 255, 255)                          // White (fallback)
+        };
     }
 }
