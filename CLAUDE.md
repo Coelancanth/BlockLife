@@ -179,22 +179,37 @@ date  # Get current date/time before creating dated documents
 **MANDATORY before committing:**
 ```bash
 # Windows
-./scripts/build.ps1 test    # Must pass all tests
+./scripts/build.ps1 test    # Build + tests (safe for commits)
 
 # Linux/Mac  
-./scripts/build.sh test     # Must pass all tests
+./scripts/build.sh test     # Build + tests (safe for commits)
 ```
 
-**Build Commands:**
-- `build` - Build the solution
-- `test` - Run all tests (REQUIRED before commit)
+**Build Commands (UPDATED - Critical Change):**
+- `build` - Build the solution only
+- `test` - **Build + run tests (safe default for commits)** ⭐
+- `test-only` - Run tests only (dev iteration, NOT for commits)
 - `clean` - Clean build artifacts
 - `all` - Clean, build, and test
 
+**⚠️ CRITICAL:** The `test` command now includes building to catch Godot compilation issues! 
+- Use `test` before committing (builds + tests)
+- Use `test-only` for rapid development (tests only, not safe for commits)
+
+**Pre-commit Hook Enforcement:**
+- Git pre-commit hook automatically runs `./scripts/build.ps1 test` (Windows) or `./scripts/build.sh test` (Linux/Mac)
+- **Cannot commit** if build fails - this catches Godot compilation issues
+- Hook can be bypassed in emergencies with `git commit --no-verify` (use sparingly)
+
 **CI/CD Pipeline:**
-- GitHub Actions runs on every PR and push
+- GitHub Actions runs on every PR and push  
 - All tests must pass for PR to be mergeable
 - Use feature branches, never commit directly to main
+
+**Architecture-Workflow Gap Solved:**
+Our Clean Architecture separates pure C# logic (src/) from Godot integration (godot_project/). 
+Tests validate C# logic but can miss Godot compilation issues. The updated build system ensures 
+both layers are validated together, preventing "tests pass but game won't compile" scenarios.
 
 ## 📚 Context7 Integration - PREVENT ASSUMPTION BUGS
 

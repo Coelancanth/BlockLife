@@ -38,9 +38,21 @@ case $command in
         ;;
         
     test)
+        write_step "Building and running tests (safe default)"
+        echo -e "  ${YELLOW}Building first to catch Godot compilation issues...${NC}"
+        execute_command "dotnet build BlockLife.sln --configuration Debug"
+        echo -e "${GREEN}✓ Build successful${NC}"
         write_step "Running tests"
         execute_command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
+        echo -e "${GREEN}✓ Build and test complete - safe to commit${NC}"
+        ;;
+        
+    test-only)
+        write_step "Running tests only (development iteration)"
+        echo -e "  ${YELLOW}⚠️  Note: This doesn't validate Godot compilation${NC}"
+        execute_command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
         echo -e "${GREEN}✓ All tests passed${NC}"
+        echo -e "  ${YELLOW}Remember to run 'test' (not 'test-only') before committing!${NC}"
         ;;
         
     run)
@@ -62,14 +74,15 @@ case $command in
         ;;
         
     *)
-        echo "Usage: $0 {build|test|clean|run|all}"
+        echo "Usage: $0 {build|test|test-only|clean|run|all}"
         echo ""
         echo "Commands:"
-        echo "  build  - Build the solution"
-        echo "  test   - Run all tests"
-        echo "  clean  - Clean build artifacts"
-        echo "  run    - Run the game (requires Godot)"
-        echo "  all    - Clean, build, and test"
+        echo "  build      - Build the solution"
+        echo "  test       - Build + run tests (safe default for commits)"
+        echo "  test-only  - Run tests only (dev iteration, not for commits)"
+        echo "  clean      - Clean build artifacts"
+        echo "  run        - Run the game (requires Godot)"
+        echo "  all        - Clean, build, and test"
         exit 1
         ;;
 esac
