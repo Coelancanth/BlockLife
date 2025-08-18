@@ -263,9 +263,10 @@ public Property DoubleSwap_ReturnsToOriginal()
 - CI pipeline includes property test execution
 
 ### TD_001: Extract Input System to Separate Feature Module [Score: 45/100]
-**Status**: In Progress 🔄
+**Status**: Done ✅
 **Owner**: Dev Engineer
-**Size**: S (1-2 hours) - REVISED DOWN from M
+**Size**: S (1 hour actual) - REVISED DOWN from M
+**Completed**: 2025-08-19
 **Priority**: Ideas (after VS_001)
 **Markers**: [ARCHITECTURE]
 
