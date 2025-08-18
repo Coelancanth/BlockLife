@@ -11,17 +11,11 @@ This folder contains the creative vision and game mechanics for BlockLife.
   - Core gameplay philosophy
 
 ### Detailed Mechanics
-- **[Core-Mechanics/](Core-Mechanics/)** - Deep dives into specific systems
+- **[Mechanics/](Mechanics/)** - Deep dives into specific systems
   - `01_Life_Stages.md` - Detailed life stage mechanics
   - `02_Personality_System.md` - MBTI-inspired personality development
   - `03_Luck_System.md` - Fortune cycles and luck mechanics
   - `04_Block_Narratives.md` - Special blocks and their stories
-
-### Creative Archive
-- **brainstormA/B/C.md** - Original creative vision and ideas
-  - Contains valuable Chinese brainstorming sections
-  - Raw ideas and creative explorations
-  - Not yet formalized into design
 
 
 ## 🎮 For AI Personas
@@ -38,8 +32,7 @@ This folder contains the creative vision and game mechanics for BlockLife.
 ### Document Priority
 
 1. **Vision.md** - Primary reference for all future work
-2. **Core-Mechanics/** - Detailed specifications when implementing
-3. **brainstormA/B/C.md** - Context and creative exploration
+2. **Mechanics/** - Detailed specifications when implementing
 
 ## 🚀 Design Philosophy
 
@@ -52,7 +45,7 @@ BlockLife is about simulating the human experience through game mechanics:
 ## 📝 Notes
 
 - Features marked "PLANNED" are not yet implemented
-- Chinese sections in Brainstorming_Archive contain important creative insights
+- Vision.md contains the complete consolidated game design
 - Clean Architecture principles guide technical implementation
 - User maintains sole creative authority over game design
 
