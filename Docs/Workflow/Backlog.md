@@ -60,11 +60,12 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### TD_013: Fix Drag Range Visual/Logic Mismatch [Score: 80/100]
-**Status**: Approved ✓ 
+**Status**: Done ✅
 **Owner**: Dev Engineer ← Tech Lead (approved)
 **Size**: S (2-3 hours for immediate fix)
 **Priority**: Critical (visual/logic mismatch is a bug)
 **Created**: 2025-08-18
+**Completed**: 2025-08-18
 **Markers**: [BUG] [UX-CRITICAL]
 
 **What**: Fix visual/logic mismatch - visual shows square but validation uses diamond
@@ -75,29 +76,18 @@
 - **User Impact**: Players see they can move to corners but validation rejects it
 - **Root Cause**: Mismatch between visual feedback and actual validation logic
 
-**Immediate Fix Required** (2-3 hours):
-1. Fix DragView.ShowRangeIndicators to draw diamond shape matching Manhattan distance
-2. Update visual to show only valid positions (no corners at max range)
-3. Add test to prevent regression
+**Dev Engineer Implementation** (2025-08-18):
+✅ **COMPLETED** - Fixed visual to match Manhattan distance validation
+- Modified DragView.cs:304-318 to store range center and distance
+- Implemented DrawManhattanDiamond method (DragView.cs:402-426) drawing diamond shape
+- Added regression test VisualAndLogicConsistency_UseManhattanDistance_NotChebyshev
+- All 71 tests passing, no breakage
 
-**Future Enhancement** (defer to later):
-```csharp
-interface IMovementShape {
-    bool IsValidMove(Vector2Int from, Vector2Int to);
-    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
-    void DrawShape(IRangeRenderer renderer); // Ensures visual matches logic
-}
-```
-
-**Revised Approach**:
-- **Phase 1** (NOW): Fix the bug - make visual match current Manhattan validation
-- **Phase 2** (LATER): If needed for different block types, implement shape system
-
-**Tech Lead Decision**:
-✅ APPROVED as CRITICAL BUG FIX
-- Fix visual/logic mismatch immediately
-- Defer shape system abstraction until actually needed
-- Principle: Fix bugs first, enhance later
+**Solution Details**:
+- Visual now draws cells where Manhattan distance ≤ range (diamond shape)
+- Each valid cell is highlighted individually with borders
+- Corner positions at max range correctly excluded (e.g., (8,2) from (5,5) with range 3)
+- Edge positions at max range correctly included (e.g., (8,5) from (5,5) with range 3)
 
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*

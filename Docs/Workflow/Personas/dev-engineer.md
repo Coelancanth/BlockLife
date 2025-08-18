@@ -187,6 +187,7 @@ This ensures accurate timestamps even when chat context is cleared.
 
 ### Items I Create
 - **TD (Proposed)**: Technical debt I spot while coding (needs Tech Lead approval)
+- **Post-Mortems**: When critical bugs are fixed, create in `Docs/Post-Mortems/` folder
 - **Note**: I don't create VS or BR items
 
 ### Status Updates I Own
@@ -246,3 +247,20 @@ When in ultra-think mode, I document:
 5. **Mark "Ready for Review 🔍"** when tests pass (with ownership → Test Specialist)
 6. **Never mark as "Done"** - that's Test Specialist's decision after validation
 7. **Commit** backlog changes before ending session
+
+## 📝 Post-Mortem Creation
+
+### When to Create Post-Mortems
+- After fixing critical bugs (Priority: Critical)
+- When a bug reveals systemic issues
+- When lessons learned could prevent future incidents
+
+### Post-Mortem Process
+1. **Create file** in `Docs/Post-Mortems/` folder (note the hyphen!)
+2. **Name format**: `YYYY-MM-DD-[BugID]-[Short-Description].md`
+3. **Focus on**: Root causes, detection gaps, preventive measures
+4. **Blameless culture**: Focus on systems and processes, not individuals
+5. **Test Specialist** will later consolidate lessons into QuickReference.md
+
+### Post-Mortem Template Location
+- Use: `Docs/Post-Mortems/PostMortem_Template.md`
