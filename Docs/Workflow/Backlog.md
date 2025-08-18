@@ -59,57 +59,126 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_012: Add Git Hooks to Prevent Direct Main Commits [Score: 95/100]
-**Status**: Approved ✓
-**Owner**: DevOps Engineer  
-**Size**: S (1-2 hours)
+### BR_002: Investigate Severe Memory Leak - 49GB Usage
+**Status**: New
+**Owner**: Debugger Expert ← Dev Engineer (discovered)
+**Size**: L (investigation unknown)
 **Priority**: Critical 🔥
-**Markers**: [SAFETY-CRITICAL] [PROCESS]
-**Created**: 2025-08-18
+**Created**: 2025-08-18 12:42 PM
+**Markers**: [PERFORMANCE] [BLOCKING] [ROOT-CAUSE]
 
-**What**: Implement pre-commit hook to block direct commits to main
-**Why**: Tech Lead violated workflow - committed directly to main 3 times!
+**What**: Investigate and fix memory leak causing 49GB RAM usage (77% of 64GB)
+**Why**: Blocking developer productivity, potential test runner crash, resource exhaustion
 
-**Implementation**: Create `.git/hooks/pre-commit` to enforce feature branches
+**Symptoms Observed**:
+- Memory usage: ~49GB (77% of 64GB system RAM) reported
+- BUT: No single process using excessive memory (Godot: 1.2GB)
+- Suggests: File cache, closed processes, or already released
+- May be intermittent during heavy test runs
 
-**Tech Lead Review**:
-✅ APPROVED - My own violation proves we need this NOW
+**Initial Suspects** (Dev Engineer hypothesis):
+1. **Test Runner Memory Leaks**:
+   - Property-based tests running 100s of iterations
+   - ServiceProvider not disposed between tests
+   - Test fixtures holding references
+
+2. **Event Subscription Leaks**:
+   - DragPresenter events not unsubscribed (lines 43-46, 54-57)
+   - WeakEventManager issues
+   - View-Presenter circular references
+
+3. **Static Collections**:
+   - GridStateService might be accumulating state
+   - Logger buffering messages indefinitely
+   - MediatR handler caching
+
+**Immediate Actions Needed**:
+- [ ] Profile memory with dotMemory or PerfView
+- [ ] Check for IDisposable implementations missing Dispose calls
+- [ ] Audit event subscriptions for missing unsubscribe
+- [ ] Review static collections and caches
+- [ ] Check test cleanup methods
+
+**Success Criteria**:
+- Memory usage under 2GB during normal development
+- No memory growth during test runs
+- Clean memory release after test completion
 
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_001 Phase 2: Drag Range Limits [Score: 85/100]
-**Status**: Ready to Start
-**Owner**: Dev Engineer
+**Status**: Ready for Review 🔍
+**Owner**: Test Specialist (for validation) ← Dev Engineer (implementation complete)
 **Size**: M (4-6 hours)
 **Branch**: feat/drag-to-move-blocks
-**Depends On**: TD_003, TD_004 (must fix safety issues first)
-**Phase 1**: ✅ Archived (see Archive section)
 
 **What**: Add movement range validation to drag system
 **Why**: Prevents unrealistic teleportation, adds strategic depth
 
-**Phase 2 Scope**:
-- Add movement range validation (default: 3 cells)
-- Show range indicators during drag start
-- Block invalid moves with visual feedback
-- Use existing IsWithinDragRange from Phase 1
+**Dev Engineer Implementation Summary** (2025-08-18):
+- ✅ Enabled range validation in DragPresenter.cs:206-213
+- ✅ Visual indicators already working in DragView.cs:304-327
+- ✅ Manhattan distance calculation in DragStateService.cs:96-108
+- ✅ Created comprehensive test suite: DragRangeValidationTests.cs (14 tests passing)
+- ✅ All existing tests still pass
+
+**Technical Decisions Made**:
+- Used Manhattan distance (grid-based) instead of Chebyshev (diagonal)
+- Default range: 3 cells (configurable via GetDragRange method)
+- Range enforcement happens at both drag update and completion
+
+**Ready for Test Specialist Validation**:
+- Implementation follows existing patterns from Phase 1
+- No breaking changes to existing functionality
+- Performance impact minimal (simple distance calculation)
 
 **Phase 3 - Swap Mechanic** (future):
 - Detect drop on occupied cell
 - Swap both blocks with animation
 - Validate swap against both block ranges
 
-**Acceptance Criteria**:
-- [ ] Range constraints properly enforced
-- [ ] Visual indicators show valid drop zones
-- [ ] Performance: No frame drops during drag
+### TD_013: Refactor Range Validation to Shape-Based System [Score: 80/100]
+**Status**: Proposed 
+**Owner**: Tech Lead (for approval) ← Dev Engineer (proposed)
+**Size**: M (6-8 hours)
+**Priority**: Important (blocks Phase 3 and future movement patterns)
+**Created**: 2025-08-18
+**Markers**: [ARCHITECTURE] [EXTENSIBILITY]
 
-**Done When**:
-- Range validation working (3 cell default)
-- Visual feedback for valid/invalid zones
-- All drag tests still passing
-- Ready for Phase 3 (Swap)
+**What**: Replace hard-coded range validation with extensible shape system
+**Why**: Current Manhattan distance is just one shape - need flexibility for different movement patterns
+
+**Dev Engineer Analysis** (2025-08-18):
+- **Current Issue**: IsWithinDragRange uses hard-coded Manhattan distance
+- **Opportunity**: Create IMovementShape interface with implementations
+- **Enables**: Diamond (Manhattan), Square (Chebyshev), Cross, L-shape, Custom patterns
+- **Impact**: More intuitive, extensible, game-design friendly
+
+**Proposed Approach**:
+```csharp
+interface IMovementShape {
+    bool IsValidMove(Vector2Int from, Vector2Int to);
+    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
+}
+```
+- DiamondShape: Manhattan distance (current)
+- SquareShape: Chebyshev distance 
+- CrossShape: Cardinal directions only
+- Custom shapes for special blocks
+
+**Benefits**:
+- Each block type can have different movement patterns
+- Visual indicators match actual movement shape
+- Extensible without changing core logic
+- Better game design flexibility
+
+**Risks**:
+- More complex than simple range check
+- Need to update UI shape rendering
+- Test complexity increases
+
+**Recommendation**: Implement BEFORE Phase 3 since swap mechanics will depend on movement shapes
 
 ### TD_005: Add Missing Drag Integration Tests [Score: 75/100]
 **Status**: Approved ✓
