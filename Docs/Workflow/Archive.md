@@ -178,6 +178,22 @@
 **Unblocked**: Strategic gameplay depth allowing board reorganization
 [METADATA: swap-mechanic, strategic-gameplay, notification-patterns, manhattan-validation]
 
+### BR_004: AI Violated Critical Git Workflow - No Fetch/Rebase Before Push ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 3 hours (workflow reinforcement)
+**Outcome**: Implemented two-layer defense system with git hooks and AI training protocol
+**Lessons**: AI workflow violations need both technical enforcement (hooks) and behavioral training (documentation)
+**Unblocked**: Prevented future git workflow violations, established Sacred Sequence compliance
+[METADATA: git-workflow, ai-behavior, workflow-enforcement, git-hooks, process-improvement]
+
+### BR_001: Multi-Phase Items Incorrectly Archived Before Completion ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 2-3 hours (documentation and process updates)
+**Outcome**: Eliminated phases entirely by enforcing thin slice principle - all VS items must complete in ≤3 days
+**Lessons**: Multi-phase items violate thin slice principle and cause archival bugs - break large features into sequential VS items instead
+**Unblocked**: Prevented work item loss, simplified backlog management, enforced architectural principles
+[METADATA: process-bug, workflow-improvement, thin-slice-principle, backlog-management, vertical-slices]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*
