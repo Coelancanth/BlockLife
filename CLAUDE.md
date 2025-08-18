@@ -239,30 +239,31 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 
 ## ⚠️ CRITICAL: Git Workflow Requirements
 
-**🚫 NEVER WORK DIRECTLY ON MAIN BRANCH**
+**🚨 ENFORCED BY GIT HOOKS - VIOLATIONS WILL BE BLOCKED**
 
-**MANDATORY for ALL changes:**
+See **[GitWorkflow.md](Docs/Reference/GitWorkflow.md)** for the SINGLE SOURCE OF TRUTH on git operations.
+
+**AI MANDATORY BEHAVIOR**:
+1. **ALWAYS** follow the Sacred Sequence from GitWorkflow.md
+2. **NEVER** skip fetch/pull before creating branches  
+3. **OUTPUT** each git command as you execute it
+4. **REBASE** immediately if pre-push hook blocks you
+
+**Hook Enforcement Active**:
+- ❌ Direct pushes to main are BLOCKED
+- ❌ Outdated branches are BLOCKED from pushing
+- ✅ Only rebased branches can be pushed
+
+**Example Required Output**:
 ```bash
-# 1. ALWAYS sync with latest main first (CRITICAL!)
-git fetch origin
-git checkout main && git pull origin main
-
-# 2. Create your feature branch FROM UPDATED MAIN
-git checkout -b feat/your-feature-name
-
-# 3. Work, commit, push
-git add . && git commit -m "feat: description"
-git push -u origin feat/your-feature-name
-
-# 4. Create PR
-gh pr create --title "feat: title" --body "description"
+# You MUST show each step:
+> git fetch origin
+> git checkout main && git pull origin main
+> git checkout -b feat/br-004-fix
+# "Branch created from latest main ✅"
 ```
 
-**⚠️ NEVER SKIP STEP 1** - Starting from outdated main causes:
-- Merge conflicts
-- Duplicate work (fixing already-fixed bugs)
-- CI failures
-- Wasted developer time
+**Installation**: Run `./scripts/install-hooks.ps1` (Windows) or `./scripts/install-hooks.sh` (Linux/Mac)
 
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)

@@ -144,6 +144,40 @@
 [RESURRECT-IF: complex-integration-scenarios, automation-requirements, regression-issues]
 [METADATA: integration-testing, pragmatic-testing, cost-benefit-analysis]
 
+## 2025-08-19
+
+### TD_013: Fix Drag Range Visual/Logic Mismatch ✅ COMPLETED
+**Completed**: 2025-08-18
+**Effort**: 3 hours
+**Outcome**: Fixed critical UX bug where visual showed square range but validation used Manhattan distance
+**Lessons**: Visual feedback must match validation logic exactly to maintain user trust
+**Unblocked**: Prevented user frustration and restored confidence in drag system
+[METADATA: bug-fix, visual-logic-mismatch, ux-critical, manhattan-distance]
+
+### BR_005: Personas Should Present Options, Not Auto-Execute ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 6 hours
+**Outcome**: Updated all 7 persona files with new workflow protocol requiring user consent before execution
+**Lessons**: AI agents must respect user agency and provide transparent control over when work begins
+**Unblocked**: User maintains full control over development flow and can modify plans before execution
+[METADATA: workflow-improvement, persona-behavior, user-agency, ai-control]
+
+### BR_003: AI Cannot Perform E2E Visual Testing ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 2 hours
+**Outcome**: Clarified AI/Human testing responsibilities with clear handoff protocol and testing matrix
+**Lessons**: AI testing limitations must be explicitly documented to prevent false confidence in "tested" features
+**Unblocked**: Clear separation of AI automated testing vs Human visual validation
+[METADATA: testing-protocol, ai-limitations, e2e-testing, workflow-clarity]
+
+### VS_001 Phase 3: Swap Mechanic ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 6 hours
+**Outcome**: Full block swapping functionality with Manhattan distance validation and smooth animations
+**Lessons**: Following notification patterns prevents view synchronization bugs, comprehensive testing catches edge cases
+**Unblocked**: Strategic gameplay depth allowing board reorganization
+[METADATA: swap-mechanic, strategic-gameplay, notification-patterns, manhattan-validation]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*

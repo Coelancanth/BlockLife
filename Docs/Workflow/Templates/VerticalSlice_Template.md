@@ -2,9 +2,10 @@
 
 **Type**: Vertical Slice  
 **Priority**: [🔥 Critical | 📈 Important | 💡 Ideas]  
-**Size**: [Thin (1 day) | Medium (2 days) | Max (3 days)]  
+**Size**: [Thin (1 day) | Medium (2 days) | Max (3 days)] ⚠️ NO PHASES - Split if >3 days  
 **Status**: [Proposed | Under Review | Needs Refinement | Ready for Dev | In Progress | Testing | Done]  
 **Domain**: [Block/Inventory/Grid/UI/etc.]
+**Depends On**: [VS_XXX | None] ← Must be explicit
 
 ---
 
