@@ -68,6 +68,101 @@
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
+### VS_002: Translate Creative Brainstorms into Feature Specifications
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: L (2-3 days)
+**Priority**: Ideas
+**Created**: 2025-08-19
+**Depends On**: None
+
+**What**: Translate Chinese brainstorming content into actionable VS items and feature specifications
+**Why**: Valuable creative vision needs to be transformed into implementable features
+
+**Scope**:
+- Review all brainstormA/B/C.md files (Chinese content)
+- Extract key gameplay concepts and emotional themes
+- Create 5-10 concrete VS items from the best ideas
+- Preserve creative intent while ensuring technical feasibility
+- Prioritize based on player value and implementation complexity
+
+**Approach**:
+1. **Extract Core Concepts**: Identify the most impactful ideas from brainstorms
+2. **Validate Against Vision**: Ensure alignment with Game_Design_Vision.md
+3. **Create VS Items**: Transform each concept into thin, implementable slices
+4. **Maintain Traceability**: Link each VS back to source brainstorm section
+5. **Prioritize**: Rank by player impact and technical complexity
+
+**Examples to Extract**:
+- Emotional time flow (happy = fast, sad = slow)
+- Relationship blocks with visual bonds
+- Personality development through actions
+- Life stage-specific block types
+- Legacy and memory systems
+
+**Done When**:
+- All brainstorm files reviewed and key concepts extracted
+- 5-10 new VS items created and added to backlog
+- Each VS item is ≤3 days of work (thin slices)
+- Priority and dependencies established
+- Creative intent preserved in specifications
+
+**Product Owner Note**: This is meta-work that enables future development. The Chinese brainstorms contain rich creative vision that needs systematic extraction and formalization.
+
+### TD_015: Fix All Internal Documentation Links After Reorganization
+**Status**: Proposed
+**Owner**: Tech Lead (needs approval)
+**Size**: S (2-3 hours)
+**Priority**: Important (documentation broken until fixed)
+**Created**: 2025-08-19
+**Proposed By**: Tech Lead
+**Markers**: [DOCUMENTATION] [TECHNICAL-DEBT]
+
+**What**: Scan all markdown files and fix broken internal links after docs reorganization
+**Why**: Major restructure moved all files - many internal links are now broken, making docs hard to navigate
+
+**Impact of Not Fixing**:
+- Broken documentation navigation
+- AI personas referencing wrong paths
+- User frustration finding information
+- Loss of documentation trustworthiness
+
+**Scope**:
+1. **Scan all .md files** for internal links
+2. **Identify broken links** pointing to old structure
+3. **Update to new paths** following numbered folder structure
+4. **Verify external links** still valid
+5. **Test navigation paths** in key documents
+
+**Technical Approach**:
+```bash
+# Find all internal links in markdown files
+grep -r "\[.*\](.*/.*\.md)" Docs/ --include="*.md"
+
+# Common replacements needed:
+Docs/Workflow/ → Docs/01-Active/
+Docs/Reference/ → Docs/03-Reference/
+Docs/Game-Design/ → Docs/02-Design/
+Docs/Workflow/Templates/ → Docs/05-Templates/
+Docs/Workflow/Personas/ → Docs/04-Personas/
+```
+
+**Files Likely Affected**:
+- All persona files (references to templates, workflow)
+- Workflow.md (links to various docs)
+- Post-mortems (links to architecture docs)
+- Templates (cross-references)
+- Any file with navigation sections
+
+**Done When**:
+- All internal links verified and working
+- No 404s when following documentation links
+- Key navigation paths tested
+- Link consistency report generated
+- CI could verify links (future enhancement)
+
+**Tech Lead Note**: This is immediate technical debt from the reorganization. Should be done before any new documentation is created to avoid compounding the problem.
+
 ### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 45/100]
 **Status**: Approved (Deferred)
 **Owner**: Dev Engineer (after MVP)

@@ -70,10 +70,10 @@ You: "That sounds like over-engineering. The current DI
 ## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
 **START HERE for 95% of your needs:**
-1. **[Workflow.md](Docs/Workflow/Workflow.md)** ⭐⭐⭐⭐⭐ - Complete development workflow  
-2. **[QuickReference.md](Docs/Reference/QuickReference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and **lessons learned**
-3. **[Architecture.md](Docs/Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
-4. **[Templates/](Docs/Workflow/Templates/)** ⭐⭐⭐⭐ - Work item templates
+1. **[Workflow.md](Docs/01-Active/Workflow.md)** ⭐⭐⭐⭐⭐ - Complete development workflow  
+2. **[QuickReference.md](Docs/03-Reference/QuickReference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and **lessons learned**
+3. **[Architecture.md](Docs/03-Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
+4. **[Templates/](Docs/05-Templates/)** ⭐⭐⭐⭐ - Work item templates
 
 **Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
 
@@ -144,8 +144,8 @@ Each persona has embedded backlog responsibilities - no separate maintainer need
 - Critical bugs are BR items with 🔥 priority
 - TD items start as "Proposed" and need Tech Lead approval to become actionable
 
-**Single Source of Truth**: `Docs/Workflow/Backlog.md`
-**Workflow Reference**: `Docs/Workflow/Workflow.md`
+**Single Source of Truth**: `Docs/01-Active/Backlog.md`
+**Workflow Reference**: `Docs/01-Active/Workflow.md`
 
 ### When to Use Personas
 - **Start fresh conversation** for each persona (don't switch mid-conversation)
@@ -155,6 +155,8 @@ Each persona has embedded backlog responsibilities - no separate maintainer need
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP pattern. Uses CQRS with functional programming (LanguageExt.Core) and pure C# core.
+
+**🎮 Game Design**: See `Docs/02-Design/` for complete game mechanics and vision. The user is the Game Designer - these docs are sacred reference material.
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
@@ -241,10 +243,10 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 
 **🚨 ENFORCED BY GIT HOOKS - VIOLATIONS WILL BE BLOCKED**
 
-See **[GitWorkflow.md](Docs/Reference/GitWorkflow.md)** for the SINGLE SOURCE OF TRUTH on git operations.
+See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE OF TRUTH on git operations.
 
 **AI MANDATORY BEHAVIOR**:
-1. **ALWAYS** follow the Sacred Sequence from GitWorkflow.md
+1. **ALWAYS** follow the Sacred Sequence from [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)
 2. **NEVER** skip fetch/pull before creating branches  
 3. **OUTPUT** each git command as you execute it
 4. **REBASE** immediately if pre-push hook blocks you
@@ -266,10 +268,10 @@ See **[GitWorkflow.md](Docs/Reference/GitWorkflow.md)** for the SINGLE SOURCE OF
 **Installation**: Run `./scripts/install-hooks.ps1` (Windows) or `./scripts/install-hooks.sh` (Linux/Mac)
 
 ### Quick Reference Resources
-- **Development workflow**: [Workflow.md](Docs/Workflow/Workflow.md)
-- **Architecture guidance**: [Architecture.md](Docs/Reference/Architecture.md)
-- **Agent patterns**: [QuickReference.md](Docs/Reference/QuickReference.md)
-- **Context7 examples**: [Context7Examples.md](Docs/Reference/Context7Examples.md)
+- **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)
+- **Architecture guidance**: [Architecture.md](Docs/03-Reference/Architecture.md)
+- **Agent patterns**: [QuickReference.md](Docs/03-Reference/QuickReference.md)
+- **Context7 examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
 
 ## 🚀 Git Survival Guide
 
