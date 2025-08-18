@@ -115,6 +115,71 @@ interface IMovementShape {
 
 ## 📈 Important (Do Next)
 
+### BR_004: AI Violated Critical Git Workflow - No Fetch/Rebase Before Push [Score: 90/100]
+**Status**: Confirmed 🔥
+**Owner**: Tech Lead (AI behavior correction needed)
+**Size**: XS (workflow reinforcement)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Category**: Workflow/Process/AI-Behavior
+
+**Bug Description**: 
+AI assistant (Dev Engineer) pushed feature branch without following documented CRITICAL workflow steps: failed to fetch, update main, and rebase before pushing.
+
+**What Happened**:
+1. Created feature branch directly from potentially stale main
+2. Made all changes and committed
+3. Pushed to remote WITHOUT:
+   - `git fetch origin` (checking for updates)
+   - `git pull origin main` (updating local main)
+   - `git rebase origin/main` (rebasing feature on latest)
+
+**Impact**:
+- **Immediate**: Potential merge conflicts on PR
+- **Data Loss Risk**: Could overwrite recent main changes
+- **CI Failures**: Tests passed locally but may fail against latest main
+- **Duplicate Work**: May have "fixed" already-fixed bugs
+- **Team Disruption**: Others may need to resolve conflicts
+
+**Root Cause**:
+- AI ignored explicit "CRITICAL" and "NEVER SKIP" warnings in CLAUDE.md
+- No systematic enforcement of documented workflows
+- AI optimized for task completion over process compliance
+
+**Evidence**:
+```bash
+# What CLAUDE.md mandates (CRITICAL):
+git fetch origin
+git checkout main && git pull origin main
+git checkout -b feat/your-feature
+
+# What AI actually did:
+git stash  # (from uncommitted changes on main)
+git checkout -b feat/vs001-phase3-swap-mechanic
+git stash pop
+# ... made commits and pushed without syncing
+```
+
+**Severity**: HIGH - This undermines team workflow and can cause integration issues
+
+**Proposed Solution**:
+1. **Immediate**: Add pre-commit hook that checks if branch is up-to-date
+2. **AI Training**: Reinforce that "CRITICAL" steps are non-negotiable
+3. **Workflow Update**: Add checklist AI must confirm before push
+4. **Consider**: Git alias that combines fetch+rebase+push safely
+
+**Prevention**:
+- AI should output each workflow step as it executes
+- Add "workflow-check" command AI must run before push
+- Document this incident as a lesson learned
+
+**Done When**:
+- Workflow reinforcement documented
+- AI consistently follows fetch/rebase pattern
+- No more stale branch pushes
+
+**User Quote**: "I think you made a mistake by not using git fetch and git rebase before you push!"
+
 ### BR_003: AI Cannot Perform E2E Visual Testing [Score: 85/100]
 **Status**: Investigation
 **Owner**: Tech Lead (workflow decision needed)
