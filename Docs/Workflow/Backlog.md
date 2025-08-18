@@ -114,6 +114,7 @@ interface IMovementShape {
 - Edge positions at max range correctly included (e.g., (8,5) from (5,5) with range 3)
 
 ## 📈 Important (Do Next)
+*Core features for current milestone, technical debt affecting velocity*
 
 ### BR_004: AI Violated Critical Git Workflow - No Fetch/Rebase Before Push [Score: 90/100]
 **Status**: Confirmed 🔥
@@ -179,6 +180,124 @@ git stash pop
 - No more stale branch pushes
 
 **User Quote**: "I think you made a mistake by not using git fetch and git rebase before you push!"
+
+### BR_005: Personas Should Present Options, Not Auto-Execute [Score: 95/100]
+**Status**: Done ✅
+**Owner**: Completed
+**Completed**: 2025-08-19
+**Size**: M (4-6 hours to update all personas)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Category**: Workflow/Process/Persona-Behavior
+**Markers**: [WORKFLOW] [UX-CRITICAL]
+
+**Bug Description**: 
+Personas currently may auto-execute tasks without clear user consent. They should instead review backlog, create todo lists, present capabilities, and await user direction.
+
+**Current Problems**:
+1. **Lack of Transparency**: User doesn't see what persona plans to do until it's happening
+2. **No User Control**: Personas may start implementing without explicit go-ahead
+3. **Ultra-Think Confusion**: Automated "deep thinking" removes user agency over when to analyze deeply
+4. **Missing Context**: User doesn't get clear summary of persona's responsibilities and current state
+
+**Impact**:
+- User feels loss of control over development flow
+- Unexpected actions taken by personas
+- Difficulty understanding what each persona can/should do
+- No clear checkpoint before work begins
+
+**Proposed Solution - New Persona Workflow**:
+```markdown
+When embodied, each persona should:
+
+1. **Auto-Review Backlog** ✅
+   - Scan for items assigned to them
+   - Identify relevant work items
+   - Note dependencies and blockers
+
+2. **Create Todo List** ✅
+   - Based on backlog items found
+   - Prioritized by importance
+   - Clear, actionable items
+
+3. **Present to User** ✅
+   - "I am [Persona Name]"
+   - "My responsibilities: [list]"
+   - "Current backlog items for me: [list]"
+   - "Suggested todo list: [show todos]"
+   - "Recommended next action: [specific suggestion]"
+
+4. **Await User Signal** 🛑
+   - NEVER auto-start implementation
+   - Wait for user to say "proceed", "go", "start", etc.
+   - User can modify todos before starting
+
+5. **Remove Ultra-Think** ❌
+   - Delete all ultra-think protocol sections
+   - User decides when deep analysis needed
+   - Can request "think deeply about X" explicitly
+```
+
+**Example Interaction**:
+```
+User: embody test specialist
+
+AI: I am the Test Specialist for BlockLife.
+
+**My Responsibilities:**
+- Write unit, integration, and property tests
+- Validate features meet acceptance criteria
+- Find edge cases and stress test
+- Create BR items for bugs found
+
+**Current Backlog Items:**
+- VS_002: Needs test strategy (Proposed)
+- BR_002: Awaiting regression test
+
+**Todo List Created:**
+1. Review VS_002 requirements for test planning
+2. Create test strategy for VS_002
+3. Write regression test for BR_002
+4. Update backlog with test results
+
+**Recommended Action:** Start with VS_002 test strategy since it's blocking development.
+
+Would you like me to proceed with this plan, or would you prefer to adjust the priorities?
+```
+
+**Files to Update**:
+- All persona files in `Docs/Workflow/Personas/`
+- Remove ultra-think protocol sections
+- Add new workflow instructions
+- Standardize presentation format
+
+**Done When**:
+- All personas follow new workflow
+- No auto-execution without user signal
+- Clear presentation of capabilities and plans
+- Ultra-think protocol removed
+- User has full control over when work begins
+
+**User Quote**: "each persona should auto review backlog... create corresponding to-do list... tell user its responsibility and summary... but never automatically implement without user's signal"
+
+**Tech Lead Implementation** (2025-08-19):
+✅ **COMPLETED** - All 7 persona files updated with new Workflow Protocol
+- Removed Ultra-Think Protocol sections from all personas
+- Added standardized Workflow Protocol with 4-step process
+- Each persona now: reviews backlog → creates todo → presents to user → awaits signal
+- Consistent example interactions across all personas
+- User maintains full control over execution
+
+**Files Updated**:
+1. product-owner.md - Focuses on VS definitions and player value
+2. tech-lead.md - Technical decisions and work breakdown  
+3. dev-engineer.md - Implementation planning
+4. test-specialist.md - Validation and quality assurance
+5. debugger-expert.md - Bug investigation priorities
+6. devops-engineer.md - Infrastructure and automation
+7. strategic-prioritizer.md - Strategic analysis and recommendations
+
+**Verification**: Each persona now presents options and waits for explicit user consent before proceeding
 
 ### BR_003: AI Cannot Perform E2E Visual Testing [Score: 85/100]
 **Status**: Investigation
