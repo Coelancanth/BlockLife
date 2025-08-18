@@ -9,9 +9,8 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 - **[Workflow.md](01-Active/Workflow.md)** - Development workflow and processes
 
 ### [02-Design/](02-Design/) - Game Design & Vision
-- **[Vision.md](02-Design/Vision.md)** - Complete game design vision
+- **[Vision.md](02-Design/Vision.md)** - Complete consolidated game design vision
 - **[Mechanics/](02-Design/Mechanics/)** - Detailed game mechanics
-- **[Brainstorms/](02-Design/Brainstorms/)** - Creative exploration (includes Chinese content)
 
 ### [03-Reference/](03-Reference/) - Technical Guidelines
 - **[Architecture.md](03-Reference/Architecture.md)** - Clean Architecture principles

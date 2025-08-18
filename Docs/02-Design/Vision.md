@@ -21,11 +21,12 @@ BlockLife simulates the journey of human life through strategic tile management.
 Effects triggered by specific conditions:
 - **Trigger Conditions**: Combos, patterns, life events
 - **Effect Types**:
-  - **Teleport**: Move blocks instantly
+  - **Teleport**: Move blocks instantly via "Opportunity" blocks
   - **Transform**: Change block types
   - **Freeze**: Lock blocks temporarily
-  - **Split**: Divide high-level blocks
+  - **Split**: Divide high-level blocks for strategic positioning
   - **Area Effects**: Affect multiple blocks in range
+  - **Inertia**: High-level blocks gain automatic merging behavior
 
 ### Random Event System
 - **Crisis Events**: Unexpected challenges requiring adaptation
@@ -140,6 +141,26 @@ Personality develops through actions, not initial selection. Player behavior sha
 
 ---
 
+## 🎭 Character Origins & Talents
+
+### Background System
+Starting conditions that shape early life:
+- **Scholarly Family**: Enhanced knowledge blocks, academic expectations
+- **Wealthy Family**: Financial advantages, social pressure, larger grid
+- **Humble Beginnings**: Resource constraints, resilience bonuses, motivation
+- **Each background**: Provides unique starting blocks and opportunities
+
+### Talent System
+Rule-changing abilities unlocked through personality development:
+- **Logical Genius**: Merge non-adjacent blocks in straight lines
+- **Social Butterfly**: Social blocks require only 2 instead of 3 to merge
+- **Artistic Intuition**: 10% chance for merges to level up twice
+- **Meticulous Planner**: Storage ability to save blocks for strategic timing
+- **Born Optimist**: Convert negative blocks to positive ones
+- **Boundless Energy**: First merge each turn costs no energy
+
+---
+
 ## 🎲 Luck System
 
 ### Fortune Cycles
@@ -200,11 +221,71 @@ Personality develops through actions, not initial selection. Player behavior sha
 - Sources: Happiness, hobbies, family
 - Drains: Bills, work pressure, stress
 
+### Generational Legacy System
+- **Inheritance Mechanics**: Previous life achievements become next generation advantages
+- **Legacy Burdens**: Past regrets create new challenges and expectations
+- **Family Traits**: Successful traits pass to descendants with variations
+- **Bloodline Effects**: Multi-generational story arcs spanning families
+- **New Game+**: Enhanced replay with meaningful continuity
+
+### Inner Monologue System
+- **Real-time Commentary**: Personality-driven thoughts reflect current state
+- **MBTI-based Voice**: Different internal dialogue for each personality type
+- **Contextual Responses**: Thoughts change based on actions and situations
+- **Emotional Resonance**: Players experience character's mental state directly
+
+### Narrative Anchor Choices
+- **Value-based Decisions**: Pause gameplay for moral/ethical choices
+- **Character Defining**: Choices that shape personality and unlock abilities
+- **Long-term Consequences**: Decisions create lasting effects on gameplay
+- **Principle Testing**: Moments that challenge player's established values
+
+### Regional Gameplay
+- **Life Areas**: Home, work, school as separate board regions
+- **Area-specific Rules**: Different merging costs and effects per region
+- **Spillover Effects**: Stress/happiness bleeds between regions
+- **Commute Costs**: Moving blocks between areas requires time/energy
+- **Environmental Buffs**: Each region provides unique advantages/challenges
+
+### Memory Palace
+- **Secondary Board**: Separate space for storing precious memories
+- **Memory Crystallization**: Peak experiences preserved as permanent blocks
+- **Recall Resource**: Revisit memories for mindset restoration in hard times
+- **Fading Mechanism**: Old memories require investment to maintain vividness
+
+### Time Budget System
+- **Limited Time Tokens**: Explicit allocation of time resources in adulthood
+- **Opportunity Cost**: Clear trade-offs between competing life demands
+- **Priority Management**: Strategic decisions about time investment
+- **Work-Life Integration**: Balancing professional and personal time allocation
+
 ### Life Sharing System
 - End-game life summary generation
 - Shareable life stories
 - Achievement tracking
-- Legacy influence on next playthrough
+- Cross-generational influence tracking
+
+---
+
+## 🎮 Game Modes
+
+### Authentic Mode
+- **Random Genetics**: Hidden traits and backgrounds assigned randomly
+- **Pure Simulation**: Emphasizes life's unpredictability and adaptation
+- **Discovery-based**: Players learn their character through gameplay
+- **Realism Focus**: Models true-to-life uncertainty and chance
+
+### Destiny Mode
+- **Character Creation**: Players influence starting background through choices
+- **Guided Experience**: Personality tests determine initial traits
+- **Accessible Entry**: Reduced randomness for strategic planning
+- **Customization**: Balance between choice and surprise
+
+### Legacy Mode
+- **Generational Focus**: Mandatory inheritance from previous lives
+- **Family Saga**: Multi-generation storytelling emphasis
+- **Continuity Themes**: Explores how past shapes present
+- **Dynasty Building**: Long-term family development across playthroughs
 
 ---
 
