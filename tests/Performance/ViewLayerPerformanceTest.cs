@@ -21,7 +21,8 @@ public class ViewLayerPerformanceTest
         _output = output;
     }
     
-    [Fact(Skip = "Performance timing tests are unreliable in virtualized CI environments")]
+    [Fact]
+    [Trait("Category", "Performance")]
     public async Task BlockMovementAnimation_ShouldCompleteWithinTargetTime()
     {
         // Arrange
@@ -54,7 +55,8 @@ public class ViewLayerPerformanceTest
         Assert.InRange(stopwatch.ElapsedMilliseconds, 0, targetMs + tolerance);
     }
     
-    [Fact(Skip = "Performance timing tests are unreliable in virtualized CI environments")]
+    [Fact]
+    [Trait("Category", "Performance")]
     public async Task InstantMode_ShouldHaveNoAnimationDelay()
     {
         // Arrange
@@ -83,7 +85,8 @@ public class ViewLayerPerformanceTest
             $"Instant mode took {stopwatch.ElapsedMilliseconds}ms, expected < 50ms");
     }
     
-    [Theory(Skip = "Timing tests are unreliable in virtualized CI environments - only meaningful for local development")]
+    [Theory]
+    [Trait("Category", "Performance")]
     [InlineData(0.05f, 50)]
     [InlineData(0.10f, 100)]
     [InlineData(0.15f, 150)]

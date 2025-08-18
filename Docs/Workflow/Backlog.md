@@ -59,57 +59,81 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_012: Add Git Hooks to Prevent Direct Main Commits [Score: 95/100]
-**Status**: Approved ✓
-**Owner**: DevOps Engineer  
-**Size**: S (1-2 hours)
-**Priority**: Critical 🔥
-**Markers**: [SAFETY-CRITICAL] [PROCESS]
-**Created**: 2025-08-18
-
-**What**: Implement pre-commit hook to block direct commits to main
-**Why**: Tech Lead violated workflow - committed directly to main 3 times!
-
-**Implementation**: Create `.git/hooks/pre-commit` to enforce feature branches
-
-**Tech Lead Review**:
-✅ APPROVED - My own violation proves we need this NOW
-
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_001 Phase 2: Drag Range Limits [Score: 85/100]
-**Status**: Ready to Start
-**Owner**: Dev Engineer
+**Status**: Ready for Review 🔍
+**Owner**: Test Specialist (for validation) ← Dev Engineer (implementation complete)
 **Size**: M (4-6 hours)
 **Branch**: feat/drag-to-move-blocks
-**Depends On**: TD_003, TD_004 (must fix safety issues first)
-**Phase 1**: ✅ Archived (see Archive section)
 
 **What**: Add movement range validation to drag system
 **Why**: Prevents unrealistic teleportation, adds strategic depth
 
-**Phase 2 Scope**:
-- Add movement range validation (default: 3 cells)
-- Show range indicators during drag start
-- Block invalid moves with visual feedback
-- Use existing IsWithinDragRange from Phase 1
+**Dev Engineer Implementation Summary** (2025-08-18):
+- ✅ Enabled range validation in DragPresenter.cs:206-213
+- ✅ Visual indicators already working in DragView.cs:304-327
+- ✅ Manhattan distance calculation in DragStateService.cs:96-108
+- ✅ Created comprehensive test suite: DragRangeValidationTests.cs (14 tests passing)
+- ✅ All existing tests still pass
+
+**Technical Decisions Made**:
+- Used Manhattan distance (grid-based) instead of Chebyshev (diagonal)
+- Default range: 3 cells (configurable via GetDragRange method)
+- Range enforcement happens at both drag update and completion
+
+**Ready for Test Specialist Validation**:
+- Implementation follows existing patterns from Phase 1
+- No breaking changes to existing functionality
+- Performance impact minimal (simple distance calculation)
 
 **Phase 3 - Swap Mechanic** (future):
 - Detect drop on occupied cell
 - Swap both blocks with animation
 - Validate swap against both block ranges
 
-**Acceptance Criteria**:
-- [ ] Range constraints properly enforced
-- [ ] Visual indicators show valid drop zones
-- [ ] Performance: No frame drops during drag
+### TD_013: Refactor Range Validation to Shape-Based System [Score: 80/100]
+**Status**: Proposed 
+**Owner**: Tech Lead (for approval) ← Dev Engineer (proposed)
+**Size**: M (6-8 hours)
+**Priority**: Important (blocks Phase 3 and future movement patterns)
+**Created**: 2025-08-18
+**Markers**: [ARCHITECTURE] [EXTENSIBILITY]
 
-**Done When**:
-- Range validation working (3 cell default)
-- Visual feedback for valid/invalid zones
-- All drag tests still passing
-- Ready for Phase 3 (Swap)
+**What**: Replace hard-coded range validation with extensible shape system
+**Why**: Current Manhattan distance is just one shape - need flexibility for different movement patterns
+
+**Dev Engineer Analysis** (2025-08-18):
+- **Current Issue**: IsWithinDragRange uses hard-coded Manhattan distance
+- **Opportunity**: Create IMovementShape interface with implementations
+- **Enables**: Diamond (Manhattan), Square (Chebyshev), Cross, L-shape, Custom patterns
+- **Impact**: More intuitive, extensible, game-design friendly
+
+**Proposed Approach**:
+```csharp
+interface IMovementShape {
+    bool IsValidMove(Vector2Int from, Vector2Int to);
+    IEnumerable<Vector2Int> GetValidPositions(Vector2Int from);
+}
+```
+- DiamondShape: Manhattan distance (current)
+- SquareShape: Chebyshev distance 
+- CrossShape: Cardinal directions only
+- Custom shapes for special blocks
+
+**Benefits**:
+- Each block type can have different movement patterns
+- Visual indicators match actual movement shape
+- Extensible without changing core logic
+- Better game design flexibility
+
+**Risks**:
+- More complex than simple range check
+- Need to update UI shape rendering
+- Test complexity increases
+
+**Recommendation**: Implement BEFORE Phase 3 since swap mechanics will depend on movement shapes
 
 ### TD_005: Add Missing Drag Integration Tests [Score: 75/100]
 **Status**: Approved ✓
@@ -137,34 +161,6 @@
 - Stress test validates no race conditions
 - Performance test confirms <16ms operations
 
-### TD_006: Separate Performance Tests from CI Pipeline [Score: 70/100]
-**Status**: Approved ✓
-**Owner**: DevOps Engineer
-**Size**: M (4-6 hours)
-**Priority**: Important
-**Found By**: DevOps Engineer during CI failure investigation
-
-**Tech Lead Decision** (2025-08-18):
-✅ APPROVED - Smart CI improvement, 100% false positive rate unacceptable
-- Add [Category("Performance")] attribute
-- Update CI workflow to exclude timing tests
-- Create optional performance pipeline
-
-**What**: Create separate test category for performance tests and exclude from main CI
-**Why**: Timing tests cause false failures in virtualized CI environments (100% false positive rate)
-**Related**: PostMortem_2025-01-17-CI-Timing-Tests.md
-
-**Approach**:
-- Add [Category("Performance")] to all timing-sensitive tests
-- Update CI workflow to exclude Performance category
-- Create optional performance test pipeline (non-blocking)
-- Add CI environment detection helper
-
-**Done When**:
-- Performance tests properly categorized
-- Main CI excludes timing tests
-- Optional performance pipeline exists
-- No more timing-related CI failures
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -182,44 +178,6 @@
 - Centralize input state management
 - Follow existing feature module structure
 
-### TD_008: Fix ccstatusline Git Branch Display Issue [Score: 12/100]
-**Status**: Deferred ⏸️
-**Owner**: DevOps Engineer (when ready)
-**Size**: S (2-3 hours)
-**Priority**: Ideas
-**Found By**: DevOps Engineer during status line configuration
-**Created**: 2025-08-18
-
-**Tech Lead Decision** (2025-08-18):
-⏸️ DEFERRED - Nice-to-have convenience feature
-- Not blocking any real work
-- Developers can use `git status` for now
-
-**Strategic Prioritizer Decision** (2025-08-18):
-💡 CONFIRMED IN IDEAS - Score: 12/100
-- Pure convenience, no business value
-- Workaround exists (git status)
-- Keep for future quality-of-life improvements
-
-**What**: Fix ccstatusline showing "no git" instead of current branch in Claude Code status line
-**Why**: Developers lose git context awareness, affecting workflow efficiency and branch management
-
-**Problem Statement**:
-- ccstatusline displays "⎇ no git" instead of actual branch name
-- Working directory is correctly in git repository root
-- Git commands work normally but status line shows incorrect information
-- Affects situational awareness during development
-
-**Approach**:
-- Investigate ccstatusline git detection logic in Claude Code context
-- Test working directory resolution when executed via Claude settings
-- Fix path/environment issues preventing git repository detection
-- Verify git integration works in both global and local config modes
-
-**Done When**:
-- Status line shows correct git branch: "🌿 docs/improve-git-workflow-documentation"
-- Git branch updates when switching branches
-- Works consistently in Claude Code status line integration
 
 ### TD_009: Refine Persona Command Implementation for Production [Score: 40/100]
 **Status**: Approved ✓
@@ -311,6 +269,17 @@
 **Solution**: Created backlog-assistant subagent
 **Impact**: Saves 30 min per prioritization session
 **Usage**: `/task backlog-assistant "Maintain backlog"`
+
+### TD_006: Separate Performance Tests from CI Pipeline ✅ DONE
+**Completed**: 2025-08-18 (1.5 hours)
+**Owner**: DevOps Engineer
+**Solution**: Added [Trait("Category", "Performance")] to timing tests, excluded from CI
+**Impact**: Eliminated 100% false positive rate on timing tests in CI
+**Key Changes**:
+- 12 timing tests categorized with Performance trait
+- Main CI excludes via --filter "Category!=Performance"
+- Optional weekly performance pipeline created
+- Tests still runnable locally for developers
 
 ---
 

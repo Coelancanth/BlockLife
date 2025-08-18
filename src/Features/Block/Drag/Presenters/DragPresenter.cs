@@ -203,16 +203,14 @@ namespace BlockLife.Core.Features.Block.Drag.Presenters
 
         private bool ShouldShowRangeIndicators()
         {
-            // This will be enabled in Phase 2
-            // For now, return false to keep Phase 1 simple
-            return false;
+            // Phase 2: Range indicators are now enabled
+            return true;
         }
 
         private bool ShouldEnforceRangeLimits()
         {
-            // This will be enabled in Phase 2
-            // For now, return false to keep Phase 1 simple
-            return false;
+            // Phase 2: Range limits are now enforced
+            return true;
         }
 
         private int GetDragRange()

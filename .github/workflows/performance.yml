@@ -1,0 +1,61 @@
+name: Performance Tests
+
+on:
+  workflow_dispatch:  # Manual trigger
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday at 2 AM UTC
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Non-blocking - informational only
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore
+      run: dotnet restore BlockLife.sln
+      
+    - name: Build
+      run: dotnet build BlockLife.sln --no-restore --configuration Release
+      
+    - name: Run Performance Tests
+      run: |
+        echo "Running performance tests (informational only)..."
+        dotnet test BlockLife.sln --no-build --configuration Release \
+          --filter "Category=Performance" \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=performance-results.trx" \
+          || echo "Performance tests completed with issues - this is informational only"
+      
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-test-results
+        path: '**/performance-results.trx'
+        retention-days: 30
+        
+    - name: Performance Test Summary
+      if: always()
+      run: |
+        echo "## Performance Test Summary"
+        echo "Performance tests are run for informational purposes only."
+        echo "These tests may fail in virtualized CI environments due to:"
+        echo "- Variable CPU performance"
+        echo "- Container resource limitations"
+        echo "- Shared infrastructure timing variations"
+        echo ""
+        echo "For accurate performance testing, run tests locally on dedicated hardware."

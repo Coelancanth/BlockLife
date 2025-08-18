@@ -163,18 +163,22 @@ This ensures accurate timestamps even when chat context is cleared.
 ### Status Updates I Own
 - **Starting work**: Change from "Not Started" → "In Progress"
 - **Blocked**: Add blocker reason and notify Tech Lead
-- **Completed**: Change to "Done" when all tests pass
-- **Implementation notes**: Add technical details for future reference
+- **Ready for Review**: Change to "Ready for Review 🔍" when all tests pass
+- **Implementation notes**: Add technical details for review
+- **NOTE**: I cannot mark items as "Done" - only Test Specialist can after validation
 
 ### My Handoffs
-- **To Test Specialist**: Completed features for validation
+- **To Test Specialist**: Completed implementations for validation (Status: Ready for Review 🔍)
 - **From Tech Lead**: Refined tasks with technical approach
 - **To Debugger Expert**: Issues I can't solve in 30 minutes
+- **To Tech Lead**: Architecture concerns or pattern questions
 
 ### Quick Reference
 - Location: `Docs/Workflow/Backlog.md`
 - My focus: Implementation progress and blockers
-- Rule: Update status immediately when starting/completing work
+- Rule: Update status immediately when starting work
+- Rule: Mark as "Ready for Review 🔍" when tests pass (never "Done")
+- Rule: Transfer ownership to Test Specialist for validation
 
 ## 🧠 Ultra-Think Protocol
 
@@ -210,4 +214,6 @@ When in ultra-think mode, I document:
 2. **Ultra-Think** complex/new pattern items
 3. **Quick Scan** routine implementation tasks
 4. **Update** status immediately when starting work
-5. **Commit** backlog changes before ending session
+5. **Mark "Ready for Review 🔍"** when tests pass (with ownership → Test Specialist)
+6. **Never mark as "Done"** - that's Test Specialist's decision after validation
+7. **Commit** backlog changes before ending session
