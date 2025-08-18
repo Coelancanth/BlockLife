@@ -206,5 +206,39 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
         // Assert
         result.Should().Be(expectedResult);
     }
+    
+    [Fact]
+    public void VisualAndLogicConsistency_UseManhattanDistance_NotChebyshev()
+    {
+        // This test documents that we use Manhattan distance (diamond shape)
+        // not Chebyshev distance (square shape) for drag range validation.
+        // This prevents regression of the visual/logic mismatch bug (TD_013).
+        
+        // Arrange
+        var center = new Vector2Int(5, 5);
+        var range = 3;
+        _dragStateService.StartDrag(Guid.NewGuid(), center);
+        
+        // Act & Assert - Corner positions at max range
+        // These positions are at Chebyshev distance 3 (would be valid for square)
+        // but Manhattan distance 6 (invalid for diamond with range 3)
+        
+        // Top-right corner: (8, 2) -> Manhattan = |8-5| + |2-5| = 3 + 3 = 6
+        _dragStateService.IsWithinDragRange(new Vector2Int(8, 2), range)
+            .Should().BeFalse("corner at max range should be outside Manhattan distance");
+            
+        // Bottom-left corner: (2, 8) -> Manhattan = |2-5| + |8-5| = 3 + 3 = 6  
+        _dragStateService.IsWithinDragRange(new Vector2Int(2, 8), range)
+            .Should().BeFalse("corner at max range should be outside Manhattan distance");
+            
+        // Edge positions at max range should be valid
+        // Right edge: (8, 5) -> Manhattan = |8-5| + |5-5| = 3 + 0 = 3
+        _dragStateService.IsWithinDragRange(new Vector2Int(8, 5), range)
+            .Should().BeTrue("edge position should be within Manhattan distance");
+            
+        // Top edge: (5, 2) -> Manhattan = |5-5| + |2-5| = 0 + 3 = 3
+        _dragStateService.IsWithinDragRange(new Vector2Int(5, 2), range)
+            .Should().BeTrue("edge position should be within Manhattan distance");
+    }
     }
 }

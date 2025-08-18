@@ -60,11 +60,12 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### TD_013: Fix Drag Range Visual/Logic Mismatch [Score: 80/100]
-**Status**: Approved ✓ 
+**Status**: Done ✅
 **Owner**: Dev Engineer ← Tech Lead (approved)
 **Size**: S (2-3 hours for immediate fix)
 **Priority**: Critical (visual/logic mismatch is a bug)
 **Created**: 2025-08-18
+**Completed**: 2025-08-18
 **Markers**: [BUG] [UX-CRITICAL]
 
 **What**: Fix visual/logic mismatch - visual shows square but validation uses diamond
@@ -98,6 +99,19 @@ interface IMovementShape {
 - Fix visual/logic mismatch immediately
 - Defer shape system abstraction until actually needed
 - Principle: Fix bugs first, enhance later
+
+**Dev Engineer Implementation** (2025-08-18):
+✅ **COMPLETED** - Fixed visual to match Manhattan distance validation
+- Modified DragView.cs:304-318 to store range center and distance
+- Implemented DrawManhattanDiamond method (DragView.cs:402-426) drawing diamond shape
+- Added regression test VisualAndLogicConsistency_UseManhattanDistance_NotChebyshev
+- All 71 tests passing, no breakage
+
+**Solution Details**:
+- Visual now draws cells where Manhattan distance ≤ range (diamond shape)
+- Each valid cell is highlighted individually with borders
+- Corner positions at max range correctly excluded (e.g., (8,2) from (5,5) with range 3)
+- Edge positions at max range correctly included (e.g., (8,5) from (5,5) with range 3)
 
 ## 📈 Important (Do Next)  
 *Core features for current milestone, technical debt affecting velocity*

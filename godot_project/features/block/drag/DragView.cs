@@ -47,6 +47,10 @@ public partial class DragView : Control, IDragView
     private Vector2Int _dragStartPosition;
     private bool _isDragging = false;
     
+    // Range indicator state for diamond drawing
+    private Vector2Int _rangeCenter;
+    private int _currentRange;
+    
     // Subscriptions
     private IDisposable? _dragStartSubscription;
     private IDisposable? _dragMoveSubscription;
@@ -307,10 +311,9 @@ public partial class DragView : Control, IDragView
         
         if (_rangeIndicator != null)
         {
-            var rangeSize = (range * 2 + 1) * CellSize;
-            _rangeIndicator.Position = GridToScreenPosition(
-                new Vector2Int(centerPosition.X - range, centerPosition.Y - range));
-            _rangeIndicator.SetSize(new Vector2(rangeSize, rangeSize));
+            // Store the center and range for drawing the diamond shape in _Draw
+            _rangeCenter = centerPosition;
+            _currentRange = range;
             _rangeIndicator.Modulate = RangeIndicatorColor;
             _rangeIndicator.Visible = true;
         }
@@ -389,12 +392,36 @@ public partial class DragView : Control, IDragView
             DrawRect(rect, _previewIndicator.Modulate, false, 3.0f);
         }
         
-        // Draw range indicator
+        // Draw range indicator as diamond (Manhattan distance)
         if (_rangeIndicator != null && _rangeIndicator.Visible)
         {
-            var rect = new Rect2(_rangeIndicator.Position, _rangeIndicator.Size);
-            DrawRect(rect, _rangeIndicator.Modulate);
-            DrawRect(rect, RangeIndicatorColor * 2, false, 2.0f); // Border
+            DrawManhattanDiamond(_rangeCenter, _currentRange);
+        }
+    }
+    
+    private void DrawManhattanDiamond(Vector2Int center, int range)
+    {
+        // Draw all cells within Manhattan distance as a filled diamond shape
+        for (int y = center.Y - range; y <= center.Y + range; y++)
+        {
+            for (int x = center.X - range; x <= center.X + range; x++)
+            {
+                // Calculate Manhattan distance from center
+                int distance = Math.Abs(x - center.X) + Math.Abs(y - center.Y);
+                
+                // Only draw cells within the Manhattan distance range
+                if (distance <= range)
+                {
+                    var cellPos = GridToScreenPosition(new Vector2Int(x, y));
+                    var rect = new Rect2(cellPos, new Vector2(CellSize, CellSize));
+                    
+                    // Draw filled cell with range indicator color
+                    DrawRect(rect, RangeIndicatorColor);
+                    
+                    // Draw border for each cell
+                    DrawRect(rect, RangeIndicatorColor * 2, false, 1.0f);
+                }
+            }
         }
     }
     
