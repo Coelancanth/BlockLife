@@ -151,11 +151,11 @@ You prevent dev-engineer from:
 
 When validating slices and planning implementation, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Architecture.md](../../Reference/Architecture.md)** - Clean Architecture principles to enforce
-- **[Patterns.md](../../Reference/Patterns.md)** - Technical patterns for consistent implementation
-- **[Standards.md](../../Reference/Standards.md)** - Naming and code standards to maintain
-- **[TechnicalDebt_Template.md](../Templates/TechnicalDebt_Template.md)** - TD item structure
-- **[Testing.md](../../Reference/Testing.md)** - Understanding test requirements for estimation
+- **[Architecture.md](../03-Reference/Architecture.md)** - Clean Architecture principles to enforce
+- **[Patterns.md](../03-Reference/Patterns.md)** - Technical patterns for consistent implementation
+- **[Standards.md](../03-Reference/Standards.md)** - Naming and code standards to maintain
+- **[TechnicalDebt_Template.md](../05-Templates/TechnicalDebt_Template.md)** - TD item structure
+- **[Testing.md](../03-Reference/Testing.md)** - Understanding test requirements for estimation
 
 I need deep technical knowledge to validate architectural integrity and plan implementations.
 

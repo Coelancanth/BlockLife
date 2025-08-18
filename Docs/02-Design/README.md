@@ -5,7 +5,7 @@ This folder contains the creative vision and game mechanics for BlockLife.
 ## 📚 Document Structure
 
 ### Core Documents
-- **[Game_Design_Vision.md](Game_Design_Vision.md)** - Complete forward-looking game design
+- **[Vision.md](Vision.md)** - Complete forward-looking game design
   - All planned features and systems
   - Life stage progression details
   - Core gameplay philosophy
@@ -31,13 +31,13 @@ This folder contains the creative vision and game mechanics for BlockLife.
 ### How to Use These Docs
 
 1. **Reference Only** - Never modify these documents
-2. **Vision First** - Start with Game_Design_Vision.md for current direction
+2. **Vision First** - Start with Vision.md for current direction
 3. **Ask When Unclear** - If design intent is ambiguous, ask the user
 4. **Respect the Vision** - Implement exactly as specified, no "improvements"
 
 ### Document Priority
 
-1. **Game_Design_Vision.md** - Primary reference for all future work
+1. **Vision.md** - Primary reference for all future work
 2. **Core-Mechanics/** - Detailed specifications when implementing
 3. **brainstormA/B/C.md** - Context and creative exploration
 

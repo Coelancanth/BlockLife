@@ -115,7 +115,7 @@ public async Task Method_Scenario_ExpectedOutcome()
 - **Effects** - Must `.Run()` before asserting results
 - **Custom Helpers** - Use `ShouldBeSuccess()`, `ShouldBeSome()` from FluentAssertionsLanguageExtExtensions
 
-📚 **See [Testing.md](../../Reference/Testing.md#languageext-testing-patterns) for complete patterns and examples**
+📚 **See [Testing.md](../03-Reference/Testing.md#languageext-testing-patterns) for complete patterns and examples**
 
 ### Key Testing Gotcha
 Always remember: Fin failures are NOT exceptions - they're values. Test them with:
@@ -437,11 +437,11 @@ Remember: You are the quality gatekeeper. Every test you write prevents a future
 
 When testing and validating quality, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Testing.md](../../Reference/Testing.md)** - Testing strategies, patterns, and edge cases
-- **[BugReport_Template.md](../Templates/BugReport_Template.md)** - Creating BR items
-- **[TechnicalDebt_Template.md](../Templates/TechnicalDebt_Template.md)** - Proposing TD items
-- **[Standards.md](../../Reference/Standards.md)** - Test naming conventions
-- **[Patterns.md](../../Reference/Patterns.md)** - Understanding what patterns to validate
+- **[Testing.md](../03-Reference/Testing.md)** - Testing strategies, patterns, and edge cases
+- **[BugReport_Template.md](../05-Templates/BugReport_Template.md)** - Creating BR items
+- **[TechnicalDebt_Template.md](../05-Templates/TechnicalDebt_Template.md)** - Proposing TD items
+- **[Standards.md](../03-Reference/Standards.md)** - Test naming conventions
+- **[Patterns.md](../03-Reference/Patterns.md)** - Understanding what patterns to validate
 
 I need to understand both testing strategies and the patterns being tested.
 

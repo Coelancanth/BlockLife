@@ -466,7 +466,7 @@ python scripts/collect_test_metrics.py --update-docs
 - **Comprehensive logging**: UTF-8 support, structured output
 - **Error recovery**: Automatic rollback on failure
 
-**See**: [Automation_Scripts_Guide.md](../Workflows/Development/Automation_Scripts_Guide.md) for complete capabilities.
+**Note**: Automation scripts capabilities documented inline above.
 
 ## 🔄 VSA Refactoring Agent
 
@@ -528,7 +528,7 @@ python scripts/collect_test_metrics.py --update-docs
 - **VERIFY proper async/await usage** throughout call chains
 - *Lesson from*: Architecture stress testing findings
 
-**For detailed bug patterns and debugging procedures**: → **[Technical_Patterns.md](Technical_Patterns.md)**
+**For detailed bug patterns and debugging procedures**: → **See persona knowledge bases and post-mortems**
 
 
 

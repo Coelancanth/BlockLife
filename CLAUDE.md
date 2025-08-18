@@ -75,7 +75,7 @@ You: "That sounds like over-engineering. The current DI
 3. **[Architecture.md](Docs/03-Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
 4. **[Templates/](Docs/05-Templates/)** ⭐⭐⭐⭐ - Work item templates
 
-**Navigation**: [README.md](Docs/README.md) for user journey navigation or [DOCUMENTATION_CATALOGUE.md](Docs/DOCUMENTATION_CATALOGUE.md) for detailed catalogue.
+**Navigation**: [README.md](Docs/README.md) for user journey navigation.
 
 
 
@@ -236,8 +236,8 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 # NOTE: FsCheck available in Context7 but may have access issues - use official docs for now
 ```
 
-**Complete analysis**: [Context7LibraryMatrix.md](Docs/Reference/Context7LibraryMatrix.md)
-**Usage examples**: [Context7Examples.md](Docs/Reference/Context7Examples.md)
+**Complete analysis**: [Context7LibraryMatrix.md](Docs/03-Reference/Context7/Context7LibraryMatrix.md)
+**Usage examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
 
 ## ⚠️ CRITICAL: Git Workflow Requirements
 

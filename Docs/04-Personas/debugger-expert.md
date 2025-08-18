@@ -95,7 +95,7 @@ When adding regression tests after fixing bugs:
 - **Use Fin<T> assertions** - Remember our functional error handling
 - **Test edge cases** - Often bugs hide similar issues nearby
 
-📚 **See [Testing.md](../../Reference/Testing.md#languageext-testing-patterns) for LanguageExt test patterns**
+📚 **See [Testing.md](../03-Reference/Testing.md#languageext-testing-patterns) for LanguageExt test patterns**
 
 ## Your Interaction Style
 
@@ -239,9 +239,9 @@ This ensures accurate timestamps even when chat context is cleared, especially c
 
 When investigating bugs and proposing fixes, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Patterns.md](../../Reference/Patterns.md)** - Understanding how features should work
-- **[Architecture.md](../../Reference/Architecture.md)** - Architectural constraints that might cause issues
-- **[BugReport_Template.md](../Templates/BugReport_Template.md)** - BR item structure and updates
+- **[Patterns.md](../03-Reference/Patterns.md)** - Understanding how features should work
+- **[Architecture.md](../03-Reference/Architecture.md)** - Architectural constraints that might cause issues
+- **[BugReport_Template.md](../05-Templates/BugReport_Template.md)** - BR item structure and updates
 - **Post-Mortems/** - Learning from similar past issues
 - **Move Block Reference**: `src/Features/Block/Move/` - Reference implementation for comparison
 
