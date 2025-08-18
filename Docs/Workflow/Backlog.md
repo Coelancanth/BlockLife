@@ -68,11 +68,11 @@
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 65/100]
-**Status**: Proposed
-**Owner**: Tech Lead (needs approval)
-**Size**: S (2-3 hours)
-**Priority**: Ideas (quality improvement)
+### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 45/100]
+**Status**: Approved (Deferred)
+**Owner**: Dev Engineer (after MVP)
+**Size**: XS (immediate) + M (future property suite)
+**Priority**: Ideas (not critical path)
 **Created**: 2025-08-19
 **Proposed By**: Test Specialist
 **Markers**: [QUALITY] [TESTING]
@@ -80,13 +80,37 @@
 **What**: Implement FSCheck property tests for swap operation invariants
 **Why**: Catch edge cases that example-based tests might miss, ensure mathematical properties hold
 
-**Approach**:
-1. Create `tests/Features/Block/Properties/SwapProperties.cs`
-2. Implement three core property tests
-3. Add custom generators for valid swap scenarios
-4. Integrate with existing test suite
+**Tech Lead Decision** (2025-08-18):
+✅ **APPROVED with modifications - Defer to after MVP**
 
-**Proposed Properties**:
+**Analysis**:
+- Current swap has only 2 example-based tests
+- Property tests would catch edge cases we haven't thought of
+- FSCheck is mature and well-suited for game logic invariants
+- Swap operation has clear mathematical properties to verify
+
+**However**: 
+- We have only 2 swap tests currently - not enough surface area yet
+- Property tests shine when you have complex state spaces
+- Current swap is relatively simple (range check + position swap)
+
+**Modified Approach**:
+1. **Immediate** (5 min): Add 2-3 more example-based tests for critical cases:
+   - Swap with boundary blocks
+   - Failed swap attempts (out of range)
+   - Swap with same block (should fail gracefully)
+
+2. **After MVP** (when swap gets complex):
+   - Implement full property-based test suite
+   - Add generators for game states
+   - Test invariants across all block operations
+
+**Rationale**:
+- Property tests are valuable but premature optimization now
+- With only 2 tests, we need basic coverage first
+- When swap mechanics get complex (power-ups, constraints), revisit
+
+**Proposed Properties** (Future Implementation):
 ```csharp
 // 1. Swap preserves total block count
 [Property]
@@ -103,19 +127,11 @@ public Property DoubleSwap_ReturnsToOriginal()
 // Swapping twice = identity operation
 ```
 
-**Additional Properties to Consider**:
-- No blocks occupy same position after swap
-- Swap respects grid boundaries
-- Failed swaps leave grid unchanged
-- Concurrent swaps don't corrupt state
-
 **Done When**:
-- Property tests integrated into test suite
-- All properties pass with 1000+ generated cases
+- **Immediate**: 2-3 additional example tests added and passing
+- **Future**: Property tests integrated with 1000+ generated cases
 - Edge cases discovered are documented
 - CI pipeline includes property test execution
-
-**Test Specialist Note**: These properties would have caught the notification bug earlier through systematic testing. FSCheck's shrinking would provide minimal failing cases for easier debugging.
 
 ### TD_001: Extract Input System to Separate Feature Module [Score: 45/100]
 **Status**: Approved ✓
