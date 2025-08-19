@@ -10,7 +10,50 @@ BlockLife simulates the journey of human life through strategic tile management.
 
 ---
 
-## 🎮 Planned Core Systems
+## 🎲 Core Gameplay Mechanics (Designer Confirmed)
+
+### Merge System - Triple Town Model
+**Fundamental Rule**: 3 adjacent matching blocks merge into higher level
+- **Merge Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
+- **Result Placement**: Merged block appears at the last-moved/placed block position
+- **Level Progression**: Level 1 + Level 1 + Level 1 → Level 2 (and so on)
+- **Same-Type Only** (Phase 1): Work blocks only merge with Work, Study with Study, etc.
+
+### Auto-Spawn System
+**Round-Based Pressure**: Each turn spawns new blocks automatically
+- **Spawn Timing**: After each player action (move/merge)
+- **Spawn Rules**: Random type, empty position
+- **Difficulty Scaling**: Spawn rate/quantity increases over time
+- **Strategic Element**: Players must manage space while pursuing merges
+
+### Chain Reaction System (Core Mechanic)
+**The Magic Moment**: Merges that trigger additional merges automatically
+- **Cascade Detection**: After any merge completes, check if result triggers new merges
+- **Combo Multiplier**: Each chain step increases score (1x → 2x → 4x → 8x)
+- **Visual Celebration**: Each chain level gets bigger effects/sounds
+- **Strategic Depth**: Players set up elaborate chain reactions for massive scores
+
+**Example Chain**:
+1. Merge three Level-1 Work blocks → Level-2 Work appears
+2. Level-2 Work completes a group with two other Level-2s → Auto-merges to Level-3
+3. Level-3 triggers another adjacent group → Chain continues
+4. Score: 10 (base) × 1 × 2 × 4 = 80 points instead of just 10!
+
+### Placement Strategy
+- **Grid Management**: Balance between keeping space for moves and setting up merges
+- **Cascade Planning**: Deliberately position blocks to trigger chain reactions
+- **Risk/Reward**: Complex setups risk grid filling but offer huge rewards
+- **Skill Expression**: Difference between beginners (random merges) and experts (5+ chains)
+
+### Future Complexity Layers (Post-MVP)
+- **Cross-Type Merging**: 2 Work + 1 Study → Career Opportunity
+- **Merge Effects**: Special blocks spawn additional blocks
+- **Life Stage Modifiers**: Different merge rules per life stage
+- **Chain Bonus Blocks**: Special blocks created only through long chains
+
+---
+
+## 🎮 Advanced Systems (Post-MVP)
 
 ### Block Tag System
 - **Multiple Tags**: Blocks can have multiple tags affecting interactions
