@@ -59,6 +59,61 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### BR_006: Parallel Incompatible Features Developed on Different Branches [Score: 95/100]
+**Status**: Confirmed
+**Owner**: DevOps Engineer
+**Size**: M (4-6 hours)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Found By**: Tech Lead during PR #40 merge attempt
+**Markers**: [PROCESS] [GIT-WORKFLOW] [DESIGN-CONFLICT]
+
+**What**: Two incompatible game designs (VS_003 merge vs VS_003A-D match) were developed in parallel on different branches
+**Why**: Critical process failure - wasted development effort and created unmergeable branches
+
+**The Problem**:
+- Main branch implemented VS_003 as "merge" system (PR #39)
+- Feature branch implemented VS_003A-D as "match" system (PR #40)
+- These are fundamentally incompatible game mechanics
+- Both branches have significant work that can't be merged
+- No design review caught this before implementation
+
+**Root Cause Analysis**:
+1. No design lock before implementation starts
+2. Feature branches can diverge significantly from main
+3. No requirement to sync with main before major work
+4. VS items can be interpreted differently without detection
+
+**Impact**:
+- Wasted ~12 hours of development work
+- Blocking PR #40 (ADR system)
+- Design decision needs escalation
+- Team confusion about game direction
+
+**Proposed Solution**:
+1. **Immediate**: Design review meeting to choose VS_003 or VS_003A-D
+2. **Short-term**: Require design approval before VS implementation
+3. **Long-term**: Implement design lock mechanism
+
+**DevOps Actions Required**:
+1. Add GitHub branch protection rule: Require up-to-date branches before merge
+2. Create design-review workflow: VS items need approval label before coding
+3. Add daily main sync requirement for feature branches
+4. Create conflict detection GitHub Action
+5. Document new workflow in GitWorkflow.md
+
+**Acceptance Criteria**:
+- Branch protection prevents outdated merges
+- Design review process documented
+- GitHub Actions detect design conflicts early
+- Team trained on new workflow
+- No more parallel incompatible features
+
+**Related**:
+- PR #39 (VS_003 merge implementation)
+- PR #40 (VS_003A-D match implementation)
+- ADR-001 (Pattern Recognition Framework)
+
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
