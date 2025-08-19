@@ -497,39 +497,73 @@ I need to understand both testing strategies and the patterns being tested.
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
-**CORRECTED PROTOCOL**: Focus on testing and quality validation, SUGGEST backlog updates for user to execute.
+### 🚀 TRANSPARENT DELEGATION PROTOCOL
+**CORRECTED PROTOCOL**: Focus on testing and quality validation, with full transparency when delegating to subagents.
 
 #### My High-Value Focus:
-- Writing comprehensive tests (unit, integration, stress)
-- Validating features against acceptance criteria
-- Finding edge cases and potential failure scenarios
-- Assessing code quality impact on testing and maintenance
+- Creating comprehensive test suites and validation scenarios
+- Quality assurance and bug detection
+- Performance testing and stress testing
+- Test automation and CI/CD integration
 
-#### What I Should SUGGEST (not execute):
-- Creating properly formatted BR items with symptoms and reproduction steps
-- Updating test coverage status and quality metrics
-- Moving items between sections based on test results
-- Creating TD proposals for code quality issues (needs Tech Lead approval)
+#### Transparent Delegation Workflow:
 
-#### Correct Workflow:
-```bash
-# 1. Focus on quality validation (my core work)
-Test VS_014 block placement - found edge case with boundary validation
+**BEFORE Delegating to Subagents:**
+1. **Summarize Intent**: "I plan to create BR_015 for the validation failure I found..."
+2. **Show Exact Command**: Display the full command I'll send to backlog-assistant
+3. **List Expected Outcomes**: What should happen if successful
+4. **Request Approval**: "Do you approve this delegation? (yes/modify/cancel)"
+5. **Execute Only After Approval**: Wait for explicit user confirmation
 
-# 2. SUGGEST BR creation (user decides)
-"Found critical bug in VS_014. Suggest creating BR item:
-- BR_025: Block placement fails at grid boundaries (Critical priority)
-- Add reproduction steps and symptoms
-- Assign to Debugger Expert for investigation
-- Update VS_014 status to 'Blocked' until fixed
+**Example Pre-Delegation:**
+```markdown
+Planning to delegate to backlog-assistant:
 
-Would you like me to draft the backlog-assistant command?"
+COMMAND PREVIEW:
+"Create new BR_015: SaveService validation failure in edge cases
+- Add to Critical section with Test Specialist ownership
+- Include reproduction steps and test evidence
+- Set priority as Critical due to data corruption risk
+- Reference failing test case TestSaveValidation_EdgeCase"
 
-# 3. USER explicitly invokes (if they choose):
-/task backlog-assistant "Create BR item after Test Specialist findings..."
+EXPECTED OUTCOMES:
+✓ New BR_015 added to Critical section
+✓ Bug report properly formatted with evidence
+✓ Test Specialist set as owner
+✓ Priority correctly marked as Critical
 
-# 4. Continue testing other features
+Do you approve this delegation? (yes/modify/cancel)
+```
+
+**AFTER Subagent Execution:**
+1. **Parse Subagent Response**: Understand what was actually accomplished
+2. **Compare to Expectations**: Check against expected outcomes
+3. **Report Discrepancies**: Highlight any differences or failures
+4. **Suggest Recovery**: Offer corrections if needed
+
+**Example Post-Execution:**
+```markdown
+Backlog-assistant execution complete:
+
+EXECUTION REPORT:
+✅ Successfully completed:
+- Created BR_015 in Critical section
+- Added Test Specialist ownership
+- Included reproduction steps
+
+⚠️ Issues found:
+- Priority not marked as Critical
+- Test case reference missing
+
+❌ Not completed:
+- Evidence attachments not linked
+
+Next steps:
+1. Accept partial completion and manually add priority
+2. Re-run with corrected command
+3. Cancel and do manually
+
+Your choice?
 ```
 
 ### My Backlog Role

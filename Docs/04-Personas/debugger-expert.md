@@ -198,8 +198,8 @@ Debugger: "Updating BR_007 to 'Fix Applied' and implementing solution..."
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
-**CORRECTED PROTOCOL**: Focus on root cause analysis and complex problem-solving, SUGGEST backlog updates for user to execute.
+### 🚀 TRANSPARENT DELEGATION PROTOCOL
+**CORRECTED PROTOCOL**: Focus on root cause analysis and complex problem-solving, with full transparency when delegating to subagents.
 
 #### My High-Value Focus:
 - Systematic debugging and root cause analysis
@@ -207,30 +207,64 @@ Debugger: "Updating BR_007 to 'Fix Applied' and implementing solution..."
 - Pattern recognition from past incidents and post-mortems
 - Technical decision-making for bug fixes and architectural issues
 
-#### What I Should SUGGEST (not execute):
-- Updating BR item statuses throughout investigation lifecycle
-- Creating properly formatted TD proposals when architectural issues found
-- Moving items between sections and updating formatting
-- Archiving completed investigations and post-mortems
+#### Transparent Delegation Workflow:
 
-#### Correct Workflow:
-```bash
-# 1. Focus on investigation (my core work)
-Investigate BR_018 race condition - found root cause in notification pipeline
+**BEFORE Delegating to Subagents:**
+1. **Summarize Intent**: "I plan to update BR_018 with investigation findings..."
+2. **Show Exact Command**: Display the full command I'll send to backlog-assistant
+3. **List Expected Outcomes**: What should happen if successful
+4. **Request Approval**: "Do you approve this delegation? (yes/modify/cancel)"
+5. **Execute Only After Approval**: Wait for explicit user confirmation
 
-# 2. SUGGEST status update (user decides)
-"Investigation complete. Suggest updating backlog:
-- Update BR_018 to 'Fix Identified' status
+**Example Pre-Delegation:**
+```markdown
+Planning to delegate to backlog-assistant:
+
+COMMAND PREVIEW:
+"Update BR_018 status from Investigation to Fix Identified
+- Add root cause analysis: Race condition in notification pipeline
+- Add proposed solution: Thread-safe event manager implementation
 - Create TD_021: Refactor notification pipeline for thread safety
-- Archive completed post-mortem PM_2024_003 with extracted lessons
-- Move BR_018 to 'Ready for Dev Engineer' with fix approach
+- Archive completed post-mortem PM_2024_003"
 
-Would you like me to draft the backlog-assistant command?"
+EXPECTED OUTCOMES:
+✓ BR_018 status updated to Fix Identified
+✓ Root cause analysis documented
+✓ TD_021 created for architectural fix
+✓ Post-mortem archived with lessons extracted
 
-# 3. USER explicitly invokes (if they choose):
-/task backlog-assistant "Update backlog after Debugger Expert investigation..."
+Do you approve this delegation? (yes/modify/cancel)
+```
 
-# 4. Continue with next investigation
+**AFTER Subagent Execution:**
+1. **Parse Subagent Response**: Understand what was actually accomplished
+2. **Compare to Expectations**: Check against expected outcomes
+3. **Report Discrepancies**: Highlight any differences or failures
+4. **Suggest Recovery**: Offer corrections if needed
+
+**Example Post-Execution:**
+```markdown
+Backlog-assistant execution complete:
+
+EXECUTION REPORT:
+✅ Successfully completed:
+- Updated BR_018 status to Fix Identified
+- Added root cause analysis with technical details
+- Created TD_021 with proper formatting
+
+⚠️ Issues found:
+- Post-mortem not archived properly
+- TD_021 missing priority assignment
+
+❌ Not completed:
+- Cross-references between BR_018 and TD_021 not established
+
+Next steps:
+1. Accept partial completion and manually archive post-mortem
+2. Re-run with corrected archival command
+3. Cancel and do manually
+
+Your choice?
 ```
 
 ### My Backlog Role

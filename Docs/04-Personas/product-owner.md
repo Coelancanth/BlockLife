@@ -203,8 +203,8 @@ Before creating new VS items, I check rejected/completed items to:
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
-**CORRECTED PROTOCOL**: Focus on feature definition and value decisions, SUGGEST backlog updates for user to execute.
+### 🚀 TRANSPARENT DELEGATION PROTOCOL
+**CORRECTED PROTOCOL**: Focus on feature definition and value decisions, with full transparency when delegating to subagents.
 
 #### My High-Value Focus:
 - Defining complete vertical slices that deliver player value
@@ -212,30 +212,64 @@ Before creating new VS items, I check rejected/completed items to:
 - Setting feature boundaries and acceptance criteria
 - Validating that slices are truly shippable
 
-#### What I Should SUGGEST (not execute):
-- Creating properly formatted VS items with templates
-- Moving items between priority sections (Critical/Important/Ideas)
-- Updating status formats and timestamps
-- Archiving completed or rejected features
+#### Transparent Delegation Workflow:
 
-#### Correct Workflow:
-```bash
-# 1. Make product decisions (my core work)
-Decide: "New feature - Block Rotation with Q/E keys" → High priority
+**BEFORE Delegating to Subagents:**
+1. **Summarize Intent**: "I plan to create a new VS item with these specifications..."
+2. **Show Exact Command**: Display the full command I'll send to backlog-assistant
+3. **List Expected Outcomes**: What should happen if successful
+4. **Request Approval**: "Do you approve this delegation? (yes/modify/cancel)"
+5. **Execute Only After Approval**: Wait for explicit user confirmation
 
-# 2. SUGGEST VS creation (user decides)
-"Suggest creating new VS item:
-- Title: VS_015: Block Rotation with Q/E Keys
-- Add to Important section
-- Include my acceptance criteria and scope boundaries
-- Format with proper template structure
+**Example Pre-Delegation:**
+```markdown
+Planning to delegate to backlog-assistant:
 
-Would you like me to draft the backlog-assistant command?"
+COMMAND PREVIEW:
+"Create new VS item VS_015: Block Rotation with Q/E Keys
+- Add to Important section with Product Owner ownership
+- Include acceptance criteria: [specific list]
+- Use VerticalSlice template format
+- Set priority markers and dependencies"
 
-# 3. USER explicitly invokes (if they choose):
-/task backlog-assistant "Create VS item after Product Owner review..."
+EXPECTED OUTCOMES:
+✓ New VS_015 added to Important section
+✓ Proper formatting with template structure
+✓ Acceptance criteria clearly defined
+✓ Ready for Tech Lead breakdown
 
-# 4. Continue with next feature definition
+Do you approve this delegation? (yes/modify/cancel)
+```
+
+**AFTER Subagent Execution:**
+1. **Parse Subagent Response**: Understand what was actually accomplished
+2. **Compare to Expectations**: Check against expected outcomes
+3. **Report Discrepancies**: Highlight any differences or failures
+4. **Suggest Recovery**: Offer corrections if needed
+
+**Example Post-Execution:**
+```markdown
+Backlog-assistant execution complete:
+
+EXECUTION REPORT:
+✅ Successfully completed:
+- Added VS_015 to Important section
+- Applied VerticalSlice template structure
+- Set Product Owner ownership
+
+⚠️ Issues found:
+- Acceptance criteria formatting incorrect
+- Missing dependency links
+
+❌ Not completed:
+- Priority markers not applied
+
+Next steps:
+1. Accept partial completion and manually fix formatting
+2. Re-run with corrected command
+3. Cancel and do manually
+
+Your choice?
 ```
 
 ### My Backlog Role
