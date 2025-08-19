@@ -55,87 +55,168 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 
-### TD_020: Review Save System Architecture Decisions
-**Status**: Ready for Review
-**Owner**: Tech Lead
-**Size**: S (1 hour)
+### TD_020: Review Save System Architecture Decisions ✅ REVIEWED
+**Status**: Reviewed - Action Required
+**Owner**: Dev Engineer (for fixes)
+**Size**: S (2 hours for fixes)
 **Priority**: Critical
 **Created**: 2025-01-19
+**Reviewed**: 2025-08-19
 **Implemented By**: Dev Engineer
 **Markers**: [ARCHITECTURE] [CODE-REVIEW]
 
 **What**: Review architectural decisions made during TD_015 Save System implementation
 **Why**: Several trade-offs need Tech Lead validation before production use
 
-**Review Points**:
-1. **Save Path Abstraction**:
-   - Used `Environment.SpecialFolder` instead of Godot paths
-   - Breaks platform consistency but maintains Clean Architecture
-   - Should we inject ISavePathProvider from Godot layer?
+**Tech Lead Decision** (2025-08-19):
 
-2. **Serialization Issues**:
-   - 4 tests failing due to `required` properties on Block records
-   - Current: Tests fail but runtime works
-   - **Options**:
-     a) Remove `required` modifiers (simple, loses compile-time validation)
-     b) Custom JsonConverter for Block (complex, precise control)
-     c) DTO pattern for serialization boundaries (clean separation)
-     d) **Switch to Newtonsoft.Json** (mature, handles required properties better)
-   - **Newtonsoft.Json Benefits**: Better object construction support, mature domain model serialization, handles records + required properties properly
-   - **System.Text.Json Benefits**: No dependencies, better performance, Microsoft preferred
+1. **Save Path Abstraction**: ✅ **APPROVED AS-IS**
+   - Keep `Environment.SpecialFolder` approach
+   - Clean Architecture > Platform consistency
+   - Optional future: Add ISavePathProvider if needed
 
-3. **Migration Pattern**:
-   - Chain of Responsibility implementation
-   - Is this over-engineered for our needs?
+2. **Serialization**: ❌ **CHANGE REQUIRED**
+   - **Decision**: Switch to Newtonsoft.Json
+   - System.Text.Json fails with `required` properties
+   - Newtonsoft handles domain models better
+   - Already a dependency (MediatR uses it)
+
+3. **Migration Pattern**: ✅ **APPROVED WITH MONITORING**
+   - Keep Chain of Responsibility pattern
+   - Good future-proofing for save compatibility
+   - Monitor: If unused in 3 months, consider simplifying
+
+**Required Actions (TD_020A)**:
+1. Replace System.Text.Json with Newtonsoft.Json in SaveService
+2. Update test configurations to match
+3. Ensure all 12 save tests pass
+4. Document decision in code comments
 
 **Implementation Details**:
 - See: `src/Core/Infrastructure/Services/SaveService.cs`
 - See: `src/Core/Domain/Save/SaveData.cs`
-- Post-mortem: `Docs/Post-Mortems/2025-01-19-TD015-TD016-Architecture-Safeguards.md`
 
 **Done When**:
-- Architecture decisions approved or changes requested
-- Serialization approach decided
-- Any required refactoring items created
+- Serialization switched to Newtonsoft.Json
+- All save tests passing
+- Decision documented in code
 
-### TD_021: Fix Block Namespace Collision
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: L (8 hours - affects 20+ files)
+### TD_021: Fix Block Namespace Collision ✅ APPROVED
+**Status**: Approved - Ready for Implementation
+**Owner**: Dev Engineer
+**Size**: L (8 hours - affects 40+ files)
 **Priority**: Critical
-**Created**: 2025-01-19
+**Created**: 2025-08-19
+**Approved**: 2025-08-19
 **Found During**: TD_015/TD_016 implementation
 **Markers**: [ARCHITECTURE] [BREAKING-CHANGE]
 
 **What**: Rename Domain.Block namespace to Domain.Blocks (plural)
 **Why**: Current collision causes compilation errors requiring fully qualified names everywhere
 
-**Problem**:
-- `Block` is both a namespace and class name
-- Causes "Block is a namespace but used like a type" errors
-- Required fixing 20+ test files during TD_015/TD_016
-- Makes code harder to read and maintain
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED - FIX IMMEDIATELY**
 
-**Proposed Solution**:
-```csharp
-// Change from:
-namespace BlockLife.Core.Domain.Block { class Block {} }
-// To:
-namespace BlockLife.Core.Domain.Blocks { class Block {} }
+**Rationale**:
+1. **Pre-release timing perfect** - No production impact
+2. **Documented pain exists** - 20+ files already affected
+3. **Fix is mechanical** - Simple find/replace
+4. **Delay increases cost** - Every new file adds burden
+5. **Clean architecture** - No ambiguous naming
+
+**Implementation Plan**:
+```bash
+# 1. Create branch from latest main
+git checkout -b fix/td-021-block-namespace
+
+# 2. Rename namespace ONLY (not the class)
+BlockLife.Core.Domain.Block → BlockLife.Core.Domain.Blocks
+
+# 3. Update all using statements
+using BlockLife.Core.Domain.Block; → using BlockLife.Core.Domain.Blocks;
+
+# 4. Run tests
+./scripts/core/build.ps1 test
+
+# 5. Single atomic commit
+git commit -m "fix: resolve Block namespace collision (TD_021)
+
+BREAKING CHANGE: Domain.Block namespace renamed to Domain.Blocks"
 ```
 
-**Impact Analysis**:
-- Breaking change for all files using Domain.Block
-- Approximately 40+ files need updating
-- All tests need namespace updates
-- Godot integration files need updates
+**Critical Success Factors**:
+- ONE atomic commit (don't mix changes)
+- Execute after current PR merges
+- Clear breaking change communication
+- Search for string literals using reflection
 
 **Done When**:
-- Tech Lead approves breaking change
-- All namespaces updated
+- All namespaces updated to Domain.Blocks
 - All tests pass
 - No fully qualified Block names needed
+- Single commit with clear message
 
+
+### TD_024: Fix CI Test Enforcement ⚠️ CRITICAL QUALITY GATE BROKEN
+**Status**: Approved - Immediate Fix Required  
+**Owner**: DevOps Engineer → Dev Engineer
+**Size**: S (2-3 hours total)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Reviewed**: 2025-08-19
+**Found By**: DevOps Engineer during CI health check
+**Markers**: [CI/CD] [QUALITY-GATES] [CRITICAL-BUG]
+
+**What**: Remove `|| true` from CI test step and fix underlying test failures
+**Why**: Tests are completely ignored in CI - zero quality gate value, false green builds
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED - IMMEDIATE FIX REQUIRED**
+
+**The Real Problem**:
+- Line 95 in ci.yml: `|| true` suppresses ALL test failures
+- This isn't a performance issue - it's a RELIABILITY issue
+- CI shows green even with failing tests
+- Only pre-commit hooks provide test validation
+
+**Root Cause (Likely)**:
+- Test discovery issues in Linux environment
+- Missing dependencies for GdUnit4
+- Path separator differences (Windows vs Linux)
+- NOT actually a performance problem
+
+**Implementation Plan**:
+
+**Step 1: Diagnose** (30 min)
+```yaml
+# Remove || true to see actual error
+# Add verbose logging
+--logger "console;verbosity=detailed"
+# Add test discovery step
+dotnet test --list-tests
+```
+
+**Step 2: Fix Root Cause** (1-2 hours)
+- Fix path issues if Windows-specific
+- Add missing Linux dependencies
+- Ensure test discovery works
+- May need to exclude GdUnit4 tests if incompatible
+
+**Step 3: Verify** (30 min)
+- Ensure CI fails on test failures
+- Confirm <2 minute execution
+- Document any excluded tests
+
+**Done When**:
+- `|| true` removed from ci.yml
+- Test failures properly fail CI
+- All unit tests run in CI
+- Green CI means tests actually pass
+
+**NOT Acceptable**:
+- Keeping `|| true` for any reason
+- Disabling all tests in CI
+- "Living with it" - this is a critical quality issue
 
 
 ## 📈 Important (Do Next)
@@ -679,51 +760,6 @@ public record MoveBlockCommand(
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_024: Fix CI Test Performance and Re-enable Test Enforcement
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: M (4-6 hours investigation + fix)
-**Priority**: Ideas
-**Created**: 2025-08-19
-**Found By**: DevOps Engineer during CI health check
-**Markers**: [CI/CD] [PERFORMANCE] [QUALITY-GATES]
-
-**What**: Fix CI test performance issues and remove `|| true` from test step
-**Why**: Currently tests in CI are ignored due to performance problems, providing zero quality gate value
-
-**Problem**: 
-- CI has `|| true` after `dotnet test` which ignores all test failures
-- Tests are slow/unreliable in CI environment  
-- We're paying CI cost for tests but getting no quality benefit
-- Pre-commit hook provides test validation but CI should too
-
-**Root Cause Analysis Needed**:
-- Why are tests slow in CI vs local? (networking? missing deps? timeout issues?)
-- Are specific tests causing the performance problems?
-- Is it a GdUnit4 vs xUnit performance difference?
-
-**Proposed Investigation**:
-1. Run tests locally vs CI with timing breakdown
-2. Identify performance bottleneck tests
-3. Either fix slow tests OR exclude them with better filtering
-4. Remove `|| true` once tests are reliable
-5. Add proper exit codes for test failures
-
-**Success Criteria**:
-- CI test run completes in <2 minutes
-- Test failures properly fail the CI build
-- No `|| true` workarounds in workflow
-- Quality gate restored
-
-**Alternative: Remove Tests from CI**:
-- If tests can't be fixed, remove them entirely from CI
-- Rely on pre-commit hook for test validation
-- Document that CI only validates build, not tests
-
-**Tech Lead Decision Needed**: 
-- Option 1: Investigate and fix test performance
-- Option 2: Remove tests from CI entirely and document decision
-
 ### VS_003D: Cross-Type Transmutation System [Score: 60/100]
 **Status**: Proposed
 **Owner**: Product Owner → Tech Lead
@@ -797,16 +833,60 @@ public class ResourceManager : IResourceManager
 
 **Depends On**: None - Do after MVP
 
-### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer (when approved)
-**Size**: M (4-8 hours implementation)
-**Priority**: Ideas
+### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces ✅ APPROVED (MODIFIED)
+**Status**: Approved - Phased Implementation
+**Owner**: Dev Engineer
+**Size**: S (2 hours Phase 1) + M (4 hours total if expanded)
+**Priority**: Important (moved up - actual pain point)
 **Created**: 2025-08-19
-**Markers**: [ARCHITECTURE] [DEVOPS] [PRODUCTIVITY]
+**Reviewed**: 2025-08-19
+**Markers**: [PRODUCTIVITY] [SOLO-DEV]
 
-**What**: Automated persona workspace isolation using git worktrees with slash command integration
-**Why**: Eliminates all git branch and file conflicts between persona sessions, significant productivity improvement
+**What**: Automated persona workspace isolation using git worktrees
+**Why**: Solo dev with frequent persona switching experiencing real friction with standard git flow
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED WITH MODIFICATIONS**
+
+**Context That Changed Decision**:
+- Solo developer, not team (different dynamics)
+- Frequent persona switching confirmed
+- Standard git flow already tried and insufficient
+- Actual productivity impact measured
+
+**Phased Implementation**:
+
+**Phase 1** (2 hours - START HERE):
+```powershell
+# Simple switch script
+./scripts/persona/switch-persona.ps1 dev-engineer
+# Creates worktree if needed, switches context
+```
+- Just Dev Engineer + Tech Lead personas
+- Basic PowerShell script
+- Manual invocation
+- Measure if it helps
+
+**Phase 2** (If Phase 1 proves valuable):
+- Add remaining personas
+- State management
+- Cleanup utilities
+
+**Phase 3** (If heavily used):
+- Slash command integration
+- Cross-platform support
+- Full automation
+
+**Success Metrics**:
+- Reduces context switch time by >50%
+- Eliminates merge conflicts from persona switches
+- Actually gets used daily
+
+**Done When (Phase 1)**:
+- Basic switch script working
+- Two personas supported
+- Documentation created
+- Friction measurably reduced
 
 **Problem Solved**:
 - Multiple persona sessions conflict on same branch (file locks, merge conflicts)
