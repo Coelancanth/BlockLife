@@ -101,7 +101,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(position))
-                .Returns(FinFail<Domain.Block.Block>(expectedError));
+                .Returns(FinFail<BlockLife.Core.Domain.Block.Block>(expectedError));
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -316,7 +316,7 @@ namespace BlockLife.Core.Tests.Features.Block.Commands
 
             _mockBlockExistsRule
                 .Setup(x => x.Validate(blockId))
-                .Returns(FinFail<Domain.Block.Block>(expectedError));
+                .Returns(FinFail<BlockLife.Core.Domain.Block.Block>(expectedError));
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);

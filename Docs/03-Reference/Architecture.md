@@ -19,6 +19,100 @@ When making architectural decisions:
 2. Create new ADR for significant decisions
 3. Reference ADRs in code comments
 
+## 📐 Grid Coordinate Convention (TD_016)
+
+**CRITICAL**: All grid operations MUST follow this single coordinate system to prevent bugs.
+
+### Coordinate System Rules
+```markdown
+- **Origin**: (0,0) at bottom-left corner
+- **X-axis**: Increases rightward (0 → GridWidth-1)  
+- **Y-axis**: Increases upward (0 → GridHeight-1)
+- **Access pattern**: grid[x,y] consistently
+- **Godot alignment**: Y+ is up (not down like screen coords)
+```
+
+### Visual Reference
+```
+Y
+↑
+3 □ □ □ □
+2 □ □ □ □  
+1 □ □ □ □
+0 □ □ □ □
+  0 1 2 3 → X
+
+Position (2,1) is third column, second row from bottom
+```
+
+### Code Enforcement
+```csharp
+// Use this helper for all grid access
+public static class GridCoordinates
+{
+    public static void AssertValid(Vector2Int pos, Vector2Int gridSize, string context)
+    {
+        if (pos.X < 0 || pos.X >= gridSize.X)
+            throw new ArgumentException($"{context}: X={pos.X} out of range [0,{gridSize.X})");
+        if (pos.Y < 0 || pos.Y >= gridSize.Y)
+            throw new ArgumentException($"{context}: Y={pos.Y} out of range [0,{gridSize.Y})");
+    }
+    
+    // Convert to array index (if using 1D array storage)
+    public static int ToIndex(Vector2Int pos, int gridWidth) => pos.Y * gridWidth + pos.X;
+    
+    // Convert from array index
+    public static Vector2Int FromIndex(int index, int gridWidth) => 
+        new Vector2Int(index % gridWidth, index / gridWidth);
+}
+```
+
+### Common Mistakes to Avoid
+- ❌ **DON'T** use top-left origin (screen coordinates)
+- ❌ **DON'T** mix row-major vs column-major access
+- ❌ **DON'T** use Y-down convention from UI frameworks
+- ✅ **DO** validate coordinates before array access
+- ✅ **DO** use consistent [x,y] ordering everywhere
+- ✅ **DO** document any coordinate transformations
+
+## ⚠️ Namespace Design Rules
+
+**CRITICAL**: Never name a class the same as its containing namespace!
+
+### The Problem
+```csharp
+// ❌ NEVER DO THIS - Creates ambiguity
+namespace BlockLife.Core.Domain.Block
+{
+    public class Block { }  // Block is both namespace AND class
+}
+
+// Results in compilation errors:
+using BlockLife.Core.Domain.Block;
+var block = new Block();  // ERROR: 'Block' is a namespace but used like a type
+```
+
+### The Solution
+```csharp
+// ✅ DO THIS - Use plural for namespace
+namespace BlockLife.Core.Domain.Blocks  // Plural
+{
+    public class Block { }  // Singular
+}
+
+// Or use different naming
+namespace BlockLife.Core.Domain.BlockManagement
+{
+    public class Block { }
+}
+```
+
+### Why This Matters
+- Prevents 20+ file compilation failures (learned from experience!)
+- Avoids need for fully qualified names everywhere
+- Makes code more readable and maintainable
+- Reduces cognitive load on developers
+
 ## 🚨 Core Rules (Non-Negotiable)
 
 ### 1. **Domain Purity** 

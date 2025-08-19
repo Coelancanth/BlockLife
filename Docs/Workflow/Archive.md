@@ -8,6 +8,22 @@
 
 ## ✅ Completed Items
 
+### TD_015: Add Save System Versioning ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: XS (30 minutes)
+**Outcome**: Implemented version field and migration framework in SaveData class
+**Lessons**: Adding versioning before user exposure prevents painful migration scenarios
+**Unblocked**: Save system can evolve safely without breaking player data
+[METADATA: architecture, save-system, versioning, migration, data-safety, critical-infrastructure]
+
+### TD_016: Document Grid Coordinate System ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: XS (15 minutes)
+**Outcome**: Standardized (0,0) bottom-left coordinate convention with validation helpers
+**Lessons**: Early documentation prevents subtle coordinate confusion bugs
+**Unblocked**: All grid operations now use consistent coordinate system
+[METADATA: architecture, documentation, grid-system, coordinate-convention, validation, bug-prevention]
+
 ### BR_006: Parallel Incompatible Features Prevention System ✅ COMPLETED
 **Completed**: 2025-08-19
 **Owner**: DevOps Engineer

@@ -140,14 +140,24 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
 ```
 
 ### Backlog Protocol
-Each persona has embedded backlog responsibilities - no separate maintainer needed:
+**⚠️ CRITICAL**: Personas should NEVER automatically invoke backlog-assistant. Only SUGGEST updates for user to execute.
+
+#### Correct Process:
+1. **Persona completes work** → Suggests status update
+2. **User decides** → Explicitly invokes `/task backlog-assistant` if desired
+3. **Review happens** → Tech Lead reviews before marking complete
+4. **User confirms** → Final status change via explicit command
+
+#### What Personas Do:
 - **Product Owner**: Creates VS items, sets priorities
-- **Tech Lead**: Reviews/approves TD proposals, breaks down work
-- **Dev Engineer**: Updates progress, can propose TD
+- **Tech Lead**: Reviews/approves TD proposals, breaks down work  
+- **Dev Engineer**: SUGGESTS progress updates, can propose TD
 - **Test Specialist**: Creates BR items when bugs found
 - **Debugger Expert**: Owns BR items, can propose TD
 - **DevOps**: Monitors CI/CD, can propose TD
 - **Anyone**: Can propose TD items (Tech Lead approves)
+
+**Remember**: Suggest don't execute. User maintains control of backlog updates.
 
 **Work Item Types**:
 - **VS (Vertical Slice)**: New features - Product Owner creates

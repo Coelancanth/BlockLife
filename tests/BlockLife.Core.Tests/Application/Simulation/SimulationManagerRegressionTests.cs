@@ -99,9 +99,9 @@ public class SimulationManagerRegressionTests
     public void QueueEffect_AfterMultipleEffects_ShouldMaintainCorrectCount()
     {
         // Arrange
-        var effect1 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(0, 0), Domain.Block.BlockType.Basic, DateTime.UtcNow);
-        var effect2 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(1, 1), Domain.Block.BlockType.Work, DateTime.UtcNow);
-        var effect3 = new BlockRemovedEffect(Guid.NewGuid(), new Vector2Int(2, 2), Domain.Block.BlockType.Health, DateTime.UtcNow);
+        var effect1 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(0, 0), BlockLife.Core.Domain.Block.BlockType.Basic, DateTime.UtcNow);
+        var effect2 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(1, 1), BlockLife.Core.Domain.Block.BlockType.Work, DateTime.UtcNow);
+        var effect3 = new BlockRemovedEffect(Guid.NewGuid(), new Vector2Int(2, 2), BlockLife.Core.Domain.Block.BlockType.Health, DateTime.UtcNow);
 
         // Act
         var result1 = _simulationManager.QueueEffect(effect1);
@@ -121,8 +121,8 @@ public class SimulationManagerRegressionTests
     public async Task ProcessQueuedEffectsAsync_ShouldProcessAllEffectsUsingTryDequeue()
     {
         // Arrange
-        var effect1 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(0, 0), Domain.Block.BlockType.Basic, DateTime.UtcNow);
-        var effect2 = new BlockRemovedEffect(Guid.NewGuid(), new Vector2Int(1, 1), Domain.Block.BlockType.Work, DateTime.UtcNow);
+        var effect1 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(0, 0), BlockLife.Core.Domain.Block.BlockType.Basic, DateTime.UtcNow);
+        var effect2 = new BlockRemovedEffect(Guid.NewGuid(), new Vector2Int(1, 1), BlockLife.Core.Domain.Block.BlockType.Work, DateTime.UtcNow);
         
         _simulationManager.QueueEffect(effect1);
         _simulationManager.QueueEffect(effect2);
@@ -178,7 +178,7 @@ public class SimulationManagerRegressionTests
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(threadId, j),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
                     
@@ -218,7 +218,7 @@ public class SimulationManagerRegressionTests
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(threadId, j),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
                     

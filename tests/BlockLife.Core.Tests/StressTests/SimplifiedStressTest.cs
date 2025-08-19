@@ -66,7 +66,7 @@ public class SimplifiedStressTest : IDisposable
                     var position = new Vector2Int(_random.Next(0, 10), _random.Next(0, 10));
 
                     // Place and remove blocks randomly
-                    var placeResult = await _mediator.Send(new PlaceBlockCommand(position, Domain.Block.BlockType.Basic));
+                    var placeResult = await _mediator.Send(new PlaceBlockCommand(position, BlockLife.Core.Domain.Block.BlockType.Basic));
                     if (placeResult.IsSucc)
                     {
                         await Task.Delay(_random.Next(1, 5));
@@ -120,7 +120,7 @@ public class SimplifiedStressTest : IDisposable
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(threadId, i),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
 
@@ -156,7 +156,7 @@ public class SimplifiedStressTest : IDisposable
             {
                 var result = await _mediator.Send(new PlaceBlockCommand(
                     new Vector2Int(x, y),
-                    Domain.Block.BlockType.Basic
+                    BlockLife.Core.Domain.Block.BlockType.Basic
                 ));
 
                 if (result.IsSucc)
@@ -220,7 +220,7 @@ public class SimplifiedStressTest : IDisposable
             {
                 await _mediator.Send(new PlaceBlockCommand(
                     new Vector2Int(x, y),
-                    Domain.Block.BlockType.Basic
+                    BlockLife.Core.Domain.Block.BlockType.Basic
                 ));
             }
         }

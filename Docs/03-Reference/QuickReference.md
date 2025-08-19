@@ -48,6 +48,20 @@ public class MatchPatternRecognizer : IPatternRecognizer
 - **Fix**: Consolidate to one source of truth
 - *Lesson from*: Block Placement architecture stress test (2025-08-13)
 
+#### Namespace Design Critical Rule
+- **NEVER name a class the same as its containing namespace** - Causes compilation nightmares
+- **Symptom**: 20+ files fail with "Block is a namespace but used like a type"
+- **Fix**: Use plural for namespace (Blocks), singular for class (Block)
+- **Example**: `namespace Domain.Blocks { class Block {} }` not `namespace Domain.Block { class Block {} }`
+- *Lesson from*: TD_015/TD_016 implementation disaster (2025-01-19)
+
+#### Serialization Design Constraints
+- **AVOID `required` properties in domain models that need serialization** - Breaks JSON deserialization
+- **Symptom**: Tests fail on round-trip serialization despite working runtime
+- **Fix**: Use init-only properties or create DTOs for serialization boundaries
+- **Example**: SaveData tests failing due to Block's `required` properties
+- *Lesson from*: Save System implementation (2025-01-19)
+
 #### Service Container Isolation
 - **NEVER create parallel service containers** in tests
 - **Symptom**: Commands succeed but notifications come from different instances
