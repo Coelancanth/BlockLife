@@ -1,4 +1,5 @@
 using BlockLife.Core.Domain.Common;
+using Newtonsoft.Json;
 using System;
 
 namespace BlockLife.Core.Domain.Block
@@ -33,6 +34,27 @@ namespace BlockLife.Core.Domain.Block
         /// Timestamp when this block was last modified.
         /// </summary>
         public required DateTime LastModifiedAt { get; init; }
+
+        /// <summary>
+        /// Default constructor required for record initialization with required properties.
+        /// </summary>
+        public Block()
+        {
+        }
+
+        /// <summary>
+        /// JsonConstructor for Newtonsoft.Json deserialization on Linux.
+        /// Ensures cross-platform compatibility with required properties.
+        /// </summary>
+        [JsonConstructor]
+        public Block(Guid id, BlockType type, Vector2Int position, DateTime createdAt, DateTime lastModifiedAt)
+        {
+            Id = id;
+            Type = type;
+            Position = position;
+            CreatedAt = createdAt;
+            LastModifiedAt = lastModifiedAt;
+        }
 
         /// <summary>
         /// Creates a new block at the specified position.
