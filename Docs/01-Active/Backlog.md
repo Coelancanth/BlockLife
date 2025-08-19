@@ -61,13 +61,20 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### TD_026: Fix Agent Path Specifications - Prevent Future Data Loss
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer
+**Status**: Approved
+**Owner**: Dev Engineer
 **Size**: S (2-3 hours)
 **Priority**: Important
 **Created**: 2025-08-19
 **Found By**: User during BR_011 root cause analysis
 **Markers**: [AGENT-RELIABILITY] [PATH-SPECIFICATION] [DATA-INTEGRITY]
+
+**Tech Lead Decision** (2025-08-20):
+✅ **APPROVED** - Complexity: 2/10
+- Real operational issue causing data loss
+- Simple fix: hardcode correct paths in agent files
+- 2-hour implementation prevents future debugging
+- No over-engineering needed
 
 **What**: Backlog-assistant and other agents lack proper path specifications for Archive.md and Post-Mortems
 **Why**: Incorrect paths cause data loss, failed operations, and inconsistent file organization
@@ -108,17 +115,194 @@
 - BR_011: Archive data loss (caused by this issue)
 - BR_010: Backlog-assistant incomplete operations (same root cause)
 
+### TD_027: Enforce Persona Subagent Protocol - Suggest Only, Never Auto-Execute
+**Status**: Approved
+**Owner**: Dev Engineer
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-20
+**Proposed By**: Tech Lead (based on BR_011 violation)
+**Markers**: [WORKFLOW] [PROTOCOL] [PERSONA-SYSTEM]
 
+**What**: Update all persona files to enforce "suggest-only" protocol for subagent usage
+**Why**: Prevent automation misuse and maintain user control over all agent operations
+
+**Tech Lead Decision** (2025-08-20):
+✅ **APPROVED** - Complexity: 2/10
+- Addresses real process violation (BR_011)
+- Simple documentation updates across persona files
+- Prevents future trust erosion and automation overreach
+- Clear implementation path
+
+**Problem Analysis**:
+- BR_011 showed Tech Lead violated Transparent Delegation Protocol
+- Current personas have buried delegation rules (line 270+ in files)
+- Risk of other personas making similar violations
+- User loses control when personas auto-execute subagents
+
+**Technical Approach**:
+1. **Add protocol header** to all persona files (6 personas):
+   ```markdown
+   ## 🚨 SUBAGENT PROTOCOL - CRITICAL
+   **PERSONAS MUST SUGGEST, NEVER AUTO-EXECUTE**
+   - ❌ NEVER invoke Task tool directly for subagents
+   - ✅ ALWAYS propose specific commands to user first
+   - ✅ Wait for explicit user approval before any delegation
+   - Example: "I suggest updating backlog via: [command preview]. Approve? (yes/no)"
+   ```
+
+2. **Update existing delegation sections** in each persona file
+3. **Test with protocol compliance check** - try to trigger violations
+4. **Update CLAUDE.md** with persona protocol reminder
+
+**Files to Update** (6 total):
+- `Docs/04-Personas/product-owner.md`
+- `Docs/04-Personas/tech-lead.md`  
+- `Docs/04-Personas/dev-engineer.md`
+- `Docs/04-Personas/test-specialist.md`
+- `Docs/04-Personas/debugger-expert.md`
+- `Docs/04-Personas/devops-engineer.md`
+
+**Done When**:
+- All 6 persona files have prominent protocol headers
+- Existing delegation sections updated for consistency
+- CLAUDE.md updated with protocol reminder
+- Test: Personas suggest rather than auto-execute subagents
+- Protocol violations impossible to miss
+
+**Related Issues**:
+- BR_011: Tech Lead protocol violation (root cause)
+- BR_007: Previous backlog-assistant automation issues
+
+### TD_028: Remove "Recently Completed" Section from Backlog Management
+**Status**: Approved  
+**Owner**: Dev Engineer
+**Size**: S (1-2 hours)
+**Priority**: Important
+**Created**: 2025-08-20
+**Proposed By**: Tech Lead (workflow improvement)
+**Markers**: [WORKFLOW] [BACKLOG-SIMPLIFICATION]
+
+**What**: Update backlog-assistant protocol to skip "Recently Completed" section entirely
+**Why**: Recently Completed adds no value and creates maintenance overhead
+
+**Tech Lead Decision** (2025-08-20):
+✅ **APPROVED** - Complexity: 1/10
+- Eliminates unnecessary workflow step
+- Reduces cognitive load in backlog management
+- Archive.md provides complete completion history
+- Simple documentation update
+
+**Current Problem**:
+- Recently Completed section requires manual maintenance
+- Adds extra step in archival process (BR_010 related)
+- No functional value - Archive.md is single source of truth
+- Creates confusion about what belongs where
+
+**Technical Approach**:
+1. **Update backlog-assistant.md** protocol:
+   ```markdown
+   ## ARCHIVAL PROTOCOL (UPDATED)
+   ❌ OLD: Move to Recently Completed first, then Archive later
+   ✅ NEW: Move completed items directly to Archive.md
+   
+   - Skip "Recently Completed" section entirely
+   - Archive.md is the ONLY destination for completed work
+   - Preserve all metadata when archiving
+   ```
+
+2. **Update Backlog.md template** - remove Recently Completed section
+3. **Archive existing items** in Recently Completed (if any)
+4. **Test archival workflow** - verify direct-to-archive works
+
+**Done When**:
+- Backlog-assistant protocol updated to skip Recently Completed
+- Recently Completed section removed from Backlog.md
+- Any existing items in Recently Completed archived properly
+- Archival workflow simplified and tested
+
+**Related Issues**:
+- BR_010: Incomplete archival operations (complexity reduction)
+- TD_026: Agent path specifications (consistency improvement)
+
+### TD_029: Update Context7 Documentation for Newtonsoft.Json Migration
+**Status**: Approved
+**Owner**: Dev Engineer  
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-20
+**Proposed By**: Tech Lead (based on BR_009 findings)
+**Markers**: [CONTEXT7] [SERIALIZATION] [DOCUMENTATION]
+
+**What**: Update Context7 documentation to reflect our switch from System.Text.Json to Newtonsoft.Json
+**Why**: Prevent future serialization bugs from incorrect Context7 advice based on wrong JSON library
+
+**Tech Lead Decision** (2025-08-20):
+✅ **APPROVED** - Complexity: 2/10
+- Prevents real serialization bugs
+- Context7 is critical for preventing assumption errors
+- Simple documentation updates with clear examples
+- Addresses gap revealed by BR_009 migration
+
+**Problem Analysis**:
+- **BR_009**: We migrated SaveService to Newtonsoft.Json due to `required` property issues
+- **Current Risk**: Context7 docs may still reference System.Text.Json patterns
+- **Bug Prevention**: Future Context7 queries need correct serialization examples
+- **Cost of Wrong Advice**: 2+ hours debugging serialization issues
+
+**Technical Approach**:
+1. **Update Context7Examples.md**:
+   - Add Newtonsoft.Json section with common patterns
+   - Update serialization examples to use Newtonsoft patterns
+   - Add JsonConstructor attribute examples (from BR_009 fix)
+   - Document `required` property handling
+
+2. **Update Context7LibraryMatrix.md**:
+   - Add Newtonsoft.Json to Tier 2 libraries if available in Context7
+   - Note System.Text.Json is NOT used in BlockLife
+   - Update serialization risk assessment
+
+3. **Add Migration Notes**:
+   ```markdown
+   ## ⚠️ SERIALIZATION LIBRARY CHANGE
+   **BlockLife uses Newtonsoft.Json, NOT System.Text.Json**
+   
+   Migration Completed: 2025-08-19 (BR_009)
+   Reason: C# 11 `required` property compatibility on Linux
+   
+   When querying Context7 for serialization advice:
+   - Request Newtonsoft.Json patterns specifically
+   - Ignore System.Text.Json recommendations
+   - Focus on JsonConstructor and JsonProperty attributes
+   ```
+
+**Files to Update**:
+- `Docs/03-Reference/Context7/Context7Examples.md`
+- `Docs/03-Reference/Context7/Context7LibraryMatrix.md`
+- Add examples from BR_009 fix (JsonConstructor pattern)
+
+**Done When**:
+- Context7 docs reflect Newtonsoft.Json usage
+- Examples show JsonConstructor patterns from BR_009
+- Clear warning about NOT using System.Text.Json
+- Future Context7 queries will return correct advice
+- No risk of reverting to wrong serialization library
+
+**Related Issues**:
+- BR_009: Linux CI failure due to Newtonsoft migration (source of change)
+- Future serialization work will query Context7 correctly
 
 ### BR_010: Backlog-Assistant Incomplete Archival Operations
 **Status**: Proposed
-**Owner**: Test Specialist → Debugger Expert
+**Owner**: Debugger Expert
 **Size**: S (2-3 hours)
 **Priority**: Important
 **Created**: 2025-08-19
 **Found By**: Dev Engineer during archival process
 **Markers**: [WORKFLOW] [AGENT-RELIABILITY] [BACKLOG-MANAGEMENT]
 **Related**: TD_026 (path specifications root cause)
+
+**Tech Lead Assignment** (2025-08-20): Assigned to Debugger Expert for agent behavior investigation
 
 **What**: Backlog-assistant fails to consistently archive all completed items from Recently Completed section
 **Why**: Incomplete archival operations leave stale items in active backlog, reducing clarity and organization
@@ -165,13 +349,65 @@
 - Manual cleanup no longer required after archival operations
 - Archival protocol documented and tested
 
-### BR_008: Investigate Flaky SimulationManagerThreadSafetyTests.ConcurrentOperations Test
+### BR_011: Tech Lead Violated Transparent Delegation Protocol
 **Status**: Proposed
 **Owner**: Test Specialist → Debugger Expert
+**Size**: S (1-2 hours)
+**Priority**: Important
+**Created**: 2025-08-20
+**Found By**: User during Tech Lead backlog update
+**Markers**: [WORKFLOW] [PROTOCOL-VIOLATION] [AGENT-MISUSE]
+
+**What**: Tech Lead persona attempted to invoke backlog-assistant without following Transparent Delegation Protocol
+**Why**: Protocol violations erode user trust and create automation misuse risks
+
+**Problem Evidence**:
+- Tech Lead was updating backlog with technical decisions
+- Attempted direct `Task` invocation with backlog-assistant
+- DID NOT show command preview to user first
+- DID NOT request explicit approval before execution
+- Violated lines 270-328 of tech-lead.md protocol
+
+**Root Cause Analysis**:
+1. **Missing safeguard**: No automatic check for delegation protocol compliance
+2. **Persona confusion**: Tech Lead acted like it had autonomous execution rights
+3. **Protocol buried**: Delegation protocol is deep in the persona file (line 270+)
+
+**Impact**:
+- User loses control over what changes are made
+- Risk of incorrect or incomplete updates
+- Undermines trust in persona system
+- Sets bad precedent for other personas
+
+**Correct Behavior (per protocol)**:
+```markdown
+BEFORE delegation:
+1. Summarize intent
+2. Show exact command preview
+3. List expected outcomes
+4. Request approval: "Do you approve this delegation?"
+5. Wait for explicit "yes" before executing
+```
+
+**Done When**:
+- Protocol violation documented
+- Fix implemented to prevent recurrence
+- All personas updated with clear delegation requirements
+- Test coverage for protocol compliance
+
+**Related Issues**:
+- BR_007: Previous automation misuse with backlog-assistant
+- TD_026: Agent specification improvements (could include protocol enforcement)
+
+### BR_008: Investigate Flaky SimulationManagerThreadSafetyTests.ConcurrentOperations Test
+**Status**: Proposed
+**Owner**: Debugger Expert
 **Size**: S (2-3 hours)
 **Priority**: Important
 **Created**: 2025-08-19
 **Markers**: [TEST-FLAKINESS]
+
+**Tech Lead Assignment** (2025-08-20): Assigned to Debugger Expert for timing analysis
 
 **What**: SimulationManagerThreadSafetyTests.ConcurrentOperations_ShouldMaintainPerformance fails intermittently
 **Why**: Flaky tests reduce confidence in CI/CD pipeline and mask real issues
@@ -196,7 +432,7 @@
 
 ### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
 **Status**: Approved
-**Owner**: Tech Lead → Dev Engineer
+**Owner**: Dev Engineer
 **Size**: M (6.5 hours - updated estimate)
 **Priority**: Important
 **Created**: 2025-08-19
@@ -207,6 +443,8 @@
 
 **Tech Lead Decision** (2025-08-19):
 ✅ **APPROVED for implementation with Pattern Recognition Architecture**
+
+**Implementation Guide Verified** (2025-08-20): Dev-ready with complete contracts, tests, and edge cases documented
 
 **Architecture Decision**: 
 - Implement extensible Pattern Recognition Framework instead of simple match detection
@@ -478,12 +716,6 @@ public static class BlockTypeRewards
 
 ## 🚧 Currently Blocked
 *None*
-
-## ✅ Recently Completed
-
-*Items completed on 2025-08-19 have been archived to C:\Users\Coel\Documents\Godot\blocklife\Docs\Workflow\Archive.md*
-
-*This section is kept minimal to maintain backlog focus. All completed items are preserved in Archive.md with full details and metadata for organizational learning.*
 
 ---
 
