@@ -1,0 +1,272 @@
+name: Design Guard - VS Item Lock Manager
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+jobs:
+  check-vs-lock:
+    name: VS Item Lock Check
+    runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Extract VS/BR/TD Item from Branch
+        id: extract
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const prNumber = context.payload.pull_request.number;
+            
+            // Pattern: feat/vs-003-description or fix/br-002-description
+            const patterns = {
+              vs: /^feat\/vs-(\d{3})/i,
+              br: /^fix\/br-(\d{3})/i,
+              td: /^feat\/td-(\d{3})/i
+            };
+            
+            let itemType = null;
+            let itemNumber = null;
+            
+            for (const [type, pattern] of Object.entries(patterns)) {
+              const match = branchName.match(pattern);
+              if (match) {
+                itemType = type.toUpperCase();
+                itemNumber = match[1];
+                break;
+              }
+            }
+            
+            if (!itemType) {
+              console.log(`✅ Branch '${branchName}' is not a work item branch. Skipping checks.`);
+              return { skip: true };
+            }
+            
+            console.log(`📋 Detected ${itemType}_${itemNumber} from branch '${branchName}'`);
+            core.setOutput('item_type', itemType);
+            core.setOutput('item_number', itemNumber);
+            core.setOutput('skip', 'false');
+            
+            return { 
+              itemType, 
+              itemNumber,
+              branchName,
+              prNumber 
+            };
+
+      - name: Check for Conflicting PRs
+        if: steps.extract.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const itemType = '${{ steps.extract.outputs.item_type }}';
+            const itemNumber = '${{ steps.extract.outputs.item_number }}';
+            const currentPR = context.payload.pull_request.number;
+            
+            // Get all open PRs
+            const { data: openPRs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+            
+            // Check for conflicts
+            const lockLabel = `${itemType.toLowerCase()}-${itemNumber}-locked`;
+            const conflicts = [];
+            
+            for (const pr of openPRs) {
+              if (pr.number === currentPR) continue;
+              
+              // Check if another PR is working on the same item
+              const branchPattern = new RegExp(`${itemType.toLowerCase()}-${itemNumber}`, 'i');
+              if (branchPattern.test(pr.head.ref)) {
+                conflicts.push({
+                  number: pr.number,
+                  title: pr.title,
+                  author: pr.user.login,
+                  url: pr.html_url
+                });
+              }
+            }
+            
+            if (conflicts.length > 0) {
+              const conflictList = conflicts.map(c => 
+                `  - PR #${c.number}: "${c.title}" by @${c.author}\n    ${c.url}`
+              ).join('\n');
+              
+              const errorMessage = `## ❌ ${itemType}_${itemNumber} Already In Progress!\n\n` +
+                `Another PR is already working on ${itemType}_${itemNumber}:\n\n${conflictList}\n\n` +
+                `### Options:\n` +
+                `1. **Collaborate**: Contact the author to combine efforts\n` +
+                `2. **Wait**: Let the other PR complete first\n` +
+                `3. **Different Item**: Work on a different ${itemType} item\n\n` +
+                `This check prevents the parallel development issue from BR_006.`;
+              
+              // Post comment on PR
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: currentPR,
+                body: errorMessage
+              });
+              
+              core.setFailed(`${itemType}_${itemNumber} is already being worked on in PR #${conflicts[0].number}`);
+              return;
+            }
+            
+            // No conflicts - add lock label
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: currentPR,
+                labels: [lockLabel]
+              });
+              console.log(`✅ Added lock label: ${lockLabel}`);
+            } catch (error) {
+              console.log(`Label ${lockLabel} might not exist yet, creating it...`);
+              
+              // Create label if it doesn't exist
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: lockLabel,
+                  color: 'FFD700',
+                  description: `Work item ${itemType}_${itemNumber} is being worked on`
+                });
+                
+                // Now add it to the PR
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: currentPR,
+                  labels: [lockLabel]
+                });
+                console.log(`✅ Created and added lock label: ${lockLabel}`);
+              } catch (createError) {
+                console.log(`Warning: Could not create/add label: ${createError.message}`);
+              }
+            }
+            
+            // Post success comment
+            const successMessage = `## ✅ ${itemType}_${itemNumber} Lock Acquired\n\n` +
+              `You are now working on ${itemType}_${itemNumber}. This lock prevents others from ` +
+              `accidentally working on the same item.\n\n` +
+              `The lock will be automatically released when this PR is merged or closed.`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: currentPR,
+              body: successMessage
+            });
+
+      - name: Validate Backlog Entry
+        if: steps.extract.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const itemType = '${{ steps.extract.outputs.item_type }}';
+            const itemNumber = '${{ steps.extract.outputs.item_number }}';
+            const fs = require('fs');
+            
+            // Read backlog file
+            const backlogPath = 'Docs/01-Active/Backlog.md';
+            let backlogContent;
+            
+            try {
+              backlogContent = fs.readFileSync(backlogPath, 'utf8');
+            } catch (error) {
+              console.log(`Warning: Could not read backlog file: ${error.message}`);
+              return; // Don't fail the check if backlog is not accessible
+            }
+            
+            // Look for the item in the backlog
+            const itemPattern = new RegExp(`### ${itemType}_${itemNumber}:`, 'i');
+            const itemExists = itemPattern.test(backlogContent);
+            
+            if (!itemExists) {
+              const warningMessage = `## ⚠️ ${itemType}_${itemNumber} Not Found in Backlog\n\n` +
+                `The item ${itemType}_${itemNumber} was not found in \`Docs/01-Active/Backlog.md\`.\n\n` +
+                `Please ensure:\n` +
+                `1. The item exists in the backlog\n` +
+                `2. The item has been properly documented\n` +
+                `3. The item status is not "Proposed" (needs approval first)\n\n` +
+                `This is a warning only - the PR can still proceed.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: warningMessage
+              });
+            } else {
+              console.log(`✅ Found ${itemType}_${itemNumber} in backlog`);
+            }
+
+  release-vs-lock:
+    name: Release VS Lock on Close
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed'
+    
+    steps:
+      - name: Remove Lock Label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const prNumber = context.payload.pull_request.number;
+            
+            // Extract item info
+            const patterns = {
+              vs: /^feat\/vs-(\d{3})/i,
+              br: /^fix\/br-(\d{3})/i,
+              td: /^feat\/td-(\d{3})/i
+            };
+            
+            let lockLabel = null;
+            for (const [type, pattern] of Object.entries(patterns)) {
+              const match = branchName.match(pattern);
+              if (match) {
+                lockLabel = `${type}-${match[1]}-locked`;
+                break;
+              }
+            }
+            
+            if (!lockLabel) {
+              console.log('No work item lock to release');
+              return;
+            }
+            
+            // Remove the lock label
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                name: lockLabel
+              });
+              console.log(`✅ Released lock: ${lockLabel}`);
+            } catch (error) {
+              console.log(`Lock ${lockLabel} was already removed or doesn't exist`);
+            }
+            
+            // Post release comment if PR was merged
+            if (context.payload.pull_request.merged) {
+              const releaseMessage = `## 🔓 Work Item Lock Released\n\n` +
+                `The lock for this work item has been released. ` +
+                `Others can now work on follow-up items if needed.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: releaseMessage
+              });
+            }
