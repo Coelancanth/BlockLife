@@ -54,51 +54,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_011: Critical Archive Data Loss - Missing Completed Items
-**Status**: Proposed  
-**Owner**: Test Specialist → Debugger Expert
-**Size**: M (4-6 hours investigation + recovery)
-**Priority**: Critical
-**Created**: 2025-08-19
-**Found By**: Dev Engineer during archive verification
-**Markers**: [DATA-LOSS] [ARCHIVE-INTEGRITY] [WORKFLOW-CRITICAL]
-
-**What**: Multiple completed work items missing from Archive.md despite being previously archived
-**Why**: Archive serves as historical record and lessons learned repository - data loss undermines organizational memory
-
-**Missing Items Evidence**:
-Based on backlog history and git commits, several completed items appear to have been accidentally deleted from Archive.md:
-
-**Expected but Missing**:
-- Previous VS items (VS_001 phases completed in earlier commits)
-- Earlier TD items from recent development cycles
-- Historical BR items that were resolved
-- Legacy workflow items from major reorganizations
-
-**Current Archive State**:
-- Only contains items from 2025-08-19 (today)
-- Missing historical context from previous months
-- Loss of lessons learned from earlier development
-- No progression history of major features
-
-**Critical Impact**:
-- **Lost organizational memory** - Cannot reference how previous issues were solved
-- **Missing lessons learned** - Repeat same mistakes without historical context  
-- **Broken process integrity** - Archive system cannot be trusted
-- **Compliance issues** - No audit trail for completed work
-
-**Investigation Steps**:
-1. **Git archaeology** - Search git history for deleted archive sections
-2. **Commit analysis** - Identify exactly when items disappeared
-3. **Agent audit** - Review all agent operations that touched Archive.md
-4. **Recovery planning** - Determine what can be reconstructed
-
-**Done When**:
-- Missing historical items recovered and restored to Archive.md
-- Root cause identified and documented
-- Archive protection safeguards implemented
-- Process integrity restored and verified
-
 ### BR_009: SaveService Tests Fail on Linux After Newtonsoft.Json Migration
 **Status**: Proposed
 **Owner**: Test Specialist → Debugger Expert  
@@ -153,6 +108,54 @@ Based on backlog history and git commits, several completed items appear to have
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
+### TD_026: Fix Agent Path Specifications - Prevent Future Data Loss
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Found By**: User during BR_011 root cause analysis
+**Markers**: [AGENT-RELIABILITY] [PATH-SPECIFICATION] [DATA-INTEGRITY]
+
+**What**: Backlog-assistant and other agents lack proper path specifications for Archive.md and Post-Mortems
+**Why**: Incorrect paths cause data loss, failed operations, and inconsistent file organization
+
+**Root Cause Analysis**:
+- Backlog-assistant doesn't know Archive.md is at `Docs/Workflow/Archive.md`
+- Post-mortems should go to `Docs/06-PostMortems/Active/` not arbitrary locations
+- No centralized path configuration for agents
+- Agents may create files in wrong locations or fail to find existing ones
+
+**Technical Approach**:
+1. **Update backlog-assistant.md** with correct Archive.md path
+2. **Update all persona files** with post-mortem path specification
+3. **Create path reference** in agent instructions:
+   ```
+   CRITICAL PATHS:
+   - Archive: Docs/Workflow/Archive.md
+   - Post-Mortems: Docs/06-PostMortems/Active/
+   - Backlog: Docs/01-Active/Backlog.md
+   - Workflow: Docs/01-Active/Workflow.md
+   ```
+4. **Add validation** - agents should verify paths exist before operations
+
+**Impact if Not Fixed**:
+- Future archive operations may fail or lose data
+- Post-mortems created in wrong locations
+- Inconsistent file organization
+- Agent operations unreliable
+
+**Done When**:
+- All agent personas have correct path specifications
+- Backlog-assistant reliably finds and updates Archive.md
+- Post-mortems consistently created in correct directory
+- Path validation added to agent operations
+- Test: Run archive operation successfully with correct paths
+
+**Related Issues**:
+- BR_011: Archive data loss (caused by this issue)
+- BR_010: Backlog-assistant incomplete operations (same root cause)
 
 ### BR_012: Backlog.md Becoming Too Long - Workflow Refinement Needed
 **Status**: Proposed
@@ -240,6 +243,7 @@ Based on backlog history and git commits, several completed items appear to have
 **Created**: 2025-08-19
 **Found By**: Dev Engineer during archival process
 **Markers**: [WORKFLOW] [AGENT-RELIABILITY] [BACKLOG-MANAGEMENT]
+**Related**: TD_026 (path specifications root cause)
 
 **What**: Backlog-assistant fails to consistently archive all completed items from Recently Completed section
 **Why**: Incomplete archival operations leave stale items in active backlog, reducing clarity and organization
@@ -1152,6 +1156,14 @@ public Property DoubleSwap_ReturnsToOriginal()
 
 ## ✅ Recently Completed
 
+### BR_011: Critical Archive Data Loss ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Debugger Expert
+**Effort**: M (4 hours actual)
+**Outcome**: 100% data recovery achieved, archive reconstructed with safeguards
+**Impact**: Restored organizational memory, prevented future data loss
+**Post-Mortem**: `Docs/06-PostMortems/Active/2025-08-19-BR011-Archive-Data-Loss.md`
+**Follow-up**: TD_026 addresses root cause (agent path specifications)
 
 ### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
 **Completed**: 2025-08-19
