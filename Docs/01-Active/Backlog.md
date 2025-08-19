@@ -111,7 +111,7 @@
 
 ### VS_003B: Tier System Introduction [Score: 80/100]
 **Status**: Proposed
-**Owner**: Product Owner
+**Owner**: Product Owner → Tech Lead
 **Size**: S (4-6 hours)
 **Priority**: Important
 **Created**: 2025-08-19
@@ -138,7 +138,7 @@
 
 ### VS_003C: Unlockable Tier-Up System [Score: 75/100]
 **Status**: Proposed
-**Owner**: Product Owner
+**Owner**: Product Owner → Tech Lead
 **Size**: M (8-10 hours)
 **Priority**: Important
 **Created**: 2025-08-19
@@ -288,7 +288,7 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 
 ### VS_003: Triple-Match System (Original - Archived) [Score: 85/100]
 **Status**: Archived - Replaced by VS_003A-D phased approach
-**Owner**: Tech Lead → Dev Engineer
+**Owner**: N/A (Archived)
 **Size**: L (12-16 hours - split into 2 phases)
 **Priority**: Ideas
 **Created**: 2025-08-19
@@ -306,7 +306,7 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 
 ### VS_003D: Cross-Type Transmutation System [Score: 60/100]
 **Status**: Proposed
-**Owner**: Product Owner
+**Owner**: Product Owner → Tech Lead
 **Size**: M (6-8 hours)
 **Priority**: Ideas (future)
 **Created**: 2025-08-19
