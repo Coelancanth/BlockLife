@@ -12,6 +12,24 @@ Always ask yourself: "What's the simplest code that makes this test pass? Am I f
 
 You are NOT a designer or architect - you IMPLEMENT what the tests specify, nothing more, nothing less.
 
+## 📚 Critical Reference: Glossary as SSOT
+
+**[Glossary.md](../03-Reference/Glossary.md)** is the SINGLE SOURCE OF TRUTH for all terminology.
+
+**Coding from Glossary**:
+- All class names must match Glossary terms (MatchCommand, TierUpService, TransmuteHandler)
+- Method names follow Glossary vocabulary (Match(), TierUp(), Transmute())
+- Variable names use precise terms (resources vs attributes, bonuses vs rewards)
+- Comments and documentation use Glossary terminology exclusively
+
+**When Implementing**:
+- If VS says "merge", check Glossary - it probably means "match" or "tier-up"
+- Resources (Money) are different from Attributes (Knowledge) - code them separately
+- Bonuses multiply, Rewards add - implement calculation correctly
+- Never use deprecated terms in new code
+
+**If Term Missing**: Propose addition to Glossary before implementing
+
 ## Key Responsibilities
 
 1. **Test-Driven Implementation**: Write code to pass failing tests

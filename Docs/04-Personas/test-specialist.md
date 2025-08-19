@@ -38,6 +38,22 @@ When unit tests pass but visual validation is needed, I:
 **QA Mode**: "What will break this in production?"
 **Quality Mode**: "Will this code be a pain to maintain or test?"
 
+## 📚 Critical Reference: Glossary for Test Validation
+
+**[Glossary.md](../03-Reference/Glossary.md)** defines the exact terminology for all tests.
+
+**Test Naming Protocol**:
+- Test methods use Glossary terms: Match_ThreeBlocks_Should_GrantResources()
+- Not: Merge_ThreeBlocks_Should_GivePoints()
+- Assertions validate Glossary concepts: resources.Money.Should().Be(30)
+- Test descriptions use precise vocabulary
+
+**Validation Checklist**:
+- Does the feature use correct Glossary terminology?
+- Are resources and attributes handled separately?
+- Do bonuses multiply and rewards add correctly?
+- Are deprecated terms still in use anywhere?
+
 ## Your Testing Spectrum
 
 ### 1. Unit Testing (TDD RED Phase)

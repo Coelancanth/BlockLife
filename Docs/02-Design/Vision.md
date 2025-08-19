@@ -12,44 +12,76 @@ BlockLife simulates the journey of human life through strategic block management
 
 ## 🎲 Core Gameplay Mechanics (Designer Confirmed)
 
-### Merge System - Triple Town Model
-**Fundamental Rule**: 3 adjacent same-type blocks merge into higher tier
-- **Merge Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
-- **Result Placement**: Merged block appears at the last-moved/placed block position
-- **Tier Progression**: Tier 1 + Tier 1 + Tier 1 → Tier 2 (and so on)
-- **Same-Type Only** (Phase 1): Work blocks only merge with Work, Study with Study, etc.
+### Dual Match/Transform System with Progression Economy
+**Core Philosophy**: Start with matching for resources, unlock transformation through progression
+- **Phase 1 (Default)**: Match blocks to clear them and earn attributes
+- **Phase 2 (Unlockable)**: Transform matched blocks into higher tiers
+- **Player Agency**: Choose between matching for resources OR transforming for progression
+
+### Match-3 System (Always Available)
+**Fundamental Rule**: 3+ adjacent same-type blocks can be matched to clear
+- **Match Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
+- **Result**: Blocks disappear, granting attributes based on type and tier
+- **Attribute Rewards**: Each block type grants specific resources:
+  - Work blocks → Money
+  - Study blocks → Knowledge  
+  - Health blocks → Health
+  - Relationship blocks → Social Capital
+- **Tier Scaling**: Higher tier blocks grant exponentially more attributes when matched
+
+### Transform System (Unlockable)
+**Progression Mechanic**: Spend earned attributes to unlock transformation abilities
+- **Unlock Cost**: Each block type requires attributes to unlock its transform ability
+- **Transform Rule**: 3 same-type blocks → 1 block of next tier (at result position)
+- **Strategic Choice**: Once unlocked, player chooses match OR transform
+- **Tier Progression Example**:
+  - 3× Work Tier-1 → 1× Work Tier-2 (if Work transform unlocked)
+  - 3× Work Tier-2 → 1× Work Tier-3 (requires higher unlock)
+- **Cross-Type Transforms** (Advanced): Unlock special combinations like Work + Study → Career
+
+### Attribute Economy
+**Resource Management**: Attributes are the core currency driving progression
+- **Earning**: Match blocks to gain attributes
+- **Spending**: Use attributes to unlock abilities, transformations, and features
+- **Types**: Money, Knowledge, Health, Social Capital, Creativity
+- **Persistence**: Attributes carry across turns, building strategic reserves
+- **Unlock Examples**:
+  - 100 Money → Unlock Work block transformation
+  - 200 Knowledge → Unlock Study block transformation
+  - 500 Money + 300 Knowledge → Unlock Career combination
 
 ### Auto-Spawn System
 **Turn-Based Pressure**: Each turn spawns new blocks automatically
-- **Spawn Timing**: After each player action (move/merge)
+- **Spawn Timing**: At TURN START (before player action)
+- **Turn Flow**: Spawn → Player sees board → Player acts → Matches resolve → Turn ends
 - **Spawn Rules**: Random type, empty position
 - **Difficulty Scaling**: Spawn rate/quantity increases over time
-- **Strategic Element**: Players must manage space while pursuing merges
+- **Strategic Element**: Players must manage space while pursuing matches/transforms
 
-### Chain Reaction System (Core Mechanic)
-**The Magic Moment**: Merges that trigger additional merges automatically
-- **Chain Detection**: After any merge completes, check if result triggers new merges
-- **Chain Multiplier**: Each chain step increases score (1x → 2x → 4x → 8x)
+### Chain Reaction System
+**The Magic Moment**: Matches/transforms that trigger additional matches automatically
+- **Chain Detection**: After any match/transform completes, check for new opportunities
+- **Attribute Multiplier**: Each chain step increases rewards (1x → 2x → 4x → 8x)
 - **Visual Celebration**: Each chain step gets bigger effects/sounds
-- **Strategic Depth**: Players set up elaborate chain reactions for massive scores
+- **Strategic Depth**: Players set up elaborate chain reactions for massive attribute gains
 
-**Example Chain**:
-1. Merge three Tier-1 Work blocks → Tier-2 Work appears
-2. Tier-2 Work completes a group with two other Tier-2s → Auto-merges to Tier-3
-3. Tier-3 triggers another adjacent group → Chain continues
-4. Score: 10 (base) × 1 × 2 × 4 = 80 points instead of just 10!
+**Example Chain with Attributes**:
+1. Match three Tier-1 Work blocks → +30 Money (10 per block)
+2. This creates space for three Study blocks to connect → Auto-match → +60 Knowledge (×2 chain)
+3. The cleared space connects Health blocks → Auto-match → +120 Health (×4 chain)
+4. Total earned: 30 Money + 60 Knowledge + 120 Health!
 
 ### Placement Strategy
-- **Grid Management**: Balance between keeping space for moves and setting up merges
+- **Grid Management**: Balance between keeping space for moves and setting up matches
 - **Chain Planning**: Deliberately position blocks to trigger chain reactions
 - **Risk/Reward**: Complex setups risk grid filling but offer huge rewards
-- **Skill Expression**: Difference between beginners (random merges) and experts (5+ chains)
+- **Skill Expression**: Difference between beginners (random matches) and experts (5+ chains)
 
 ### Future Complexity Layers (Post-MVP)
-- **Cross-Type Merging**: 2 Work + 1 Study → Career Opportunity
-- **Merge Effects**: Special blocks spawn additional blocks
-- **Life Stage Modifiers**: Different merge rules per life stage
-- **Chain Bonus Blocks**: Special blocks created only through long chains
+- **Cross-Type Transmutation**: 2 Work + 1 Study → Career Opportunity
+- **Match Effects**: Special blocks spawn additional blocks  
+- **Life Stage Modifiers**: Different match/tier-up rules per life stage
+- **Chain Reward Blocks**: Special blocks created only through long chains
 
 ---
 

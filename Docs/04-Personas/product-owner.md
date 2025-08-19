@@ -95,6 +95,11 @@ Your success is measured not by how many features you approve, but by how many c
 ## 📚 My Reference Docs
 
 When defining vertical slices, I primarily reference:
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - SINGLE SOURCE OF TRUTH for all terminology
+  - MANDATORY: All VS items must use exact glossary terms
+  - Check before using any game term (match vs tier-up vs transmute)
+  - Distinguish resources (Money) from attributes (Knowledge)
+  - Use proper bonus/reward terminology
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
 - **[CurrentState.md](../01-Active/CurrentState.md)** ⭐⭐⭐⭐⭐ - What's actually implemented vs planned (I maintain this!)
 - **[Completed_Backlog.md](../07-Archive/Completed_Backlog.md)** ⭐⭐⭐⭐ - Lessons from completed/rejected items to avoid repeating mistakes
@@ -102,7 +107,11 @@ When defining vertical slices, I primarily reference:
 - **[VerticalSlice_Template.md](../05-Templates/VerticalSlice_Template.md)** - Template for creating VS items
 - **[Standards.md](../03-Reference/Standards.md)** - Naming conventions for VS items (VS_XXX pattern)
 
-I don't need deep technical docs - I focus on defining complete slices that deliver player value.
+**Glossary Usage Protocol**:
+- Before writing any VS item, verify terminology in Glossary
+- If a term isn't in Glossary, propose addition before using
+- Never use deprecated terms (e.g., "merge" when meaning "match")
+- Ensure acceptance criteria use precise Glossary vocabulary
 
 ## 📊 CurrentState.md Ownership
 

@@ -63,78 +63,104 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_003: Triple-Merge System (Same-Type Only) [Score: 85/100]
-**Status**: Ready for Dev ✅
-**Owner**: Tech Lead → Dev Engineer
-**Size**: L (12-16 hours - split into 2 phases)
+### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead
+**Size**: S (4-6 hours)
 **Priority**: Important
 **Created**: 2025-08-19
-**Depends On**: None (separate from drag/move)
+**Depends On**: None
 
-**What**: Implement Triple Town-style merging - 3 adjacent same-type blocks merge into higher tier
-**Why**: Creates strategic gameplay with clear, simple rules that players instantly understand
+**What**: Match 3+ adjacent same-type blocks to clear them and earn attributes
+**Why**: Proves core resource economy loop before adding complexity
 
-**Core Mechanic** (Triple Town Model):
-- **3+ adjacent blocks** of same type (orthogonal only, not diagonal)
-- **Merge triggers** when player moves a block to complete a group of 3+
-- **Result appears** at the result position (last-moved block location)
-- **Tier progression**: Three Tier-1 blocks → One Tier-2 block
+**Core Mechanic**:
+- Match 3+ adjacent same-type blocks (orthogonal only)
+- Matched blocks disappear (no transformation)
+- Each block type grants specific resources or attributes:
+  - Work → Money +10 per block (resource)
+  - Study → Knowledge +10 per block (attribute)
+  - Health → Health +10 per block (attribute)
+  - Relationship → Social Capital +10 per block (resource)
+  - Fun → Happiness +10 per block (attribute)
+  - Sleep → Energy +10 per block (attribute)
+  - Food → Nutrition +10 per block (attribute)
+  - Exercise → Fitness +10 per block (attribute)
+  - Meditation → Mindfulness +10 per block (attribute)
+- Display current attributes (text UI for now)
 
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED with architectural refinements**
-
-**Technical Approach**:
-- **Event-driven architecture** using MediatR notifications
-- **IMergeDetector strategy pattern** for future extensibility
-- **Chain-aware from start** (ChainDepth parameter for VS_005)
-- **Two-phase implementation** to maintain thin slices
-
-**Architecture Structure**:
-```
-src/Features/Block/Merge/
-├── Commands/           # MergeCommand with ChainDepth
-├── Notifications/      # MergeCompletedNotification, BoardChangedNotification  
-├── Services/          # IMergeDetector, AdjacentSameTypeMergeDetector
-└── Models/            # MergeGroup, MergeResult
-```
-
-**Phase 1: Core Merge Logic** (6-8 hours):
-1. Create IMergeDetector interface and flood-fill implementation
-2. Build MergeCommand/Handler with ChainDepth support (default 0)
-3. Add MergeCompletedNotification for future chain detection
-4. Implement MergeScoreCalculator (pure function)
-5. Comprehensive unit tests (flood-fill, boundaries, scoring)
-
-**Phase 2: Event Integration & UI** (6-8 hours):
-1. Implement BoardChangedNotification pattern
-2. Create MergeDetectionHandler for automatic triggering
-3. Add TurnEndNotification (marks action complete)
-4. Wire up Godot UI with MergePresenter
-5. Simple visual feedback and score display
-6. End-to-end integration testing
+**Match Size Bonuses**:
+- Match-3: Base rewards (×1.0)
+- Match-4: ×1.5 bonus multiplier
+- Match-5: ×2.0 bonus multiplier
+- Match-6+: ×3.0 bonus multiplier
 
 **Done When**:
-- Moving a block to form 3+ adjacent same-type triggers merge
-- Transformed block appears at result position (last-moved location)
-- Other blocks in merge group disappear with visual effect
-- Score increases and displays (simple text for now)
-- Works for all 9 block types (same-type only)
-- 8+ unit tests covering detection, execution, and edge cases
-- Event notifications ready for VS_004/VS_005 integration
+- Matching 3+ blocks clears them from grid
+- Attributes increase based on block types matched
+- Current attributes display on screen
+- Works for all 9 block types
+- 5+ unit tests for match detection
+- 3+ tests for attribute calculation
 
-**NOT in Scope** (VS_004+ territory):
-- Auto-spawn system (that's next)
-- Cross-type merging (2 Work + 1 Study combinations)
-- Chain reactions/cascading merges (VS_005)
-- Complex animations beyond simple disappear
-- Undo functionality
+**NOT in Scope**:
+- Transformation to higher tiers
+- Spending attributes
+- Unlocks or progression
+- Chain reactions
 
-**Technical Risks Identified**:
-- Concurrent merges → Mitigate with sequential processing
-- Performance on large grids → Cache flood-fill results
-- Turn state management → Clear TurnStart/TurnEnd notifications
+### VS_003B: Tier System Introduction [Score: 80/100]
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: S (4-6 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: VS_003A
 
-**Next**: Dev Engineer implements Phase 1, then Test Specialist validates before Phase 2
+**What**: Add tier indicators and tier-based reward scaling
+**Why**: Introduces progression concept without transformation mechanics
+
+**Core Mechanic**:
+- Blocks show tier indicator (T1, T2, T3)
+- Higher tier blocks give more resources/attributes when matched:
+
+**Tier Bonuses** (multiplicative):
+- Tier 1: ×1.0 (base)
+- Tier 2: ×3.0 tier bonus
+- Tier 3: ×10.0 tier bonus
+- Manual tier-2/3 spawn for testing (debug command)
+
+**Done When**:
+- Blocks display tier visually
+- Matching higher tiers gives proportional resources/attributes
+- Debug commands to spawn specific tiers
+- 3+ tests for tier-based calculations
+
+### VS_003C: Unlockable Tier-Up System [Score: 75/100]
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: M (8-10 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: VS_003B
+
+**What**: Spend resources to unlock tier-up abilities
+**Why**: Creates strategic resource management and player agency
+
+**Core Mechanic**:
+- Unlock shop UI (simple buttons)
+- Spend resources to unlock tier-up abilities:
+  - "Unlock Work Tier-Up" - 100 Money (resource)
+  - "Unlock Study Tier-Up" - 100 Knowledge (attribute)
+- When unlocked: 3 same-type blocks can tier-up to 1 higher tier block
+- Player chooses: match for resources/attributes OR tier-up for progression
+
+**Done When**:
+- Unlock shop displays available unlocks
+- Can spend resources to unlock abilities
+- Unlocked tier-ups work alongside matching
+- Visual indicator for unlocked abilities
+- 5+ tests for unlock system
 
 ### VS_004: Auto-Spawn System [Score: 75/100]
 **Status**: Proposed
@@ -142,14 +168,14 @@ src/Features/Block/Merge/
 **Size**: S (4-6 hours - straightforward mechanic)
 **Priority**: Important
 **Created**: 2025-08-19
-**Depends On**: VS_003 (need merging to manage spawned blocks)
+**Depends On**: VS_003A (need matching to manage spawned blocks)
 
 **What**: Automatically spawn new blocks at TURN START before player acts (Tetris-style)
 **Why**: Creates strategic planning - player must account for new block before moving
 
 **Core Mechanic** (UPDATED - Turn-Based):
 - **Spawn Trigger**: At TURN START (before player can act)
-- **Turn Flow**: Spawn → Player sees board → Player acts → Merges resolve → Turn ends
+- **Turn Flow**: Spawn → Player sees board → Player acts → Matches resolve → Turn ends
 - **Spawn Count**: 1 block per turn (adjustable for difficulty later)
 - **Spawn Position**: Random empty position
 - **Spawn Type**: Random from available block types (weighted distribution)
@@ -171,7 +197,7 @@ src/Features/Block/Merge/
 - Spawns only on empty positions
 - Visual indication of newly spawned block
 - Game over triggers when grid is full
-- Game over screen with final score
+- Game over screen with final resources and attributes
 - 5+ unit tests for spawn logic
 - 2+ tests for game over detection
 
@@ -193,45 +219,47 @@ src/Features/Block/Merge/
 ### VS_005: Chain Reaction System [Score: 90/100]
 **Status**: Proposed
 **Owner**: Product Owner → Tech Lead (for breakdown)
-**Size**: M (6-8 hours - builds on VS_003 foundation)
+**Size**: M (6-8 hours - builds on VS_003A foundation)
 **Priority**: Important
 **Created**: 2025-08-19
-**Depends On**: VS_003 (need basic merging first)
+**Depends On**: VS_003A (need basic matching first)
 
-**What**: Add cascading merges that trigger automatically, with exponential scoring multipliers
+**What**: Add cascading matches that trigger automatically, with exponential resource/attribute bonuses
 **Why**: Creates the addictive "YES!" moments that separate good puzzle games from great ones
 
 **Core Mechanic**:
-- **Chain Trigger**: After any merge completes, check if result can trigger new merge
+- **Chain Trigger**: After any match completes, check if result can trigger new match
 - **Recursive Detection**: Each chain can trigger another chain
-- **Multiplier System**: Base × 1 → ×2 → ×4 → ×8 → ×16 (exponential)
+- **Chain Bonus**: Base × 1 → ×2 → ×4 → ×8 → ×16 (exponential)
 - **Chain Counter**: Display "Chain ×2!", "Chain ×3!" etc.
 - **Celebration**: Bigger effects for longer chains
 
 **Implementation Approach**:
-- After merge completes, run merge detection on result position
-- If new merge detected, execute it with increased multiplier
-- Continue recursively until no more merges possible
+- After match completes, run match detection on result position
+- If new match detected, execute it with increased bonus
+- Continue recursively until no more matches possible
 - Track chain depth for scoring and display
 - Add brief delay between chains for visual clarity
 
-**Scoring Formula**:
+**Resource/Attribute Formula**:
 ```
-Chain 1: 10 points × 1 = 10
-Chain 2: 10 points × 2 = 20
-Chain 3: 10 points × 4 = 40
-Chain 4: 10 points × 8 = 80
-Total for 4-chain: 150 points!
+Chain 1: 10 resources/attributes × 1 = 10
+Chain 2: 10 resources/attributes × 2 = 20
+Chain 3: 10 resources/attributes × 4 = 40
+Chain 4: 10 resources/attributes × 8 = 80
+Total for 4-chain: 150 resources/attributes!
+
+Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainBonus) + Rewards
 ```
 
 **Done When**:
-- Merges automatically trigger follow-up merges
-- Score multiplier increases exponentially per chain
+- Matches automatically trigger follow-up matches
+- Resource/attribute bonus increases exponentially per chain
 - Chain counter displays during chains
 - Visual delay between chain steps (player can follow what happened)
 - Different sound effects for each chain level
 - 5+ unit tests for chain detection
-- 3+ tests for multiplier calculation
+- 3+ tests for bonus calculation
 - 2+ tests for recursive chain limits
 
 **NOT in Scope**:
@@ -245,12 +273,12 @@ Total for 4-chain: 150 points!
 **Critical Design Decisions**:
 - **Delay Between Chains**: 0.3-0.5 seconds (fast enough to feel smooth, slow enough to see)
 - **Max Chain Depth**: Unlimited (let players find crazy combos)
-- **Multiplier Cap**: No cap initially (see how high players can go)
+- **Bonus Cap**: No cap initially (see how high players can go)
 
 **Product Owner Notes**:
-- This is THE feature that makes merge games addictive
+- This is THE feature that makes match-3 games addictive
 - Must feel satisfying - sound/visual feedback crucial
-- Exponential scoring rewards elaborate setups
+- Exponential bonuses reward elaborate setups
 - Creates skill gap between new and experienced players
 - Watch for degenerate strategies (infinite chains)
 
@@ -258,7 +286,50 @@ Total for 4-chain: 150 points!
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 45/100]
+### VS_003: Triple-Match System (Original - Archived) [Score: 85/100]
+**Status**: Archived - Replaced by VS_003A-D phased approach
+**Owner**: Tech Lead → Dev Engineer
+**Size**: L (12-16 hours - split into 2 phases)
+**Priority**: Ideas
+**Created**: 2025-08-19
+**Archived**: 2025-08-19
+**Depends On**: None (separate from drag/move)
+
+**What**: Original design mixing match and tier-up mechanics without clear separation
+**Why**: Creates strategic gameplay with clear, simple rules that players instantly understand
+
+**Note**: Replaced by VS_003A-D phased approach that properly separates:
+- VS_003A: Match for resources/attributes
+- VS_003B: Tier system introduction
+- VS_003C: Unlockable tier-up mechanics
+- VS_003D: Cross-type transmutation
+
+### VS_003D: Cross-Type Transmutation System [Score: 60/100]
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: M (6-8 hours)
+**Priority**: Ideas (future)
+**Created**: 2025-08-19
+**Depends On**: VS_003C
+
+**What**: Unlock special cross-type transmutations
+**Why**: Adds strategic depth through type conversion
+
+**Core Mechanic**:
+- Expensive unlocks for transmutation recipes:
+  - Work + Work + Study → Career (500 Money + 300 Knowledge)
+  - Health + Health + Fun → Wellness (300 Health + 200 Happiness)
+- Different from tier-up: Changes block TYPE not TIER
+- Creates special blocks with unique properties
+
+**Done When**:
+- Unlock shop displays transmutation recipes
+- Can spend resources to unlock transmutation abilities
+- Transmutation works alongside matching and tier-up
+- Visual indication of transmuted block types
+- 5+ tests for transmutation system
+
+### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
 **Status**: Approved - Immediate Part Ready
 **Owner**: Test Specialist  
 **Size**: XS (immediate) + M (future property suite)
@@ -379,125 +450,7 @@ public Property DoubleSwap_ReturnsToOriginal()
 
 ## ✅ Recently Completed
 
-### TD_016: Update All Documentation for Glossary Consistency [Score: 30/100]
-**Status**: ✅ Completed
-**Owner**: Dev Engineer
-**Size**: S (2-3 hours)
-**Priority**: Important (do before VS_003)
-**Created**: 2025-08-19
-**Completed**: 2025-08-19
-**Markers**: [DOCUMENTATION] [CONSISTENCY]
-
-**What**: Update all documentation to use glossary terms consistently
-**Why**: Inconsistent terminology in personas and docs creates confusion
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED - Critical for VS_003 clarity**
-- Backlog itself has inconsistencies (e.g., "level" instead of "tier")
-- Persona docs will generate wrong variable names
-- Must be done before VS_003 implementation
-
-**Scope of Changes**:
-- **Persona docs** (6 files): Update terminology in all persona descriptions
-- **Backlog items**: Ensure VS/TD/BR descriptions use correct terms
-- **Architecture docs**: Align with glossary vocabulary
-- **README/Workflow**: Check for terminology mismatches
-
-**Key Replacements Needed**:
-- "match" → "merge"
-- "level" (for blocks) → "tier"
-- "round" → "turn"
-- "cell/slot/tile" → "position"
-- "combo/cascade" → "chain"
-- "spawn" (for merge results) → "transform"
-- "trigger position" → "result position"
-
-**Approach**:
-1. Grep for anti-pattern terms across Docs/
-2. Update each file with correct glossary terms
-3. Special attention to persona docs (they guide behavior)
-4. Update code comments if found
-
-**Done When**:
-- All persona docs use glossary terms
-- No anti-pattern terms in active documentation
-- Backlog items updated for consistency
-- Quick reference guide reflects proper vocabulary
-
-**Tech Lead Note**: This is housekeeping but critical - personas using wrong terms will generate wrong code.
-
-**Dev Engineer Completion** (2025-08-19):
-✅ **COMPLETED - 33 terminology violations fixed across 6 critical files**
-- **Backlog.md**: 8 violations fixed ("cascade"→"chain", "match-3"→"merge", etc.)
-- **Vision.md**: 17 violations fixed ("tile-based"→"block-based", "Level"→"Tier", etc.)
-- **Design README.md**: 2 violations fixed ("triple-match"→"triple-merge")
-- **CurrentState.md**: 4 violations fixed ("tile"→"position", "level up"→"tier up")
-- **Glossary.md**: 2 violations fixed (CRITICAL: authority doc had self-violations)
-- **Total Impact**: All VS_003 implementation will now use correct terminology
-- **Quality**: Systematic grep-based detection, surgical fixes preserving technical terms
-- **Result**: Ready for VS_003 Phase 1 with clean, consistent vocabulary foundation
-
-### TD_015: Create Ubiquitous Language Glossary [Score: 20/100]
-**Status**: ✅ Completed
-**Owner**: Tech Lead
-**Size**: XS (30 minutes)
-**Priority**: Important
-**Created**: 2025-08-19
-**Completed**: 2025-08-19
-
-**What**: Create lean glossary defining core game terms
-**Why**: Prevent terminology confusion across team and code
-
-**Tech Lead Implementation**:
-✅ Created `Docs/03-Reference/Glossary.md` with essential terms
-✅ Defined clear vocabulary for turns, actions, blocks, merges
-✅ Included code references for each term
-✅ Added usage examples and anti-patterns
-✅ Distinguished "spawn" (new blocks) from "transform" (merge results)
-
-**Key Terms Defined**:
-- **Turn**: Complete cycle from spawn to action resolution
-- **Action**: Player-initiated board change
-- **Merge**: 3+ adjacent same-type combining
-- **Transform**: Merge result creating higher tier (not "spawn")
-- **Chain**: Sequential merges from one action
-- **Result Position**: Where transformed block appears
-- **Tier**: Block tier (1-9), not "level"
-
-**Impact**: 
-- VS_003-005 can now use consistent terminology
-- Code reviews have authoritative reference
-- Prevents "what do you mean by X?" discussions
-
-### VS_002: Translate Creative Brainstorms into Feature Specifications [Score: 30/100]
-**Status**: ✅ Completed
-**Owner**: Product Owner
-**Size**: L (2-3 days)
-**Priority**: Ideas
-**Created**: 2025-08-19
-**Completed**: 2025-08-18
-**Depends On**: None
-
-**What**: Translate Chinese brainstorming content into actionable VS items and feature specifications
-**Why**: Valuable creative vision needs to be transformed into implementable features
-
-**COMPLETED WORK**:
-- ✅ Reviewed all brainstormA/B/C.md files and extracted key concepts
-- ✅ Successfully consolidated all creative content into Vision.md
-- ✅ Added new systems: Character Origins & Talents, Regional Gameplay, Memory Palace
-- ✅ Integrated Inner Monologue System, Narrative Anchor Choices, Time Budget System
-- ✅ Added Game Modes (Authentic/Destiny/Legacy) and Generational Legacy System
-- ✅ Removed redundant brainstorm files after consolidation
-- ✅ Updated documentation references for consistency
-
-**Key Features Integrated**:
-- ✅ Emotional time flow (Dynamic Time Scale)
-- ✅ Relationship blocks with visual bonds (Bond Links)
-- ✅ Personality development through actions (MBTI System)
-- ✅ Life stage-specific block types (All Life Stages)
-- ✅ Legacy and memory systems (Memory Palace, Generational Legacy)
-
-**Product Owner Note**: All valuable creative vision from Chinese brainstorms has been successfully integrated into the consolidated Vision.md. The game design is now comprehensive and ready for implementation prioritization.
+*No recent completions. Older completed items have been moved to Archive for reference.*
 
 ---
 
