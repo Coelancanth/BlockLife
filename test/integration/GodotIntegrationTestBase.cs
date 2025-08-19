@@ -1,7 +1,6 @@
 using Godot;
-using System;
 
-namespace BlockLife.Tests.Integration
+namespace BlockLife.test.integration
 {
     /// <summary>
     /// DEPRECATED: This base class is deprecated and should not be used.

@@ -1,10 +1,10 @@
 using System;
 using BlockLife.Core.Domain.Common;
 using LanguageExt;
-using static LanguageExt.Prelude;
 using Serilog;
+using static LanguageExt.Prelude;
 
-namespace BlockLife.Godot.Features.Block.Input.State;
+namespace BlockLife.godot_project.features.block.input.State;
 
 /// <summary>
 /// Manages block selection and hover state for input operations.

@@ -1,3 +1,7 @@
+using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using Godot;
 using Serilog;
 using Serilog.Configuration;
@@ -6,12 +10,8 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 
-namespace BlockLife.Godot.Infrastructure.Logging;
+namespace BlockLife.godot_project.infrastructure.logging;
 
 public class GodotConsoleSink : ILogEventSink
 {

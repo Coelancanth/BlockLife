@@ -54,173 +54,89 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-
-### TD_020: Review Save System Architecture Decisions ✅ REVIEWED
-**Status**: Reviewed - Action Required
-**Owner**: Dev Engineer (for fixes)
-**Size**: S (2 hours for fixes)
-**Priority**: Critical
-**Created**: 2025-01-19
-**Reviewed**: 2025-08-19
-**Implemented By**: Dev Engineer
-**Markers**: [ARCHITECTURE] [CODE-REVIEW]
-
-**What**: Review architectural decisions made during TD_015 Save System implementation
-**Why**: Several trade-offs need Tech Lead validation before production use
-
-**Tech Lead Decision** (2025-08-19):
-
-1. **Save Path Abstraction**: ✅ **APPROVED AS-IS**
-   - Keep `Environment.SpecialFolder` approach
-   - Clean Architecture > Platform consistency
-   - Optional future: Add ISavePathProvider if needed
-
-2. **Serialization**: ❌ **CHANGE REQUIRED**
-   - **Decision**: Switch to Newtonsoft.Json
-   - System.Text.Json fails with `required` properties
-   - Newtonsoft handles domain models better
-   - Already a dependency (MediatR uses it)
-
-3. **Migration Pattern**: ✅ **APPROVED WITH MONITORING**
-   - Keep Chain of Responsibility pattern
-   - Good future-proofing for save compatibility
-   - Monitor: If unused in 3 months, consider simplifying
-
-**Required Actions (TD_020A)**:
-1. Replace System.Text.Json with Newtonsoft.Json in SaveService
-2. Update test configurations to match
-3. Ensure all 12 save tests pass
-4. Document decision in code comments
-
-**Implementation Details**:
-- See: `src/Core/Infrastructure/Services/SaveService.cs`
-- See: `src/Core/Domain/Save/SaveData.cs`
-
-**Done When**:
-- Serialization switched to Newtonsoft.Json
-- All save tests passing
-- Decision documented in code
-
-### TD_021: Fix Block Namespace Collision ✅ APPROVED
-**Status**: Approved - Ready for Implementation
-**Owner**: Dev Engineer
-**Size**: L (8 hours - affects 40+ files)
+### BR_009: SaveService Tests Fail on Linux After Newtonsoft.Json Migration
+**Status**: Proposed
+**Owner**: Test Specialist → Debugger Expert  
+**Size**: M (4-6 hours)
 **Priority**: Critical
 **Created**: 2025-08-19
-**Approved**: 2025-08-19
-**Found During**: TD_015/TD_016 implementation
-**Markers**: [ARCHITECTURE] [BREAKING-CHANGE]
+**Found By**: CI pipeline after TD_024 fix
+**Markers**: [PLATFORM-SPECIFIC] [LINUX] [SERIALIZATION] [CI-BLOCKER]
 
-**What**: Rename Domain.Block namespace to Domain.Blocks (plural)
-**Why**: Current collision causes compilation errors requiring fully qualified names everywhere
+**What**: 4 SaveService tests fail on Linux but pass on Windows after Newtonsoft.Json migration
+**Why**: Platform-specific serialization issues break Linux deployments and block CI
 
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED - FIX IMMEDIATELY**
+**Failed Tests on Linux CI**:
+1. `SaveAsync_AlwaysSavesInCurrentVersion` - Load after save fails (IsSucc = False)
+2. `LoadAsync_UpdatesLoadCount` - Load fails (IsSucc = False)
+3. `LoadAsync_WithOldVersion_ShouldMigrate` - Import fails (IsSucc = False)  
+4. `ImportSave_WithValidJson_ShouldDeserialize` - Import fails (IsSucc = False)
 
-**Rationale**:
-1. **Pre-release timing perfect** - No production impact
-2. **Documented pain exists** - 20+ files already affected
-3. **Fix is mechanical** - Simple find/replace
-4. **Delay increases cost** - Every new file adds burden
-5. **Clean architecture** - No ambiguous naming
+**Evidence from CI**:
+- PR #45 Build & Test job failed
+- All failures show "Expected IsSucc to be True, but found False"
+- Tests pass on Windows (local dev) but fail on Ubuntu (CI)
+- Issue discovered only after removing `|| true` from CI (TD_024)
 
-**Implementation Plan**:
-```bash
-# 1. Create branch from latest main
-git checkout -b fix/td-021-block-namespace
+**Potential Causes**:
+1. Newtonsoft.Json platform-specific behavior with `required` properties
+2. File path handling differences (Windows backslash vs Linux forward slash)
+3. Line ending differences (CRLF vs LF) in JSON serialization
+4. Culture/locale differences affecting date/number formatting
+5. Case sensitivity in file system operations
 
-# 2. Rename namespace ONLY (not the class)
-BlockLife.Core.Domain.Block → BlockLife.Core.Domain.Blocks
-
-# 3. Update all using statements
-using BlockLife.Core.Domain.Block; → using BlockLife.Core.Domain.Blocks;
-
-# 4. Run tests
-./scripts/core/build.ps1 test
-
-# 5. Single atomic commit
-git commit -m "fix: resolve Block namespace collision (TD_021)
-
-BREAKING CHANGE: Domain.Block namespace renamed to Domain.Blocks"
-```
-
-**Critical Success Factors**:
-- ONE atomic commit (don't mix changes)
-- Execute after current PR merges
-- Clear breaking change communication
-- Search for string literals using reflection
+**Investigation Steps**:
+1. Add detailed logging to SaveService to capture exact error
+2. Check if System.Text.Json works on Linux (might need to revert TD_020)
+3. Test Newtonsoft.Json settings for cross-platform compatibility
+4. Verify file permissions and path separators
+5. Check JSON output differences between platforms
 
 **Done When**:
-- All namespaces updated to Domain.Blocks
-- All tests pass
-- No fully qualified Block names needed
-- Single commit with clear message
+- All 4 SaveService tests pass on Linux CI
+- Root cause documented
+- Cross-platform compatibility ensured
+- No platform-specific test exclusions needed
 
+**Impact if Not Fixed**:
+- CI remains red, blocking all PRs
+- Linux deployments completely broken
+- Save/Load functionality fails on Linux servers
+- Cannot ship to Linux users
 
-### TD_024: Fix CI Test Enforcement ⚠️ CRITICAL QUALITY GATE BROKEN
-**Status**: Approved - Immediate Fix Required  
-**Owner**: DevOps Engineer → Dev Engineer
-**Size**: S (2-3 hours total)
-**Priority**: Critical
-**Created**: 2025-08-19
-**Reviewed**: 2025-08-19
-**Found By**: DevOps Engineer during CI health check
-**Markers**: [CI/CD] [QUALITY-GATES] [CRITICAL-BUG]
-
-**What**: Remove `|| true` from CI test step and fix underlying test failures
-**Why**: Tests are completely ignored in CI - zero quality gate value, false green builds
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED - IMMEDIATE FIX REQUIRED**
-
-**The Real Problem**:
-- Line 95 in ci.yml: `|| true` suppresses ALL test failures
-- This isn't a performance issue - it's a RELIABILITY issue
-- CI shows green even with failing tests
-- Only pre-commit hooks provide test validation
-
-**Root Cause (Likely)**:
-- Test discovery issues in Linux environment
-- Missing dependencies for GdUnit4
-- Path separator differences (Windows vs Linux)
-- NOT actually a performance problem
-
-**Implementation Plan**:
-
-**Step 1: Diagnose** (30 min)
-```yaml
-# Remove || true to see actual error
-# Add verbose logging
---logger "console;verbosity=detailed"
-# Add test discovery step
-dotnet test --list-tests
-```
-
-**Step 2: Fix Root Cause** (1-2 hours)
-- Fix path issues if Windows-specific
-- Add missing Linux dependencies
-- Ensure test discovery works
-- May need to exclude GdUnit4 tests if incompatible
-
-**Step 3: Verify** (30 min)
-- Ensure CI fails on test failures
-- Confirm <2 minute execution
-- Document any excluded tests
-
-**Done When**:
-- `|| true` removed from ci.yml
-- Test failures properly fail CI
-- All unit tests run in CI
-- Green CI means tests actually pass
-
-**NOT Acceptable**:
-- Keeping `|| true` for any reason
-- Disabling all tests in CI
-- "Living with it" - this is a critical quality issue
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
+### BR_008: Investigate Flaky SimulationManagerThreadSafetyTests.ConcurrentOperations Test
+**Status**: Proposed
+**Owner**: Test Specialist → Debugger Expert
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Markers**: [TEST-FLAKINESS]
+
+**What**: SimulationManagerThreadSafetyTests.ConcurrentOperations_ShouldMaintainPerformance fails intermittently
+**Why**: Flaky tests reduce confidence in CI/CD pipeline and mask real issues
+
+**Symptoms**:
+- Test failed during TD_020A implementation but seems unrelated to SaveService changes
+- Stress test involving concurrent operations
+- Performance-based assertion that might be timing-sensitive
+- Test output: "[xUnit.net 00:00:00.33] BlockLife.Core.Tests.StressTests.SimulationManagerThreadSafetyTests.ConcurrentOperations_ShouldMaintainPerformance [FAIL]"
+
+**Initial Investigation Needed**:
+1. Check if test has history of flakiness
+2. Review performance thresholds - might be too tight
+3. Consider machine-dependent factors (CPU load, etc.)
+4. May need retry logic or loosened constraints
+
+**Done When**:
+- Root cause identified
+- Test either fixed or marked with appropriate attributes
+- No false positives in CI
+- Documentation of why test was flaky
 
 ### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
 **Status**: Approved
@@ -833,6 +749,51 @@ public class ResourceManager : IResourceManager
 
 **Depends On**: None - Do after MVP
 
+### TD_025: Add Verification Protocol for Agent Task Completion
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Markers**: [QUALITY-CONTROL] [AGENT-VERIFICATION]
+
+**What**: Implement verification checklist for agent-completed tasks, especially backlog-assistant
+**Why**: Agents may partially complete tasks without clear indication of what was/wasn't done
+
+**Problem Observed**:
+- Backlog-assistant was asked to move TD_020 and clean up duplicates
+- It moved TD_020 to Archive.md correctly
+- It did NOT add TD_020 to Recently Completed section
+- Manual intervention was needed to complete the task
+- No clear report of what was/wasn't completed
+
+**Proposed Solution**:
+1. **Agent Completion Checklist**:
+   - Pre-task: Document expected outcomes
+   - During: Track each sub-task completion
+   - Post-task: Verify all outcomes achieved
+   - Report: Clear summary of completed/incomplete items
+
+2. **Backlog-Assistant Specific Checks**:
+   - Items removed from original location?
+   - Items added to target location?
+   - Duplicates removed?
+   - Formatting preserved?
+   - Both Backlog.md AND Archive.md updated?
+   - Chronological order maintained?
+
+3. **Implementation Ideas**:
+   - Add verification prompts to agent personas
+   - Create standard verification templates
+   - Document common failure patterns
+   - Add "verify completion" step to workflows
+
+**Done When**:
+- Verification protocol documented in agent personas
+- Checklist templates created for common operations
+- Backlog-assistant specifically updated with multi-file awareness
+- Test case: Successfully moves item between Backlog.md and Archive.md completely
+
 ### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces ✅ APPROVED (MODIFIED)
 **Status**: Approved - Phased Implementation
 **Owner**: Dev Engineer
@@ -1013,6 +974,14 @@ public Property DoubleSwap_ReturnsToOriginal()
 *None*
 
 ## ✅ Recently Completed
+
+### TD_024: Fix CI Test Enforcement ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: 1 hour
+**Solution**: Removed `|| true` from ci.yml, added test discovery and failure analysis
+**Impact**: CI quality gates restored, discovered 4 Linux-specific test failures (BR_009)
+**Key Learning**: Hiding test failures with `|| true` masks platform-specific issues
 
 ### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
 **Completed**: 2025-08-19

@@ -6,7 +6,7 @@ using LanguageExt;
 using MediatR;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Input.Handlers;
+namespace BlockLife.godot_project.features.block.input.Handlers;
 
 /// <summary>
 /// Handles block placement input operations.

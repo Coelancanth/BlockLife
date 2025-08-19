@@ -1,14 +1,14 @@
-using Godot;
 using System;
-using System.Reactive.Subjects;
 using System.Reactive.Linq;
-using BlockLife.Core.Features.Block.Placement;
+using System.Reactive.Subjects;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Godot.Scenes;
+using BlockLife.Core.Features.Block.Placement;
+using BlockLife.godot_project.scenes.Main;
+using Godot;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Godot.Features.Block.Placement;
+namespace BlockLife.godot_project.features.block.placement;
 
 public partial class GridInteractionController : Control, IGridInteractionView
 {

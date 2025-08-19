@@ -7,11 +7,10 @@ using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Infrastructure.Services;
 using Godot;
 using LanguageExt;
-using static LanguageExt.Prelude;
 using MediatR;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Input;
+namespace BlockLife.godot_project.features.block.input;
 
 /// <summary>
 /// Unified handler for all block input operations.

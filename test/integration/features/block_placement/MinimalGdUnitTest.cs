@@ -1,13 +1,13 @@
-using Godot;
-using GdUnit4;
 using System;
 using System.Threading.Tasks;
-using BlockLife.Godot.Scenes;
+using BlockLife.godot_project.scenes.Main;
 using FluentAssertions;
+using GdUnit4;
+using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using static GdUnit4.Assertions;
 
-namespace BlockLife.Tests.Integration.Features.BlockPlacement
+namespace BlockLife.test.integration.features.block_placement
 {
     /// <summary>
     /// Minimal test suite to verify GdUnit4 and SceneTree access

@@ -8,6 +8,22 @@
 
 ## ✅ Completed Items
 
+### TD_020: Review Save System Architecture Decisions ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: S (2 hours)
+**Outcome**: Switched SaveService to Newtonsoft.Json to handle 'required' properties, all 12 save tests passing
+**Lessons**: Tech Lead review process caught critical serialization issues before production deployment
+**Unblocked**: Save system now properly handles domain model properties without serialization failures
+[METADATA: architecture, save-system, serialization, tech-review, newtonsoft-json, domain-models, production-ready]
+
+### TD_021: Fix Block Namespace Collision ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: 5 minutes (vs 8 hours estimated)
+**Solution**: Used Rider's "Adjust Namespaces" feature to automatically rename Domain.Block to Domain.Blocks
+**Impact**: Eliminated namespace collision affecting 40+ files, restored clean architecture
+**Post-Mortem**: Created at `Docs/Post-Mortems/2025-08-19-TD021-Namespace-Collision-Fix.md`
+
 ### TD_015: Add Save System Versioning ✅ COMPLETED
 **Completed**: 2025-08-19
 **Effort**: XS (30 minutes)

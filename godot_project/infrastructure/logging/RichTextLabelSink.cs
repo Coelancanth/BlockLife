@@ -1,14 +1,12 @@
-using Godot;
-using Serilog.Core;
-using Serilog.Events;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using Godot;
+using Serilog.Core;
+using Serilog.Events;
 
-namespace BlockLife.Godot.Infrastructure.Logging;
+namespace BlockLife.godot_project.infrastructure.logging;
 
 /// <summary>
 /// **PERFORMANCE-CRITICAL** Serilog sink for Godot RichTextLabel.

@@ -1,15 +1,15 @@
-using Godot;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BlockLife.Core.Features.Block.Placement;
-using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Domain.Block;
-using BlockLife.Godot.Features.Block.Performance;
+using BlockLife.Core.Domain.Common;
+using BlockLife.Core.Features.Block.Placement;
+using BlockLife.godot_project.features.block.performance;
+using Godot;
 using LanguageExt;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Godot.Features.Block.Placement;
+namespace BlockLife.godot_project.features.block.placement;
 
 public partial class BlockVisualizationController : Node2D, IBlockVisualizationView
 {

@@ -1,21 +1,20 @@
-using Godot;
-using GdUnit4;
 using System;
 using System.Threading.Tasks;
-using BlockLife.Godot.Scenes;
-using BlockLife.Godot.Features.Block.Placement;
-using BlockLife.Godot.Infrastructure;
-using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Domain.Block;
+using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Infrastructure.Services;
-using Microsoft.Extensions.DependencyInjection;
-using MediatR;
+using BlockLife.godot_project.features.block.placement;
+using BlockLife.godot_project.scenes.Main;
 using FluentAssertions;
+using GdUnit4;
+using Godot;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using static GdUnit4.Assertions;
 
-namespace BlockLife.Tests.Integration.Features.BlockPlacement
+namespace BlockLife.test.integration.features.block_placement
 {
     /// <summary>
     /// INTEGRATION TESTS: Presenter-View Communication

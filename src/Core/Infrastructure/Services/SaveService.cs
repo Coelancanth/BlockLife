@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BlockLife.Core.Domain.Save;
 using BlockLife.Core.Infrastructure.Logging;
 using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using static LanguageExt.Prelude;
 
 namespace BlockLife.Core.Infrastructure.Services
@@ -21,7 +22,7 @@ namespace BlockLife.Core.Infrastructure.Services
     {
         private readonly ILogger<SaveService> _logger;
         private readonly IEnumerable<ISaveMigration> _migrations;
-        private readonly JsonSerializerOptions _jsonOptions;
+        private readonly JsonSerializerSettings _jsonSettings;
         private readonly string _saveDirectory;
 
         public SaveService(
@@ -31,16 +32,16 @@ namespace BlockLife.Core.Infrastructure.Services
             _logger = logger;
             _migrations = migrations.OrderBy(m => m.FromVersion).ToList();
             
-            // Configure JSON serialization
-            _jsonOptions = new JsonSerializerOptions
+            // Configure JSON serialization with Newtonsoft.Json
+            // Handles 'required' properties and domain models better than System.Text.Json
+            _jsonSettings = new JsonSerializerSettings
             {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                IncludeFields = true, // Include fields for records
-                Converters =
+                Formatting = Formatting.Indented,
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = new List<JsonConverter>
                 {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    new StringEnumConverter { NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy() }
                 }
             };
 
@@ -62,8 +63,8 @@ namespace BlockLife.Core.Infrastructure.Services
                     Version = SaveData.CURRENT_VERSION // Always save in current format
                 };
 
-                // Serialize to JSON
-                var json = JsonSerializer.Serialize(dataToSave, _jsonOptions);
+                // Serialize to JSON using Newtonsoft.Json
+                var json = JsonConvert.SerializeObject(dataToSave, _jsonSettings);
                 
                 // Write to file
                 await File.WriteAllTextAsync(filePath, json);
@@ -89,9 +90,9 @@ namespace BlockLife.Core.Infrastructure.Services
                     return FinFail<SaveData>(Error.New($"No save found in slot {slot}"));
                 }
 
-                // Read and deserialize
+                // Read and deserialize using Newtonsoft.Json
                 var json = await File.ReadAllTextAsync(filePath);
-                var saveData = JsonSerializer.Deserialize<SaveData>(json, _jsonOptions);
+                var saveData = JsonConvert.DeserializeObject<SaveData>(json, _jsonSettings);
                 
                 if (saveData == null)
                 {
@@ -172,33 +173,19 @@ namespace BlockLife.Core.Infrastructure.Services
                     return None;
                 }
 
-                // Read just enough to get metadata
+                // Read just enough to get metadata using Newtonsoft.Json
                 var json = await File.ReadAllTextAsync(filePath);
-                using var document = JsonDocument.Parse(json);
-                var root = document.RootElement;
+                var jObject = JObject.Parse(json);
 
                 var info = new SaveInfo
                 {
                     Slot = slot,
-                    CreatedAt = root.TryGetProperty("createdAt", out var created) 
-                        ? created.GetDateTime() 
-                        : DateTime.MinValue,
-                    LastModifiedAt = root.TryGetProperty("lastModifiedAt", out var modified) 
-                        ? modified.GetDateTime() 
-                        : DateTime.MinValue,
-                    CurrentTurn = root.TryGetProperty("currentTurn", out var turn) 
-                        ? turn.GetInt32() 
-                        : 0,
-                    TotalScore = root.TryGetProperty("totalScore", out var score) 
-                        ? score.GetInt32() 
-                        : 0,
-                    PlayTimeSeconds = root.TryGetProperty("metadata", out var metadata) 
-                                      && metadata.TryGetProperty("playTimeSeconds", out var playTime)
-                        ? playTime.GetDouble() 
-                        : 0,
-                    Version = root.TryGetProperty("version", out var version) 
-                        ? version.GetInt32() 
-                        : 0
+                    CreatedAt = jObject["createdAt"]?.ToObject<DateTime>() ?? DateTime.MinValue,
+                    LastModifiedAt = jObject["lastModifiedAt"]?.ToObject<DateTime>() ?? DateTime.MinValue,
+                    CurrentTurn = jObject["currentTurn"]?.ToObject<int>() ?? 0,
+                    TotalScore = jObject["totalScore"]?.ToObject<int>() ?? 0,
+                    PlayTimeSeconds = jObject["metadata"]?["playTimeSeconds"]?.ToObject<double>() ?? 0,
+                    Version = jObject["version"]?.ToObject<int>() ?? 0
                 };
 
                 return Some(info);
@@ -214,14 +201,14 @@ namespace BlockLife.Core.Infrastructure.Services
         {
             // Ensure we're exporting in current version format
             var dataToExport = saveData with { Version = SaveData.CURRENT_VERSION };
-            return JsonSerializer.Serialize(dataToExport, _jsonOptions);
+            return JsonConvert.SerializeObject(dataToExport, _jsonSettings);
         }
 
         public Fin<SaveData> ImportSave(string saveString)
         {
             try
             {
-                var saveData = JsonSerializer.Deserialize<SaveData>(saveString, _jsonOptions);
+                var saveData = JsonConvert.DeserializeObject<SaveData>(saveString, _jsonSettings);
                 
                 if (saveData == null)
                 {

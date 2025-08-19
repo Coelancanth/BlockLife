@@ -1,19 +1,17 @@
-using Godot;
-using GdUnit4;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using BlockLife.Godot.Scenes;
-using BlockLife.Godot.Features.Block.Placement;
-using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Domain.Block;
+using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Infrastructure.Services;
-using Microsoft.Extensions.DependencyInjection;
+using BlockLife.godot_project.scenes.Main;
 using FluentAssertions;
-using static GdUnit4.Assertions;
-using System.Linq;
+using GdUnit4;
+using Godot;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace BlockLife.Tests.Integration.Features.BlockPlacement
+namespace BlockLife.test.integration.features.block_placement
 {
     /// <summary>
     /// Standalone integration test following the SimpleSceneTest pattern

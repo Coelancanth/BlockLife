@@ -1,16 +1,15 @@
 #if TOOLS
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using BlockLife.Core.Infrastructure.Logging;
 using Godot;
 using Godot.Collections;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
-namespace BlockLife.Godot.Infrastructure.Logging;
+namespace BlockLife.godot_project.infrastructure.logging;
 
 [Tool]
 [GlobalClass]

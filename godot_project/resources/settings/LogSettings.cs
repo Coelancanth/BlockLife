@@ -1,9 +1,8 @@
+using System.Collections.Generic;
 using Godot;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
 
-namespace BlockLife.Godot.Resources;
+namespace BlockLife.godot_project.resources.settings;
 
 /// <summary>
 /// A Godot Resource to hold configuration for the logging system.

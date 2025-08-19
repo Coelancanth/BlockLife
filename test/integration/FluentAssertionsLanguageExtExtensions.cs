@@ -1,11 +1,11 @@
+using System;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using LanguageExt;
 using LanguageExt.Common;
-using System;
 
-namespace BlockLife.Tests.Integration
+namespace BlockLife.test.integration
 {
     /// <summary>
     /// FluentAssertions extension methods for LanguageExt types.

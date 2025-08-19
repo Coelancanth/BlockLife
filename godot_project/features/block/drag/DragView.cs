@@ -1,21 +1,16 @@
-using Godot;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Core.Features.Block.Drag.Views;
 using BlockLife.Core.Features.Block.Drag.Presenters;
+using BlockLife.Core.Features.Block.Drag.Views;
 using BlockLife.Core.Infrastructure.Services;
-using BlockLife.Godot.Features.Block.Placement;
-using BlockLife.Godot.Scenes;
-using BlockLife.Godot.Infrastructure;
+using BlockLife.godot_project.features.block.placement;
+using BlockLife.godot_project.infrastructure;
+using BlockLife.godot_project.scenes.Main;
+using Godot;
 using LanguageExt;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BlockLife.Godot.Features.Block.Drag;
+namespace BlockLife.godot_project.features.block.drag;
 
 /// <summary>
 /// Godot implementation of IDragView for drag-and-drop operations.

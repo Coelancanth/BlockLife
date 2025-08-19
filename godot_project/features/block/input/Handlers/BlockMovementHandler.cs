@@ -3,13 +3,12 @@ using System.Threading.Tasks;
 using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Commands;
 using BlockLife.Core.Infrastructure.Services;
-using BlockLife.Godot.Features.Block.Input.State;
+using BlockLife.godot_project.features.block.input.State;
 using LanguageExt;
-using static LanguageExt.Prelude;
 using MediatR;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Input.Handlers;
+namespace BlockLife.godot_project.features.block.input.Handlers;
 
 /// <summary>
 /// Handles block movement completion after drag operations.

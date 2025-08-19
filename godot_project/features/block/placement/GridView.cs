@@ -1,13 +1,12 @@
-using Godot;
 using System.Threading.Tasks;
-using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Core.Presentation;
-using BlockLife.Godot.Features.Block.Performance;
-using BlockLife.Godot.Infrastructure;
-using BlockLife.Godot.Scenes;
+using BlockLife.Core.Features.Block.Placement;
+using BlockLife.godot_project.features.block.performance;
+using BlockLife.godot_project.infrastructure;
+using BlockLife.godot_project.scenes.Main;
+using Godot;
 
-namespace BlockLife.Godot.Features.Block.Placement;
+namespace BlockLife.godot_project.features.block.placement;
 
 public partial class GridView : Control, IBlockManagementView
 {
