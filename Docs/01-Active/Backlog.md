@@ -59,7 +59,97 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-*No critical items at this time. All critical blockers have been resolved.*
+### TD_015: Add Save System Versioning
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: XS (30 minutes)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Markers**: [ARCHITECTURE] [SAFETY-CRITICAL]
+
+**What**: Add version field to SaveData and implement migration framework
+**Why**: Once players have save files, format changes become extremely painful without versioning
+
+**Tech Lead Decision** (2025-08-19):
+✅ **PRE-APPROVED** - Must be done before any save system is exposed to users
+
+**Technical Approach**:
+```csharp
+public class SaveData 
+{
+    public const int CURRENT_VERSION = 1;
+    public int Version { get; set; } = CURRENT_VERSION;
+    public GameState State { get; set; }
+    
+    public static SaveData Load(string json) 
+    {
+        var data = JsonSerializer.Deserialize<SaveData>(json);
+        return MigrateToLatest(data);
+    }
+    
+    private static SaveData MigrateToLatest(SaveData data) 
+    {
+        // Future migrations go here
+        while (data.Version < CURRENT_VERSION) 
+        {
+            data = MigrateVersion(data);
+        }
+        return data;
+    }
+}
+```
+
+**Done When**:
+- SaveData has Version field
+- Load method handles migration
+- Test proves v0→v1 migration works
+- Migration pattern documented
+
+**Depends On**: None - Do immediately
+
+### TD_016: Document Grid Coordinate System
+**Status**: Proposed  
+**Owner**: Tech Lead → Dev Engineer
+**Size**: XS (15 minutes)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Markers**: [ARCHITECTURE] [DOCUMENTATION]
+
+**What**: Document and enforce single coordinate system convention
+**Why**: Mixed coordinate systems cause subtle bugs that are nightmare to debug
+
+**Tech Lead Decision** (2025-08-19):
+✅ **PRE-APPROVED** - Prevents coordinate confusion bugs
+
+**Technical Approach**:
+1. Add to Architecture.md:
+   ```markdown
+   ## Grid Coordinate Convention
+   - Origin: (0,0) at bottom-left corner
+   - X-axis: Increases rightward (0 → GridWidth-1)
+   - Y-axis: Increases upward (0 → GridHeight-1)
+   - Access pattern: grid[x,y] consistently
+   - Godot alignment: Y+ is up (not down like screen coords)
+   ```
+
+2. Add assertion helper:
+   ```csharp
+   public static class GridAssert 
+   {
+       public static void ValidateCoordinate(Vector2Int pos, string context) 
+       {
+           Debug.Assert(pos.x >= 0, $"{context}: X must be >= 0");
+           Debug.Assert(pos.y >= 0, $"{context}: Y must be >= 0");
+       }
+   }
+   ```
+
+**Done When**:
+- Architecture.md has coordinate convention section
+- GridAssert helper exists
+- All grid access uses consistent pattern
+
+**Depends On**: None - Do immediately
 
 
 ## 📈 Important (Do Next)
@@ -484,6 +574,121 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 - Creates skill gap between new and experienced players
 - Watch for degenerate strategies (infinite chains)
 
+### TD_017: Create Centralized Turn Manager
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer  
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Markers**: [ARCHITECTURE] [ROOT-CAUSE]
+
+**What**: Centralize turn/phase management in single service
+**Why**: Scattered turn logic causes race conditions, makes replay/undo impossible
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED** - Implement before VS_004 (Auto-Spawn)
+
+**Technical Approach**:
+```csharp
+public enum TurnPhase 
+{
+    SpawnPhase,      // New blocks appear
+    PlayerPhase,     // Player can act
+    ResolutionPhase, // Patterns process
+    EndPhase         // Cleanup, check game over
+}
+
+public interface ITurnManager 
+{
+    int CurrentTurn { get; }
+    TurnPhase CurrentPhase { get; }
+    bool IsPlayerActionAllowed { get; }
+    
+    Task<Fin<Unit>> StartNewTurn();
+    Task<Fin<Unit>> AdvancePhase();
+    Task<Fin<Unit>> ExecutePlayerAction(IRequest command);
+}
+
+public class TurnManager : ITurnManager 
+{
+    private readonly IMediator _mediator;
+    
+    public async Task<Fin<Unit>> StartNewTurn() 
+    {
+        CurrentTurn++;
+        CurrentPhase = TurnPhase.SpawnPhase;
+        
+        // Publish notification for spawn system
+        await _mediator.Publish(new TurnStartedNotification(CurrentTurn));
+        
+        return await AdvancePhase();
+    }
+    
+    public async Task<Fin<Unit>> ExecutePlayerAction(IRequest command) 
+    {
+        if (CurrentPhase != TurnPhase.PlayerPhase)
+            return Fin<Unit>.Fail(Error.New("Actions only allowed during player phase"));
+            
+        var result = await _mediator.Send(command);
+        if (result.IsSucc)
+            await AdvancePhase();
+            
+        return result;
+    }
+}
+```
+
+**Done When**:
+- ITurnManager interface defined
+- TurnManager implementation with phases
+- All player actions go through TurnManager
+- Turn flow: Spawn → Player → Resolve → End
+- 5+ unit tests for phase transitions
+
+**Depends On**: None - Do before VS_004
+
+### TD_018: Add Block Unique IDs
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (1-2 hours)  
+**Priority**: Important
+**Created**: 2025-08-19
+**Markers**: [ARCHITECTURE]
+
+**What**: Add unique identifier to Block entity
+**Why**: Position-based identity breaks with animations, history tracking, future multiplayer
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED** - Implement before complex features need block tracking
+
+**Technical Approach**:
+```csharp
+public record Block 
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public BlockType Type { get; init; }
+    public int Tier { get; init; } = 1;
+    public Vector2Int Position { get; init; }
+    
+    // Position changes, ID stays same
+    public Block MoveTo(Vector2Int newPos) => this with { Position = newPos };
+}
+
+// Commands reference blocks by ID, not position
+public record MoveBlockCommand(
+    Guid BlockId,  // Not Vector2Int position
+    Vector2Int TargetPosition
+) : IRequest<Fin<Unit>>;
+```
+
+**Done When**:
+- Block has Id field (Guid or int)
+- Commands use BlockId not position
+- Grid service has GetBlockById method
+- Tests verify ID persistence through moves
+
+**Depends On**: None
+
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -530,6 +735,54 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 - Transmutation works alongside matching and tier-up
 - Visual indication of transmuted block types
 - 5+ tests for transmutation system
+
+### TD_019: Create Resource Manager Service
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (2 hours)
+**Priority**: Ideas
+**Created**: 2025-08-19
+
+**What**: Centralize all resource loading through single service
+**Why**: Scattered GD.Load calls make asset reorganization and bundling painful
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED for later** - Not critical path, do after MVP
+
+**Technical Approach**:
+```csharp
+public interface IResourceManager 
+{
+    Texture2D GetBlockTexture(BlockType type, int tier);
+    AudioStream GetSoundEffect(SoundType type);
+    PackedScene GetPrefab(string prefabName);
+    T LoadResource<T>(string path) where T : Resource;
+}
+
+public class ResourceManager : IResourceManager 
+{
+    private readonly Dictionary<string, Resource> _cache = new();
+    
+    public Texture2D GetBlockTexture(BlockType type, int tier) 
+    {
+        var key = $"block_{type}_t{tier}";
+        if (!_cache.ContainsKey(key)) 
+        {
+            var path = $"res://assets/blocks/{type.ToString().ToLower()}_tier{tier}.png";
+            _cache[key] = GD.Load<Texture2D>(path);
+        }
+        return (Texture2D)_cache[key];
+    }
+}
+```
+
+**Done When**:
+- IResourceManager interface exists
+- All GD.Load calls go through manager
+- Resources are cached appropriately
+- Easy to swap resource paths/bundles
+
+**Depends On**: None - Do after MVP
 
 ### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
 **Status**: Approved - Immediate Part Ready
