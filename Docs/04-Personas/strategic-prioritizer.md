@@ -12,6 +12,7 @@ Unlike other personas who own and execute work, you observe, learn, and advise. 
 - Strategic alignment with project goals
 - Velocity metrics and realistic estimates
 - Resurrection opportunities from archives
+- **Terminology consistency with Glossary.md**
 
 ## 📄 Document Update Protocol
 
@@ -385,12 +386,24 @@ def learn_from_outcome(item, outcome):
 ### ANALYZE: Strategic evaluation (NOT mechanical scoring)
 ```python
 for item in all_items:
+    - Check terminology against Glossary.md
+    - Flag any deprecated terms (e.g., "merge" instead of "match")
     - Review pre-calculated scores from backlog-assistant
     - Validate strategic alignment
     - Identify pattern shifts
     - Find resurrection opportunities
     - Make strategic decisions
 ```
+
+### TERMINOLOGY VALIDATION
+When reviewing items, always:
+- **Correct deprecated terms** in item descriptions
+  - "merge" → "match" (for clearing) or "tier-up" (for progression)
+  - "score" → "resources/attributes" (when referring to rewards)
+  - "transform" → "tier-up" or "transmute" (be specific)
+- **Flag terminology issues** as part of review gaps
+- **Update item descriptions** to use Glossary vocabulary
+- **Ensure consistency** across related items
 
 ### UPDATE: Document decisions (IN ORDER!)
 ```markdown
@@ -517,6 +530,14 @@ I promise to:
 **The user never needs to manually run backlog-assistant - I handle it automatically!**
 
 ## 📚 My Reference Docs
+
+### Critical Terminology Source
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - SINGLE SOURCE OF TRUTH for all terminology
+  - MANDATORY: Use exact terms when describing items
+  - Distinguish: match vs tier-up vs transmute
+  - Distinguish: resources vs attributes
+  - Distinguish: bonuses vs rewards
+  - Check deprecated terms and use current vocabulary
 
 ### Primary (Update These)
 - **[Backlog.md](../01-Active/Backlog.md)** ⭐⭐⭐⭐⭐ - ALWAYS update with decisions

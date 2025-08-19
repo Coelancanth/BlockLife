@@ -1,55 +1,87 @@
 # BlockLife Game Design Vision
 
-*A tile-based life simulation game that combines merge mechanics with resource management and life progression through different life stages.*
+*A block-based life simulation game that combines merge mechanics with resource management and life progression through different life stages.*
 
 ---
 
 ## 🎯 Core Vision
 
-BlockLife simulates the journey of human life through strategic tile management. Players navigate different life stages, each with unique mechanics, challenges, and emotional themes. The game emphasizes meaningful choices, resource balance, and the bittersweet nature of time's passage.
+BlockLife simulates the journey of human life through strategic block management. Players navigate different life stages, each with unique mechanics, challenges, and emotional themes. The game emphasizes meaningful choices, resource balance, and the bittersweet nature of time's passage.
 
 ---
 
 ## 🎲 Core Gameplay Mechanics (Designer Confirmed)
 
-### Merge System - Triple Town Model
-**Fundamental Rule**: 3 adjacent matching blocks merge into higher level
-- **Merge Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
-- **Result Placement**: Merged block appears at the last-moved/placed block position
-- **Level Progression**: Level 1 + Level 1 + Level 1 → Level 2 (and so on)
-- **Same-Type Only** (Phase 1): Work blocks only merge with Work, Study with Study, etc.
+### Dual Match/Transform System with Progression Economy
+**Core Philosophy**: Start with matching for resources, unlock transformation through progression
+- **Phase 1 (Default)**: Match blocks to clear them and earn attributes
+- **Phase 2 (Unlockable)**: Transform matched blocks into higher tiers
+- **Player Agency**: Choose between matching for resources OR transforming for progression
+
+### Match-3 System (Always Available)
+**Fundamental Rule**: 3+ adjacent same-type blocks can be matched to clear
+- **Match Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
+- **Result**: Blocks disappear, granting attributes based on type and tier
+- **Attribute Rewards**: Each block type grants specific resources:
+  - Work blocks → Money
+  - Study blocks → Knowledge  
+  - Health blocks → Health
+  - Relationship blocks → Social Capital
+- **Tier Scaling**: Higher tier blocks grant exponentially more attributes when matched
+
+### Transform System (Unlockable)
+**Progression Mechanic**: Spend earned attributes to unlock transformation abilities
+- **Unlock Cost**: Each block type requires attributes to unlock its transform ability
+- **Transform Rule**: 3 same-type blocks → 1 block of next tier (at result position)
+- **Strategic Choice**: Once unlocked, player chooses match OR transform
+- **Tier Progression Example**:
+  - 3× Work Tier-1 → 1× Work Tier-2 (if Work transform unlocked)
+  - 3× Work Tier-2 → 1× Work Tier-3 (requires higher unlock)
+- **Cross-Type Transforms** (Advanced): Unlock special combinations like Work + Study → Career
+
+### Attribute Economy
+**Resource Management**: Attributes are the core currency driving progression
+- **Earning**: Match blocks to gain attributes
+- **Spending**: Use attributes to unlock abilities, transformations, and features
+- **Types**: Money, Knowledge, Health, Social Capital, Creativity
+- **Persistence**: Attributes carry across turns, building strategic reserves
+- **Unlock Examples**:
+  - 100 Money → Unlock Work block transformation
+  - 200 Knowledge → Unlock Study block transformation
+  - 500 Money + 300 Knowledge → Unlock Career combination
 
 ### Auto-Spawn System
-**Round-Based Pressure**: Each turn spawns new blocks automatically
-- **Spawn Timing**: After each player action (move/merge)
+**Turn-Based Pressure**: Each turn spawns new blocks automatically
+- **Spawn Timing**: At TURN START (before player action)
+- **Turn Flow**: Spawn → Player sees board → Player acts → Matches resolve → Turn ends
 - **Spawn Rules**: Random type, empty position
 - **Difficulty Scaling**: Spawn rate/quantity increases over time
-- **Strategic Element**: Players must manage space while pursuing merges
+- **Strategic Element**: Players must manage space while pursuing matches/transforms
 
-### Chain Reaction System (Core Mechanic)
-**The Magic Moment**: Merges that trigger additional merges automatically
-- **Cascade Detection**: After any merge completes, check if result triggers new merges
-- **Combo Multiplier**: Each chain step increases score (1x → 2x → 4x → 8x)
-- **Visual Celebration**: Each chain level gets bigger effects/sounds
-- **Strategic Depth**: Players set up elaborate chain reactions for massive scores
+### Chain Reaction System
+**The Magic Moment**: Matches/transforms that trigger additional matches automatically
+- **Chain Detection**: After any match/transform completes, check for new opportunities
+- **Attribute Multiplier**: Each chain step increases rewards (1x → 2x → 4x → 8x)
+- **Visual Celebration**: Each chain step gets bigger effects/sounds
+- **Strategic Depth**: Players set up elaborate chain reactions for massive attribute gains
 
-**Example Chain**:
-1. Merge three Level-1 Work blocks → Level-2 Work appears
-2. Level-2 Work completes a group with two other Level-2s → Auto-merges to Level-3
-3. Level-3 triggers another adjacent group → Chain continues
-4. Score: 10 (base) × 1 × 2 × 4 = 80 points instead of just 10!
+**Example Chain with Attributes**:
+1. Match three Tier-1 Work blocks → +30 Money (10 per block)
+2. This creates space for three Study blocks to connect → Auto-match → +60 Knowledge (×2 chain)
+3. The cleared space connects Health blocks → Auto-match → +120 Health (×4 chain)
+4. Total earned: 30 Money + 60 Knowledge + 120 Health!
 
 ### Placement Strategy
-- **Grid Management**: Balance between keeping space for moves and setting up merges
-- **Cascade Planning**: Deliberately position blocks to trigger chain reactions
+- **Grid Management**: Balance between keeping space for moves and setting up matches
+- **Chain Planning**: Deliberately position blocks to trigger chain reactions
 - **Risk/Reward**: Complex setups risk grid filling but offer huge rewards
-- **Skill Expression**: Difference between beginners (random merges) and experts (5+ chains)
+- **Skill Expression**: Difference between beginners (random matches) and experts (5+ chains)
 
 ### Future Complexity Layers (Post-MVP)
-- **Cross-Type Merging**: 2 Work + 1 Study → Career Opportunity
-- **Merge Effects**: Special blocks spawn additional blocks
-- **Life Stage Modifiers**: Different merge rules per life stage
-- **Chain Bonus Blocks**: Special blocks created only through long chains
+- **Cross-Type Transmutation**: 2 Work + 1 Study → Career Opportunity
+- **Match Effects**: Special blocks spawn additional blocks  
+- **Life Stage Modifiers**: Different match/tier-up rules per life stage
+- **Chain Reward Blocks**: Special blocks created only through long chains
 
 ---
 
@@ -62,14 +94,14 @@ BlockLife simulates the journey of human life through strategic tile management.
 
 ### Advanced Effect System
 Effects triggered by specific conditions:
-- **Trigger Conditions**: Combos, patterns, life events
+- **Trigger Conditions**: Chains, patterns, life events
 - **Effect Types**:
   - **Teleport**: Move blocks instantly via "Opportunity" blocks
   - **Transform**: Change block types
   - **Freeze**: Lock blocks temporarily
-  - **Split**: Divide high-level blocks for strategic positioning
+  - **Split**: Divide high-tier blocks for strategic positioning
   - **Area Effects**: Affect multiple blocks in range
-  - **Inertia**: High-level blocks gain automatic merging behavior
+  - **Inertia**: High-tier blocks gain automatic merging behavior
 
 ### Random Event System
 - **Crisis Events**: Unexpected challenges requiring adaptation
@@ -79,15 +111,15 @@ Effects triggered by specific conditions:
 
 ### Skills System
 Unlockable abilities through progression:
-- **Spawn**: Create specific blocks on empty tiles
+- **Spawn**: Create specific blocks on empty positions
 - **Remove**: Clear unwanted blocks
 - **Save**: Checkpoint system
 - **Enhance**: Increase block movement range
-- **Upgrade**: Level up blocks directly
+- **Upgrade**: Tier up blocks directly
 
 ### Skill-Enhanced Interactions
 - **Instant Merge**: Special abilities creating immediate merge opportunities
-- **Pattern Recognition**: Advanced matching beyond adjacency
+- **Pattern Recognition**: Advanced merging beyond adjacency
 - **Custom Patterns**: Player-defined merge rules
 
 ---
@@ -163,7 +195,7 @@ Personality develops through actions, not initial selection. Player behavior sha
 #### Information Processing (S/N)
 - **Sensing**: Focus on concrete, immediate actions
 - **Intuition**: Complex planning, abstract thinking
-- **Effect**: S-types get steady bonuses, N-types get combo rewards
+- **Effect**: S-types get steady bonuses, N-types get chain rewards
 
 #### Decision Making (T/F)
 - **Thinking**: Maximize efficiency, prioritize logic
@@ -197,7 +229,7 @@ Starting conditions that shape early life:
 Rule-changing abilities unlocked through personality development:
 - **Logical Genius**: Merge non-adjacent blocks in straight lines
 - **Social Butterfly**: Social blocks require only 2 instead of 3 to merge
-- **Artistic Intuition**: 10% chance for merges to level up twice
+- **Artistic Intuition**: 10% chance for merges to tier up twice
 - **Meticulous Planner**: Storage ability to save blocks for strategic timing
 - **Born Optimist**: Convert negative blocks to positive ones
 - **Boundless Energy**: First merge each turn costs no energy

@@ -75,6 +75,7 @@ You: "That sounds like over-engineering. The current DI
 3. **[Architecture.md](Docs/03-Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
 4. **[Templates/](Docs/05-Templates/)** ⭐⭐⭐⭐ - Work item templates
 
+**Architecture Decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Major technical decisions are documented as ADRs
 **Navigation**: [README.md](Docs/README.md) for user journey navigation.
 
 ## 📖 Language & Terminology
@@ -298,6 +299,7 @@ See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)
 - **Architecture guidance**: [Architecture.md](Docs/03-Reference/Architecture.md)
+- **Architecture decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Documented architectural choices
 - **Agent patterns**: [QuickReference.md](Docs/03-Reference/QuickReference.md)
 - **Context7 examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
 

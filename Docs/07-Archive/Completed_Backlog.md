@@ -218,6 +218,22 @@
 **Unblocked**: Cleaner input handling structure without over-engineering
 [METADATA: architecture, input-system, simplification, anti-over-engineering]
 
+### TD_016: Update All Documentation for Glossary Consistency ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 2-3 hours
+**Outcome**: Fixed 33 terminology violations across 6 critical files ensuring VS_003 implementation uses correct vocabulary
+**Lessons**: Systematic grep-based detection prevents terminology drift, authority docs must be self-consistent
+**Unblocked**: VS_003 implementation with clean, consistent vocabulary foundation
+[METADATA: documentation, terminology, glossary, consistency, vs_003-preparation]
+
+### TD_015: Create Ubiquitous Language Glossary ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: 30 minutes
+**Outcome**: Created authoritative vocabulary preventing terminology confusion with clear code references
+**Lessons**: Early glossary creation prevents cascade of inconsistent naming across codebase
+**Unblocked**: VS_003-005 can use consistent terminology, reduced code review discussion
+[METADATA: glossary, ubiquitous-language, terminology, architecture-foundation]
+
 ---
 *Append-only file - never delete historical entries*
 *Each entry helps the Prioritizer learn and prevent repeated mistakes*

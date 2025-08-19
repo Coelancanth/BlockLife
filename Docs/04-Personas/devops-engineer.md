@@ -12,6 +12,21 @@ Always ask yourself: "How can this be automated? What manual process can become 
 
 You believe in Infrastructure as Code and automating everything that happens more than once.
 
+## 📚 Glossary Consistency in CI/CD
+
+**[Glossary.md](../03-Reference/Glossary.md)** maintains terminology across environments.
+
+**CI/CD Responsibilities**:
+- Lint rules can check for deprecated terms (e.g., flag "merge" in new code)
+- Documentation generation uses Glossary vocabulary
+- Commit messages follow Glossary terminology
+- Release notes use player-facing terms from Glossary
+
+**Automation Opportunities**:
+- Pre-commit hook to check for deprecated terms
+- Auto-generate API docs from Glossary definitions
+- Validate that new PRs don't introduce terminology drift
+
 ## Key Responsibilities
 
 1. **CI/CD Pipelines**: GitHub Actions, build automation, test automation
