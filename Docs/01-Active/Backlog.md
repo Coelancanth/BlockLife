@@ -63,6 +63,174 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
+### VS_003: Triple-Match Merging (Same-Type Only) [Score: 85/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead (for breakdown)
+**Size**: M (8-10 hours - new mechanic, not simple extension)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: None (separate from drag/move)
+
+**What**: Implement Triple Town-style merging - 3 adjacent same-type blocks merge into higher level
+**Why**: Creates strategic gameplay with clear, simple rules that players instantly understand
+
+**Core Mechanic** (Triple Town Model):
+- **3+ adjacent blocks** of same type (orthogonal only, not diagonal)
+- **Merge triggers** when player moves a block to complete a group of 3+
+- **Result appears** at the last-moved block position
+- **Level progression**: Three Level-1 blocks → One Level-2 block
+
+**Implementation Approach**:
+- Create IMergeDetector interface for future extensibility
+- Implement AdjacentSameTypeMergeDetector (uses flood-fill internally)
+- Detect merges after any move/place action via detector
+- Remove all but last-moved block from detected group
+- Transform last-moved block to next level
+- Add score based on merge (Level 1 merge = 10pts, Level 2 = 30pts, etc.)
+
+**Done When**:
+- Moving a block to form 3+ adjacent same-type triggers merge
+- Merged block appears at last-moved position
+- Other blocks in merge group disappear with visual effect
+- Score increases and displays (simple text for now)
+- Works for all 9 block types (same-type only)
+- 5+ unit tests covering merge detection and execution
+- 3+ unit tests for scoring calculation
+
+**NOT in Scope** (VS_004+ territory):
+- Auto-spawn system (that's next)
+- Cross-type merging (2 Work + 1 Study combinations)
+- Chain reactions/cascading merges
+- Merge animations beyond simple disappear
+- Special effects or particles
+- Combo multipliers
+
+**Product Owner Ultra-Think Notes**:
+- This is MORE complex than I initially thought - it's a new core mechanic
+- Triple Town model proven fun for 10+ years
+- Same-type only keeps it learnable (9 rules vs 100+ combinations)
+- Must feel responsive - merge detection after EVERY action
+- **Architecture Decision**: IMergeDetector interface prevents lock-in to flood-fill
+- Future rule engine can swap detector implementation without touching other code
+- This is strategic abstraction - minimal cost now, huge flexibility later
+
+### VS_004: Auto-Spawn System [Score: 75/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead (for breakdown)
+**Size**: S (4-6 hours - straightforward mechanic)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: VS_003 (need merging to manage spawned blocks)
+
+**What**: Automatically spawn new blocks after player actions to create natural game pressure
+**Why**: Transforms sandbox into challenging game with failure state and strategic decisions
+
+**Core Mechanic**:
+- **Spawn Trigger**: After EVERY player action (move, place, merge)
+- **Spawn Count**: 1 block per turn (adjustable for difficulty later)
+- **Spawn Position**: Random empty tile
+- **Spawn Type**: Random from available block types (weighted distribution)
+- **Game Over**: When spawn fails due to no empty tiles
+
+**Implementation Approach**:
+- Hook into existing command completion (after move/place/merge)
+- Find all empty positions on grid
+- If empty positions exist: spawn random block type at random position
+- If no empty positions: trigger game over state
+- Visual feedback for spawned block (appear animation/effect)
+
+**Spawn Distribution** (initial):
+- All 9 block types equally weighted (11.1% each)
+- Future: Weight based on life stage or difficulty
+
+**Done When**:
+- Block spawns after every player action
+- Spawns only on empty tiles
+- Visual indication of newly spawned block
+- Game over triggers when grid is full
+- Game over screen with final score
+- 5+ unit tests for spawn logic
+- 2+ tests for game over detection
+
+**NOT in Scope**:
+- Difficulty progression (spawn rate increase)
+- Weighted spawn probabilities
+- Special spawn patterns or rules
+- Power-ups to clear spawned blocks
+- Spawn preview/prediction
+- Multiple spawns per turn
+- Life-stage specific spawn rules
+
+**Product Owner Notes**:
+- Start with simplest version - one block per turn
+- This creates the core gameplay loop: Act → Spawn → React
+- Game over condition finally makes score meaningful
+- Must feel fair - random but not cruel
+
+### VS_005: Chain Reaction System [Score: 90/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead (for breakdown)
+**Size**: M (6-8 hours - builds on VS_003 foundation)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: VS_003 (need basic merging first)
+
+**What**: Add cascading merges that trigger automatically, with exponential scoring multipliers
+**Why**: Creates the addictive "YES!" moments that separate good puzzle games from great ones
+
+**Core Mechanic**:
+- **Cascade Trigger**: After any merge completes, check if result can trigger new merge
+- **Recursive Detection**: Each cascade can trigger another cascade
+- **Multiplier System**: Base × 1 → ×2 → ×4 → ×8 → ×16 (exponential)
+- **Chain Counter**: Display "Chain ×2!", "Chain ×3!" etc.
+- **Celebration**: Bigger effects for longer chains
+
+**Implementation Approach**:
+- After merge completes, run merge detection on result position
+- If new merge detected, execute it with increased multiplier
+- Continue recursively until no more merges possible
+- Track chain depth for scoring and display
+- Add brief delay between cascades for visual clarity
+
+**Scoring Formula**:
+```
+Chain 1: 10 points × 1 = 10
+Chain 2: 10 points × 2 = 20
+Chain 3: 10 points × 4 = 40
+Chain 4: 10 points × 8 = 80
+Total for 4-chain: 150 points!
+```
+
+**Done When**:
+- Merges automatically trigger follow-up merges
+- Score multiplier increases exponentially per chain
+- Chain counter displays during cascades
+- Visual delay between cascade steps (player can follow what happened)
+- Different sound effects for each chain level
+- 5+ unit tests for cascade detection
+- 3+ tests for multiplier calculation
+- 2+ tests for recursive cascade limits
+
+**NOT in Scope**:
+- Special chain-only blocks
+- Chain preview/planning UI
+- Undo for chains
+- Chain-specific animations (use simple for now)
+- Maximum chain bonuses/achievements
+- Chain-triggered special events
+
+**Critical Design Decisions**:
+- **Delay Between Cascades**: 0.3-0.5 seconds (fast enough to feel smooth, slow enough to see)
+- **Max Chain Depth**: Unlimited (let players find crazy combos)
+- **Multiplier Cap**: No cap initially (see how high players can go)
+
+**Product Owner Notes**:
+- This is THE feature that makes match-3 games addictive
+- Must feel satisfying - sound/visual feedback crucial
+- Exponential scoring rewards elaborate setups
+- Creates skill gap between new and experienced players
+- Watch for degenerate strategies (infinite chains)
+
 
 
 ## 💡 Ideas (Do Later)

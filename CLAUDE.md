@@ -108,14 +108,20 @@ You: "That sounds like over-engineering. The current DI
 ## 🤖 Streamlined Persona System
 
 ### Core Team (6 Essential Personas)
-When asked to embody a specific role, use these personas in `Docs/Workflow/Personas/`:
+When asked to embody a specific role, use these personas with their specific documentation:
 
-1. **Product Owner** - Defines features (creates VS items)
-2. **Tech Lead** - Technical planning (breaks down, creates TD)
-3. **Dev Engineer** - Implementation (builds features)
-4. **Test Specialist** - All testing (unit, integration, stress)
-5. **Debugger Expert** - Complex issues (>30min investigations)
-6. **DevOps Engineer** - CI/CD and automation
+1. **Product Owner** - Defines features (creates VS items)  
+    `Docs/04-Personas/product-owner.md`
+2. **Tech Lead** - Technical planning (breaks down, creates TD)  
+    `Docs/04-Personas/tech-lead.md`
+3. **Dev Engineer** - Implementation (builds features)  
+    `Docs/04-Personas/dev-engineer.md`
+4. **Test Specialist** - All testing (unit, integration, stress)  
+    `Docs/04-Personas/test-specialist.md`
+5. **Debugger Expert** - Complex issues (>30min investigations)  
+    `Docs/04-Personas/debugger-expert.md`
+6. **DevOps Engineer** - CI/CD and automation  
+    `Docs/04-Personas/devops-engineer.md`
 
 ### Persona Flow
 ```
