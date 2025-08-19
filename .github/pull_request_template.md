@@ -1,20 +1,28 @@
-## Summary
-<!-- Brief description of changes -->
+## 📋 Work Item Reference
+<!-- For VS/BR/TD items, use branch naming: feat/vs-XXX-description -->
+**Work Item**: <!-- e.g., VS_003, BR_002, TD_009 -->
+**Backlog Link**: <!-- Link to item in Docs/01-Active/Backlog.md -->
 
-## Type of Change
-- [ ] 🐛 Bug fix (BR)
-- [ ] ✨ New feature (VS)
-- [ ] 🔧 Technical debt/refactoring (TD)
-- [ ] 📝 Documentation update
-- [ ] 🧪 Test improvement
+## 📝 What Changed
+<!-- Brief summary of implementation -->
 
-## Testing
-- [ ] Tests pass locally (`./build.ps1 test` or `./build.sh test`)
-- [ ] New tests added (if applicable)
-- [ ] Manual testing completed
+## ✅ Checklist
+<!-- Check all that apply -->
+- [ ] Branch follows naming convention (`feat/vs-XXX`, `fix/br-XXX`, `feat/td-XXX`)
+- [ ] Work item exists in Backlog.md
+- [ ] Tests added/updated
+- [ ] Build passes locally (`./scripts/build.ps1 test`)
+- [ ] No merge conflicts with main
 
-## Checklist
-- [ ] Followed existing code patterns (especially Move Block pattern)
-- [ ] No over-engineering or unnecessary complexity
-- [ ] Changes are focused and minimal
-- [ ] Updated relevant documentation (if needed)
+## 🎯 Implementation Notes
+<!-- Any decisions, trade-offs, or important context -->
+
+## 🧪 Testing
+<!-- How to verify this works -->
+
+---
+*Automated checks will verify:*
+- 🔒 No conflicting PRs for same work item
+- ✅ CI/build passes
+- 🔄 Branch is up-to-date with main
+- 👁️ Code review approval

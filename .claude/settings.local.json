@@ -36,7 +36,9 @@
       "WebFetch(domain:docs.anthropic.com)",
       "mcp__context7__resolve-library-id",
       "Bash(git fetch:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(git commit:*)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": [],

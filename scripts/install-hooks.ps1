@@ -34,11 +34,19 @@ foreach ($hook in $hooks) {
 Write-Host ""
 Write-Host "🎉 Git hooks installed successfully!" -ForegroundColor Green
 Write-Host ""
-Write-Host "The pre-push hook will now:" -ForegroundColor Yellow
+Write-Host "The hooks will now:" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Pre-checkout hook:" -ForegroundColor Cyan
+Write-Host "   • Validate branch naming (feat/vs-XXX, fix/br-XXX, feat/td-XXX)"
+Write-Host "   • Remind you to check the backlog for work items"
+Write-Host "   • Prevent invalid branch names"
+Write-Host ""
+Write-Host "Pre-push hook:" -ForegroundColor Cyan
 Write-Host "   • Block direct pushes to main"
 Write-Host "   • Ensure your branch is rebased on latest main"
 Write-Host "   • Prevent merge conflicts and duplicate work"
 Write-Host ""
-Write-Host "To test the hook, try:" -ForegroundColor Cyan
-Write-Host "   git push  (it will check if you're up to date)"
+Write-Host "To test the hooks, try:" -ForegroundColor Green
+Write-Host "   git checkout -b test-branch  (validates naming)"
+Write-Host "   git push                     (checks if up to date)"
 Write-Host ""
