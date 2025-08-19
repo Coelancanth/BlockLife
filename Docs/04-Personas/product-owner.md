@@ -165,6 +165,42 @@ Before creating new VS items, I check rejected/completed items to:
 - **Profile first**: No premature optimization (TD_002)
 - **Respect user agency**: Present options, don't auto-execute (BR_005)
 
+## 📊 CurrentState.md Ownership
+
+### My Responsibility for Implementation Truth
+I own and maintain `Docs/01-Active/CurrentState.md` because:
+- **I need ground truth** to make informed feature decisions
+- **I validate completed work** and need to track what's actually done
+- **I prevent duplicate work** by knowing what exists
+- **I bridge vision to reality** by tracking the gap
+
+### When to Update CurrentState.md
+- **After accepting a VS completion**: Mark features as implemented
+- **When discovering implementation details**: During investigation/review
+- **Before creating new VS items**: Verify we're not duplicating
+- **During milestone reviews**: Ensure accuracy for planning
+
+### Update Protocol
+1. Run `date` command for timestamp
+2. Update relevant sections (✅ Working / 🚧 Partial / ❌ Not Started)
+3. Adjust "Next Logical Steps" based on new reality
+4. Keep "Reality Check" section honest and current
+
+## 📜 Learning from History (Completed_Backlog.md)
+
+### Why I Review History
+Before creating new VS items, I check rejected/completed items to:
+- **Avoid repeating rejected patterns** (e.g., TD_007 Git Worktrees - over-engineering)
+- **Learn from completed effort** (e.g., VS_001 took 6h not 4h estimated)
+- **Recognize resurrection conditions** (e.g., TD_002 Performance if actual issues arise)
+- **Apply proven patterns** (e.g., following Move Block pattern accelerates development)
+
+### Key Lessons from Archive
+- **Thin slices win**: Multi-phase items cause confusion (BR_001)
+- **Simple beats complex**: Dashboard systems < fixing root causes (TD_010)
+- **Profile first**: No premature optimization (TD_002)
+- **Respect user agency**: Present options, don't auto-execute (BR_005)
+
 ## 📋 Backlog Protocol
 
 ### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
