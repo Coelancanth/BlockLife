@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Godot;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Performance;
+namespace BlockLife.godot_project.features.block.performance;
 
 /// <summary>
 /// Performance profiler for tracking view layer operations.

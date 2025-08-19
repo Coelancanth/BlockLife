@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace BlockLife.Tests.Integration
+namespace BlockLife.test.integration
 {
     public static class TestLogger
     {

@@ -1,11 +1,10 @@
-using System;
 using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Infrastructure.Services;
 using Godot;
 using LanguageExt;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Input.Handlers;
+namespace BlockLife.godot_project.features.block.input.Handlers;
 
 /// <summary>
 /// Handles block inspection input operations.

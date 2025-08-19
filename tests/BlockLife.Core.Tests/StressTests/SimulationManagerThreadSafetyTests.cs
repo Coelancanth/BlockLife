@@ -71,7 +71,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                     var effect = new BlockPlacedEffect(
                         effectId,
                         new Vector2Int(threadId % 50, i % 50), // Distribute across grid
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
 
@@ -137,7 +137,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(threadId, i),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
 
@@ -242,7 +242,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                             var effect = new BlockPlacedEffect(
                                 Guid.NewGuid(),
                                 new Vector2Int(currentCycle, i * 5 + j),
-                                Domain.Block.BlockType.Basic,
+                                BlockLife.Core.Domain.Block.BlockType.Basic,
                                 DateTime.UtcNow
                             );
                             simulationManager.QueueEffect(effect);
@@ -257,7 +257,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                             var effect = new BlockRemovedEffect(
                                 Guid.NewGuid(),
                                 new Vector2Int(currentCycle, i * 3 + j),
-                                Domain.Block.BlockType.Study,
+                                BlockLife.Core.Domain.Block.BlockType.Study,
                                 DateTime.UtcNow
                             );
                             simulationManager.QueueEffect(effect);
@@ -310,7 +310,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(threadId % 20, i % 20),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
 
@@ -392,7 +392,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         var effect = new BlockPlacedEffect(
                             Guid.NewGuid(),
                             new Vector2Int(threadId, i),
-                            Domain.Block.BlockType.Basic,
+                            BlockLife.Core.Domain.Block.BlockType.Basic,
                             DateTime.UtcNow
                         );
 
@@ -456,7 +456,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                     var effect = new BlockPlacedEffect(
                         Guid.NewGuid(),
                         new Vector2Int(i % 100, (i / 100) % 100),
-                        Domain.Block.BlockType.Basic,
+                        BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
                     simulationManager.QueueEffect(effect);

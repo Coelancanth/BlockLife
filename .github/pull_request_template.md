@@ -11,7 +11,7 @@
 - [ ] Branch follows naming convention (`feat/vs-XXX`, `fix/br-XXX`, `feat/td-XXX`)
 - [ ] Work item exists in Backlog.md
 - [ ] Tests added/updated
-- [ ] Build passes locally (`./scripts/build.ps1 test`)
+- [ ] Build passes locally (`./scripts/core/build.ps1 test`)
 - [ ] No merge conflicts with main
 
 ## 🎯 Implementation Notes

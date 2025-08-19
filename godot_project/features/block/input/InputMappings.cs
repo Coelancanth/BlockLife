@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BlockLife.Godot.Features.Block.Input;
+namespace BlockLife.godot_project.features.block.input;
 
 /// <summary>
 /// Centralized configuration for all input mappings.

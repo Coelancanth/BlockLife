@@ -2,8 +2,8 @@
 # This script copies git hooks to the .git/hooks directory
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$hooksSource = Join-Path $scriptPath "git-hooks"
-$hooksTarget = Join-Path (Split-Path -Parent $scriptPath) ".git\hooks"
+$hooksSource = Join-Path $scriptPath "hooks"
+$hooksTarget = Join-Path (Split-Path -Parent (Split-Path -Parent $scriptPath)) ".git\hooks"
 
 if (-not (Test-Path $hooksSource)) {
     Write-Error "❌ Git hooks source directory not found: $hooksSource"
@@ -36,17 +36,21 @@ Write-Host "🎉 Git hooks installed successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "The hooks will now:" -ForegroundColor Yellow
 Write-Host ""
+Write-Host "Pre-commit hook:" -ForegroundColor Cyan
+Write-Host "   • Run build + tests before each commit"
+Write-Host "   • Prevent bad commits from entering history"
+Write-Host "   • Save CI resources with fast local validation"
+Write-Host ""
 Write-Host "Pre-checkout hook:" -ForegroundColor Cyan
 Write-Host "   • Validate branch naming (feat/vs-XXX, fix/br-XXX, feat/td-XXX)"
-Write-Host "   • Remind you to check the backlog for work items"
-Write-Host "   • Prevent invalid branch names"
+Write-Host "   • Link branches to backlog work items"
+Write-Host "   • Guide developers through workflow"
 Write-Host ""
-Write-Host "Pre-push hook:" -ForegroundColor Cyan
-Write-Host "   • Block direct pushes to main"
-Write-Host "   • Ensure your branch is rebased on latest main"
-Write-Host "   • Prevent merge conflicts and duplicate work"
+Write-Host "Note:" -ForegroundColor Yellow
+Write-Host "   GitHub branch protection handles main branch security"
+Write-Host "   These hooks focus on quality and workflow guidance"
 Write-Host ""
 Write-Host "To test the hooks, try:" -ForegroundColor Green
-Write-Host "   git checkout -b test-branch  (validates naming)"
-Write-Host "   git push                     (checks if up to date)"
+Write-Host "   git checkout -b feat/vs-001-test  (validates naming)"
+Write-Host "   git commit -m \"test\"              (runs build+tests)"
 Write-Host ""

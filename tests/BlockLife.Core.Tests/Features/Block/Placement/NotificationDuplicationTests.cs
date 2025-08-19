@@ -67,7 +67,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
                 .Returns(FinSucc(Unit.Default));
 
             var mockGridState = new Mock<IGridStateService>();
-            mockGridState.Setup(g => g.PlaceBlock(It.IsAny<Domain.Block.Block>()))
+            mockGridState.Setup(g => g.PlaceBlock(It.IsAny<BlockLife.Core.Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
 
             var handlerLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();
@@ -123,7 +123,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             var mockLogger = new Mock<ILogger<SimulationManager>>();
             var simulationManager = new SimulationManager(mockMediator.Object, mockLogger.Object);
 
-            var effect = new BlockPlacedEffect(blockId, position, Domain.Block.BlockType.Basic, placedAt);
+            var effect = new BlockPlacedEffect(blockId, position, BlockLife.Core.Domain.Block.BlockType.Basic, placedAt);
 
             // Act
             simulationManager.QueueEffect(effect);
@@ -165,7 +165,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
                 .Returns(FinSucc(Unit.Default));
 
             var mockGridState = new Mock<IGridStateService>();
-            mockGridState.Setup(g => g.PlaceBlock(It.IsAny<Domain.Block.Block>()))
+            mockGridState.Setup(g => g.PlaceBlock(It.IsAny<BlockLife.Core.Domain.Block.Block>()))
                 .Returns(FinSucc(Unit.Default));
 
             var mockLogger = new Mock<ILogger<PlaceBlockCommandHandler>>();

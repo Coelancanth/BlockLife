@@ -1,13 +1,13 @@
-using BlockLife.Core.Infrastructure.Logging;
-using Godot;
-using Serilog.Core;
-using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BlockLife.Core.Infrastructure.Logging;
+using Godot;
+using Serilog.Core;
+using Serilog.Events;
 
-namespace BlockLife.Godot.Infrastructure.Debug;
+namespace BlockLife.godot_project.infrastructure.debug;
 
 [GlobalClass]
 public partial class DebugLogManager : Control

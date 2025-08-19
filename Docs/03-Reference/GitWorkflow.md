@@ -90,12 +90,12 @@ git rebase origin/main
 # 3. git rebase --continue
 ```
 
-### "The pre-push hook blocked me!"
+### "GitHub blocked my push to main!"
 ```bash
-# This means you're behind main. Fix it:
-git fetch origin
-git rebase origin/main
-git push  # Now it will work
+# Create a feature branch instead:
+git checkout -b feat/your-feature-name
+git push -u origin feat/your-feature-name
+# Then create a PR through GitHub
 ```
 
 ## 🤖 For AI Assistants
@@ -120,17 +120,17 @@ git push  # Now it will work
 First time setup (run once):
 ```bash
 # Windows
-./scripts/install-hooks.ps1
+./scripts/git/install-hooks.ps1
 
 # Linux/Mac
-./scripts/install-hooks.sh
+./scripts/git/install-hooks.sh
 ```
 
-The pre-push hook will:
-- ❌ Block pushes to main
-- ❌ Block pushes from outdated branches  
-- ✅ Allow pushes from up-to-date branches
-- 📝 Provide clear fix instructions when blocking
+The git hooks will:
+- 🚀 **Pre-commit**: Run build+tests before each commit (quality gate)
+- 🏷️ **Pre-checkout**: Validate branch naming (workflow guide)
+- 🔒 **GitHub Protection**: Block direct main pushes (process gate)
+- ✅ Clear separation: Local hooks = quality, Remote protection = process
 
 ## 📝 Commit Message Format
 

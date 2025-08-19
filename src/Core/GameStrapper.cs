@@ -360,6 +360,17 @@ public static class GameStrapper
 
         // Legacy rules (to be removed after migration)
         services.AddTransient<BlockLife.Core.Features.Block.Rules.PlacementValidationRule>();
+
+        // --- Save System with Versioning (TD_015) ---
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.ISaveService,
+            BlockLife.Core.Infrastructure.Services.SaveService>();
+        
+        // Register all save migrations (they'll be injected as IEnumerable)
+        services.AddTransient<BlockLife.Core.Domain.Save.ISaveMigration,
+            BlockLife.Core.Infrastructure.Services.Migrations.ExampleV0ToV1Migration>();
+        // Future migrations will be added here:
+        // services.AddTransient<ISaveMigration, V1ToV2Migration>();
+        // services.AddTransient<ISaveMigration, V2ToV3Migration>();
         services.AddTransient<BlockLife.Core.Features.Block.Rules.RemovalValidationRule>();
 
         // --- Simulation Manager ---

@@ -4,11 +4,10 @@ using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
 using Godot;
 using LanguageExt;
-using LanguageExt.Common;
-using static LanguageExt.Prelude;
 using Serilog;
+using static LanguageExt.Prelude;
 
-namespace BlockLife.Godot.Features.Block.Input.Infrastructure;
+namespace BlockLife.godot_project.features.block.input.Infrastructure;
 
 /// <summary>
 /// Handles one-time initialization and pre-warming of input system components.

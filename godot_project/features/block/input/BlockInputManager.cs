@@ -1,16 +1,15 @@
-using Godot;
 using System;
 using System.Threading.Tasks;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Godot.Features.Block.Input.Infrastructure;
-using BlockLife.Godot.Features.Block.Placement;
-using BlockLife.Godot.Scenes;
-using LanguageExt;
+using BlockLife.godot_project.features.block.input.Infrastructure;
+using BlockLife.godot_project.features.block.placement;
+using BlockLife.godot_project.scenes.Main;
+using Godot;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
-namespace BlockLife.Godot.Features.Block.Input;
+namespace BlockLife.godot_project.features.block.input;
 
 /// <summary>
 /// Centralized input router for block operations.

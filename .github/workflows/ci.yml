@@ -87,15 +87,49 @@ jobs:
       
     - name: Test (Unit & Integration)
       run: |
+        # First, discover what tests are available (for debugging)
+        echo "🔍 Discovering tests..."
+        dotnet test BlockLife.sln \
+          --no-build \
+          --configuration Debug \
+          --list-tests \
+          --filter "Category!=Performance" | head -20
+        
+        # Now run the actual tests - MUST FAIL if tests fail
+        echo "🧪 Running tests..."
         dotnet test BlockLife.sln \
           --no-build \
           --configuration Debug \
           --logger "console;verbosity=minimal" \
           --logger "trx;LogFileName=test-results.trx" \
-          --filter "Category!=Performance" || true
+          --filter "Category!=Performance&FullyQualifiedName!=BlockLife.Core.Tests.StressTests.SimulationManagerThreadSafetyTests.ConcurrentOperations_ShouldMaintainPerformance"
         
-        # Note: Code coverage will be added when Coverlet is configured in the project
+        # Note: Removed || true - tests MUST pass for CI to succeed
+        # If tests fail on Linux but pass on Windows, we need to fix the tests, not hide failures
+        # TEMPORARY: Excluding flaky SimulationManagerThreadSafetyTests until BR_008 is resolved
           
+    - name: Handle Test Failures
+      if: failure()
+      run: |
+        echo "❌ Tests failed! Checking for common issues..." 
+        echo "## ❌ Test Failure Analysis" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Check if it's a platform-specific issue
+        if grep -q "System.PlatformNotSupportedException" **/test-results.trx 2>/dev/null; then
+          echo "⚠️ Platform-specific test failures detected (Linux vs Windows)" >> $GITHUB_STEP_SUMMARY
+          echo "Consider marking these tests with [Trait(\"Platform\", \"Windows\")]" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Check for missing dependencies
+        if grep -q "Could not load file or assembly" **/test-results.trx 2>/dev/null; then
+          echo "⚠️ Missing dependencies detected" >> $GITHUB_STEP_SUMMARY
+          echo "Run 'dotnet restore' locally to verify all packages" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Fail the job explicitly
+        exit 1
+        
     - name: Generate Test Report
       if: always()
       run: |

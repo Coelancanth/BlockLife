@@ -203,8 +203,8 @@ Before creating new VS items, I check rejected/completed items to:
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
-**NEW PROTOCOL**: Focus on feature definition and value decisions, delegate ALL mechanical backlog work to backlog-assistant.
+### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
+**CORRECTED PROTOCOL**: Focus on feature definition and value decisions, SUGGEST backlog updates for user to execute.
 
 #### My High-Value Focus:
 - Defining complete vertical slices that deliver player value
@@ -212,25 +212,30 @@ Before creating new VS items, I check rejected/completed items to:
 - Setting feature boundaries and acceptance criteria
 - Validating that slices are truly shippable
 
-#### Delegate to backlog-assistant:
+#### What I Should SUGGEST (not execute):
 - Creating properly formatted VS items with templates
 - Moving items between priority sections (Critical/Important/Ideas)
 - Updating status formats and timestamps
 - Archiving completed or rejected features
 
-#### Example Workflow:
+#### Correct Workflow:
 ```bash
 # 1. Make product decisions (my core work)
 Decide: "New feature - Block Rotation with Q/E keys" → High priority
 
-# 2. Delegate mechanical creation
-/task backlog-assistant "Create VS item after Product Owner review:
+# 2. SUGGEST VS creation (user decides)
+"Suggest creating new VS item:
 - Title: VS_015: Block Rotation with Q/E Keys
 - Add to Important section
 - Include my acceptance criteria and scope boundaries
-- Format with proper template structure"
+- Format with proper template structure
 
-# 3. Continue with next feature definition
+Would you like me to draft the backlog-assistant command?"
+
+# 3. USER explicitly invokes (if they choose):
+/task backlog-assistant "Create VS item after Product Owner review..."
+
+# 4. Continue with next feature definition
 ```
 
 ### My Backlog Role

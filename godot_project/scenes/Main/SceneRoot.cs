@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
 using BlockLife.Core;
 using BlockLife.Core.Infrastructure.Logging;
 using BlockLife.Core.Presentation;
-using BlockLife.Godot.Infrastructure.Logging;
-using BlockLife.Godot.Resources;
+using BlockLife.godot_project.infrastructure.logging;
+using BlockLife.godot_project.resources.settings;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
 
-namespace BlockLife.Godot.Scenes;
+namespace BlockLife.godot_project.scenes.Main;
 
 /// <summary>
 /// **ENHANCED** SceneRoot with comprehensive error handling and cleanup.

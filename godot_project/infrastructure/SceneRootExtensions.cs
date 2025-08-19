@@ -1,8 +1,8 @@
 using BlockLife.Core.Presentation;
-using BlockLife.Godot.Scenes;
+using BlockLife.godot_project.scenes.Main;
 using Godot;
 
-namespace BlockLife.Godot.Infrastructure;
+namespace BlockLife.godot_project.infrastructure;
 
 /// <summary>
 /// Extension methods for SceneRoot to simplify presenter creation

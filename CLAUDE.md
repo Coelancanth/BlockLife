@@ -139,15 +139,27 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
                           Debugger Expert (FIX COMPLEX ISSUES)
 ```
 
-### Backlog Protocol
-Each persona has embedded backlog responsibilities - no separate maintainer needed:
+### Backlog Protocol - CRITICAL FIX (BR_007)
+**⚠️ AUTOMATION MISUSE PREVENTION**: Personas should NEVER automatically invoke backlog-assistant. Only SUGGEST updates for user to execute.
+
+#### Correct Process (Prevents automation misuse):
+1. **Persona completes work** → Suggests status update: "Suggest updating backlog: [details]. Would you like me to draft the backlog-assistant command?"
+2. **User decides** → Explicitly invokes `/task backlog-assistant` if desired  
+3. **Review happens** → Tech Lead reviews before marking complete
+4. **User confirms** → Final status change via explicit command
+
+#### Exception: Strategic Prioritizer auto-invokes backlog-assistant for meta-analysis (this is its designed function)
+
+#### What Personas Do:
 - **Product Owner**: Creates VS items, sets priorities
-- **Tech Lead**: Reviews/approves TD proposals, breaks down work
-- **Dev Engineer**: Updates progress, can propose TD
+- **Tech Lead**: Reviews/approves TD proposals, breaks down work  
+- **Dev Engineer**: SUGGESTS progress updates, can propose TD
 - **Test Specialist**: Creates BR items when bugs found
 - **Debugger Expert**: Owns BR items, can propose TD
 - **DevOps**: Monitors CI/CD, can propose TD
 - **Anyone**: Can propose TD items (Tech Lead approves)
+
+**Remember**: Suggest don't execute. User maintains control of backlog updates.
 
 **Work Item Types**:
 - **VS (Vertical Slice)**: New features - Product Owner creates
@@ -193,10 +205,10 @@ date  # Get current date/time before creating dated documents
 **MANDATORY before committing:**
 ```bash
 # Windows
-./scripts/build.ps1 test    # Build + tests (safe for commits)
+./scripts/core/build.ps1 test    # Build + tests (safe for commits)
 
 # Linux/Mac  
-./scripts/build.sh test     # Build + tests (safe for commits)
+./scripts/core/build.sh test     # Build + tests (safe for commits)
 ```
 
 **Build Commands (UPDATED - Critical Change):**
@@ -211,7 +223,7 @@ date  # Get current date/time before creating dated documents
 - Use `test-only` for rapid development (tests only, not safe for commits)
 
 **Pre-commit Hook Enforcement:**
-- Git pre-commit hook automatically runs `./scripts/build.ps1 test` (Windows) or `./scripts/build.sh test` (Linux/Mac)
+- Git pre-commit hook automatically runs `./scripts/core/build.ps1 test` (Windows) or `./scripts/core/build.sh test` (Linux/Mac)
 - **Cannot commit** if build fails - this catches Godot compilation issues
 - Hook can be bypassed in emergencies with `git commit --no-verify` (use sparingly)
 
@@ -278,7 +290,7 @@ See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE
 1. **ALWAYS** follow the Sacred Sequence from [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)
 2. **NEVER** skip fetch/pull before creating branches  
 3. **OUTPUT** each git command as you execute it
-4. **REBASE** immediately if pre-push hook blocks you
+4. **REBASE** immediately if GitHub branch protection blocks you
 
 **Hook Enforcement Active**:
 - ❌ Direct pushes to main are BLOCKED
@@ -294,7 +306,7 @@ See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE
 # "Branch created from latest main ✅"
 ```
 
-**Installation**: Run `./scripts/install-hooks.ps1` (Windows) or `./scripts/install-hooks.sh` (Linux/Mac)
+**Installation**: Run `./scripts/git/install-hooks.ps1` (Windows) or `./scripts/git/install-hooks.sh` (Linux/Mac)
 
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)
