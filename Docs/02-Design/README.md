@@ -30,7 +30,7 @@ This folder contains the creative vision for BlockLife.
 
 ### Current Implementation Priority
 
-1. **VS_003** - Triple-match merging (same-type only)
+1. **VS_003** - Triple-merge system (same-type only)
 2. **VS_004** - Auto-spawn system
 3. **VS_005** - Chain reactions
 4. Everything else in Vision.md is FUTURE possibility
@@ -55,7 +55,7 @@ BlockLife is about simulating the human experience through game mechanics:
 
 **Core Loop Being Built (VS_003-005):**
 ```
-Move Block → Check for 3+ Match → Merge → Check for Chains → Score → Spawn New Block
+Move Block → Check for 3+ Merge → Merge → Check for Chains → Score → Spawn New Block
 ```
 
 Everything else (life stages, personality, etc.) comes AFTER we validate this is fun.

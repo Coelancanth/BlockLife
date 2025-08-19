@@ -202,8 +202,8 @@ src/Features/Block/Merge/
 **Why**: Creates the addictive "YES!" moments that separate good puzzle games from great ones
 
 **Core Mechanic**:
-- **Cascade Trigger**: After any merge completes, check if result can trigger new merge
-- **Recursive Detection**: Each cascade can trigger another cascade
+- **Chain Trigger**: After any merge completes, check if result can trigger new merge
+- **Recursive Detection**: Each chain can trigger another chain
 - **Multiplier System**: Base × 1 → ×2 → ×4 → ×8 → ×16 (exponential)
 - **Chain Counter**: Display "Chain ×2!", "Chain ×3!" etc.
 - **Celebration**: Bigger effects for longer chains
@@ -213,7 +213,7 @@ src/Features/Block/Merge/
 - If new merge detected, execute it with increased multiplier
 - Continue recursively until no more merges possible
 - Track chain depth for scoring and display
-- Add brief delay between cascades for visual clarity
+- Add brief delay between chains for visual clarity
 
 **Scoring Formula**:
 ```
@@ -227,12 +227,12 @@ Total for 4-chain: 150 points!
 **Done When**:
 - Merges automatically trigger follow-up merges
 - Score multiplier increases exponentially per chain
-- Chain counter displays during cascades
-- Visual delay between cascade steps (player can follow what happened)
+- Chain counter displays during chains
+- Visual delay between chain steps (player can follow what happened)
 - Different sound effects for each chain level
-- 5+ unit tests for cascade detection
+- 5+ unit tests for chain detection
 - 3+ tests for multiplier calculation
-- 2+ tests for recursive cascade limits
+- 2+ tests for recursive chain limits
 
 **NOT in Scope**:
 - Special chain-only blocks
@@ -243,63 +243,16 @@ Total for 4-chain: 150 points!
 - Chain-triggered special events
 
 **Critical Design Decisions**:
-- **Delay Between Cascades**: 0.3-0.5 seconds (fast enough to feel smooth, slow enough to see)
+- **Delay Between Chains**: 0.3-0.5 seconds (fast enough to feel smooth, slow enough to see)
 - **Max Chain Depth**: Unlimited (let players find crazy combos)
 - **Multiplier Cap**: No cap initially (see how high players can go)
 
 **Product Owner Notes**:
-- This is THE feature that makes match-3 games addictive
+- This is THE feature that makes merge games addictive
 - Must feel satisfying - sound/visual feedback crucial
 - Exponential scoring rewards elaborate setups
 - Creates skill gap between new and experienced players
 - Watch for degenerate strategies (infinite chains)
-
-### TD_016: Update All Documentation for Glossary Consistency [Score: 30/100]
-**Status**: Approved ✅
-**Owner**: Tech Lead → Dev Engineer
-**Size**: S (2-3 hours)
-**Priority**: Important (do before VS_003)
-**Created**: 2025-08-19
-**Markers**: [DOCUMENTATION] [CONSISTENCY]
-
-**What**: Update all documentation to use glossary terms consistently
-**Why**: Inconsistent terminology in personas and docs creates confusion
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED - Critical for VS_003 clarity**
-- Backlog itself has inconsistencies (e.g., "level" instead of "tier")
-- Persona docs will generate wrong variable names
-- Must be done before VS_003 implementation
-
-**Scope of Changes**:
-- **Persona docs** (6 files): Update terminology in all persona descriptions
-- **Backlog items**: Ensure VS/TD/BR descriptions use correct terms
-- **Architecture docs**: Align with glossary vocabulary
-- **README/Workflow**: Check for terminology mismatches
-
-**Key Replacements Needed**:
-- "match" → "merge"
-- "level" (for blocks) → "tier"
-- "round" → "turn"
-- "cell/slot/tile" → "position"
-- "combo/cascade" → "chain"
-- "spawn" (for merge results) → "transform"
-- "trigger position" → "result position"
-
-**Approach**:
-1. Grep for anti-pattern terms across Docs/
-2. Update each file with correct glossary terms
-3. Special attention to persona docs (they guide behavior)
-4. Update code comments if found
-
-**Done When**:
-- All persona docs use glossary terms
-- No anti-pattern terms in active documentation
-- Backlog items updated for consistency
-- Quick reference guide reflects proper vocabulary
-
-**Tech Lead Note**: This is housekeeping but critical - personas using wrong terms will generate wrong code.
-
 
 
 ## 💡 Ideas (Do Later)
@@ -426,6 +379,96 @@ public Property DoubleSwap_ReturnsToOriginal()
 
 ## ✅ Recently Completed
 
+### TD_016: Update All Documentation for Glossary Consistency [Score: 30/100]
+**Status**: ✅ Completed
+**Owner**: Dev Engineer
+**Size**: S (2-3 hours)
+**Priority**: Important (do before VS_003)
+**Created**: 2025-08-19
+**Completed**: 2025-08-19
+**Markers**: [DOCUMENTATION] [CONSISTENCY]
+
+**What**: Update all documentation to use glossary terms consistently
+**Why**: Inconsistent terminology in personas and docs creates confusion
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED - Critical for VS_003 clarity**
+- Backlog itself has inconsistencies (e.g., "level" instead of "tier")
+- Persona docs will generate wrong variable names
+- Must be done before VS_003 implementation
+
+**Scope of Changes**:
+- **Persona docs** (6 files): Update terminology in all persona descriptions
+- **Backlog items**: Ensure VS/TD/BR descriptions use correct terms
+- **Architecture docs**: Align with glossary vocabulary
+- **README/Workflow**: Check for terminology mismatches
+
+**Key Replacements Needed**:
+- "match" → "merge"
+- "level" (for blocks) → "tier"
+- "round" → "turn"
+- "cell/slot/tile" → "position"
+- "combo/cascade" → "chain"
+- "spawn" (for merge results) → "transform"
+- "trigger position" → "result position"
+
+**Approach**:
+1. Grep for anti-pattern terms across Docs/
+2. Update each file with correct glossary terms
+3. Special attention to persona docs (they guide behavior)
+4. Update code comments if found
+
+**Done When**:
+- All persona docs use glossary terms
+- No anti-pattern terms in active documentation
+- Backlog items updated for consistency
+- Quick reference guide reflects proper vocabulary
+
+**Tech Lead Note**: This is housekeeping but critical - personas using wrong terms will generate wrong code.
+
+**Dev Engineer Completion** (2025-08-19):
+✅ **COMPLETED - 33 terminology violations fixed across 6 critical files**
+- **Backlog.md**: 8 violations fixed ("cascade"→"chain", "match-3"→"merge", etc.)
+- **Vision.md**: 17 violations fixed ("tile-based"→"block-based", "Level"→"Tier", etc.)
+- **Design README.md**: 2 violations fixed ("triple-match"→"triple-merge")
+- **CurrentState.md**: 4 violations fixed ("tile"→"position", "level up"→"tier up")
+- **Glossary.md**: 2 violations fixed (CRITICAL: authority doc had self-violations)
+- **Total Impact**: All VS_003 implementation will now use correct terminology
+- **Quality**: Systematic grep-based detection, surgical fixes preserving technical terms
+- **Result**: Ready for VS_003 Phase 1 with clean, consistent vocabulary foundation
+
+### TD_015: Create Ubiquitous Language Glossary [Score: 20/100]
+**Status**: ✅ Completed
+**Owner**: Tech Lead
+**Size**: XS (30 minutes)
+**Priority**: Important
+**Created**: 2025-08-19
+**Completed**: 2025-08-19
+
+**What**: Create lean glossary defining core game terms
+**Why**: Prevent terminology confusion across team and code
+
+**Tech Lead Implementation**:
+✅ Created `Docs/03-Reference/Glossary.md` with essential terms
+✅ Defined clear vocabulary for turns, actions, blocks, merges
+✅ Included code references for each term
+✅ Added usage examples and anti-patterns
+✅ Distinguished "spawn" (new blocks) from "transform" (merge results)
+
+**Key Terms Defined**:
+- **Turn**: Complete cycle from spawn to action resolution
+- **Action**: Player-initiated board change
+- **Merge**: 3+ adjacent same-type combining
+- **Transform**: Merge result creating higher tier (not "spawn")
+- **Chain**: Sequential merges from one action
+- **Result Position**: Where transformed block appears
+- **Tier**: Block tier (1-9), not "level"
+
+**Impact**: 
+- VS_003-005 can now use consistent terminology
+- Code reviews have authoritative reference
+- Prevents "what do you mean by X?" discussions
+
 ### VS_002: Translate Creative Brainstorms into Feature Specifications [Score: 30/100]
 **Status**: ✅ Completed
 **Owner**: Product Owner
@@ -455,38 +498,6 @@ public Property DoubleSwap_ReturnsToOriginal()
 - ✅ Legacy and memory systems (Memory Palace, Generational Legacy)
 
 **Product Owner Note**: All valuable creative vision from Chinese brainstorms has been successfully integrated into the consolidated Vision.md. The game design is now comprehensive and ready for implementation prioritization.
-
-### TD_015: Create Ubiquitous Language Glossary [Score: 20/100]
-**Status**: ✅ Completed
-**Owner**: Tech Lead
-**Size**: XS (30 minutes)
-**Priority**: Important
-**Created**: 2025-08-19
-**Completed**: 2025-08-19
-
-**What**: Create lean glossary defining core game terms
-**Why**: Prevent terminology confusion across team and code
-
-**Tech Lead Implementation**:
-✅ Created `Docs/03-Reference/Glossary.md` with essential terms
-✅ Defined clear vocabulary for turns, actions, blocks, merges
-✅ Included code references for each term
-✅ Added usage examples and anti-patterns
-✅ Distinguished "spawn" (new blocks) from "transform" (merge results)
-
-**Key Terms Defined**:
-- **Turn**: Complete cycle from spawn to action resolution
-- **Action**: Player-initiated board change
-- **Merge**: 3+ adjacent same-type combining
-- **Transform**: Merge result creating higher tier (not "spawn")
-- **Chain**: Sequential merges from one action
-- **Trigger Position**: Where transformed block appears
-- **Tier**: Block tier (1-9), not "level"
-
-**Impact**: 
-- VS_003-005 can now use consistent terminology
-- Code reviews have authoritative reference
-- Prevents "what do you mean by X?" discussions
 
 ---
 

@@ -1,26 +1,26 @@
 # BlockLife Game Design Vision
 
-*A tile-based life simulation game that combines merge mechanics with resource management and life progression through different life stages.*
+*A block-based life simulation game that combines merge mechanics with resource management and life progression through different life stages.*
 
 ---
 
 ## 🎯 Core Vision
 
-BlockLife simulates the journey of human life through strategic tile management. Players navigate different life stages, each with unique mechanics, challenges, and emotional themes. The game emphasizes meaningful choices, resource balance, and the bittersweet nature of time's passage.
+BlockLife simulates the journey of human life through strategic block management. Players navigate different life stages, each with unique mechanics, challenges, and emotional themes. The game emphasizes meaningful choices, resource balance, and the bittersweet nature of time's passage.
 
 ---
 
 ## 🎲 Core Gameplay Mechanics (Designer Confirmed)
 
 ### Merge System - Triple Town Model
-**Fundamental Rule**: 3 adjacent matching blocks merge into higher level
+**Fundamental Rule**: 3 adjacent same-type blocks merge into higher tier
 - **Merge Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
 - **Result Placement**: Merged block appears at the last-moved/placed block position
-- **Level Progression**: Level 1 + Level 1 + Level 1 → Level 2 (and so on)
+- **Tier Progression**: Tier 1 + Tier 1 + Tier 1 → Tier 2 (and so on)
 - **Same-Type Only** (Phase 1): Work blocks only merge with Work, Study with Study, etc.
 
 ### Auto-Spawn System
-**Round-Based Pressure**: Each turn spawns new blocks automatically
+**Turn-Based Pressure**: Each turn spawns new blocks automatically
 - **Spawn Timing**: After each player action (move/merge)
 - **Spawn Rules**: Random type, empty position
 - **Difficulty Scaling**: Spawn rate/quantity increases over time
@@ -28,20 +28,20 @@ BlockLife simulates the journey of human life through strategic tile management.
 
 ### Chain Reaction System (Core Mechanic)
 **The Magic Moment**: Merges that trigger additional merges automatically
-- **Cascade Detection**: After any merge completes, check if result triggers new merges
-- **Combo Multiplier**: Each chain step increases score (1x → 2x → 4x → 8x)
-- **Visual Celebration**: Each chain level gets bigger effects/sounds
+- **Chain Detection**: After any merge completes, check if result triggers new merges
+- **Chain Multiplier**: Each chain step increases score (1x → 2x → 4x → 8x)
+- **Visual Celebration**: Each chain step gets bigger effects/sounds
 - **Strategic Depth**: Players set up elaborate chain reactions for massive scores
 
 **Example Chain**:
-1. Merge three Level-1 Work blocks → Level-2 Work appears
-2. Level-2 Work completes a group with two other Level-2s → Auto-merges to Level-3
-3. Level-3 triggers another adjacent group → Chain continues
+1. Merge three Tier-1 Work blocks → Tier-2 Work appears
+2. Tier-2 Work completes a group with two other Tier-2s → Auto-merges to Tier-3
+3. Tier-3 triggers another adjacent group → Chain continues
 4. Score: 10 (base) × 1 × 2 × 4 = 80 points instead of just 10!
 
 ### Placement Strategy
 - **Grid Management**: Balance between keeping space for moves and setting up merges
-- **Cascade Planning**: Deliberately position blocks to trigger chain reactions
+- **Chain Planning**: Deliberately position blocks to trigger chain reactions
 - **Risk/Reward**: Complex setups risk grid filling but offer huge rewards
 - **Skill Expression**: Difference between beginners (random merges) and experts (5+ chains)
 
@@ -62,14 +62,14 @@ BlockLife simulates the journey of human life through strategic tile management.
 
 ### Advanced Effect System
 Effects triggered by specific conditions:
-- **Trigger Conditions**: Combos, patterns, life events
+- **Trigger Conditions**: Chains, patterns, life events
 - **Effect Types**:
   - **Teleport**: Move blocks instantly via "Opportunity" blocks
   - **Transform**: Change block types
   - **Freeze**: Lock blocks temporarily
-  - **Split**: Divide high-level blocks for strategic positioning
+  - **Split**: Divide high-tier blocks for strategic positioning
   - **Area Effects**: Affect multiple blocks in range
-  - **Inertia**: High-level blocks gain automatic merging behavior
+  - **Inertia**: High-tier blocks gain automatic merging behavior
 
 ### Random Event System
 - **Crisis Events**: Unexpected challenges requiring adaptation
@@ -79,15 +79,15 @@ Effects triggered by specific conditions:
 
 ### Skills System
 Unlockable abilities through progression:
-- **Spawn**: Create specific blocks on empty tiles
+- **Spawn**: Create specific blocks on empty positions
 - **Remove**: Clear unwanted blocks
 - **Save**: Checkpoint system
 - **Enhance**: Increase block movement range
-- **Upgrade**: Level up blocks directly
+- **Upgrade**: Tier up blocks directly
 
 ### Skill-Enhanced Interactions
 - **Instant Merge**: Special abilities creating immediate merge opportunities
-- **Pattern Recognition**: Advanced matching beyond adjacency
+- **Pattern Recognition**: Advanced merging beyond adjacency
 - **Custom Patterns**: Player-defined merge rules
 
 ---
@@ -163,7 +163,7 @@ Personality develops through actions, not initial selection. Player behavior sha
 #### Information Processing (S/N)
 - **Sensing**: Focus on concrete, immediate actions
 - **Intuition**: Complex planning, abstract thinking
-- **Effect**: S-types get steady bonuses, N-types get combo rewards
+- **Effect**: S-types get steady bonuses, N-types get chain rewards
 
 #### Decision Making (T/F)
 - **Thinking**: Maximize efficiency, prioritize logic
@@ -197,7 +197,7 @@ Starting conditions that shape early life:
 Rule-changing abilities unlocked through personality development:
 - **Logical Genius**: Merge non-adjacent blocks in straight lines
 - **Social Butterfly**: Social blocks require only 2 instead of 3 to merge
-- **Artistic Intuition**: 10% chance for merges to level up twice
+- **Artistic Intuition**: 10% chance for merges to tier up twice
 - **Meticulous Planner**: Storage ability to save blocks for strategic timing
 - **Born Optimist**: Convert negative blocks to positive ones
 - **Boundless Energy**: First merge each turn costs no energy

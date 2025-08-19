@@ -11,7 +11,7 @@
 
 ### ✅ What Players Can Do NOW
 1. **Click to place** blocks on a 10x10 grid
-2. **Drag blocks** to new positions (3-tile range limit)
+2. **Drag blocks** to new positions (3-position range limit)
 3. **Swap blocks** when dragging to occupied spaces
 4. **See visual feedback** with color-coded block types
 5. **Experience validated moves** (can't place outside grid, overlap blocks, etc.)
@@ -37,8 +37,8 @@
 - [x] Block occupancy tracking
 
 #### Block Operations
-- [x] **Place Block**: Click empty tile to place
-- [x] **Move Block**: Drag to new position (3-tile range)
+- [x] **Place Block**: Click empty position to place
+- [x] **Move Block**: Drag to new position (3-position range)
 - [x] **Remove Block**: Delete by position or ID
 - [x] **Swap Blocks**: Exchange positions when dragging to occupied
 - [x] **Cancel Drag**: ESC or right-click to cancel
@@ -120,7 +120,7 @@ Based on what's built, the most valuable next features would be:
 
 1. **Block Merging Mechanics** - We have the logic, need the trigger
 2. **Basic Scoring** - Give players a reason to merge
-3. **Simple Progression** - Level up or unlock new block types
+3. **Simple Progression** - Tier up or unlock new block types
 4. **Win/Lose Conditions** - Grid full = game over
 5. **Save/Load** - Let players keep progress
 

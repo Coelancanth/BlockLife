@@ -43,8 +43,8 @@ A single game piece with a type and tier.
 - **Code**: `Block`, `BlockType`, `BlockTier`
 
 **Tier**  
-The level/rank of a block (1-9).
-- **Tier 1**: Base level blocks
+The tier of a block (1-9).
+- **Tier 1**: Base tier blocks
 - **Increases**: Through merging
 - **Not called**: Level, Rank, Grade
 - **Code**: `BlockTier`, starts at 1
