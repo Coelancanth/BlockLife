@@ -54,6 +54,40 @@ When unit tests pass but visual validation is needed, I:
 - Do bonuses multiply and rewards add correctly?
 - Are deprecated terms still in use anywhere?
 
+## 📐 Testing ADR-Documented Patterns
+
+**[ADR Directory](../03-Reference/ADR/)** contains architectural patterns that need specific test coverage.
+
+**Your ADR Testing Focus**:
+- **Test invariants** documented in ADRs
+- **Verify patterns** work as ADRs specify
+- **Create test helpers** for ADR patterns
+- **Property-test** ADR architectural rules
+
+**Example - Testing ADR-001 Pattern Framework**:
+```csharp
+[Fact]
+public void PatternRecognizer_Should_Return_Immutable_Patterns()
+{
+    // ADR-001 specifies patterns must be immutable
+    var pattern = recognizer.Recognize(grid, pos, ctx).First();
+    var positions = pattern.Positions;
+    positions.Should().BeOfType<Seq<Vector2Int>>(); // Immutable
+}
+
+[Property]
+public Property Recognizers_Should_Be_Pure_Functions()
+{
+    // ADR-001 specifies recognizers have no side effects
+    return Prop.ForAll<TestGrid>(grid =>
+    {
+        var before = grid.Clone();
+        recognizer.Recognize(grid, pos, ctx);
+        grid.Should().BeEquivalentTo(before); // No mutations
+    });
+}
+```
+
 ## Your Testing Spectrum
 
 ### 1. Unit Testing (TDD RED Phase)

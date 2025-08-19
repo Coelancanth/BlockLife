@@ -8,6 +8,17 @@
 - Test organization and coverage
 - MVP integration with Godot
 
+## 📝 Architecture Decision Records (ADRs)
+**[ADR Directory](ADR/)**: Documented architectural decisions
+- Significant patterns and frameworks
+- Technology choices and trade-offs
+- See [ADR-001](ADR/ADR-001-pattern-recognition-framework.md) for Pattern Recognition Framework
+
+When making architectural decisions:
+1. Check existing ADRs for precedent
+2. Create new ADR for significant decisions
+3. Reference ADRs in code comments
+
 ## 🚨 Core Rules (Non-Negotiable)
 
 ### 1. **Domain Purity** 

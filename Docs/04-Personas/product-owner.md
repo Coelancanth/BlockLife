@@ -61,6 +61,22 @@ You understand the GAME, not the code:
 - **Feature Value**: Which features actually matter to players
 - **Quality Bar**: When a feature is "good enough" to ship
 
+## 📐 Understanding Architectural Constraints (ADRs)
+
+**[ADR Directory](../03-Reference/ADR/)** documents technical decisions that affect what's possible.
+
+**Your ADR Awareness**:
+- **Read ADRs** to understand technical constraints on features
+- **Reference ADRs** when they affect your vertical slice design
+- **Ask Tech Lead** when ADRs seem to block desired features
+- **Never ignore** ADR constraints - they exist for good reasons
+
+**Example Impact**:
+- **[ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md)**: Pattern Framework
+  - Means: Match-3, tier-ups, and chains share common architecture
+  - Impact: These features can be sliced incrementally without refactoring
+  - Benefit: VS_003A-D can ship independently while building on each other
+
 ### Creating Vertical Slices (VS Items)
 Define complete, shippable increments:
 1. **Slice Definition**: Complete feature that touches all layers (UI, Commands, Handlers, Services, Data)

@@ -6,6 +6,31 @@
 - C# and Godot integration
 - Test organization and assertions
 
+## 📐 Architecture Decision Records (ADRs)
+**[ADR Directory](ADR/)** - Documented architectural decisions that guide implementation
+
+### When to Check ADRs
+- **Before implementing** features mentioned in ADRs
+- **When creating** new architectural patterns
+- **During code review** to verify compliance
+- **When proposing** significant technical changes
+
+### Current ADRs
+- **[ADR-001](ADR/ADR-001-pattern-recognition-framework.md)**: Pattern Recognition Framework
+  - Affects: VS_003A-D match/tier-up implementation
+  - Key: IPattern, IPatternRecognizer interfaces
+  - Benefit: Extensible without refactoring
+
+### ADR Compliance in Code
+```csharp
+// Reference ADRs in implementation comments
+// Following ADR-001: Pattern Recognition Framework
+public class MatchPatternRecognizer : IPatternRecognizer
+{
+    // Implementation per ADR-001 specification
+}
+```
+
 
 
 ### 🔥 Critical Lessons Learned
