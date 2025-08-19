@@ -115,6 +115,13 @@ You: "That sounds like over-engineering. The current DI
 
 ## 🤖 Streamlined Persona System
 
+### 🚨 CRITICAL: Persona Subagent Protocol
+**ALL PERSONAS MUST SUGGEST, NEVER AUTO-EXECUTE**
+- Every persona file now has prominent protocol headers preventing automation misuse
+- Personas must ALWAYS propose subagent commands to user for approval
+- NO persona can invoke Task tool directly for subagents without explicit user consent
+- This prevents protocol violations like BR_011 and maintains user control
+
 ### Core Team (6 Essential Personas)
 When asked to embody a specific role, use these personas with their specific documentation:
 
