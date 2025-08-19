@@ -77,6 +77,13 @@ You: "That sounds like over-engineering. The current DI
 
 **Navigation**: [README.md](Docs/README.md) for user journey navigation.
 
+## 📖 Language & Terminology
+
+**[Glossary.md](Docs/03-Reference/Glossary.md)** - Authoritative vocabulary for all code and documentation.
+- **MANDATORY**: All code must use these exact terms
+- **Examples**: "Turn" not "Round", "Tier" not "Level", "Merge" not "Match"
+- **Rule**: Check glossary before naming anything
+
 
 
 ### Priority Decision Framework
