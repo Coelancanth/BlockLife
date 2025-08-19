@@ -54,6 +54,51 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### BR_011: Critical Archive Data Loss - Missing Completed Items
+**Status**: Proposed  
+**Owner**: Test Specialist → Debugger Expert
+**Size**: M (4-6 hours investigation + recovery)
+**Priority**: Critical
+**Created**: 2025-08-19
+**Found By**: Dev Engineer during archive verification
+**Markers**: [DATA-LOSS] [ARCHIVE-INTEGRITY] [WORKFLOW-CRITICAL]
+
+**What**: Multiple completed work items missing from Archive.md despite being previously archived
+**Why**: Archive serves as historical record and lessons learned repository - data loss undermines organizational memory
+
+**Missing Items Evidence**:
+Based on backlog history and git commits, several completed items appear to have been accidentally deleted from Archive.md:
+
+**Expected but Missing**:
+- Previous VS items (VS_001 phases completed in earlier commits)
+- Earlier TD items from recent development cycles
+- Historical BR items that were resolved
+- Legacy workflow items from major reorganizations
+
+**Current Archive State**:
+- Only contains items from 2025-08-19 (today)
+- Missing historical context from previous months
+- Loss of lessons learned from earlier development
+- No progression history of major features
+
+**Critical Impact**:
+- **Lost organizational memory** - Cannot reference how previous issues were solved
+- **Missing lessons learned** - Repeat same mistakes without historical context  
+- **Broken process integrity** - Archive system cannot be trusted
+- **Compliance issues** - No audit trail for completed work
+
+**Investigation Steps**:
+1. **Git archaeology** - Search git history for deleted archive sections
+2. **Commit analysis** - Identify exactly when items disappeared
+3. **Agent audit** - Review all agent operations that touched Archive.md
+4. **Recovery planning** - Determine what can be reconstructed
+
+**Done When**:
+- Missing historical items recovered and restored to Archive.md
+- Root cause identified and documented
+- Archive protection safeguards implemented
+- Process integrity restored and verified
+
 ### BR_009: SaveService Tests Fail on Linux After Newtonsoft.Json Migration
 **Status**: Proposed
 **Owner**: Test Specialist → Debugger Expert  
@@ -108,6 +153,138 @@
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
+### BR_012: Backlog.md Becoming Too Long - Workflow Refinement Needed
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead (workflow design)
+**Size**: M (4-6 hours analysis + implementation)
+**Priority**: Important
+**Created**: 2025-08-19
+**Found By**: Dev Engineer during backlog management
+**Markers**: [WORKFLOW-EFFICIENCY] [PROCESS-IMPROVEMENT] [SCALABILITY]
+
+**What**: Backlog.md is becoming excessively long, reducing readability and quick decision-making ability
+**Why**: Effective backlog management requires quick scanning and prioritization, not reading novellas
+
+**Current Problems**:
+- **Excessive detail in backlog items** - Investigation steps, technical plans, root causes taking 20-50 lines each
+- **Poor scanning experience** - Cannot quickly identify priorities without scrolling through walls of text
+- **Mixed concerns** - Planning details mixed with status tracking
+- **Intimidating for stakeholders** - Too much technical detail for quick reviews
+- **Maintenance overhead** - Complex items harder to update and reorganize
+
+**Evidence**:
+- Current backlog.md is 1000+ lines
+- BR items have 30-50 lines each with detailed investigation plans
+- Critical section harder to scan due to verbose descriptions
+- Recently Completed section accumulating without clear retention policy
+
+**Proposed Workflow Refinements**:
+
+**1. Lean Backlog Items (5-10 lines max)**:
+```markdown
+### BR_XXX: Short Descriptive Title
+**Status**: Proposed | **Owner**: Persona | **Priority**: Level
+**What**: One sentence problem description
+**Why**: One sentence business impact
+**Investigation**: Link to separate investigation doc if needed
+**Done When**: 3 bullet points maximum
+```
+
+**2. Separate Investigation Documents**:
+- Complex items get dedicated files in `Docs/02-Investigations/`
+- Backlog references investigation doc, not inline details
+- Keeps backlog scannable while preserving detail when needed
+
+**3. Retention Policies**:
+- Recently Completed: Max 3 items (auto-archive older ones)
+- Important section: Max 10 items (force prioritization)
+- Ideas section: Max 15 items (regular pruning)
+
+**4. Status-Only Updates**:
+- Backlog updates focus on status changes, not detailed progress
+- Technical details go in investigation docs or commit messages
+- Keep backlog as decision-making tool, not documentation repository
+
+**5. Template Enforcement**:
+- Standardized item templates prevent scope creep
+- Clear separation between "what needs doing" vs "how to do it"
+- Force conciseness through template constraints
+
+**Benefits**:
+- **Faster scanning** - See all priorities at a glance
+- **Better decision-making** - Focus on what matters without noise
+- **Easier maintenance** - Simple status updates vs complex rewrites
+- **Stakeholder friendly** - Non-technical people can understand priorities
+- **Scalable** - Process works with 50+ items, not just 10
+
+**Implementation Plan**:
+1. **Create item templates** with strict length limits
+2. **Migrate verbose items** to investigation docs  
+3. **Implement retention policies** with automated archival
+4. **Update persona instructions** for lean backlog maintenance
+5. **Create backlog health metrics** (item count, average length)
+
+**Done When**:
+- Backlog.md under 500 lines total
+- Individual items 5-10 lines maximum
+- Quick scanning possible for all sections
+- Investigation details moved to separate documents
+- Retention policies implemented and enforced
+
+### BR_010: Backlog-Assistant Incomplete Archival Operations
+**Status**: Proposed
+**Owner**: Test Specialist → Debugger Expert
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Found By**: Dev Engineer during archival process
+**Markers**: [WORKFLOW] [AGENT-RELIABILITY] [BACKLOG-MANAGEMENT]
+
+**What**: Backlog-assistant fails to consistently archive all completed items from Recently Completed section
+**Why**: Incomplete archival operations leave stale items in active backlog, reducing clarity and organization
+
+**Problem Evidence**:
+- Asked to "move completed items" to Archive.md
+- Only moved TD_024, left 4 other completed items (BR_007, TD_015, TD_016, BR_006)
+- No clear completion verification or status reporting
+- Inconsistent interpretation of "all completed items" vs specific items
+
+**Current Archival Failures**:
+1. **BR_007**: Completed 2025-08-19, still in Recently Completed
+2. **TD_015**: Completed 2025-08-19, still in Recently Completed  
+3. **TD_016**: Completed 2025-08-19, still in Recently Completed
+4. **BR_006**: Completed 2025-08-19, still in Recently Completed
+
+**Root Causes**:
+1. **Task specification ambiguity** - "completed items" vs specific item names
+2. **Missing completion verification** - agent doesn't report what was/wasn't moved
+3. **No archival criteria defined** - unclear when items should move
+4. **Agent scope limitations** - follows literal instructions, misses broader intent
+
+**Impact**:
+- Recently Completed section cluttered with old items
+- Reduces visibility of truly recent work
+- Manual cleanup required after every archival request
+- Undermines trust in backlog-assistant reliability
+
+**Investigation Steps**:
+1. Review backlog-assistant.md for archival instruction clarity
+2. Test various archival command phrasings
+3. Check if agent can identify "completed" status programmatically
+4. Verify multi-file coordination capabilities (Backlog.md + Archive.md)
+
+**Proposed Solutions**:
+1. **Clear archival protocol** in agent instructions
+2. **Completion verification** checklist in agent responses  
+3. **Status reporting** - list what was moved and what remains
+4. **Retention policy** - Recently Completed keeps max 3 items
+
+**Done When**:
+- Backlog-assistant consistently moves ALL completed items when requested
+- Agent reports completion status clearly
+- Manual cleanup no longer required after archival operations
+- Archival protocol documented and tested
 
 ### BR_008: Investigate Flaky SimulationManagerThreadSafetyTests.ConcurrentOperations Test
 **Status**: Proposed
@@ -975,13 +1152,6 @@ public Property DoubleSwap_ReturnsToOriginal()
 
 ## ✅ Recently Completed
 
-### TD_024: Fix CI Test Enforcement ✅ COMPLETED
-**Completed**: 2025-08-19
-**Owner**: Dev Engineer
-**Effort**: 1 hour
-**Solution**: Removed `|| true` from ci.yml, added test discovery and failure analysis
-**Impact**: CI quality gates restored, discovered 4 Linux-specific test failures (BR_009)
-**Key Learning**: Hiding test failures with `|| true` masks platform-specific issues
 
 ### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
 **Completed**: 2025-08-19

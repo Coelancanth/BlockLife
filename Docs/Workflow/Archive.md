@@ -8,6 +8,15 @@
 
 ## ✅ Completed Items
 
+### TD_024: Fix CI Test Enforcement ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: S (1 hour)
+**Outcome**: Removed `|| true` from ci.yml, restored proper test failure enforcement, discovered 4 Linux-specific SaveService failures
+**Lessons**: Hiding test failures with `|| true` masks critical platform-specific issues that break deployments
+**Unblocked**: CI quality gates now properly enforce test success, platform issues visible and tracked (BR_009)
+[METADATA: ci/cd, quality-gates, test-enforcement, platform-discovery, linux-compatibility, process-improvement]
+
 ### TD_020: Review Save System Architecture Decisions ✅ COMPLETED
 **Completed**: 2025-08-19
 **Effort**: S (2 hours)
@@ -82,6 +91,63 @@
 - Design conflicts detected automatically by GitHub Actions
 
 [METADATA: git-workflow, devops, automation, process-improvement, design-conflicts, prevention-system, github-actions, branch-protection]
+
+
+
+### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Completed
+**Effort**: S (2 hours)
+**Original Issue**: Personas were automatically calling backlog-assistant instead of user explicitly invoking it, bypassing review process
+**Solution**: Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+**Impact**: Review process integrity restored, user control over backlog changes maintained, Tech Lead review gates properly enforced
+
+**Implementation Details**:
+- Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+- Updated 5 persona files to use "Suggest-Don't-Execute" pattern instead of auto-invocation
+- Preserved Strategic Prioritizer exception for meta-analysis functions
+- Updated Workflow.md and CLAUDE.md with corrected protocol
+- Root cause eliminated: Documentation drift between personas resolved
+
+**Impact Assessment**:
+- ✅ Review process integrity restored
+- ✅ User control over backlog changes maintained  
+- ✅ Efficiency benefits preserved through suggestion pattern
+- ✅ Clear documentation prevents regression
+- ✅ Tech Lead review gates properly enforced
+
+**Files Updated**:
+- Docs/04-Personas/tech-lead.md
+- Docs/04-Personas/test-specialist.md  
+- Docs/04-Personas/debugger-expert.md
+- Docs/04-Personas/devops-engineer.md
+- Docs/04-Personas/product-owner.md
+- Docs/01-Active/Workflow.md
+- CLAUDE.md
+
+### TD_015: Add Save System Versioning ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: XS (30 minutes)
+**Implementation**: Added version field to SaveData with migration framework for future compatibility
+**Impact**: Save system now protected against format changes, prevents player data loss during updates
+**Key Components**: Version field, migration pattern, test coverage for v0→v1 transitions
+
+### TD_016: Document Grid Coordinate System ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: XS (15 minutes)
+**Implementation**: Documented coordinate convention and added validation helpers
+**Impact**: Eliminates coordinate confusion bugs, standardizes grid access patterns
+**Key Components**: Architecture.md documentation, GridAssert helper class, consistent (0,0) bottom-left convention
+
+### BR_006: Parallel Incompatible Features Prevention System ✅ RESOLVED
+**Completed**: 2025-08-19
+**Owner**: DevOps Engineer
+**Effort**: M (4-6 hours)
+**Solution**: Comprehensive automated prevention system with branch protection, VS locking, and workflow enforcement
+**Impact**: Eliminates parallel incompatible development, prevents wasted effort, ensures design consistency
+**Key Components**: GitHub branch protection + Design Guard Action + PR templates + Git hooks + updated GitWorkflow.md
 
 ---
 
