@@ -54,36 +54,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_007: Backlog-Assistant Automation Misuse
-**Status**: New
-**Owner**: Test Specialist → DevOps Engineer
-**Size**: S (2 hours)
-**Priority**: Critical
-**Created**: 2025-08-19
-**Found By**: Dev Engineer during TD_015/TD_016 implementation
-**Markers**: [WORKFLOW] [PROCESS]
-
-**What**: Personas are automatically calling backlog-assistant instead of user explicitly invoking it
-**Why**: Violates separation of concerns - mechanical tasks should be user-initiated, not persona-initiated
-
-**Issue Details**:
-- Dev Engineer automatically invoked backlog-assistant to mark items complete
-- Items were marked complete WITHOUT Tech Lead review
-- This bypasses the review process and creates false completion status
-
-**Root Cause**: Personas have been updated to proactively use backlog-assistant
-
-**Correct Workflow**:
-1. Persona completes implementation → Status: "Ready for Review"
-2. User explicitly invokes: `/task backlog-assistant "update status..."`
-3. Tech Lead reviews → Approves or requests changes
-4. Only THEN mark as complete
-
-**Done When**:
-- Persona documentation updated to NOT auto-invoke backlog-assistant
-- Clear guidance that users must explicitly call backlog-assistant
-- Workflow.md updated with correct process
-- All personas follow "suggest but don't execute" pattern for backlog updates
 
 ### TD_020: Review Save System Architecture Decisions
 **Status**: Ready for Review
@@ -105,8 +75,14 @@
 
 2. **Serialization Issues**:
    - 4 tests failing due to `required` properties on Block records
-   - Options: Custom JsonConverter vs DTOs vs accept failures
    - Current: Tests fail but runtime works
+   - **Options**:
+     a) Remove `required` modifiers (simple, loses compile-time validation)
+     b) Custom JsonConverter for Block (complex, precise control)
+     c) DTO pattern for serialization boundaries (clean separation)
+     d) **Switch to Newtonsoft.Json** (mature, handles required properties better)
+   - **Newtonsoft.Json Benefits**: Better object construction support, mature domain model serialization, handles records + required properties properly
+   - **System.Text.Json Benefits**: No dependencies, better performance, Microsoft preferred
 
 3. **Migration Pattern**:
    - Chain of Responsibility implementation
@@ -703,6 +679,50 @@ public record MoveBlockCommand(
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
+### TD_024: Fix CI Test Performance and Re-enable Test Enforcement
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: M (4-6 hours investigation + fix)
+**Priority**: Ideas
+**Created**: 2025-08-19
+**Found By**: DevOps Engineer during CI health check
+**Markers**: [CI/CD] [PERFORMANCE] [QUALITY-GATES]
+
+**What**: Fix CI test performance issues and remove `|| true` from test step
+**Why**: Currently tests in CI are ignored due to performance problems, providing zero quality gate value
+
+**Problem**: 
+- CI has `|| true` after `dotnet test` which ignores all test failures
+- Tests are slow/unreliable in CI environment  
+- We're paying CI cost for tests but getting no quality benefit
+- Pre-commit hook provides test validation but CI should too
+
+**Root Cause Analysis Needed**:
+- Why are tests slow in CI vs local? (networking? missing deps? timeout issues?)
+- Are specific tests causing the performance problems?
+- Is it a GdUnit4 vs xUnit performance difference?
+
+**Proposed Investigation**:
+1. Run tests locally vs CI with timing breakdown
+2. Identify performance bottleneck tests
+3. Either fix slow tests OR exclude them with better filtering
+4. Remove `|| true` once tests are reliable
+5. Add proper exit codes for test failures
+
+**Success Criteria**:
+- CI test run completes in <2 minutes
+- Test failures properly fail the CI build
+- No `|| true` workarounds in workflow
+- Quality gate restored
+
+**Alternative: Remove Tests from CI**:
+- If tests can't be fixed, remove them entirely from CI
+- Rely on pre-commit hook for test validation
+- Document that CI only validates build, not tests
+
+**Tech Lead Decision Needed**: 
+- Option 1: Investigate and fix test performance
+- Option 2: Remove tests from CI entirely and document decision
 
 ### VS_003D: Cross-Type Transmutation System [Score: 60/100]
 **Status**: Proposed
@@ -914,17 +934,36 @@ public Property DoubleSwap_ReturnsToOriginal()
 
 ## ✅ Recently Completed
 
-### TD_015: Add Save System Versioning ✅
-**Completed**: 2025-01-19 (PENDING REVIEW - see TD_020)
-**Owner**: Dev Engineer
-**Effort**: 30 minutes
-**Note**: Implementation complete but needs Tech Lead review for architectural decisions
+### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Completed
+**Effort**: S (2 hours)
+**Original Issue**: Personas were automatically calling backlog-assistant instead of user explicitly invoking it, bypassing review process
+**Solution**: Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+**Impact**: Review process integrity restored, user control over backlog changes maintained, Tech Lead review gates properly enforced
 
-### TD_016: Document Grid Coordinate System ✅
-**Completed**: 2025-01-19
-**Owner**: Dev Engineer  
-**Effort**: 15 minutes
-**Solution**: Added comprehensive coordinate documentation to Architecture.md and GridCoordinates helper class
+**Implementation Details**:
+- Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+- Updated 5 persona files to use "Suggest-Don't-Execute" pattern instead of auto-invocation
+- Preserved Strategic Prioritizer exception for meta-analysis functions
+- Updated Workflow.md and CLAUDE.md with corrected protocol
+- Root cause eliminated: Documentation drift between personas resolved
+
+**Impact Assessment**:
+- ✅ Review process integrity restored
+- ✅ User control over backlog changes maintained  
+- ✅ Efficiency benefits preserved through suggestion pattern
+- ✅ Clear documentation prevents regression
+- ✅ Tech Lead review gates properly enforced
+
+**Files Updated**:
+- Docs/04-Personas/tech-lead.md
+- Docs/04-Personas/test-specialist.md  
+- Docs/04-Personas/debugger-expert.md
+- Docs/04-Personas/devops-engineer.md
+- Docs/04-Personas/product-owner.md
+- Docs/01-Active/Workflow.md
+- CLAUDE.md
 
 ### TD_015: Add Save System Versioning ✅ COMPLETED
 **Completed**: 2025-08-19

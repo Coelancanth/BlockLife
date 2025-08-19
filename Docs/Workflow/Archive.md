@@ -24,6 +24,14 @@
 **Unblocked**: All grid operations now use consistent coordinate system
 [METADATA: architecture, documentation, grid-system, coordinate-convention, validation, bug-prevention]
 
+### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
+**Completed**: 2025-08-19
+**Effort**: S (2 hours)
+**Outcome**: Fixed inconsistent backlog-assistant invocation patterns across all persona documentation with "Suggest-Don't-Execute" pattern
+**Lessons**: Persona documentation drift can undermine process integrity; centralized protocol documentation prevents regression
+**Unblocked**: Review process integrity restored, user maintains control over all backlog changes, Tech Lead review gates properly enforced
+[METADATA: workflow, process-integrity, personas, backlog-management, review-process, documentation-consistency, automation-boundaries]
+
 ### BR_006: Parallel Incompatible Features Prevention System ✅ COMPLETED
 **Completed**: 2025-08-19
 **Owner**: DevOps Engineer

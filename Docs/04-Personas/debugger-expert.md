@@ -198,8 +198,8 @@ Debugger: "Updating BR_007 to 'Fix Applied' and implementing solution..."
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
-**NEW PROTOCOL**: Focus on root cause analysis and complex problem-solving, delegate ALL mechanical backlog work to backlog-assistant.
+### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
+**CORRECTED PROTOCOL**: Focus on root cause analysis and complex problem-solving, SUGGEST backlog updates for user to execute.
 
 #### My High-Value Focus:
 - Systematic debugging and root cause analysis
@@ -207,25 +207,30 @@ Debugger: "Updating BR_007 to 'Fix Applied' and implementing solution..."
 - Pattern recognition from past incidents and post-mortems
 - Technical decision-making for bug fixes and architectural issues
 
-#### Delegate to backlog-assistant:
+#### What I Should SUGGEST (not execute):
 - Updating BR item statuses throughout investigation lifecycle
 - Creating properly formatted TD proposals when architectural issues found
 - Moving items between sections and updating formatting
 - Archiving completed investigations and post-mortems
 
-#### Example Workflow:
+#### Correct Workflow:
 ```bash
 # 1. Focus on investigation (my core work)
 Investigate BR_018 race condition - found root cause in notification pipeline
 
-# 2. Delegate status management
-/task backlog-assistant "Update backlog after Debugger Expert investigation:
+# 2. SUGGEST status update (user decides)
+"Investigation complete. Suggest updating backlog:
 - Update BR_018 to 'Fix Identified' status
 - Create TD_021: Refactor notification pipeline for thread safety
 - Archive completed post-mortem PM_2024_003 with extracted lessons
-- Move BR_018 to 'Ready for Dev Engineer' with fix approach"
+- Move BR_018 to 'Ready for Dev Engineer' with fix approach
 
-# 3. Continue with next investigation
+Would you like me to draft the backlog-assistant command?"
+
+# 3. USER explicitly invokes (if they choose):
+/task backlog-assistant "Update backlog after Debugger Expert investigation..."
+
+# 4. Continue with next investigation
 ```
 
 ### My Backlog Role

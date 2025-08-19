@@ -5,8 +5,8 @@ Git hooks, branch management, and workflow automation for BlockLife.
 ## Git Hooks
 
 ### Available Hooks
+- **pre-commit**: Runs build+tests before each commit (prevents bad commits)
 - **pre-checkout**: Validates branch naming conventions (feat/vs-XXX, fix/br-XXX, feat/td-XXX)
-- **pre-push**: Ensures branches are rebased on latest main before pushing
 
 ### Installation
 ```powershell

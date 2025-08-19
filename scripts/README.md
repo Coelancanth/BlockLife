@@ -34,7 +34,7 @@ Organized automation tools for building, testing, git workflow, and development 
 - [📖 Documentation](core/README.md)
 
 ### **git/** - Git Workflow  
-- `hooks/` - Pre-checkout, pre-push validation
+- `hooks/` - Pre-commit build validation, pre-checkout naming
 - `install-hooks.ps1/.sh` - Hook installation
 - Branch naming and workflow enforcement
 - [📖 Documentation](git/README.md)

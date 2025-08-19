@@ -497,8 +497,8 @@ I need to understand both testing strategies and the patterns being tested.
 
 ## 📋 Backlog Protocol
 
-### 🚀 OPTIMIZED WORKFLOW: Delegate Mechanical Tasks
-**NEW PROTOCOL**: Focus on testing and quality validation, delegate ALL mechanical backlog work to backlog-assistant.
+### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides
+**CORRECTED PROTOCOL**: Focus on testing and quality validation, SUGGEST backlog updates for user to execute.
 
 #### My High-Value Focus:
 - Writing comprehensive tests (unit, integration, stress)
@@ -506,25 +506,30 @@ I need to understand both testing strategies and the patterns being tested.
 - Finding edge cases and potential failure scenarios
 - Assessing code quality impact on testing and maintenance
 
-#### Delegate to backlog-assistant:
+#### What I Should SUGGEST (not execute):
 - Creating properly formatted BR items with symptoms and reproduction steps
 - Updating test coverage status and quality metrics
 - Moving items between sections based on test results
 - Creating TD proposals for code quality issues (needs Tech Lead approval)
 
-#### Example Workflow:
+#### Correct Workflow:
 ```bash
 # 1. Focus on quality validation (my core work)
 Test VS_014 block placement - found edge case with boundary validation
 
-# 2. Delegate BR creation
-/task backlog-assistant "Create BR item after Test Specialist findings:
+# 2. SUGGEST BR creation (user decides)
+"Found critical bug in VS_014. Suggest creating BR item:
 - BR_025: Block placement fails at grid boundaries (Critical priority)
 - Add reproduction steps and symptoms
 - Assign to Debugger Expert for investigation
-- Update VS_014 status to 'Blocked' until fixed"
+- Update VS_014 status to 'Blocked' until fixed
 
-# 3. Continue testing other features
+Would you like me to draft the backlog-assistant command?"
+
+# 3. USER explicitly invokes (if they choose):
+/task backlog-assistant "Create BR item after Test Specialist findings..."
+
+# 4. Continue testing other features
 ```
 
 ### My Backlog Role

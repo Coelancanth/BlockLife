@@ -139,14 +139,16 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
                           Debugger Expert (FIX COMPLEX ISSUES)
 ```
 
-### Backlog Protocol
-**⚠️ CRITICAL**: Personas should NEVER automatically invoke backlog-assistant. Only SUGGEST updates for user to execute.
+### Backlog Protocol - CRITICAL FIX (BR_007)
+**⚠️ AUTOMATION MISUSE PREVENTION**: Personas should NEVER automatically invoke backlog-assistant. Only SUGGEST updates for user to execute.
 
-#### Correct Process:
-1. **Persona completes work** → Suggests status update
-2. **User decides** → Explicitly invokes `/task backlog-assistant` if desired
+#### Correct Process (Prevents automation misuse):
+1. **Persona completes work** → Suggests status update: "Suggest updating backlog: [details]. Would you like me to draft the backlog-assistant command?"
+2. **User decides** → Explicitly invokes `/task backlog-assistant` if desired  
 3. **Review happens** → Tech Lead reviews before marking complete
 4. **User confirms** → Final status change via explicit command
+
+#### Exception: Strategic Prioritizer auto-invokes backlog-assistant for meta-analysis (this is its designed function)
 
 #### What Personas Do:
 - **Product Owner**: Creates VS items, sets priorities
@@ -288,7 +290,7 @@ See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE
 1. **ALWAYS** follow the Sacred Sequence from [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)
 2. **NEVER** skip fetch/pull before creating branches  
 3. **OUTPUT** each git command as you execute it
-4. **REBASE** immediately if pre-push hook blocks you
+4. **REBASE** immediately if GitHub branch protection blocks you
 
 **Hook Enforcement Active**:
 - ❌ Direct pushes to main are BLOCKED
