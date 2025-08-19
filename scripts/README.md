@@ -1,30 +1,63 @@
-# BlockLife Build Scripts
+# BlockLife Automation Scripts
 
-Simple, no-complexity build automation for the BlockLife project.
+Organized automation tools for building, testing, git workflow, and development productivity.
 
-## Quick Start
+## 🚀 Quick Start
 
-### Windows
+### Essential Build Commands
 ```powershell
-./scripts/build.ps1 test    # Run all tests
-./scripts/build.ps1 build   # Build the solution
-./scripts/build.ps1 all     # Clean, build, and test
+# Windows
+./scripts/core/build.ps1 test    # Build + run tests (safe default)
+./scripts/core/build.ps1 build   # Build only
+./scripts/core/build.ps1 all     # Clean, build, and test
+
+# Linux/Mac
+./scripts/core/build.sh test     # Build + run tests (safe default)
+./scripts/core/build.sh build    # Build only
+./scripts/core/build.sh all      # Clean, build, and test
 ```
 
-### Linux/Mac
-```bash
-./scripts/build.sh test     # Run all tests
-./scripts/build.sh build    # Build the solution
-./scripts/build.sh all      # Clean, build, and test
+### Git Workflow Setup
+```powershell
+# Windows
+./scripts/git/install-hooks.ps1   # Install git hooks
+
+# Linux/Mac
+./scripts/git/install-hooks.sh    # Install git hooks
 ```
 
-## Available Commands
+## 📁 Directory Structure
 
-- `build` - Build the solution in Debug configuration
-- `test` - Run all unit tests
-- `clean` - Clean all build artifacts
-- `run` - Launch the game (requires Godot)
-- `all` - Clean, build, and test in sequence
+### **core/** - Essential Operations
+- `build.ps1/.sh` - Build automation (build, test, clean, run)
+- Complete build lifecycle management
+- [📖 Documentation](core/README.md)
+
+### **git/** - Git Workflow  
+- `hooks/` - Pre-checkout, pre-push validation
+- `install-hooks.ps1/.sh` - Hook installation
+- Branch naming and workflow enforcement
+- [📖 Documentation](git/README.md)
+
+### **test/** - Testing Automation *(Future)*
+- Comprehensive test execution and reporting
+- Code coverage and performance benchmarking
+- [📖 Documentation](test/README.md)
+
+### **dev/** - Development Utilities *(Future)*
+- Environment setup and health checks
+- Multi-persona development tools (TD_023)
+- [📖 Documentation](dev/README.md)
+
+### **deploy/** - Deployment Automation *(Future)*
+- Game packaging and release management
+- Multi-platform deployment
+- [📖 Documentation](deploy/README.md)
+
+### **utils/** - Shared Utilities *(Future)*
+- Common functions and cross-platform helpers
+- Standardized error handling and validation
+- [📖 Documentation](utils/README.md)
 
 ## CI/CD Integration
 

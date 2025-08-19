@@ -36,7 +36,7 @@
     "Check existing patterns before implementing - don't assume methods exist",
     "DragStateService is singleton - only one drag operation at a time",
     "Use feature branches, never commit directly to main",
-    "Run './scripts/build.ps1 test' before committing",
+    "Run './scripts/core/build.ps1 test' before committing",
     "Commit messages: feat:, fix:, refactor:, test:, docs:, perf:, chore:",
     "Complex bugs (>30min) need Debugger Expert persona",
     "VS items for features, BR for bugs, TD for technical debt",

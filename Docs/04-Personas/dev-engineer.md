@@ -353,7 +353,7 @@ This ensures accurate timestamps even when chat context is cleared.
 
 ### Testing Handoff Protocol
 When my implementation is complete:
-1. **Run unit/integration tests** with `./scripts/build.ps1 test`
+1. **Run unit/integration tests** with `./scripts/core/build.ps1 test`
 2. **If pure logic feature** → Status: "Ready for Review 🔍"
 3. **If visual/UI feature** → Status: "Ready for Human Testing 👁️"
 4. **Generate basic test notes** describing what needs visual validation

@@ -2,8 +2,8 @@
 # This script copies git hooks to the .git/hooks directory
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$hooksSource = Join-Path $scriptPath "git-hooks"
-$hooksTarget = Join-Path (Split-Path -Parent $scriptPath) ".git\hooks"
+$hooksSource = Join-Path $scriptPath "hooks"
+$hooksTarget = Join-Path (Split-Path -Parent (Split-Path -Parent $scriptPath)) ".git\hooks"
 
 if (-not (Test-Path $hooksSource)) {
     Write-Error "❌ Git hooks source directory not found: $hooksSource"

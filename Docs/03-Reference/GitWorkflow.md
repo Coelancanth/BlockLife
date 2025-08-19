@@ -120,10 +120,10 @@ git push  # Now it will work
 First time setup (run once):
 ```bash
 # Windows
-./scripts/install-hooks.ps1
+./scripts/git/install-hooks.ps1
 
 # Linux/Mac
-./scripts/install-hooks.sh
+./scripts/git/install-hooks.sh
 ```
 
 The pre-push hook will:

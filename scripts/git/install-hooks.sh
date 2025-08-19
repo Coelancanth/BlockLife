@@ -2,8 +2,8 @@
 # Install git hooks for BlockLife project (Linux/Mac version)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HOOKS_SOURCE="$SCRIPT_DIR/git-hooks"
-HOOKS_TARGET="$(dirname "$SCRIPT_DIR")/.git/hooks"
+HOOKS_SOURCE="$SCRIPT_DIR/hooks"
+HOOKS_TARGET="$(dirname "$(dirname "$SCRIPT_DIR")")/.git/hooks"
 
 if [ ! -d "$HOOKS_SOURCE" ]; then
     echo "❌ Git hooks source directory not found: $HOOKS_SOURCE"

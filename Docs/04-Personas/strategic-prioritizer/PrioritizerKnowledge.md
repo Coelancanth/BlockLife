@@ -20,7 +20,7 @@ Patterns:
 - **Language**: C# with LanguageExt.Core (functional)
 - **Testing**: GdUnit4 + standard unit tests
 - **Architecture**: Clean Architecture, CQRS, MVP
-- **Build**: dotnet 8.0, scripts/build.ps1
+- **Build**: dotnet 8.0, scripts/core/build.ps1
 
 ### Critical Dependencies Map
 ```mermaid

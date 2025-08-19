@@ -4,21 +4,16 @@
 
 ## 📖 How to Use This Backlog
 
-### 🧠 Owner-Based Ultra-Think Protocol
+### 🧠 Owner-Based Protocol
 
 **Each item has a single Owner persona responsible for decisions and progress.**
 
 #### When You Embody a Persona:
 1. **Filter** for items where `Owner: [Your Persona]`
-2. **Ultra-Think** if `Status: Proposed` and you're the owner (5-15 min deep analysis)
 3. **Quick Scan** for other statuses you own (<2 min updates)
 4. **Update** the backlog before ending your session
 5. **Reassign** owner when handing off to next persona
 
-#### Ultra-Think Triggers:
-- **Automatic**: When you own a "Proposed" item
-- **Markers**: [ARCHITECTURE], [ROOT-CAUSE], [SAFETY-CRITICAL], [COMPLEX]
-- **Output**: Document decision rationale directly in the item
 
 ### Default Ownership Rules
 | Item Type | Status | Default Owner | Next Owner |
@@ -64,7 +59,7 @@
 **Owner**: Test Specialist → DevOps Engineer
 **Size**: S (2 hours)
 **Priority**: Critical
-**Created**: 2025-01-19
+**Created**: 2025-08-19
 **Found By**: Dev Engineer during TD_015/TD_016 implementation
 **Markers**: [WORKFLOW] [PROCESS]
 
@@ -708,23 +703,6 @@ public record MoveBlockCommand(
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### VS_003: Triple-Match System (Original - Archived) [Score: 85/100]
-**Status**: Archived - Replaced by VS_003A-D phased approach
-**Owner**: N/A (Archived)
-**Size**: L (12-16 hours - split into 2 phases)
-**Priority**: Ideas
-**Created**: 2025-08-19
-**Archived**: 2025-08-19
-**Depends On**: None (separate from drag/move)
-
-**What**: Original design mixing match and tier-up mechanics without clear separation
-**Why**: Creates strategic gameplay with clear, simple rules that players instantly understand
-
-**Note**: Replaced by VS_003A-D phased approach that properly separates:
-- VS_003A: Match for resources/attributes
-- VS_003B: Tier system introduction
-- VS_003C: Unlockable tier-up mechanics
-- VS_003D: Cross-type transmutation
 
 ### VS_003D: Cross-Type Transmutation System [Score: 60/100]
 **Status**: Proposed
@@ -799,6 +777,65 @@ public class ResourceManager : IResourceManager
 
 **Depends On**: None - Do after MVP
 
+### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer (when approved)
+**Size**: M (4-8 hours implementation)
+**Priority**: Ideas
+**Created**: 2025-08-19
+**Markers**: [ARCHITECTURE] [DEVOPS] [PRODUCTIVITY]
+
+**What**: Automated persona workspace isolation using git worktrees with slash command integration
+**Why**: Eliminates all git branch and file conflicts between persona sessions, significant productivity improvement
+
+**Problem Solved**:
+- Multiple persona sessions conflict on same branch (file locks, merge conflicts)
+- Manual branch switching between personas is error-prone
+- Context switching overhead reduces persona effectiveness
+- Coordination complexity grows exponentially with concurrent personas
+
+**Solution - Persona Worktree System**:
+- Single command `/embody dev-engineer` automatically creates worktree + switches directory + activates persona
+- Each persona gets isolated workspace using native git worktree functionality
+- Zero maintenance overhead (git handles all complexity)
+- Perfect isolation - no shared files, branches, or state
+
+**Key Benefits**:
+- **Complete Isolation**: No more file conflicts between persona sessions
+- **Zero Context Switch**: Instant persona activation with full environment
+- **Native Git**: Uses proven git worktree functionality (stable, zero bugs)
+- **Single Command**: `/embody persona-name` handles everything automatically
+- **9 Hours Total**: vs weeks for complex coordination systems
+
+**Implementation Components**:
+1. **Custom Slash Command** (2h): `/embody` command with persona parameter
+2. **Worktree Management** (3h): Create, switch, cleanup worktree operations
+3. **Cross-Platform Scripts** (2h): Bash + PowerShell automation scripts
+4. **Management Utilities** (1h): Status, cleanup, workspace listing commands
+5. **Documentation** (1h): Usage guide and troubleshooting
+
+**Technical Approach**:
+```bash
+# Single command does everything:
+/embody dev-engineer
+  → git worktree add ../blocklife-dev-engineer
+  → cd ../blocklife-dev-engineer
+  → activate dev-engineer persona
+  → ready for isolated development
+```
+
+**Reference**: Comprehensive design document at `Docs/02-Design/PersonaWorktreeSystem.md`
+
+**Done When**:
+- `/embody persona-name` creates isolated workspace automatically
+- Cross-platform support (Windows/Linux/Mac)
+- Workspace management commands (status, cleanup, list)
+- Complete persona isolation achieved
+- Documentation and troubleshooting guide complete
+- 5+ tests for worktree operations
+
+**Depends On**: None
+
 ### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
 **Status**: Approved - Immediate Part Ready
 **Owner**: Test Specialist  
@@ -871,49 +908,6 @@ public Property DoubleSwap_ReturnsToOriginal()
 - Edge cases discovered are documented
 - CI pipeline includes property test execution
 
-
-
-### TD_009: Refine Persona Command Implementation for Production [Score: 40/100]
-**Status**: Approved ✓
-**Owner**: DevOps Engineer
-**Size**: M (4-6 hours)  
-**Priority**: Ideas
-**Found By**: DevOps Engineer during persona system testing
-**Created**: 2025-08-18
-
-**Tech Lead Decision** (2025-08-18):
-✅ APPROVED - Valid improvements but not urgent
-- Do after critical items (TD_003, TD_004)
-- Focus on error handling and silent mode
-
-**What**: Improve persona command system robustness and user experience
-**Why**: Current implementation works but needs refinement for reliable production automation
-
-**Current Issues**:
-- Local vs global config precedence unclear and inconsistent
-- No error handling for corrupted state files
-- Manual testing required to verify which config is active
-- Command output verbose for status line usage
-
-**Approach**:
-- Add config detection and validation to persona commands
-- Implement graceful error handling for missing/corrupted state files
-- Create diagnostic commands to show active configuration
-- Add silent mode for status line integration (no console output)
-- Document config precedence rules clearly
-
-**Technical Improvements**:
-- Add `--quiet` flag for status line usage
-- Validate .claude/current-persona file format
-- Add config source detection (global vs local)
-- Implement fallback behavior for missing configs
-
-**Done When**:
-- Commands work reliably regardless of config setup
-- Clear error messages for configuration issues
-- Silent mode works properly with ccstatusline
-- Documentation explains config precedence clearly
-- No false negatives in persona detection
 
 ## 🚧 Currently Blocked
 *None*

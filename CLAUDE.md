@@ -203,10 +203,10 @@ date  # Get current date/time before creating dated documents
 **MANDATORY before committing:**
 ```bash
 # Windows
-./scripts/build.ps1 test    # Build + tests (safe for commits)
+./scripts/core/build.ps1 test    # Build + tests (safe for commits)
 
 # Linux/Mac  
-./scripts/build.sh test     # Build + tests (safe for commits)
+./scripts/core/build.sh test     # Build + tests (safe for commits)
 ```
 
 **Build Commands (UPDATED - Critical Change):**
@@ -221,7 +221,7 @@ date  # Get current date/time before creating dated documents
 - Use `test-only` for rapid development (tests only, not safe for commits)
 
 **Pre-commit Hook Enforcement:**
-- Git pre-commit hook automatically runs `./scripts/build.ps1 test` (Windows) or `./scripts/build.sh test` (Linux/Mac)
+- Git pre-commit hook automatically runs `./scripts/core/build.ps1 test` (Windows) or `./scripts/core/build.sh test` (Linux/Mac)
 - **Cannot commit** if build fails - this catches Godot compilation issues
 - Hook can be bypassed in emergencies with `git commit --no-verify` (use sparingly)
 
@@ -304,7 +304,7 @@ See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE
 # "Branch created from latest main ✅"
 ```
 
-**Installation**: Run `./scripts/install-hooks.ps1` (Windows) or `./scripts/install-hooks.sh` (Linux/Mac)
+**Installation**: Run `./scripts/git/install-hooks.ps1` (Windows) or `./scripts/git/install-hooks.sh` (Linux/Mac)
 
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)

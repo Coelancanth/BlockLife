@@ -134,7 +134,7 @@ Ready for Dev      (back to refine scope)
     ↓
 Dev Engineer implements (Status: In Progress)
     ↓ [Quick Scan mode]
-[Runs ./scripts/build.ps1 test (build+tests) locally]
+[Runs ./scripts/core/build.ps1 test (build+tests) locally]
     ↓
 Creates PR → CI/CD runs (Owner: Test Specialist)
     ↓
@@ -335,7 +335,7 @@ Date: ________________
 5. **User approves fixes** - Debugger can't autonomously fix
 6. **Single source**: `Docs/Workflow/Backlog.md`
 7. **Quality gates**: Test Specialist blocks if untestable, proposes TD if messy
-8. **CI/CD gates**: Build+tests must pass locally (`./scripts/build.ps1 test`) and pre-commit hook enforces this
+8. **CI/CD gates**: Build+tests must pass locally (`./scripts/core/build.ps1 test`) and pre-commit hook enforces this
 9. **PR requirements**: CI must pass on GitHub before merge
 
 ## 🔧 Build Error Troubleshooting
@@ -354,7 +354,7 @@ Before building after refactoring:
 - [ ] Verified namespaces with `Grep "class ClassName"`
 - [ ] Added type aliases for any ambiguous types
 - [ ] Checked all Match branches return consistent types
-- [ ] Ran `./scripts/build.ps1 test` locally (build+tests)
+- [ ] Ran `./scripts/core/build.ps1 test` locally (build+tests)
 - [ ] Fixed any namespace conflicts with type aliases
 
 ### Pre-Implementation Checklist (Context7 Integration)
@@ -377,10 +377,10 @@ Grep "class PlaceBlockCommand" src/
 Grep "PlaceBlockCommand" --type cs
 
 # Build + test locally before committing (NEW - single command is safe!)
-./scripts/build.ps1 test
+./scripts/core/build.ps1 test
 
 # For rapid development iteration (tests only, NOT for commits)
-./scripts/build.ps1 test-only
+./scripts/core/build.ps1 test-only
 ```
 
 ## Post-Mortem Lifecycle (Debugger Expert Owns)
