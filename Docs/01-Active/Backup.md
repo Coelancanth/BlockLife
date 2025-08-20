@@ -1,3 +1,249 @@
+### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
+**Status**: Approved
+**Owner**: Tech Lead → Dev Engineer
+**Size**: M (6.5 hours - updated estimate)
+**Priority**: Important
+**Created**: 2025-08-19
+**Depends On**: None
+
+**What**: Match 3+ adjacent same-type blocks to clear them and earn attributes
+**Why**: Proves core resource economy loop before adding complexity
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED for implementation with Pattern Recognition Architecture**
+
+**Architecture Decision**: 
+- Implement extensible Pattern Recognition Framework instead of simple match detection
+- Patterns are descriptions (what COULD happen) separate from execution (what SHOULD happen)
+- Enables future tier-ups, transmutations, and chains without refactoring
+- See [ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md) for detailed architectural rationale
+
+**Technical Approach**:
+1. **Pattern Framework** (1.5h): Core abstractions - IPattern, IPatternRecognizer, IPatternResolver, IPatternExecutor
+2. **Match Implementation** (1.5h): MatchPatternRecognizer with flood-fill, MatchPatternExecutor for clearing blocks
+3. **Player State** (1h): Domain model for resources/attributes, PlayerStateService for tracking
+4. **CQRS Integration** (1h): ProcessPatternsCommand triggered after actions, pattern processing pipeline
+5. **Presentation** (0.5h): Simple text UI for attributes display
+
+**Key Implementation Files**:
+- `src/Core/Features/Block/Patterns/` - Pattern recognition framework
+- `src/Core/Domain/Player/` - Player state domain model  
+- `src/Core/Features/Block/Patterns/Recognizers/MatchPatternRecognizer.cs` - Flood-fill implementation
+- `src/Core/Features/Block/Patterns/Commands/ProcessPatternsCommand.cs` - CQRS integration
+
+**Testing Requirements**:
+- 5 tests for MatchPatternRecognizer (horizontal, vertical, L-shape, T-shape, no-match)
+- 3 tests for reward calculations (resource mapping, size bonuses, all block types)
+- 3 tests for pattern resolution (priority handling, conflict resolution)
+- 2 tests for player state updates
+
+**Updated Estimate**: 6.5 hours (added 1h for pattern framework)
+
+**Rationale for Architecture**:
+- Flood-fill is encapsulated in ONE recognizer, not spread through codebase
+- New pattern types (tier-up, transmute) plug in without touching existing code
+- Testable in isolation - mock recognizers for complex scenarios
+- Chains work automatically through recursive pattern detection
+- Follows Open/Closed Principle - extensible but stable
+
+**Developer Implementation Guide**:
+
+**Pattern Framework Contracts**:
+```csharp
+// Core pattern interface - all patterns implement this
+public interface IPattern
+{
+    PatternType Type { get; }              // Match, TierUp, Transmute
+    Seq<Vector2Int> Positions { get; }     // Blocks involved
+    int Priority { get; }                  // Match=10, TierUp=20, Transmute=30
+    IPatternOutcome CalculateOutcome();    // What happens if executed
+}
+
+// Recognizer finds patterns at a position
+public interface IPatternRecognizer
+{
+    PatternType SupportedType { get; }
+    bool IsEnabled { get; }  // Can be toggled by unlocks
+    Seq<IPattern> Recognize(IGridStateService grid, Vector2Int trigger, PatternContext ctx);
+}
+
+// Executor applies pattern to game state
+public interface IPatternExecutor
+{
+    Task<Fin<ExecutionResult>> Execute(IPattern pattern, ExecutionContext context);
+}
+```
+
+**Integration Flow (Step-by-Step)**:
+1. Player completes action (move/place) → `BlockMovedNotification`
+2. `ActionCompletedNotificationHandler` catches notification
+3. Handler sends `ProcessPatternsCommand(triggerPosition)`
+4. `ProcessPatternsCommandHandler` orchestrates:
+   - PatternEngine.FindPatterns() → calls all recognizers
+   - PatternResolver.Resolve() → picks highest priority
+   - PatternExecutor.Execute() → applies changes
+   - Check for chains → recursive call if new patterns
+5. Publish `PatternProcessedNotification` → UI updates
+
+**Flood-Fill Implementation Details**:
+```csharp
+private Seq<Vector2Int> FloodFill(IGridStateService grid, Vector2Int start, BlockType targetType)
+{
+    var visited = new HashSet<Vector2Int>();
+    var connected = new List<Vector2Int>();
+    var stack = new Stack<Vector2Int>();
+    
+    stack.Push(start);
+    
+    while (stack.Count > 0 && connected.Count < 100) // Safety limit
+    {
+        var pos = stack.Pop();
+        if (visited.Contains(pos)) continue;
+        
+        var block = grid.GetBlockAt(pos);
+        if (block.IsNone || block.Value.Type != targetType) continue;
+        
+        visited.Add(pos);
+        connected.Add(pos);
+        
+        // Add orthogonal neighbors (not diagonal)
+        foreach (var neighbor in GetOrthogonalNeighbors(pos))
+        {
+            if (grid.IsValidPosition(neighbor) && !visited.Contains(neighbor))
+                stack.Push(neighbor);
+        }
+    }
+    
+    return connected.Count >= 3 ? Seq(connected) : Seq<Vector2Int>.Empty;
+}
+```
+
+**DI Container Registration** (in `BlockLifeServiceRegistration.cs`):
+```csharp
+// Player state (singleton - one player)
+services.AddSingleton<IPlayerStateService, PlayerStateService>();
+
+// Pattern recognition system (scoped per request)
+services.AddScoped<IPatternEngine, PatternEngine>();
+services.AddScoped<IPatternResolver, PriorityResolver>();
+
+// Register ALL recognizers (they'll be injected as IEnumerable)
+services.AddScoped<IPatternRecognizer, MatchPatternRecognizer>();
+// Future: services.AddScoped<IPatternRecognizer, TierUpRecognizer>();
+
+// Register executors by type
+services.AddScoped<IPatternExecutor, MatchPatternExecutor>();
+```
+
+**First Test to Write** (TDD approach):
+```csharp
+[Fact]
+public void Recognize_ThreeHorizontal_ReturnsMatchPattern()
+{
+    // Arrange
+    var grid = new TestGridBuilder()
+        .WithBlock(0, 0, BlockType.Work)
+        .WithBlock(1, 0, BlockType.Work)
+        .WithBlock(2, 0, BlockType.Work)
+        .Build();
+    
+    var recognizer = new MatchPatternRecognizer();
+    var context = new PatternContext(null, null, null); // Can be null for basic tests
+    
+    // Act
+    var patterns = recognizer.Recognize(grid, new Vector2Int(1, 0), context);
+    
+    // Assert
+    patterns.Should().ContainSingle();
+    var pattern = patterns.First();
+    pattern.Type.Should().Be(PatternType.Match);
+    pattern.Positions.Should().BeEquivalentTo(new[] {
+        new Vector2Int(0, 0),
+        new Vector2Int(1, 0),
+        new Vector2Int(2, 0)
+    });
+}
+```
+
+**Critical Edge Cases to Handle**:
+- **Empty positions**: Skip during flood-fill (GetBlockAt returns None)
+- **Grid boundaries**: Always check `IsValidPosition()` before access
+- **Overlapping patterns**: Resolver picks highest priority (TierUp > Match)
+- **Rapid actions**: Commands queued in MediatR, processed sequentially
+- **Pattern at edge**: Works normally (flood-fill handles boundaries)
+- **No patterns found**: Return empty Seq, no error
+- **Circular dependencies**: Visited set prevents infinite loops
+
+**Common Pitfalls to Avoid**:
+❌ **DON'T** mutate grid during recognition phase
+❌ **DON'T** execute patterns inside recognizers
+❌ **DON'T** couple recognizers to specific executors
+❌ **DON'T** use mutable collections in patterns
+❌ **DON'T** throw exceptions - use Fin<T> for errors
+
+✅ **DO** keep patterns immutable (use records)
+✅ **DO** test recognizers in complete isolation
+✅ **DO** use LanguageExt.Seq for collections
+✅ **DO** validate all grid positions before access
+✅ **DO** log pattern detection for debugging
+
+**Resource/Attribute Mapping** (for reference):
+```csharp
+public static class BlockTypeRewards
+{
+    public static (RewardType type, int amount) GetReward(BlockType blockType) => blockType switch
+    {
+        BlockType.Work => (RewardType.Resource(ResourceType.Money), 10),
+        BlockType.Study => (RewardType.Attribute(AttributeType.Knowledge), 10),
+        BlockType.Health => (RewardType.Attribute(AttributeType.Health), 10),
+        BlockType.Relationship => (RewardType.Resource(ResourceType.SocialCapital), 10),
+        BlockType.Fun => (RewardType.Attribute(AttributeType.Happiness), 10),
+        // ... etc for all 9 types
+    };
+}
+```
+
+**Performance Considerations**:
+- Flood-fill limited to 100 blocks (prevent runaway)
+- Pattern detection runs synchronously (fast enough)
+- Cache patterns for same board state (future optimization)
+- Use ValueTask for hot paths (if profiling shows need)
+
+**Core Mechanic**:
+- Match 3+ adjacent same-type blocks (orthogonal only)
+- Matched blocks disappear (no transformation)
+- Each block type grants specific resources or attributes:
+  - Work → Money +10 per block (resource)
+  - Study → Knowledge +10 per block (attribute)
+  - Health → Health +10 per block (attribute)
+  - Relationship → Social Capital +10 per block (resource)
+  - Fun → Happiness +10 per block (attribute)
+  - Sleep → Energy +10 per block (attribute)
+  - Food → Nutrition +10 per block (attribute)
+  - Exercise → Fitness +10 per block (attribute)
+  - Meditation → Mindfulness +10 per block (attribute)
+- Display current attributes (text UI for now)
+
+**Match Size Bonuses**:
+- Match-3: Base rewards (×1.0)
+- Match-4: ×1.5 bonus multiplier
+- Match-5: ×2.0 bonus multiplier
+- Match-6+: ×3.0 bonus multiplier
+
+**Done When**:
+- Matching 3+ blocks clears them from grid
+- Attributes increase based on block types matched
+- Current attributes display on screen
+- Works for all 9 block types
+- 5+ unit tests for match detection
+- 3+ tests for attribute calculation
+
+**NOT in Scope**:
+- Transformation to higher tiers
+- Spending attributes
+- Unlocks or progression
+- Chain reactions
+
 ### VS_003B: Tier System Introduction [Score: 80/100]
 **Status**: Proposed
 **Owner**: Product Owner → Tech Lead
@@ -286,6 +532,30 @@ public record MoveBlockCommand(
 
 **Depends On**: None
 
+### VS_003D: Cross-Type Transmutation System [Score: 60/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead
+**Size**: M (6-8 hours)
+**Priority**: Ideas (future)
+**Created**: 2025-08-19
+**Depends On**: VS_003C
+
+**What**: Unlock special cross-type transmutations
+**Why**: Adds strategic depth through type conversion
+
+**Core Mechanic**:
+- Expensive unlocks for transmutation recipes:
+  - Work + Work + Study → Career (500 Money + 300 Knowledge)
+  - Health + Health + Fun → Wellness (300 Health + 200 Happiness)
+- Different from tier-up: Changes block TYPE not TIER
+- Creates special blocks with unique properties
+
+**Done When**:
+- Unlock shop displays transmutation recipes
+- Can spend resources to unlock transmutation abilities
+- Transmutation works alongside matching and tier-up
+- Visual indication of transmuted block types
+- 5+ tests for transmutation system
 
 ### TD_019: Create Resource Manager Service
 **Status**: Proposed
@@ -334,81 +604,6 @@ public class ResourceManager : IResourceManager
 - Easy to swap resource paths/bundles
 
 **Depends On**: None - Do after MVP
-
-
-### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
-**Status**: Approved - Immediate Part Ready
-**Owner**: Test Specialist  
-**Size**: XS (immediate) + M (future property suite)
-**Priority**: Ideas (not critical path)
-**Created**: 2025-08-19
-**Proposed By**: Test Specialist
-**Markers**: [QUALITY] [TESTING]
-
-**What**: Implement FSCheck property tests for swap operation invariants
-**Why**: Catch edge cases that example-based tests might miss, ensure mathematical properties hold
-
-**Tech Lead Decision** (2025-08-18):
-✅ **APPROVED with modifications - Defer to after MVP**
-
-**Analysis**:
-- Current swap has only 2 example-based tests
-- Property tests would catch edge cases we haven't thought of
-- FSCheck is mature and well-suited for game logic invariants
-- Swap operation has clear mathematical properties to verify
-
-**However**: 
-- We have only 2 swap tests currently - not enough surface area yet
-- Property tests shine when you have complex state spaces
-- Current swap is relatively simple (range check + position swap)
-
-**Modified Approach**:
-1. **Immediate** (5 min): Add 2-3 more example-based tests for critical cases:
-   - Swap with boundary blocks (edge of grid)
-   - Failed swap attempts (out of range) 
-   - Swap with same block (should fail gracefully)
-   
-**Test Specialist Assignment** (2025-08-18):
-✅ **READY FOR IMPLEMENTATION** - Tech Lead analysis complete, Test Specialist to implement
-- Current swap tests: 2 existing (CompleteDrag_ToOccupiedPosition_WithinRange_ShouldSwapBlocks, CompleteDrag_SwapAtMaxRange_ShouldSucceed)
-- Missing coverage: boundary cases, same-block swaps, edge validation
-- Test file location: `tests/BlockLife.Core.Tests/Features/Block/Drag/DragCommandTests.cs`
-- Follow existing test patterns using BlockBuilder and FluentAssertions
-
-2. **After MVP** (when swap gets complex):
-   - Implement full property-based test suite
-   - Add generators for game states
-   - Test invariants across all block operations
-
-**Rationale**:
-- Property tests are valuable but premature optimization now
-- With only 2 tests, we need basic coverage first
-- When swap mechanics get complex (power-ups, constraints), revisit
-
-**Proposed Properties** (Future Implementation):
-```csharp
-// 1. Swap preserves total block count
-[Property]
-public Property SwapOperation_PreservesBlockCount()
-
-// 2. Swap validation is symmetric
-[Property]
-public Property SwapDistance_IsSymmetric()
-// If A can swap with B, then B can swap with A
-
-// 3. Double swap returns to original state
-[Property]
-public Property DoubleSwap_ReturnsToOriginal()
-// Swapping twice = identity operation
-```
-
-**Done When**:
-- **Immediate**: 2-3 additional example tests added and passing
-- **Future**: Property tests integrated with 1000+ generated cases
-- Edge cases discovered are documented
-- CI pipeline includes property test execution
-
-
 
 
 ### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces ✅ APPROVED (MODIFIED)
@@ -515,251 +710,74 @@ public Property DoubleSwap_ReturnsToOriginal()
 **Depends On**: None
 
 
-
-### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
-**Status**: Approved
-**Owner**: Dev Engineer
-**Size**: M (6.5 hours - updated estimate)
-**Priority**: Important
+### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
+**Status**: Approved - Immediate Part Ready
+**Owner**: Test Specialist  
+**Size**: XS (immediate) + M (future property suite)
+**Priority**: Ideas (not critical path)
 **Created**: 2025-08-19
-**Depends On**: None
+**Proposed By**: Test Specialist
+**Markers**: [QUALITY] [TESTING]
 
-**What**: Match 3+ adjacent same-type blocks to clear them and earn attributes
-**Why**: Proves core resource economy loop before adding complexity
+**What**: Implement FSCheck property tests for swap operation invariants
+**Why**: Catch edge cases that example-based tests might miss, ensure mathematical properties hold
 
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED for implementation with Pattern Recognition Architecture**
+**Tech Lead Decision** (2025-08-18):
+✅ **APPROVED with modifications - Defer to after MVP**
 
-**Implementation Guide Verified** (2025-08-20): Dev-ready with complete contracts, tests, and edge cases documented
+**Analysis**:
+- Current swap has only 2 example-based tests
+- Property tests would catch edge cases we haven't thought of
+- FSCheck is mature and well-suited for game logic invariants
+- Swap operation has clear mathematical properties to verify
 
-**Architecture Decision**: 
-- Implement extensible Pattern Recognition Framework instead of simple match detection
-- Patterns are descriptions (what COULD happen) separate from execution (what SHOULD happen)
-- Enables future tier-ups, transmutations, and chains without refactoring
-- See [ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md) for detailed architectural rationale
+**However**: 
+- We have only 2 swap tests currently - not enough surface area yet
+- Property tests shine when you have complex state spaces
+- Current swap is relatively simple (range check + position swap)
 
-**Technical Approach**:
-1. **Pattern Framework** (1.5h): Core abstractions - IPattern, IPatternRecognizer, IPatternResolver, IPatternExecutor
-2. **Match Implementation** (1.5h): MatchPatternRecognizer with flood-fill, MatchPatternExecutor for clearing blocks
-3. **Player State** (1h): Domain model for resources/attributes, PlayerStateService for tracking
-4. **CQRS Integration** (1h): ProcessPatternsCommand triggered after actions, pattern processing pipeline
-5. **Presentation** (0.5h): Simple text UI for attributes display
+**Modified Approach**:
+1. **Immediate** (5 min): Add 2-3 more example-based tests for critical cases:
+   - Swap with boundary blocks (edge of grid)
+   - Failed swap attempts (out of range) 
+   - Swap with same block (should fail gracefully)
+   
+**Test Specialist Assignment** (2025-08-18):
+✅ **READY FOR IMPLEMENTATION** - Tech Lead analysis complete, Test Specialist to implement
+- Current swap tests: 2 existing (CompleteDrag_ToOccupiedPosition_WithinRange_ShouldSwapBlocks, CompleteDrag_SwapAtMaxRange_ShouldSucceed)
+- Missing coverage: boundary cases, same-block swaps, edge validation
+- Test file location: `tests/BlockLife.Core.Tests/Features/Block/Drag/DragCommandTests.cs`
+- Follow existing test patterns using BlockBuilder and FluentAssertions
 
-**Key Implementation Files**:
-- `src/Core/Features/Block/Patterns/` - Pattern recognition framework
-- `src/Core/Domain/Player/` - Player state domain model  
-- `src/Core/Features/Block/Patterns/Recognizers/MatchPatternRecognizer.cs` - Flood-fill implementation
-- `src/Core/Features/Block/Patterns/Commands/ProcessPatternsCommand.cs` - CQRS integration
+2. **After MVP** (when swap gets complex):
+   - Implement full property-based test suite
+   - Add generators for game states
+   - Test invariants across all block operations
 
-**Testing Requirements**:
-- 5 tests for MatchPatternRecognizer (horizontal, vertical, L-shape, T-shape, no-match)
-- 3 tests for reward calculations (resource mapping, size bonuses, all block types)
-- 3 tests for pattern resolution (priority handling, conflict resolution)
-- 2 tests for player state updates
+**Rationale**:
+- Property tests are valuable but premature optimization now
+- With only 2 tests, we need basic coverage first
+- When swap mechanics get complex (power-ups, constraints), revisit
 
-**Updated Estimate**: 6.5 hours (added 1h for pattern framework)
-
-**Rationale for Architecture**:
-- Flood-fill is encapsulated in ONE recognizer, not spread through codebase
-- New pattern types (tier-up, transmute) plug in without touching existing code
-- Testable in isolation - mock recognizers for complex scenarios
-- Chains work automatically through recursive pattern detection
-- Follows Open/Closed Principle - extensible but stable
-
-**Developer Implementation Guide**:
-
-**Pattern Framework Contracts**:
+**Proposed Properties** (Future Implementation):
 ```csharp
-// Core pattern interface - all patterns implement this
-public interface IPattern
-{
-    PatternType Type { get; }              // Match, TierUp, Transmute
-    Seq<Vector2Int> Positions { get; }     // Blocks involved
-    int Priority { get; }                  // Match=10, TierUp=20, Transmute=30
-    IPatternOutcome CalculateOutcome();    // What happens if executed
-}
+// 1. Swap preserves total block count
+[Property]
+public Property SwapOperation_PreservesBlockCount()
 
-// Recognizer finds patterns at a position
-public interface IPatternRecognizer
-{
-    PatternType SupportedType { get; }
-    bool IsEnabled { get; }  // Can be toggled by unlocks
-    Seq<IPattern> Recognize(IGridStateService grid, Vector2Int trigger, PatternContext ctx);
-}
+// 2. Swap validation is symmetric
+[Property]
+public Property SwapDistance_IsSymmetric()
+// If A can swap with B, then B can swap with A
 
-// Executor applies pattern to game state
-public interface IPatternExecutor
-{
-    Task<Fin<ExecutionResult>> Execute(IPattern pattern, ExecutionContext context);
-}
+// 3. Double swap returns to original state
+[Property]
+public Property DoubleSwap_ReturnsToOriginal()
+// Swapping twice = identity operation
 ```
-
-**Integration Flow (Step-by-Step)**:
-1. Player completes action (move/place) → `BlockMovedNotification`
-2. `ActionCompletedNotificationHandler` catches notification
-3. Handler sends `ProcessPatternsCommand(triggerPosition)`
-4. `ProcessPatternsCommandHandler` orchestrates:
-   - PatternEngine.FindPatterns() → calls all recognizers
-   - PatternResolver.Resolve() → picks highest priority
-   - PatternExecutor.Execute() → applies changes
-   - Check for chains → recursive call if new patterns
-5. Publish `PatternProcessedNotification` → UI updates
-
-**Flood-Fill Implementation Details**:
-```csharp
-private Seq<Vector2Int> FloodFill(IGridStateService grid, Vector2Int start, BlockType targetType)
-{
-    var visited = new HashSet<Vector2Int>();
-    var connected = new List<Vector2Int>();
-    var stack = new Stack<Vector2Int>();
-    
-    stack.Push(start);
-    
-    while (stack.Count > 0 && connected.Count < 100) // Safety limit
-    {
-        var pos = stack.Pop();
-        if (visited.Contains(pos)) continue;
-        
-        var block = grid.GetBlockAt(pos);
-        if (block.IsNone || block.Value.Type != targetType) continue;
-        
-        visited.Add(pos);
-        connected.Add(pos);
-        
-        // Add orthogonal neighbors (not diagonal)
-        foreach (var neighbor in GetOrthogonalNeighbors(pos))
-        {
-            if (grid.IsValidPosition(neighbor) && !visited.Contains(neighbor))
-                stack.Push(neighbor);
-        }
-    }
-    
-    return connected.Count >= 3 ? Seq(connected) : Seq<Vector2Int>.Empty;
-}
-```
-
-**DI Container Registration** (in `BlockLifeServiceRegistration.cs`):
-```csharp
-// Player state (singleton - one player)
-services.AddSingleton<IPlayerStateService, PlayerStateService>();
-
-// Pattern recognition system (scoped per request)
-services.AddScoped<IPatternEngine, PatternEngine>();
-services.AddScoped<IPatternResolver, PriorityResolver>();
-
-// Register ALL recognizers (they'll be injected as IEnumerable)
-services.AddScoped<IPatternRecognizer, MatchPatternRecognizer>();
-// Future: services.AddScoped<IPatternRecognizer, TierUpRecognizer>();
-
-// Register executors by type
-services.AddScoped<IPatternExecutor, MatchPatternExecutor>();
-```
-
-**First Test to Write** (TDD approach):
-```csharp
-[Fact]
-public void Recognize_ThreeHorizontal_ReturnsMatchPattern()
-{
-    // Arrange
-    var grid = new TestGridBuilder()
-        .WithBlock(0, 0, BlockType.Work)
-        .WithBlock(1, 0, BlockType.Work)
-        .WithBlock(2, 0, BlockType.Work)
-        .Build();
-    
-    var recognizer = new MatchPatternRecognizer();
-    var context = new PatternContext(null, null, null); // Can be null for basic tests
-    
-    // Act
-    var patterns = recognizer.Recognize(grid, new Vector2Int(1, 0), context);
-    
-    // Assert
-    patterns.Should().ContainSingle();
-    var pattern = patterns.First();
-    pattern.Type.Should().Be(PatternType.Match);
-    pattern.Positions.Should().BeEquivalentTo(new[] {
-        new Vector2Int(0, 0),
-        new Vector2Int(1, 0),
-        new Vector2Int(2, 0)
-    });
-}
-```
-
-**Critical Edge Cases to Handle**:
-- **Empty positions**: Skip during flood-fill (GetBlockAt returns None)
-- **Grid boundaries**: Always check `IsValidPosition()` before access
-- **Overlapping patterns**: Resolver picks highest priority (TierUp > Match)
-- **Rapid actions**: Commands queued in MediatR, processed sequentially
-- **Pattern at edge**: Works normally (flood-fill handles boundaries)
-- **No patterns found**: Return empty Seq, no error
-- **Circular dependencies**: Visited set prevents infinite loops
-
-**Common Pitfalls to Avoid**:
-❌ **DON'T** mutate grid during recognition phase
-❌ **DON'T** execute patterns inside recognizers
-❌ **DON'T** couple recognizers to specific executors
-❌ **DON'T** use mutable collections in patterns
-❌ **DON'T** throw exceptions - use Fin<T> for errors
-
-✅ **DO** keep patterns immutable (use records)
-✅ **DO** test recognizers in complete isolation
-✅ **DO** use LanguageExt.Seq for collections
-✅ **DO** validate all grid positions before access
-✅ **DO** log pattern detection for debugging
-
-**Resource/Attribute Mapping** (for reference):
-```csharp
-public static class BlockTypeRewards
-{
-    public static (RewardType type, int amount) GetReward(BlockType blockType) => blockType switch
-    {
-        BlockType.Work => (RewardType.Resource(ResourceType.Money), 10),
-        BlockType.Study => (RewardType.Attribute(AttributeType.Knowledge), 10),
-        BlockType.Health => (RewardType.Attribute(AttributeType.Health), 10),
-        BlockType.Relationship => (RewardType.Resource(ResourceType.SocialCapital), 10),
-        BlockType.Fun => (RewardType.Attribute(AttributeType.Happiness), 10),
-        // ... etc for all 9 types
-    };
-}
-```
-
-**Performance Considerations**:
-- Flood-fill limited to 100 blocks (prevent runaway)
-- Pattern detection runs synchronously (fast enough)
-- Cache patterns for same board state (future optimization)
-- Use ValueTask for hot paths (if profiling shows need)
-
-**Core Mechanic**:
-- Match 3+ adjacent same-type blocks (orthogonal only)
-- Matched blocks disappear (no transformation)
-- Each block type grants specific resources or attributes:
-  - Work → Money +10 per block (resource)
-  - Study → Knowledge +10 per block (attribute)
-  - Health → Health +10 per block (attribute)
-  - Relationship → Social Capital +10 per block (resource)
-  - Fun → Happiness +10 per block (attribute)
-  - Sleep → Energy +10 per block (attribute)
-  - Food → Nutrition +10 per block (attribute)
-  - Exercise → Fitness +10 per block (attribute)
-  - Meditation → Mindfulness +10 per block (attribute)
-- Display current attributes (text UI for now)
-
-**Match Size Bonuses**:
-- Match-3: Base rewards (×1.0)
-- Match-4: ×1.5 bonus multiplier
-- Match-5: ×2.0 bonus multiplier
-- Match-6+: ×3.0 bonus multiplier
 
 **Done When**:
-- Matching 3+ blocks clears them from grid
-- Attributes increase based on block types matched
-- Current attributes display on screen
-- Works for all 9 block types
-- 5+ unit tests for match detection
-- 3+ tests for attribute calculation
-
-**NOT in Scope**:
-- Transformation to higher tiers
-- Spending attributes
-- Unlocks or progression
-- Chain reactions
+- **Immediate**: 2-3 additional example tests added and passing
+- **Future**: Property tests integrated with 1000+ generated cases
+- Edge cases discovered are documented
+- CI pipeline includes property test execution

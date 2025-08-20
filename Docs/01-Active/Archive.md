@@ -13,6 +13,134 @@
 
 ### 2025-08-20
 
+#### BR_011: Critical Archive Data Loss ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Debugger Expert
+**Effort**: M (4 hours actual)
+**Outcome**: 100% data recovery achieved, archive reconstructed with safeguards
+**Impact**: Restored organizational memory, prevented future data loss
+**Post-Mortem**: `Docs/06-PostMortems/Active/2025-08-19-BR011-Archive-Data-Loss.md`
+**Follow-up**: TD_026 addresses root cause (agent path specifications)
+[METADATA: data-recovery, archive-reconstruction, organizational-memory, debugger-expert, critical-fix]
+
+#### BR_007: Backlog-Assistant Automation Misuse ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Debugger Expert
+**Effort**: S (2 hours)
+**Original Issue**: Personas were automatically calling backlog-assistant instead of user explicitly invoking it, bypassing review process
+**Solution**: Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+**Impact**: Review process integrity restored, user control over backlog changes maintained, Tech Lead review gates properly enforced
+**Implementation Details**:
+- Fixed inconsistent backlog-assistant invocation patterns across ALL persona documentation
+- Updated 5 persona files to use "Suggest-Don't-Execute" pattern instead of auto-invocation
+- Preserved Strategic Prioritizer exception for meta-analysis functions
+- Updated Workflow.md and CLAUDE.md with corrected protocol
+- Root cause eliminated: Documentation drift between personas resolved
+**Impact Assessment**:
+- ✅ Review process integrity restored
+- ✅ User control over backlog changes maintained  
+- ✅ Efficiency benefits preserved through suggestion pattern
+- ✅ Clear documentation prevents regression
+- ✅ Tech Lead review gates properly enforced
+**Files Updated**:
+- Docs/04-Personas/tech-lead.md
+- Docs/04-Personas/test-specialist.md  
+- Docs/04-Personas/debugger-expert.md
+- Docs/04-Personas/devops-engineer.md
+- Docs/04-Personas/product-owner.md
+- Docs/01-Active/Workflow.md
+- CLAUDE.md
+[METADATA: workflow, process-integrity, personas, backlog-management, review-process, documentation-consistency, automation-boundaries]
+
+#### TD_015: Add Save System Versioning ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: XS (30 minutes)
+**Implementation**: Added version field to SaveData with migration framework for future compatibility
+**Impact**: Save system now protected against format changes, prevents player data loss during updates
+**Key Components**: Version field, migration pattern, test coverage for v0→v1 transitions
+[METADATA: architecture, save-system, versioning, migration, data-safety, critical-infrastructure]
+
+#### TD_016: Document Grid Coordinate System ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: Dev Engineer
+**Effort**: XS (15 minutes)
+**Implementation**: Documented coordinate convention and added validation helpers
+**Impact**: Eliminates coordinate confusion bugs, standardizes grid access patterns
+**Key Components**: Architecture.md documentation, GridAssert helper class, consistent (0,0) bottom-left convention
+[METADATA: architecture, documentation, grid-system, coordinate-convention, validation, bug-prevention]
+
+#### BR_006: Parallel Incompatible Features Prevention System ✅ COMPLETED
+**Completed**: 2025-08-19
+**Owner**: DevOps Engineer
+**Effort**: M (4-6 hours)
+**Solution**: Comprehensive automated prevention system with branch protection, VS locking, and workflow enforcement
+**Impact**: Eliminates parallel incompatible development, prevents wasted effort, ensures design consistency
+**Key Components**: GitHub branch protection + Design Guard Action + PR templates + Git hooks + updated GitWorkflow.md
+**Implementation Details**:
+- Branch protection rules requiring CI pass + up-to-date branches
+- Design Guard GitHub Action for VS lock management
+- Automated PR validation and branch naming enforcement
+- Updated GitWorkflow.md with new conventions
+- Local git hooks for early validation
+- PR templates to guide proper workflow
+**Lessons Learned**:
+- Prevention-focused automation eliminates human error
+- Early detection (branch naming, PR validation) prevents costly rework
+- Elegant solutions scale better than manual process overhead
+- Git hooks + GitHub Actions provide comprehensive enforcement
+**Technical Implementation**:
+- Only one PR per VS item allowed through automated locking
+- Branch naming pattern enforcement (feat/vs-XXX)
+- CI must pass and branches must be current with main before merge
+- Design conflicts detected automatically by GitHub Actions
+[METADATA: git-workflow, devops, automation, process-improvement, design-conflicts, prevention-system, github-actions, branch-protection]
+
+#### BR_008: Flaky SimulationManagerThreadSafetyTests ✅ COMPLETED
+**Completed**: 2025-08-20
+**Effort**: S (3 hours)
+**Outcome**: Environment-aware thresholds implemented - 5ms for CI, 1ms for local development
+**Solution**: Added JIT warmup period and dynamic threshold adjustment based on environment detection
+**Impact**: CI stability restored, eliminated false positives in stress tests
+**Lessons**: Performance tests need environment-aware tolerances to avoid flakiness
+**Unblocked**: Reliable stress test validation for concurrent operations
+[METADATA: test-reliability, performance-testing, ci-stability, environment-awareness, stress-testing]
+
+#### BR_009: Linux SaveService Tests Compatibility ✅ COMPLETED
+**Completed**: 2025-08-20
+**Effort**: M (4 hours)
+**Outcome**: Linux compatibility achieved, all 4 SaveService tests now pass on CI
+**Solution**: Resolved Newtonsoft.Json platform-specific behavior with Block type JsonConstructor
+**Impact**: Linux deployments unblocked, CI pipeline reliability restored
+**Lessons**: Platform-specific serialization requires explicit constructor annotations
+**Unblocked**: Cross-platform save/load functionality, Linux server deployments
+[METADATA: linux-compatibility, serialization, platform-specific, ci-pipeline, newtonsoft-json]
+
+#### BR_010: Backlog-Assistant Incomplete Operations ✅ COMPLETED
+**Completed**: 2025-08-20
+**Effort**: S (2 hours)
+**Outcome**: Fixed by TD_026 path corrections - agent now reliably finds and updates all target files
+**Solution**: Corrected agent path specifications eliminated root cause of incomplete operations
+**Impact**: Reliable archival operations, consistent file organization, eliminated manual cleanup
+**Lessons**: Agent path specifications must be explicit and validated to prevent incomplete operations
+**Unblocked**: Trustworthy backlog maintenance automation
+[METADATA: agent-reliability, path-specification, archival-operations, workflow-automation]
+
+#### TD_026: Agent Path Specifications ✅ COMPLETED
+**Completed**: 2025-08-20
+**Effort**: S (3 hours)
+**Outcome**: All agent personas updated with correct path specifications and validation protocols
+**Solution**: Added critical path validation to backlog-assistant and all persona files
+**Implementation**:
+- Updated backlog-assistant.md with Archive.md path: `Docs/01-Active/Archive.md`
+- Added post-mortem path specification: `Docs/06-PostMortems/Active/`
+- Implemented path validation protocol requiring existence checks before operations
+- Added CRITICAL PATHS section to all relevant agent files
+**Impact**: Prevented future data loss, ensured reliable file operations, consistent organization
+**Lessons**: Agent instructions must include explicit path validation to prevent operational failures
+**Unblocked**: Reliable agent operations, prevented future archive data loss incidents
+[METADATA: agent-reliability, path-validation, data-integrity, operational-safety, prevention]
+
 #### TD_028: Type-Specific Item Numbering System ✅ COMPLETED
 **Completed**: 2025-08-20
 **Owner**: Dev Engineer
@@ -28,20 +156,22 @@
 **Results**: Clean, predictable, collision-free item identification system
 [METADATA: process-improvement, numbering-system, id-management, systematic-fix, operational-efficiency]
 
-#### TD_027: Subagent Protocol Enforcement ✅ COMPLETED
+#### TD_025/TD_027: Subagent Protocol Enforcement & Verification ✅ COMPLETED
 **Completed**: 2025-08-20
 **Owner**: Dev Engineer
 **Effort**: S (2 hours)
-**Problem**: Personas auto-invoking backlog-assistant bypassed review process
-**Solution**: Added prominent "SUBAGENT PROTOCOL - CRITICAL" headers to all personas
+**Note**: TD_025 (Verification Protocol) and TD_027 (Subagent Protocol) were the same fix
+**Problem**: Personas auto-invoking backlog-assistant bypassed review, no task completion verification
+**Solution**: Added prominent "SUBAGENT PROTOCOL - CRITICAL" headers with verification checklist
 **Implementation**:
 - Updated 6 persona files with "SUGGEST, NEVER AUTO-EXECUTE" protocol
 - Created transparent delegation workflow requiring user approval
 - Added clear command preview and expected outcomes documentation
+- Implemented verification checklist (pre-task, during, post-task reporting)
 - Preserved Strategic Prioritizer exception for meta-analysis
-**Impact**: Review process integrity restored, user control maintained, Tech Lead gates enforced
+**Impact**: Review process integrity restored, user control maintained, verification protocol active
 **Principle**: Process reliability requires visibility - buried rules get violated
-[METADATA: process-enforcement, delegation-protocol, user-control, review-gates, transparency]
+[METADATA: process-enforcement, delegation-protocol, user-control, review-gates, transparency, verification]
 
 ### 2025-08-19
 
