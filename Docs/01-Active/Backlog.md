@@ -63,8 +63,108 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-*None*
+### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces ✅ APPROVED (MODIFIED)
+**Status**: Approved - Phased Implementation
+**Owner**: DevOps Engineer
+**Size**: S (2 hours Phase 1) + M (4 hours total if expanded)
+**Priority**: Important (moved up - actual pain point)
+**Created**: 2025-08-19
+**Reviewed**: 2025-08-19
+**Markers**: [PRODUCTIVITY] [SOLO-DEV]
 
+**What**: Automated persona workspace isolation using git worktrees
+**Why**: Solo dev with frequent persona switching experiencing real friction with standard git flow
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED WITH MODIFICATIONS**
+
+**Context That Changed Decision**:
+- Solo developer, not team (different dynamics)
+- Frequent persona switching confirmed
+- Standard git flow already tried and insufficient
+- Actual productivity impact measured
+
+**Phased Implementation**:
+
+**Phase 1** (2 hours - START HERE):
+```powershell
+# Simple switch script
+./scripts/persona/switch-persona.ps1 dev-engineer
+# Creates worktree if needed, switches context
+```
+- Just Dev Engineer + Tech Lead personas
+- Basic PowerShell script
+- Manual invocation
+- Measure if it helps
+
+**Phase 2** (If Phase 1 proves valuable):
+- Add remaining personas
+- State management
+- Cleanup utilities
+
+**Phase 3** (If heavily used):
+- Slash command integration
+- Cross-platform support
+- Full automation
+
+**Success Metrics**:
+- Reduces context switch time by >50%
+- Eliminates merge conflicts from persona switches
+- Actually gets used daily
+
+**Done When (Phase 1)**:
+- Basic switch script working
+- Two personas supported
+- Documentation created
+- Friction measurably reduced
+
+**Problem Solved**:
+- Multiple persona sessions conflict on same branch (file locks, merge conflicts)
+- Manual branch switching between personas is error-prone
+- Context switching overhead reduces persona effectiveness
+- Coordination complexity grows exponentially with concurrent personas
+
+**Solution - Persona Worktree System**:
+- Single command `/embody dev-engineer` automatically creates worktree + switches directory + activates persona
+- Each persona gets isolated workspace using native git worktree functionality
+- Zero maintenance overhead (git handles all complexity)
+- Perfect isolation - no shared files, branches, or state
+
+**Key Benefits**:
+- **Complete Isolation**: No more file conflicts between persona sessions
+- **Zero Context Switch**: Instant persona activation with full environment
+- **Native Git**: Uses proven git worktree functionality (stable, zero bugs)
+- **Single Command**: `/embody persona-name` handles everything automatically
+- **9 Hours Total**: vs weeks for complex coordination systems
+
+**Implementation Components**:
+1. **Custom Slash Command** (2h): `/embody` command with persona parameter
+2. **Worktree Management** (3h): Create, switch, cleanup worktree operations
+3. **Cross-Platform Scripts** (2h): Bash + PowerShell automation scripts
+4. **Management Utilities** (1h): Status, cleanup, workspace listing commands
+5. **Documentation** (1h): Usage guide and troubleshooting
+
+**Technical Approach**:
+```bash
+# Single command does everything:
+/embody dev-engineer
+  → git worktree add ../blocklife-dev-engineer
+  → cd ../blocklife-dev-engineer
+  → activate dev-engineer persona
+  → ready for isolated development
+```
+
+**Reference**: Comprehensive design document at `Docs/02-Design/PersonaWorktreeSystem.md`
+
+**Done When**:
+- `/embody persona-name` creates isolated workspace automatically
+- Cross-platform support (Windows/Linux/Mac)
+- Workspace management commands (status, cleanup, list)
+- Complete persona isolation achieved
+- Documentation and troubleshooting guide complete
+- 5+ tests for worktree operations
+
+**Depends On**: None
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
