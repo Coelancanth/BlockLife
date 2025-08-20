@@ -275,6 +275,46 @@
 - Pattern: Similar to tech-lead.md improvements just completed
 
 
+### TD_035: Migrate from Git Worktrees to Multiple Clones for Persona System
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: L (1-3 days)
+**Priority**: Important
+**Markers**: [ARCHITECTURE] [PERSONA-SYSTEM] [GIT-WORKFLOW]
+**Created**: 2025-08-20
+
+**What**: Replace current git worktree setup with independent clones for each persona
+**Why**: Worktrees add unnecessary complexity; clones provide better isolation and simpler mental model
+**How**: 
+- Create migration scripts to automate clone setup for all personas
+- Update GitWorkflow.md to reflect clone-based approach
+- Refactor Sacred Sequence scripts to work with independent repos
+- Create sync scripts to coordinate updates across clones
+- Update all persona documentation and CLAUDE.md files
+- Create automated setup script for new developers
+**Done When**: 
+- Each persona has independent clone (blocklife-dev-engineer, blocklife-debugger, etc.)
+- GitWorkflow.md updated with new clone-based flow
+- Sacred Sequence works across independent repos
+- Sync scripts enable coordinated updates when needed
+- All documentation consistent with clone approach
+- Zero references to worktree commands remain
+- Setup script creates all clones in one command
+**Depends On**: None
+
+**Rationale**: Analysis revealed that with terminal restart requirements for persona switching, multiple clones are superior to worktrees.      
+    its include:
+- Complete isolation per persona (no shared .git)
+- Simpler mental model (each persona owns a repo)
+- No "sacred main folder" complexity
+- Unique git config per persona
+- Trivial disaster recovery (just re-clone)
+- No worktree command learning curve
+
+**Migration Impact**: 
+- Disk space: +250MB (trivial in 2024)
+- Complexity: -90% (massive simplification)
+- Safety: +100% (complete isolation)
 
 
 
