@@ -2,18 +2,40 @@
 
 **IMPORTANT**: This is the ONLY git workflow guide. All personas and documentation reference this file.
 
-## 🚨 The Iron Rules (Enforced Automatically)
+## 🆕 Sacred Sequence Enforcement System (TD_034)
+
+**As of 2025-08-20**: Smart git commands and pre-push hooks now ENFORCE the Sacred Sequence automatically.
+
+### Installation (One Time)
+```bash
+# From BlockLife root directory
+.\scripts\git\install-sacred-sequence.ps1
+```
+
+### The New Way - Smart Commands
+```bash
+# ✅ USE THESE COMMANDS (Sacred Sequence built-in):
+git newbranch feat/save-system  # Auto-fetches, updates main, creates branch
+git syncmain                     # Auto-fetches and rebases current branch
+git sacred                       # Shows sync status and available commands
+git checkfresh                   # Verifies branch is up-to-date
+
+# ❌ AVOID THESE (will trigger warnings):
+git checkout -b                  # Use git newbranch instead
+```
+
+## 🚨 The Iron Rules (Now Enforced by Hooks)
 
 1. **NEVER work directly on main** - Branch protection blocks direct pushes
-2. **ALWAYS fetch before creating branches** - Start from latest code
-3. **ALWAYS rebase before pushing** - Branch must be up-to-date with main
+2. **ALWAYS use `git newbranch`** - Enforces fetch before creating branches
+3. **Pre-push hook validates freshness** - Blocks stale branches automatically
 4. **COMMIT frequently** - Small, focused commits are better
 5. **CI MUST PASS** - Merges blocked until build-and-test succeeds
 6. **NO PARALLEL WORK** - VS lock system prevents duplicate efforts
 
-## 📜 The Sacred Sequence
+## 📜 The Sacred Sequence (Traditional Way)
 
-This is the ONLY workflow you need to memorize:
+If you need to do it manually (or smart commands aren't installed):
 
 ```bash
 # 1. Start fresh (MANDATORY first step)
@@ -40,6 +62,28 @@ git push -u origin feat/vs-003-match-system
 
 # 6. Create PR via GitHub (template will guide you)
 gh pr create --title "feat: title" --body "description"
+```
+
+## 🤖 AI Agent Workflow (MANDATORY)
+
+**AI agents MUST use smart commands to prevent Sacred Sequence violations:**
+
+```bash
+# Starting new work:
+git sacred                       # Check status first
+git newbranch feat/td-034-impl  # Creates from fresh main
+
+# During development:
+git add -A
+git commit -m "feat: implement Sacred Sequence enforcement"
+
+# Before pushing:
+git checkfresh                   # Verify still current
+git push -u origin feat/td-034-impl
+
+# If pre-push hook blocks you:
+git syncmain                     # Auto-fixes the issue
+git push                         # Try again
 ```
 
 ## 🔒 Branch Naming Convention (NEW - Prevents BR_006)
