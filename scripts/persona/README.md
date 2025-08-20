@@ -13,6 +13,9 @@ A workspace isolation system that gives each development persona their own direc
 ```powershell
 # From BlockLife root directory
 .\scripts\persona\setup-aliases.ps1 -AddToProfile
+
+# Recommended: Install Claude protection
+.\scripts\protection\install-claude-protection.ps1
 ```
 
 That's it! Restart PowerShell and you're ready.
@@ -126,6 +129,64 @@ A: Your prompt shows it: `@Coel dev-engineer git(persona/dev-engineer/workspace)
 **Q: Can I delete a workspace?**  
 A: Yes, use `git worktree remove personas/[persona-name]`
 
+## Claude Protection System (TD_029)
+
+The protection system intercepts the `claude` command to guide you toward persona workspaces:
+
+### How It Works
+
+```powershell
+# After installing protection:
+claude                      # Shows reminder in main directory
+claude                      # Works normally in persona workspaces
+```
+
+### Installation
+
+```powershell
+# Install protection (one time):
+.\scripts\protection\install-claude-protection.ps1
+
+# Activate it:
+. $PROFILE  # Or restart PowerShell
+
+# Remove if needed:
+.\scripts\protection\install-claude-protection.ps1 -Uninstall
+```
+
+### Protection Features
+
+- **Automatic**: Intercepts the real `claude` command
+- **Context-aware**: Only triggers in BlockLife main directory
+- **Non-intrusive**: Easy bypass options
+- **Persistent choice**: Can disable per-project with .claude-protection
+
+### The Protection Flow
+
+```
+User types: claude
+         ↓
+┌─────────────────────────┐
+│  In BlockLife main?     │──No──→ Launch Claude normally
+└────────┬────────────────┘
+        Yes
+         ↓
+┌─────────────────────────┐
+│  Protection disabled?   │──Yes──→ Launch Claude normally
+│  (.claude-protection)   │
+└────────┬────────────────┘
+         No
+         ↓
+┌─────────────────────────┐
+│  Show friendly reminder │
+│  with persona benefits  │
+└────────┬────────────────┘
+         ↓
+    [P] Switch to persona
+    [C] Continue this time
+    [D] Disable permanently
+```
+
 ## Troubleshooting
 
 **"Command not found"**  
@@ -136,6 +197,10 @@ Run commands from the BlockLife project root.
 
 **"Failed to create worktree"**  
 Check disk space and git version (needs Git 2.5+).
+
+**"Claude protection not working"**  
+Install it: `.\scripts\protection\install-claude-protection.ps1`
+Then restart PowerShell or run: `. $PROFILE`
 
 ## Benefits Summary
 

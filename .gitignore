@@ -6,6 +6,7 @@
 # --- Local Settings ---
 # Machine-specific configuration
 test/local_settings.cmd
+.claude-protection
 
 # --- IDE Specific ---
 # VS Code extensions data
