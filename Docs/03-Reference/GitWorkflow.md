@@ -1,234 +1,158 @@
-# Git Workflow - The Single Source of Truth
+# Git Workflow - Multi-Clone Architecture
 
-**IMPORTANT**: This is the ONLY git workflow guide. All personas and documentation reference this file.
+**Updated**: 2025-08-20 - Simplified for multiple clone setup
 
-> 📦 **Multi-Clone Architecture Coming**: TD_035 will migrate from worktrees to multiple clones.  
-> See [GitWorkflow-MultiClone.md](GitWorkflow-MultiClone.md) for the new workflow design.  
-> This document will be updated when TD_035 is implemented.
+## 🏗️ Architecture: Multiple Independent Clones
 
-## 🆕 Sacred Sequence Enforcement System (TD_034)
+Each persona has its own complete repository clone with unique git identity:
+- `blocklife-dev-engineer/` - dev-eng@blocklife
+- `blocklife-test-specialist/` - test-spec@blocklife  
+- `blocklife-debugger-expert/` - debugger@blocklife
+- `blocklife-tech-lead/` - tech-lead@blocklife
+- `blocklife-product-owner/` - product@blocklife
+- `blocklife-devops-engineer/` - devops-eng@blocklife
 
-**As of 2025-08-20**: Smart git commands and pre-push hooks now ENFORCE the Sacred Sequence automatically.
+## 🚀 Initial Setup
 
-### Installation (One Time)
 ```bash
-# From BlockLife root directory
-.\scripts\git\install-sacred-sequence.ps1
+# One-time setup for all personas
+.\scripts\persona\setup-personas.ps1
+
+# Load helper functions in your PowerShell profile
+. "C:\Projects\persona-functions.ps1"
 ```
 
-### The New Way - Smart Commands
+## 📖 Standard Git Workflow (Simple & Effective)
+
+### Starting New Work
 ```bash
-# ✅ USE THESE COMMANDS (Sacred Sequence built-in):
-git newbranch feat/save-system  # Auto-fetches, updates main, creates branch
-git syncmain                     # Auto-fetches and rebases current branch
-git sacred                       # Shows sync status and available commands
-git checkfresh                   # Verifies branch is up-to-date
+# 1. Switch to appropriate persona workspace
+blocklife-dev  # or blocklife-test, blocklife-debug, etc.
 
-# ❌ AVOID THESE (will trigger warnings):
-git checkout -b                  # Use git newbranch instead
-```
+# 2. Ensure you're up to date
+git checkout main
+git pull origin main
 
-## 🚨 The Iron Rules (Now Enforced by Hooks)
+# 3. Create feature branch
+git checkout -b feat/your-feature
 
-1. **NEVER work directly on main** - Branch protection blocks direct pushes
-2. **ALWAYS use `git newbranch`** - Enforces fetch before creating branches
-3. **Pre-push hook validates freshness** - Blocks stale branches automatically
-4. **COMMIT frequently** - Small, focused commits are better
-5. **CI MUST PASS** - Merges blocked until build-and-test succeeds
-6. **NO PARALLEL WORK** - VS lock system prevents duplicate efforts
-
-## 📜 The Sacred Sequence (Traditional Way)
-
-If you need to do it manually (or smart commands aren't installed):
-
-```bash
-# 1. Start fresh (MANDATORY first step)
-git fetch origin
-git checkout main && git pull origin main
-
-# 2. Create your feature branch FROM UPDATED MAIN
-# IMPORTANT: Use proper naming convention!
-# VS items: feat/vs-XXX-description
-# BR items: fix/br-XXX-description  
-# TD items: feat/td-XXX-description
-git checkout -b feat/vs-003-match-system  # Example
-
-# 3. Do your work, commit frequently
-git add .
-git commit -m "feat: clear description"
-
-# 4. Before pushing, REBASE on latest main
-git fetch origin
-git rebase origin/main
-
-# 5. Push your branch
-git push -u origin feat/vs-003-match-system
-
-# 6. Create PR via GitHub (template will guide you)
-gh pr create --title "feat: title" --body "description"
-```
-
-## 🤖 AI Agent Workflow (MANDATORY)
-
-**AI agents MUST use smart commands to prevent Sacred Sequence violations:**
-
-```bash
-# Starting new work:
-git sacred                       # Check status first
-git newbranch feat/td-034-impl  # Creates from fresh main
-
-# During development:
+# 4. Make changes and commit
 git add -A
-git commit -m "feat: implement Sacred Sequence enforcement"
+git commit -m "feat: implement new feature"
 
-# Before pushing:
-git checkfresh                   # Verify still current
-git push -u origin feat/td-034-impl
+# 5. Push to remote
+git push -u origin feat/your-feature
 
-# If pre-push hook blocks you:
-git syncmain                     # Auto-fixes the issue
-git push                         # Try again
+# 6. Create PR via GitHub or CLI
+gh pr create --title "feat: your feature" --body "Description"
 ```
 
-## 🔒 Branch Naming Convention (NEW - Prevents BR_006)
-
-**MANDATORY naming patterns** for work items:
-- **VS items**: `feat/vs-XXX-description` (e.g., `feat/vs-003-match-system`)
-- **BR items**: `fix/br-XXX-description` (e.g., `fix/br-006-parallel-work`)
-- **TD items**: `feat/td-XXX-description` (e.g., `feat/td-009-persona-commands`)
-- **Other work**: `feat/`, `fix/`, `docs/`, `chore/` (no restrictions)
-
-**Why this matters**:
-- Automated VS lock system prevents parallel work on same item
-- Clear intent from branch name
-- Automatic backlog validation
-- PR template auto-fills from branch name
-
-## ⚠️ What Happens If You Skip Steps?
-
-**Skip Step 1 (fetch/pull)?**
-- You branch from outdated code
-- You "fix" already-fixed bugs  
-- You create conflicts for others
-
-**Skip Step 4 (rebase)?**
-- Git hook BLOCKS your push ❌
-- You must rebase before pushing
-- This is enforced automatically
-
-## 🛠️ Common Scenarios
-
-### "I forgot to create a branch!"
+### Syncing All Personas
 ```bash
-git stash                          # Save your work
-git checkout main                  
-git pull origin main               
-git checkout -b feat/proper-name  
-git stash pop                      # Restore your work
+# Fetch latest for all personas at once
+.\scripts\persona\sync-personas.ps1
+
+# Or fetch and pull (if no local changes)
+.\scripts\persona\sync-personas.ps1 -Pull
 ```
 
-### "I need to update my branch with latest main"
+### Checking Status Across All Clones
 ```bash
-git fetch origin
-git rebase origin/main
-
-# If conflicts occur:
-# 1. Fix conflicts in your editor
-# 2. git add <fixed-files>
-# 3. git rebase --continue
+# Show branch and modification status for all personas
+blocklife-status
 ```
 
-### "GitHub blocked my push to main!"
+## 🎯 Key Benefits of Multi-Clone
+
+1. **Complete Isolation** - Each persona has independent git state
+2. **Self-Documenting** - Commits show persona email (dev-eng@blocklife)
+3. **No Branch Conflicts** - Multiple clones can use same branch name
+4. **Standard Git** - No custom commands or worktree complexity
+5. **Simple Recovery** - Corrupted clone? Just delete and re-clone
+
+## ⚡ Quick Commands
+
 ```bash
-# Create a feature branch instead:
-git checkout -b feat/your-feature-name
-git push -u origin feat/your-feature-name
-# Then create a PR through GitHub
+# Navigation shortcuts
+blocklife-dev      # → Dev Engineer workspace
+blocklife-test     # → Test Specialist workspace
+blocklife-debug    # → Debugger Expert workspace
+blocklife-tech     # → Tech Lead workspace
+blocklife-product  # → Product Owner workspace
+blocklife-devops   # → DevOps Engineer workspace
+
+# Status check
+blocklife-status   # Show all personas status
 ```
 
-## 🤖 For AI Assistants
+## 🔒 GitHub Protection (Enforced Server-Side)
 
-**MANDATORY BEHAVIOR**:
-1. ALWAYS run the sacred sequence when starting work
-2. NEVER skip the fetch/pull steps
-3. Output each git command as you run it
-4. If the hook blocks you, rebase immediately
-
-**Example AI workflow output**:
-```
-"Starting work on feat/block-rotation..."
-> git fetch origin
-> git checkout main && git pull origin main  
-> git checkout -b feat/block-rotation
-"Branch created from latest main ✅"
-```
-
-## 🔧 Hook Installation
-
-First time setup (run once):
-```bash
-# Windows
-./scripts/git/install-hooks.ps1
-
-# Linux/Mac
-./scripts/git/install-hooks.sh
-```
-
-The git hooks will:
-- 🚀 **Pre-commit**: Run build+tests before each commit (quality gate)
-- 🏷️ **Pre-checkout**: Validate branch naming (workflow guide)
-- 🔒 **GitHub Protection**: Block direct main pushes (process gate)
-- ✅ Clear separation: Local hooks = quality, Remote protection = process
+GitHub enforces these rules automatically:
+- **No direct pushes to main** - Must use PRs
+- **Branches must be up-to-date** - Prevents merge conflicts
+- **CI must pass** - All tests green before merge
+- **Required reviews** - At least one approval needed
 
 ## 📝 Commit Message Format
 
-```
-type: description
-
-Types:
-feat:     New feature
-fix:      Bug fix
-refactor: Code restructuring
-test:     Test changes
-docs:     Documentation only
-perf:     Performance improvement
-chore:    Maintenance tasks
+```bash
+feat:     # New feature
+fix:      # Bug fix
+refactor: # Code restructuring
+test:     # Test additions/changes
+docs:     # Documentation only
+perf:     # Performance improvement
+chore:    # Maintenance tasks
 ```
 
 Examples:
 - `feat: add block rotation with Q/E keys`
 - `fix: prevent blocks from overlapping`
-- `refactor: extract validation logic`
+- `refactor: extract validation to service`
 
-## 🚀 Why This Workflow?
+## 🚫 What NOT to Do
 
-1. **Prevents conflicts** - Always working from latest code
-2. **Clean history** - Rebase keeps history linear
-3. **No surprises** - Everyone follows same rules
-4. **Automated safety** - Hooks catch mistakes
-5. **Fast integration** - PRs merge cleanly
+- ❌ **Don't work directly on main** - Always branch
+- ❌ **Don't force push** - Except for your own feature branches
+- ❌ **Don't share clones** - Each persona owns its repository
+- ❌ **Don't skip tests** - Run locally before pushing
 
-## 🤖 Automated Protections (Active Now!)
+## 🆘 Troubleshooting
 
-### Branch Protection (GitHub)
-- ❌ **Direct pushes to main blocked** - Must use PR
-- ❌ **Merges blocked if CI fails** - Tests must pass
-- ❌ **Merges blocked if branch outdated** - Must rebase first
-- ✅ **Review required** - At least 1 approval needed
+### "I have merge conflicts"
+```bash
+# Update your branch with latest main
+git fetch origin
+git rebase origin/main
+# Resolve conflicts, then continue
+git rebase --continue
+```
 
-### VS Lock System (Design Guard)
-When you open a PR for a work item (VS/BR/TD):
-1. **Checks for conflicts** - Fails if someone else is working on same item
-2. **Adds lock label** - Shows item is in progress
-3. **Validates backlog** - Warns if item not found
-4. **Releases lock** - Automatically when PR closes
+### "I committed to wrong persona"
+```bash
+# Get commit SHA from wrong persona
+git log -1 --format="%H"
 
-### What This Prevents
-- ✅ **No more BR_006** - Parallel incompatible features impossible
-- ✅ **No broken builds on main** - CI must pass
-- ✅ **No merge conflicts** - Branches must be current
-- ✅ **Clear ownership** - Lock labels show who's working on what
+# Switch to correct persona
+blocklife-dev  # or appropriate persona
+
+# Cherry-pick the commit
+git cherry-pick <commit-sha>
+```
+
+### "I need to reset everything"
+```bash
+# Nuclear option - just re-clone
+cd ..
+rm -rf blocklife-dev-engineer
+.\scripts\persona\setup-personas.ps1 -SkipExisting
+```
+
+## 📚 References
+
+- [Setup Script](../../scripts/persona/setup-personas.ps1) - Initial setup
+- [Sync Script](../../scripts/persona/sync-personas.ps1) - Bulk operations
+- [ADR-002](ADR/ADR-002-persona-system-architecture.md) - Architecture decision
 
 ---
-
-*This workflow is enforced by GitHub Actions and branch protection. Attempting to bypass it will fail.*
+*Simple, standard git workflow. No custom commands, no complexity, just git.*
