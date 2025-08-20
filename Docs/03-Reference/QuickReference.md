@@ -31,7 +31,75 @@ public class MatchPatternRecognizer : IPatternRecognizer
 }
 ```
 
+## 🎯 Persona Work Routing Matrix
 
+**Quick Decision Guide**: When work comes in, use this table to route to the right persona.
+
+| Work Type | Goes To | Red Flags (Don't Accept) |
+|-----------|---------|--------------------------|
+| **New Feature Definition** | Product Owner | If technical implementation details included |
+| **Feature Breakdown** | Tech Lead | If requirements/acceptance criteria missing |
+| **Code Implementation** | Dev Engineer | If tests not written or architecture unclear |
+| **Test Creation** | Test Specialist | If acceptance criteria undefined |
+| **Bug Investigation (>30min)** | Debugger Expert | If simple fix or reproduction steps missing |
+| **CI/CD & Automation** | DevOps Engineer | If business logic changes required |
+
+### 📋 Handoff Decision Tree
+
+```
+Work Request
+     ↓
+┌─────────────────────────┐
+│ Is this a new feature   │──Yes──→ Product Owner
+│ or requirement?         │        (VS creation)
+└─────────┬───────────────┘
+         No
+          ↓
+┌─────────────────────────┐
+│ Is this architectural   │──Yes──→ Tech Lead
+│ or design work?         │        (patterns, breakdown)
+└─────────┬───────────────┘
+         No
+          ↓
+┌─────────────────────────┐
+│ Is this implementation  │──Yes──→ Dev Engineer
+│ with clear tests?       │        (coding, integration)
+└─────────┬───────────────┘
+         No
+          ↓
+┌─────────────────────────┐
+│ Is this test design     │──Yes──→ Test Specialist
+│ or quality validation?  │        (testing, validation)
+└─────────┬───────────────┘
+         No
+          ↓
+┌─────────────────────────┐
+│ Is this complex bug     │──Yes──→ Debugger Expert
+│ investigation?          │        (>30min debugging)
+└─────────┬───────────────┘
+         No
+          ↓
+┌─────────────────────────┐
+│ Is this automation      │──Yes──→ DevOps Engineer
+│ or infrastructure?      │        (CI/CD, tooling)
+└─────────────────────────┘
+```
+
+### 🚫 Common Routing Mistakes
+
+❌ **Sending code to Product Owner** - They define WHAT, not HOW  
+❌ **Asking Dev Engineer for architecture** - They implement patterns, don't create them  
+❌ **Giving complex bugs to Dev Engineer** - They fix simple issues, Debugger handles complex  
+❌ **Asking Test Specialist for requirements** - They validate requirements, don't create them  
+❌ **Sending infrastructure work to Dev Engineer** - DevOps handles automation and tooling  
+
+### ✅ Perfect Handoffs
+
+✅ **Product Owner → Tech Lead**: "Here's a VS with clear acceptance criteria"  
+✅ **Tech Lead → Dev Engineer**: "Here's the breakdown with patterns and sequence"  
+✅ **Dev Engineer → Test Specialist**: "Implementation complete, ready for validation"  
+✅ **Test Specialist → Debugger Expert**: "Complex failure, reproduction steps attached"  
+✅ **Any Persona → DevOps Engineer**: "Manual process needs automation"  
 
 ### 🔥 Critical Lessons Learned
 
