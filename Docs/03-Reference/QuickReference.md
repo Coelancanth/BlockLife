@@ -575,9 +575,9 @@ python scripts/collect_test_metrics.py --update-docs
 
 - **Move Block Reference**: `src/Features/Block/Move/` (Copy this!)
 - **Architecture Guide**: `Docs/Core/Architecture/Architecture_Guide.md`
-- **Development Workflow**: `Docs/Workflows/Development/Essential_Development_Workflow.md`
-- **Git Workflow**: `Docs/Workflows/Git/Git_Workflow_Guide.md`
-- **Backlog**: `Docs/Backlog/Backlog.md` (Single source of truth)
+- **Development Workflow**: `Docs/01-Active/Workflow.md`
+- **Git Workflow**: `Docs/03-Reference/GitWorkflow.md`
+- **Backlog**: `Docs/01-Active/Backlog.md` (Single source of truth)
 
 ---
 *This reference replaces 8 individual agent reference files, providing all essential patterns and templates in one location for faster navigation and reduced cognitive overhead.*

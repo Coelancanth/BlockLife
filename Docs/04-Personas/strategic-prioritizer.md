@@ -164,7 +164,7 @@ This separation allows the Strategic Prioritizer to focus 100% on strategic thin
 - Stale "In Progress" items (>7 days)
 
 ### Output Location:
-- **ReviewGaps.md**: `Docs/Workflow/ReviewGaps.md` (auto-generated)
+- **ReviewGaps.md**: `Docs/01-Active/ReviewGaps.md` (auto-generated)
 - **Scored Backlog**: Items tagged with `[Score: XX/100]` in Backlog.md
 
 ## Output Format

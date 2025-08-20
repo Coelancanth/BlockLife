@@ -60,7 +60,7 @@ Move completed/rejected items to Archive.md (NOT Backlog.md):
 
 **WHERE to move items:**
 - FROM: Any section in Backlog.md (Critical/Important/Ideas/Blocked)
-- TO: `Docs/Workflow/Archive.md` file (separate from Backlog.md)
+- TO: `Docs/01-Active/Archive.md` file (separate from Backlog.md)
 - REMOVE the "## 📦 Archive" section from Backlog.md if it exists
 
 **WHAT to move:**
@@ -117,7 +117,9 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 - Ensure consistent status format
 - Fix section ordering (Critical → Important → Ideas → Blocked → Archive)
 - Remove duplicate entries
-- Standardize item naming: `[Type]_[Number]: Title`
+- Standardize item naming: `[Type]_[Number]: Title` using type-specific numbering from Backlog.md header
+- **NUMBERING PROTOCOL**: Check appropriate type counter (Next BR/TD/VS/PM) in Backlog.md header before processing items
+- **UPDATE COUNTERS**: When processing new items, increment the correct type counter and update timestamp
 
 ## Rules You MUST Follow
 
@@ -140,20 +142,20 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 ## Workflow Order (MUST follow this sequence)
 
 1. **Run bash date** to get current timestamp
-2. **Read Backlog.md** from `Docs/Workflow/Backlog.md`
-3. **Read Archive.md** from `Docs/Workflow/Archive.md` (to append completed items)
+2. **Read Backlog.md** from `Docs/01-Active/Backlog.md`
+3. **Read Archive.md** from `Docs/01-Active/Archive.md` (to append completed items)
 4. **Apply all mechanical rules** (move to archive, score, detect gaps)
 5. **Update Backlog.md** with Edit/MultiEdit tools (remove completed/rejected)
 6. **Update Archive.md** with new completed/rejected items
-7. **Write ReviewGaps.md** to `Docs/Workflow/ReviewGaps.md`
+7. **Write ReviewGaps.md** to `Docs/01-Active/ReviewGaps.md`
 8. **Provide summary** of changes
 
 ## Output Requirements
 
 1. **Always update these files:**
-   - `Docs/Workflow/Backlog.md` (remove completed/rejected items)
-   - `Docs/Workflow/Archive.md` (append completed/rejected items)
-   - `Docs/Workflow/ReviewGaps.md` (complete regeneration)
+   - `Docs/01-Active/Backlog.md` (remove completed/rejected items)
+   - `Docs/01-Active/Archive.md` (append completed/rejected items)
+   - `Docs/01-Active/ReviewGaps.md` (complete regeneration)
 
 2. **Provide summary in response:**
 ```markdown
@@ -185,8 +187,8 @@ Backlog cleaned and scored. ReviewGaps.md updated.
 bash date  # Returns: "Mon, Aug 18, 2025 8:30:00 AM"
 
 # Step 2: Read both files
-Read Docs/Workflow/Backlog.md
-Read Docs/Workflow/Archive.md
+Read Docs/01-Active/Backlog.md
+Read Docs/01-Active/Archive.md
 
 # Step 3: Apply rules
 - Find TD_003 with Status="Completed" → Format for Archive.md
@@ -201,7 +203,7 @@ MultiEdit to remove completed/rejected items and add scores
 Edit to append newly completed/rejected items with proper formatting
 
 # Step 6: Generate ReviewGaps.md
-Write complete report to Docs/Workflow/ReviewGaps.md
+Write complete report to Docs/01-Active/ReviewGaps.md
 
 # Step 7: Summarize
 "Moved 2 items to Archive.md, scored 8 active items, found 3 review gaps"

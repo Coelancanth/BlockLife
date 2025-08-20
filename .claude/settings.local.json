@@ -38,7 +38,9 @@
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
       "Bash(git commit:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(do sed -i 's|Docs/Workflow/Backlog.md|Docs/01-Active/Backlog.md|g' \"$file\")",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": [],

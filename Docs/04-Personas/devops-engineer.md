@@ -155,6 +155,12 @@ This ensures accurate timestamps even when chat context is cleared.
 - **BR (Bug Report)**: Critical CI/CD or deployment failures (🔥 priority)
 - **Build Notes**: Add CI/CD status to existing items
 
+### 🔢 Item Numbering Protocol
+**CRITICAL**: Before creating TD or BR items:
+- **For TD items**: Check "Next TD" counter in Backlog.md header, use and increment
+- **For BR items**: Check "Next BR" counter in Backlog.md header, use and increment
+- **Example**: TD_029 → TD_030, BR_012 → BR_013 (each type has its own sequence)
+
 ### Status Updates I Own
 - **CI/CD status**: Mark items as "Build Passing" or "Build Failed"
 - **Deployment tracking**: Update when items are deployed to production
@@ -168,7 +174,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Product Owner**: Release planning and deployment schedules
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Automation opportunities and deployment tracking
 - Rule: If it happens twice, automate it
 

@@ -2,6 +2,16 @@
 
 **Last Updated**: 2025-08-19
 
+## 🔢 Next Item Numbers by Type
+**CRITICAL**: Before creating new items, check and update the appropriate counter.
+
+- **Next BR**: 012 (Last: BR_011 - 2025-08-20)
+- **Next TD**: 029 (Last: TD_028 - 2025-08-20)  
+- **Next VS**: 004 (Last: VS_003D - 2025-08-19)
+- **Next PM**: 001 (No post-mortems numbered yet)
+
+**Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
+
 ## 📖 How to Use This Backlog
 
 ### 🧠 Owner-Based Protocol
@@ -122,7 +132,7 @@
 **Why**: Incorrect paths cause data loss, failed operations, and inconsistent file organization
 
 **Root Cause Analysis**:
-- Backlog-assistant doesn't know Archive.md is at `Docs/Workflow/Archive.md`
+- Backlog-assistant doesn't know Archive.md is at `Docs/01-Active/Archive.md`
 - Post-mortems should go to `Docs/06-PostMortems/Active/` not arbitrary locations
 - No centralized path configuration for agents
 - Agents may create files in wrong locations or fail to find existing ones
@@ -133,7 +143,7 @@
 3. **Create path reference** in agent instructions:
    ```
    CRITICAL PATHS:
-   - Archive: Docs/Workflow/Archive.md
+   - Archive: Docs/01-Active/Archive.md
    - Post-Mortems: Docs/06-PostMortems/Active/
    - Backlog: Docs/01-Active/Backlog.md
    - Workflow: Docs/01-Active/Workflow.md

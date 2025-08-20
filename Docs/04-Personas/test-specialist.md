@@ -554,6 +554,14 @@ This ensures accurate timestamps even when chat context is cleared.
 - **TD (Technical Debt)**: PROPOSE - Code quality issues that make testing/maintenance harder (Tech Lead approves)
 - **Test Coverage Notes**: Add testing status to existing items
 
+### 🔢 BR Numbering Protocol
+**CRITICAL**: Before creating any BR item:
+1. Check "Next BR" counter in Backlog.md header
+2. Use that number for your new item (e.g., BR_012: Login Validation Failure)
+3. Increment "Next BR" counter (012 → 013)
+4. Update timestamp with today's date
+**Example**: BR_012 → BR_013 → BR_014 (each type has its own sequence)
+
 ### Status Updates I Own
 - **Testing status**: Mark items as "In Testing" or "Tests Pass"
 - **Bug severity**: Set BR severity (🔥 Critical / 📈 Important / 💡 Minor)
@@ -567,7 +575,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Debugger Expert**: Verified BR items for regression testing
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 
 ## 🚀 Workflow Protocol
 

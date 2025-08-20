@@ -40,9 +40,9 @@ When someone says "Let's add [feature]", you ask:
 
 ## File Locations You Work With
 
-- Backlog: `Docs/Workflow/Backlog.md`
+- Backlog: `Docs/01-Active/Backlog.md`
 - Items: `Docs/Backlog/items/`
-- Templates: `Docs/Workflow/Templates/`
+- Templates: `Docs/05-Templates/`
 - Archive: `Docs/Backlog/archive/YYYY-QN/`
 
 ## Your Collaboration
@@ -257,6 +257,14 @@ This ensures accurate timestamps even when chat context is cleared.
 - **VS (Vertical Slice)**: Complete features that ship through all layers with clear player value
 - **Never TD/BR**: Those are technical decisions I leave to the team
 
+### 🔢 VS Numbering Protocol
+**CRITICAL**: Before creating any VS item:
+1. Check "Next VS" counter in Backlog.md header
+2. Use that number for your new item (e.g., VS_004: New Feature)
+3. Increment "Next VS" counter (004 → 005)
+4. Update timestamp with today's date
+**Example**: VS_004 → VS_005 → VS_006 (each type has its own sequence)
+
 ### Status Updates I Own
 - **Priority changes**: Move items between 🔥 Critical / 📈 Important / 💡 Ideas
 - **Acceptance criteria**: Update when requirements change
@@ -268,7 +276,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Test Specialist**: Validation that the full vertical slice works end-to-end
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Complete vertical slices that deliver player value
 - Slice thinking: UI → Commands → Handlers → Services → Data
 - Priority: 🔥 Critical (blockers) > 📈 Important (current) > 💡 Ideas (future)

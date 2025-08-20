@@ -353,7 +353,7 @@ Date: ________________
 3. **BR for bugs** - Not BF (Bug Fix)
 4. **TD for quality issues** - Test Specialist proposes during testing (Tech Lead approves)
 5. **User approves fixes** - Debugger can't autonomously fix
-6. **Single source**: `Docs/Workflow/Backlog.md`
+6. **Single source**: `Docs/01-Active/Backlog.md`
 7. **Quality gates**: Test Specialist blocks if untestable, proposes TD if messy
 8. **CI/CD gates**: Build+tests must pass locally (`./scripts/core/build.ps1 test`) and pre-commit hook enforces this
 9. **PR requirements**: CI must pass on GitHub before merge
@@ -421,9 +421,9 @@ Grep "PlaceBlockCommand" --type cs
 
 ## Templates
 
-- `Docs/Workflow/Templates/VerticalSlice_Template.md` - Features
-- `Docs/Workflow/Templates/BugReport_Template.md` - Bugs  
-- `Docs/Workflow/Templates/TechnicalDebt_Template.md` - Tech Debt
+- `Docs/05-Templates/VerticalSlice_Template.md` - Features
+- `Docs/05-Templates/BugReport_Template.md` - Bugs  
+- `Docs/05-Templates/TechnicalDebt_Template.md` - Tech Debt
 - `Docs/Post-Mortems/PostMortem_Template.md` - Post-mortems
 
 ---

@@ -4,12 +4,44 @@
 
 **Purpose**: Completed and rejected work items for historical reference and lessons learned.
 
-**Last Updated**: 2025-08-19
+**Last Updated**: 2025-08-20
 **Recovery Note**: Archive reconstructed on 2025-08-19 after data loss incident (see BR_011 post-mortem)
 
 ---
 
 ## ✅ Completed Items
+
+### 2025-08-20
+
+#### TD_028: Type-Specific Item Numbering System ✅ COMPLETED
+**Completed**: 2025-08-20
+**Owner**: Dev Engineer
+**Effort**: M (3 hours)
+**Problem**: ID collision chaos - BR_001, TD_001, VS_001 all existed simultaneously
+**Solution**: Implemented separate counters for each item type in Backlog.md header
+**Implementation**: 
+- Added centralized counter tracking (Next BR: 012, Next TD: 029, Next VS: 004, Next PM: 001)
+- Updated all 6 persona files with type-specific numbering protocols
+- Enhanced backlog-assistant with counter management logic
+- Created systematic "Check → Use → Increment → Update" protocol
+**Impact**: Eliminated ID collisions, created logical sequences, improved search efficiency
+**Results**: Clean, predictable, collision-free item identification system
+[METADATA: process-improvement, numbering-system, id-management, systematic-fix, operational-efficiency]
+
+#### TD_027: Subagent Protocol Enforcement ✅ COMPLETED
+**Completed**: 2025-08-20
+**Owner**: Dev Engineer
+**Effort**: S (2 hours)
+**Problem**: Personas auto-invoking backlog-assistant bypassed review process
+**Solution**: Added prominent "SUBAGENT PROTOCOL - CRITICAL" headers to all personas
+**Implementation**:
+- Updated 6 persona files with "SUGGEST, NEVER AUTO-EXECUTE" protocol
+- Created transparent delegation workflow requiring user approval
+- Added clear command preview and expected outcomes documentation
+- Preserved Strategic Prioritizer exception for meta-analysis
+**Impact**: Review process integrity restored, user control maintained, Tech Lead gates enforced
+**Principle**: Process reliability requires visibility - buried rules get violated
+[METADATA: process-enforcement, delegation-protocol, user-control, review-gates, transparency]
 
 ### 2025-08-19
 
@@ -226,7 +258,7 @@
 4. **PRESERVE HISTORY** - Every entry is valuable for learning
 
 **Recovery Protocol** (if data loss detected):
-1. Check git history: `git log --all --full-history -- Docs/Workflow/Archive.md`
+1. Check git history: `git log --all --full-history -- Docs/01-Active/Archive.md`
 2. Recover from last known good state
 3. Merge any missing items
 4. Document incident in post-mortem

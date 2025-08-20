@@ -328,7 +328,15 @@ This ensures accurate timestamps even when chat context is cleared.
   - **REQUIRED: Pattern Match** - Which existing pattern does this follow?
   - **REQUIRED: Simpler Alternative** - What's the minimal solution?
   - **Anything scoring >5 needs strong justification**
-- **Post-Mortems**: When critical bugs are fixed, create in `Docs/Post-Mortems/` folder
+- **Post-Mortems**: When critical bugs are fixed, create in `Docs/06-PostMortems/Active/` folder
+
+### 🔢 PM Numbering Protocol
+**CRITICAL**: Before creating any PM (Post-Mortem) item:
+1. Check "Next PM" counter in Backlog.md header
+2. Use that number for your new item (e.g., PM_001: Implementation Learning)
+3. Increment "Next PM" counter (001 → 002)
+4. Update timestamp with today's date
+**Example**: PM_001 → PM_002 → PM_003 (each type has its own sequence)
 - **Note**: I don't create VS or BR items
 
 #### TD Proposal Template
@@ -377,7 +385,7 @@ When my implementation is complete:
 - **To Tech Lead**: Architecture concerns or pattern questions
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Implementation progress and blockers
 - Rule: Update status immediately when starting work
 - Rule: Mark as "Ready for Review 🔍" when tests pass (never "Done")

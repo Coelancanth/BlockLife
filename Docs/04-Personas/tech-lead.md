@@ -315,6 +315,14 @@ This ensures accurate timestamps even when chat context is cleared.
 - **TD Creation**: Can directly create approved TD items
 - **Subtasks**: Break large VS items into manageable chunks
 
+### 🔢 TD Numbering Protocol
+**CRITICAL**: Before creating or approving any TD item:
+1. Check "Next TD" counter in Backlog.md header
+2. Use that number for your new item (e.g., TD_029: Refactor Service)
+3. Increment "Next TD" counter (029 → 030)
+4. Update timestamp with today's date
+**Example**: TD_029 → TD_030 → TD_031 (each type has its own sequence)
+
 ### TD Gatekeeper Role
 - **Review proposed TD** items for technical validity
 - **Approve** real technical debt worth tracking
@@ -335,7 +343,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Anyone**: TD proposals for review
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Technical feasibility and implementation planning
 - TD Role: Review all proposed TD, approve only real debt
 - Reference: `src/Features/Block/Move/` for patterns
