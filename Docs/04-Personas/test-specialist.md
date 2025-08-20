@@ -575,7 +575,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Debugger Expert**: Verified BR items for regression testing
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 
 ## 🚀 Workflow Protocol
 

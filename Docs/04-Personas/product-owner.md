@@ -40,9 +40,9 @@ When someone says "Let's add [feature]", you ask:
 
 ## File Locations You Work With
 
-- Backlog: `Docs/Workflow/Backlog.md`
+- Backlog: `Docs/01-Active/Backlog.md`
 - Items: `Docs/Backlog/items/`
-- Templates: `Docs/Workflow/Templates/`
+- Templates: `Docs/05-Templates/`
 - Archive: `Docs/Backlog/archive/YYYY-QN/`
 
 ## Your Collaboration
@@ -276,7 +276,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Test Specialist**: Validation that the full vertical slice works end-to-end
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Complete vertical slices that deliver player value
 - Slice thinking: UI → Commands → Handlers → Services → Data
 - Priority: 🔥 Critical (blockers) > 📈 Important (current) > 💡 Ideas (future)

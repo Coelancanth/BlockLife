@@ -132,7 +132,7 @@
 **Why**: Incorrect paths cause data loss, failed operations, and inconsistent file organization
 
 **Root Cause Analysis**:
-- Backlog-assistant doesn't know Archive.md is at `Docs/Workflow/Archive.md`
+- Backlog-assistant doesn't know Archive.md is at `Docs/01-Active/Archive.md`
 - Post-mortems should go to `Docs/06-PostMortems/Active/` not arbitrary locations
 - No centralized path configuration for agents
 - Agents may create files in wrong locations or fail to find existing ones
@@ -143,7 +143,7 @@
 3. **Create path reference** in agent instructions:
    ```
    CRITICAL PATHS:
-   - Archive: Docs/Workflow/Archive.md
+   - Archive: Docs/01-Active/Archive.md
    - Post-Mortems: Docs/06-PostMortems/Active/
    - Backlog: Docs/01-Active/Backlog.md
    - Workflow: Docs/01-Active/Workflow.md

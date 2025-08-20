@@ -174,7 +174,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Product Owner**: Release planning and deployment schedules
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Automation opportunities and deployment tracking
 - Rule: If it happens twice, automate it
 

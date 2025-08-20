@@ -385,7 +385,7 @@ When my implementation is complete:
 - **To Tech Lead**: Architecture concerns or pattern questions
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Implementation progress and blockers
 - Rule: Update status immediately when starting work
 - Rule: Mark as "Ready for Review 🔍" when tests pass (never "Done")

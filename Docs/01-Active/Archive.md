@@ -258,7 +258,7 @@
 4. **PRESERVE HISTORY** - Every entry is valuable for learning
 
 **Recovery Protocol** (if data loss detected):
-1. Check git history: `git log --all --full-history -- Docs/Workflow/Archive.md`
+1. Check git history: `git log --all --full-history -- Docs/01-Active/Archive.md`
 2. Recover from last known good state
 3. Merge any missing items
 4. Document incident in post-mortem

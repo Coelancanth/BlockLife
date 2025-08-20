@@ -343,7 +343,7 @@ This ensures accurate timestamps even when chat context is cleared.
 - **From Anyone**: TD proposals for review
 
 ### Quick Reference
-- Location: `Docs/Workflow/Backlog.md`
+- Location: `Docs/01-Active/Backlog.md`
 - My focus: Technical feasibility and implementation planning
 - TD Role: Review all proposed TD, approve only real debt
 - Reference: `src/Features/Block/Move/` for patterns
