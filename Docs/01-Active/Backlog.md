@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 012 (Last: BR_011 - 2025-08-20)
-- **Next TD**: 029 (Last: TD_028 - 2025-08-20)  
+- **Next TD**: 035 (Last: TD_034 - 2025-08-20)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -67,11 +67,182 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
+### TD_029: Add Main Directory Protection for Persona Worktree System
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [PRODUCTIVITY] [SAFETY]
+**Created**: 2025-08-20
 
+**What**: Create warning system to prevent accidental work in main directory when personas should be used
+**Why**: Users may accidentally open Claude in main directory, losing isolation benefits and risking conflicts
+**How**: 
+- Create claude.ps1 wrapper script with warning
+- Add .claude-warning marker file
+- Update README with clear guidance
+- Optional git hook for commit warnings
+**Done When**: 
+- Warning appears when opening Claude in main
+- Clear redirection to blocklife command
+- Documentation updated
+- Accidental main work reduced to near-zero
+**Depends On**: TD_023 (Complete)
+
+**Problem Context**: With worktree system complete, nothing prevents accidentally working in main directory which loses isolation benefits and can create conflicts
+**Proposed Solution**: Gentle guardrails that remind users to use workspaces without being obstructive
+
+**Tech Lead Decision** (2025-08-20):
+- **Complexity Score**: 2/10
+- **Decision**: Approved as simple, non-intrusive safety guardrail
+- **Rationale**: PowerShell wrapper pattern matches existing tooling, allows bypass for legitimate work, minimal implementation risk
+- **Technical Guidance**: Use .claude-warning marker approach that can be checked by wrapper script for clean detection
+
+### TD_030: Simplify Persona Backlog Update Suggestions
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [UX] [PRODUCTIVITY]
+**Created**: 2025-08-20
+
+**What**: Personas should provide concise task summaries instead of detailed backlog-assistant commands
+**Why**: Current pattern shows full command syntax which is verbose and intimidating for users, reduces readability
+**How**: 
+- Update all persona documentation to suggest summaries in bullet points
+- User can request command generation if needed
+- Focus on WHAT changed not HOW to update
+**Done When**: 
+- All personas provide clean summaries like "Mark VS_004 complete, Create TD_031 for refactoring"
+- Commands only generated on explicit request
+- Documentation updated
+**Depends On**: None
+
+**Problem**: Personas currently suggest long, detailed backlog-assistant commands that are hard to read and review
+**Better Approach**: Simple bullet summaries that user can easily understand and approve
+
+**Tech Lead Decision** (2025-08-20):
+- **Complexity Score**: 1/10
+- **Decision**: Approved as pure documentation improvement
+- **Rationale**: Reduces cognitive load, improves readability, no technical changes required, aligns with simplicity principle
+- **Implementation Note**: Update all persona docs to use bullet summaries instead of showing full backlog-assistant command syntax
+
+### TD_031: Add Verification Step for Subagent Work Completion
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [PROCESS] [QUALITY]
+**Created**: 2025-08-20
+
+**What**: Create verification mechanism to confirm subagent tasks are actually completed
+**Why**: Currently operating on trust without verification - subagents report completion but we don't verify
+**How**: 
+- Add post-subagent verification step in workflows
+- Create simple verification scripts/patterns
+- Document verification protocol for each subagent type
+- Consider adding automated checks where possible
+**Done When**: 
+- Verification patterns documented for all subagents
+- Scripts/tools created for common verifications
+- Process integrated into persona workflows
+- False completion reports detectible
+**Depends On**: None
+
+**Tech Lead Decision** (2025-08-20):
+- Complexity Score: 3/10
+- Decision: Auto-approved as process improvement
+- Rationale: Addresses real trust-but-don't-verify gap in our automation
+- Owner: DevOps (workflow tooling and process automation)
 
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: L (1-3 days)
+**Priority**: Ideas
+**Markers**: [ARCHITECTURE] [TOOLING] [PROTOTYPE]
+**Created**: 2025-08-20
+
+**What**: Create custom PowerShell tool for Claude Code to validate architecture and patterns
+**Why**: Current validation requires multiple grep/read operations; structured validation would catch issues early
+**How**: 
+- Implement after TD_029/030 to compare approaches
+- Create validate-architecture.ps1 with structured output
+- Check Clean Architecture boundaries
+- Validate Glossary term usage in code
+- Compare against Move Block reference pattern
+- Return JSON with violations and suggestions
+**Done When**: 
+- Tool validates architecture rules programmatically
+- Returns structured data Claude can interpret
+- Demonstrates clear value over manual checking
+- Decision made on wider custom tool adoption
+**Depends On**: TD_029, TD_030 (learn from implementation)
+
+**Problem Context**: We manually check architecture compliance through multiple file reads and greps. A custom tool could provide instant, structured feedback.
+**Prototype Goal**: Evaluate if custom PowerShell tools reduce cognitive load and improve quality
+**Success Metrics**: Time saved, bugs prevented, developer experience improvement
+
+### TD_034: Enforce Up-to-Date Branch Requirement via GitHub Protection
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [GIT] [PROCESS] [AUTOMATION]
+**Created**: 2025-08-20
+
+**What**: Configure GitHub branch protection to require branches be up-to-date with main before merging
+**Why**: PR #49 conflict was caused by not fetching/pulling main first - automation can prevent this
+**How**: 
+- Enable "Require branches to be up to date before merging" in GitHub settings
+- Review GitWorkflow.md for additional protection opportunities
+- Consider "Require linear history" to enforce rebase workflow
+- Add "Dismiss stale reviews when new commits are pushed"
+- Document the protection rules in GitWorkflow.md
+**Done When**: 
+- Branch protection enforces up-to-date requirement
+- PR conflicts from outdated branches become impossible
+- GitWorkflow.md updated with protection details
+- Team can't accidentally create conflicts from stale branches
+**Depends On**: None
+
+**Problem Context**: PR #49 had conflicts because branch was created without fetching latest main. While GitWorkflow.md documents the Sacred Sequence, human error still occurs.
+**Solution**: GitHub's built-in protection can enforce this automatically - no PR can be merged unless it's current with main.
+**Additional Benefits**: Forces good git hygiene, prevents "worked on my machine" issues, ensures CI runs against latest code
+
+### TD_032: Fix Persona Documentation Routing and Ownership Gaps
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: M (4-8h)
+**Priority**: Ideas
+**Markers**: [DOCUMENTATION] [PRODUCTIVITY]
+**Created**: 2025-08-20
+
+**What**: Add routing tables and "what NOT to accept" sections to all persona documents
+**Why**: Current docs cause work misrouting - personas don't know when to hand off to others
+**How**: 
+- Add "Work I Don't Accept" section to each persona doc
+- Create master routing table in QuickReference.md
+- Expand DevOps ownership to include all dev tooling/scripts
+- Clarify Test Specialist vs Debugger Expert handoff criteria
+- Add cross-references between related personas
+**Done When**: 
+- Each persona has clear rejection criteria
+- Master routing table exists and is referenced
+- No ambiguity about who owns what type of work
+- DevOps owns all developer experience improvements
+**Depends On**: None
+
+**Tech Lead Decision** (2025-08-20):
+- Complexity Score: 4/10
+- Decision: Auto-approved as documentation improvement
+- Rationale: Addresses systematic routing confusion discovered during TD_029/030 review
+- Impact: Prevents future work misrouting and clarifies ownership
+- Pattern: Similar to tech-lead.md improvements just completed
 
 
 

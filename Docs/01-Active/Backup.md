@@ -1,3 +1,4 @@
+
 ### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
 **Status**: Approved
 **Owner**: Tech Lead → Dev Engineer
