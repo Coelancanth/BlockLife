@@ -37,4 +37,9 @@
     <EmbeddedResource Remove="addons\**" />
     <None Remove="addons\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="personas\**" />
+    <EmbeddedResource Remove="personas\**" />
+    <None Remove="personas\**" />
+  </ItemGroup>
 </Project>
