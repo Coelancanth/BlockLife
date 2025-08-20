@@ -64,36 +64,6 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 
-### TD_037: Update All Personas for Multi-Clone Architecture [Score: 70/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: M (4-8h)
-**Priority**: Critical
-**Markers**: [INFRASTRUCTURE] [PERSONA-SYSTEM]
-**Created**: 2025-08-20
-
-**What**: Update all persona documentation and scripts to work with multi-clone structure
-**Why**: Personas still reference worktree paths and Sacred Sequence commands that no longer exist
-**How**:
-- Update each persona's .md file to remove worktree references
-- Update paths to use blocklife-[persona-name] directories
-- Remove all Sacred Sequence command references
-- Update any scripts that assume worktree structure
-- Add persona-specific git identity information
-- Update CLAUDE.md files in each clone after creation
-
-**Done When**:
-- All 6 persona docs updated with correct clone paths
-- No references to worktrees or Sacred Sequence remain
-- Each persona knows its git identity (e.g., dev-eng@blocklife)
-- Personas can navigate to their correct directories
-- All scripts work with new structure
-
-**Depends On**: TD_035 (Complete)
-
-**Problem Context**: We've migrated to multi-clone architecture but persona documentation and scripts still reference the old worktree structure. This will cause immediate failures when personas try to use old paths or commands.
-
-**Implementation Notes**: This is essentially the "cleanup" phase of the migration. Each persona needs to know about its new home directory and identity.
 
 
 ## 📈 Important (Do Next)
