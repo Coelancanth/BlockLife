@@ -90,4 +90,10 @@ commit_message.txt
 addons/gdUnit4/
 # Project icon  
 icon.svg  
-icon.svg.import  
+icon.svg.import
+
+# --- Persona Worktree System ---
+# Git worktrees for isolated persona workspaces
+personas/
+# Note: These are git worktrees created by scripts/persona/switch-persona.ps1
+# They should NOT be committed to the repository  
