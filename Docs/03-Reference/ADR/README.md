@@ -17,6 +17,7 @@ ADRs are **immutable** - once accepted, they don't change. If a decision needs t
 | ADR | Title | Status | Date | Summary |
 |-----|-------|--------|------|---------|
 | [ADR-001](ADR-001-pattern-recognition-framework.md) | Pattern Recognition Framework | Accepted | 2025-01-19 | Extensible framework for recognizing and executing game patterns (match-3, tier-ups, chains) |
+| [ADR-002](ADR-002-persona-system-architecture.md) | Persona System Architecture | Accepted | 2025-08-20 | Migration from Git worktrees to multiple clones for true persona isolation |
 
 ## When to Create an ADR
 

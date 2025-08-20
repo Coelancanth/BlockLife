@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-20)
-- **Next TD**: 035 (Last: TD_034 - 2025-08-20)  
+- **Next TD**: 037 (Last: TD_036 - 2025-08-20)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -187,6 +187,30 @@
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+### TD_036: Simplify or Remove Sacred Sequence After Clone Migration
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: S (<4h)
+**Priority**: Ideas
+**Markers**: [SIMPLIFICATION] [GIT-WORKFLOW]
+**Created**: 2025-08-20
+
+**What**: Re-evaluate Sacred Sequence (TD_034) after multiple clone migration
+**Why**: With isolated clones, complex git aliases may be unnecessary overhead
+**How**: 
+- Assess if Sacred Sequence adds value in multi-clone environment
+- Consider removing custom aliases in favor of standard git commands
+- Rely on GitHub branch protection for enforcement
+- Keep only the truly valuable parts (if any)
+**Done When**: 
+- Decision made: Keep, simplify, or remove
+- If keeping: Document clear value proposition
+- If removing: Clean up all aliases and hooks
+- Standard git workflow documented clearly
+**Depends On**: TD_035 (must complete clone migration first)
+
+**Honest Assessment**: Sacred Sequence was a band-aid for worktree problems. With multiple clones providing natural isolation, we should question if custom git commands are worth the complexity. Standard git + GitHub protection might be simpler and more maintainable.
 
 ### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation
 **Status**: Proposed
