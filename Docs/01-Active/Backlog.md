@@ -5,7 +5,7 @@
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
-- **Next BR**: 012 (Last: BR_011 - 2025-08-20)
+- **Next BR**: 013 (Last: BR_012 - 2025-08-20)
 - **Next TD**: 035 (Last: TD_034 - 2025-08-20)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
@@ -63,12 +63,41 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### BR_012: Git Worktree Branch Conflict Prevents Persona System Usage
+**Status**: New
+**Owner**: Debugger Expert
+**Size**: M (4-8h)
+**Priority**: Critical
+**Markers**: [WORKFLOW] [GIT] [PERSONA-SYSTEM]
+**Created**: 2025-08-20
+
+**What**: Git worktrees prevent same branch from being checked out in multiple workspaces
+**Why**: Blocks proper persona system usage - can't work on feature branches in persona workspaces
+**How**: 
+- Research git worktree branch sharing limitations
+- Design workflow for feature work in persona environments
+- Consider solutions: workspace-specific branches, branch forwarding, or workflow changes
+- Test solution with actual persona system usage
+**Done When**: 
+- DevOps Engineer can work on feat/persona-system-v2 from DevOps workspace
+- Clear workflow documented for feature work in persona environments
+- No compromise to persona isolation benefits
+- Solution works consistently across all personas
+**Depends On**: None
+
+**Problem Context**: While implementing Persona System v2.0, discovered that git worktrees prevent checking out the same branch (feat/persona-system-v2) in both main directory and persona workspace. This forces choice between persona isolation and proper feature branch workflow.
+
+**Impact**: Major workflow friction that defeats the purpose of persona system. Currently requires awkward workarounds like working in main directory (loses isolation) or creating separate branches per workspace (complicates merging).
+
+**Workaround**: Created feat/devops-persona-v2 branch for now, but this doesn't scale.
+
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
 ### TD_029: Add Main Directory Protection for Persona Worktree System
-**Status**: Approved
+**Status**: Done
+**Completed**: 2025-08-20
 **Owner**: DevOps Engineer
 **Size**: S (<4h)
 **Priority**: Important
