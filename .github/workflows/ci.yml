@@ -102,11 +102,11 @@ jobs:
           --configuration Debug \
           --logger "console;verbosity=minimal" \
           --logger "trx;LogFileName=test-results.trx" \
-          --filter "Category!=Performance&FullyQualifiedName!=BlockLife.Core.Tests.StressTests.SimulationManagerThreadSafetyTests.ConcurrentOperations_ShouldMaintainPerformance"
+          --filter "Category!=Performance"
         
         # Note: Removed || true - tests MUST pass for CI to succeed
         # If tests fail on Linux but pass on Windows, we need to fix the tests, not hide failures
-        # TEMPORARY: Excluding flaky SimulationManagerThreadSafetyTests until BR_008 is resolved
+        # BR_008 RESOLVED: SimulationManagerThreadSafetyTests fixed with environment-aware thresholds
           
     - name: Handle Test Failures
       if: failure()
