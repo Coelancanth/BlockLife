@@ -96,7 +96,8 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### TD_029: Add Main Directory Protection for Persona Worktree System
-**Status**: Approved
+**Status**: Done
+**Completed**: 2025-08-20
 **Owner**: DevOps Engineer
 **Size**: S (<4h)
 **Priority**: Important
