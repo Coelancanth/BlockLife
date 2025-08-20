@@ -117,7 +117,9 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 - Ensure consistent status format
 - Fix section ordering (Critical → Important → Ideas → Blocked → Archive)
 - Remove duplicate entries
-- Standardize item naming: `[Type]_[Number]: Title`
+- Standardize item naming: `[Type]_[Number]: Title` using type-specific numbering from Backlog.md header
+- **NUMBERING PROTOCOL**: Check appropriate type counter (Next BR/TD/VS/PM) in Backlog.md header before processing items
+- **UPDATE COUNTERS**: When processing new items, increment the correct type counter and update timestamp
 
 ## Rules You MUST Follow
 

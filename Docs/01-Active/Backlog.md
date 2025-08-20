@@ -2,6 +2,16 @@
 
 **Last Updated**: 2025-08-19
 
+## 🔢 Next Item Numbers by Type
+**CRITICAL**: Before creating new items, check and update the appropriate counter.
+
+- **Next BR**: 012 (Last: BR_011 - 2025-08-20)
+- **Next TD**: 029 (Last: TD_028 - 2025-08-20)  
+- **Next VS**: 004 (Last: VS_003D - 2025-08-19)
+- **Next PM**: 001 (No post-mortems numbered yet)
+
+**Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
+
 ## 📖 How to Use This Backlog
 
 ### 🧠 Owner-Based Protocol

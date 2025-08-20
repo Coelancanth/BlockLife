@@ -253,6 +253,14 @@ This ensures accurate timestamps even when chat context is cleared, especially c
 ### Items I Own and Update
 - **BR (Bug Report)**: I own BR items during investigation
 - **Post-Mortems**: Create after BR verified and lessons learned
+
+### 🔢 PM Numbering Protocol
+**CRITICAL**: Before creating any PM (Post-Mortem) item:
+1. Check "Next PM" counter in Backlog.md header
+2. Use that number for your new item (e.g., PM_001: Critical Bug Analysis)
+3. Increment "Next PM" counter (001 → 002)
+4. Update timestamp with today's date
+**Example**: PM_001 → PM_002 → PM_003 (each type has its own sequence)
 - **TD (Proposed)**: When investigation reveals architectural issues (needs Tech Lead approval)
 
 ## 📚 My Reference Docs
