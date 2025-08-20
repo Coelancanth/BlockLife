@@ -4,15 +4,69 @@
 
 **Purpose**: Completed and rejected work items for historical reference and lessons learned.
 
-**Last Updated**: 2025-08-20
+**Last Updated**: 2025-08-21
 **Recovery Note**: Archive reconstructed on 2025-08-19 after data loss incident (see BR_011 post-mortem)
 
 ---
 
 ## ✅ Completed Items
 
+### 2025-08-21
+
+#### TD_035: Create Setup Script for Multiple Clone Structure ✅ COMPLETED
+**Completed**: 2025-08-21
+**Owner**: DevOps Engineer
+**Effort**: S (<4h)
+**Outcome**: Setup scripts created: setup-personas.ps1 and sync-personas.ps1. GitWorkflow.md updated to remove Sacred Sequence and document standard git workflow for multi-clone architecture.
+**Impact**: Streamlined developer onboarding with automated persona clone setup, eliminated Sacred Sequence complexity
+**Implementation**: Persona git identities implemented (dev-eng@blocklife, etc.), standard git workflow documented
+**Lessons**: Simplification often delivers more value than complex automation systems
+**Unblocked**: Easy persona system adoption for new developers, clean git workflow without custom aliases
+[METADATA: setup-automation, persona-system, git-workflow, simplification, developer-onboarding]
+
+#### TD_036: Simplify or Remove Sacred Sequence After Clone Migration ✅ COMPLETED
+**Completed**: 2025-08-21
+**Owner**: Tech Lead
+**Effort**: S (<4h - merged into TD_035)
+**Outcome**: Sacred Sequence removed entirely. Standard git commands with GitHub branch protection provide sufficient safety.
+**Impact**: Eliminated unnecessary complexity, improved maintainability, standard git workflow
+**Implementation**: GitWorkflow.md updated to document simple, standard workflow for multi-clone architecture
+**Lessons**: Complex solutions should be removed when underlying problems are eliminated
+**Unblocked**: Clean, maintainable git workflow without custom aliases or enforcement overhead
+[METADATA: simplification, git-workflow, sacred-sequence-removal, maintainability, standard-practices]
+
+#### BR_012: Git Worktree Branch Conflict Prevents Persona System Usage ✅ RESOLVED
+**Resolved**: 2025-08-21
+**Owner**: Debugger Expert
+**Effort**: M (4-8h estimated, resolved via architecture change)
+**Outcome**: Resolved - Worktrees eliminated, using simple clones instead. No branch conflicts possible with independent repos.
+**Resolution**: Problem eliminated by moving from worktree-based persona system to independent clone approach
+**Impact**: Persona system workflow friction completely eliminated, feature branch development restored
+**Lessons**: Sometimes the best solution to complex problems is to eliminate the complexity entirely
+**Unblocked**: Full persona system usage with feature branches, eliminated worktree limitations
+[METADATA: workflow, git, persona-system, architecture-decision, simplification]
+
+#### TD_029: Add Main Directory Protection for Persona Worktree System ❌ OBSOLETE
+**Obsolete**: 2025-08-21
+**Owner**: DevOps Engineer
+**Reason**: Obsolete - Was for worktree protection. No worktrees exist anymore after fresh clone approach.
+**Alternative**: No protection needed with independent clones - each persona has complete isolation by design
+[RESURRECT-IF: return-to-shared-workspace-model]
+[METADATA: worktree-protection, obsolete, persona-system, architecture-change]
+
 ### 2025-08-20
 
+#### TD_034: Enforce Up-to-Date Branch Requirement via Sacred Sequence Automation ✅ COMPLETED
+**Completed**: 2025-08-20
+**Owner**: DevOps Engineer
+**Effort**: S (<4h)
+**Outcome**: Implemented Sacred Sequence enforcement through smart git aliases and pre-push hooks
+**Impact**: Eliminated PR conflicts from stale branches, AI agents can't accidentally create conflicts
+**Implementation**: Three-layer enforcement system - smart aliases (prevention), pre-push hooks (detection), and clear documentation (education)
+**Key Components**: git newbranch command, syncmain alias, pre-push hook blocking, GitWorkflow.md updates
+**Lessons**: Prevention-focused automation with multiple enforcement layers provides comprehensive safety
+**Unblocked**: Conflict-free PR workflow, eliminated human error in git operations
+[METADATA: git-workflow, automation, sacred-sequence, pr-conflicts, prevention-system, devops]
 
 #### TD_023: Implement Persona Worktree System - Automated Isolation Workspaces ✅ COMPLETED
 **Completed**: 2025-08-20

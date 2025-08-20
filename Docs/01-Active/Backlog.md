@@ -1,12 +1,12 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-20
+**Last Updated**: 2025-08-21
 
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
-- **Next BR**: 013 (Last: BR_012 - 2025-08-20)
-- **Next TD**: 037 (Last: TD_036 - 2025-08-20)  
+- **Next BR**: 013 (Last: BR_012 - 2025-08-21)
+- **Next TD**: 039 (Last: TD_038 - 2025-08-20)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -63,71 +63,44 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_012: Git Worktree Branch Conflict Prevents Persona System Usage
-**Status**: New
-**Owner**: Debugger Expert
+
+### TD_037: Update All Personas for Multi-Clone Architecture [Score: 70/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
 **Size**: M (4-8h)
 **Priority**: Critical
-**Markers**: [WORKFLOW] [GIT] [PERSONA-SYSTEM]
+**Markers**: [INFRASTRUCTURE] [PERSONA-SYSTEM]
 **Created**: 2025-08-20
 
-**What**: Git worktrees prevent same branch from being checked out in multiple workspaces
-**Why**: Blocks proper persona system usage - can't work on feature branches in persona workspaces
-**How**: 
-- Research git worktree branch sharing limitations
-- Design workflow for feature work in persona environments
-- Consider solutions: workspace-specific branches, branch forwarding, or workflow changes
-- Test solution with actual persona system usage
-**Done When**: 
-- DevOps Engineer can work on feat/persona-system-v2 from DevOps workspace
-- Clear workflow documented for feature work in persona environments
-- No compromise to persona isolation benefits
-- Solution works consistently across all personas
-**Depends On**: None
+**What**: Update all persona documentation and scripts to work with multi-clone structure
+**Why**: Personas still reference worktree paths and Sacred Sequence commands that no longer exist
+**How**:
+- Update each persona's .md file to remove worktree references
+- Update paths to use blocklife-[persona-name] directories
+- Remove all Sacred Sequence command references
+- Update any scripts that assume worktree structure
+- Add persona-specific git identity information
+- Update CLAUDE.md files in each clone after creation
 
-**Problem Context**: While implementing Persona System v2.0, discovered that git worktrees prevent checking out the same branch (feat/persona-system-v2) in both main directory and persona workspace. This forces choice between persona isolation and proper feature branch workflow.
+**Done When**:
+- All 6 persona docs updated with correct clone paths
+- No references to worktrees or Sacred Sequence remain
+- Each persona knows its git identity (e.g., dev-eng@blocklife)
+- Personas can navigate to their correct directories
+- All scripts work with new structure
 
-**Impact**: Major workflow friction that defeats the purpose of persona system. Currently requires awkward workarounds like working in main directory (loses isolation) or creating separate branches per workspace (complicates merging).
+**Depends On**: TD_035 (Complete)
 
-**Workaround**: Created feat/devops-persona-v2 branch for now, but this doesn't scale.
+**Problem Context**: We've migrated to multi-clone architecture but persona documentation and scripts still reference the old worktree structure. This will cause immediate failures when personas try to use old paths or commands.
+
+**Implementation Notes**: This is essentially the "cleanup" phase of the migration. Each persona needs to know about its new home directory and identity.
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### TD_029: Add Main Directory Protection for Persona Worktree System
-**Status**: Done
-**Completed**: 2025-08-20
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [PRODUCTIVITY] [SAFETY]
-**Created**: 2025-08-20
 
-**What**: Create warning system to prevent accidental work in main directory when personas should be used
-**Why**: Users may accidentally open Claude in main directory, losing isolation benefits and risking conflicts
-**How**: 
-- Create claude.ps1 wrapper script with warning
-- Add .claude-warning marker file
-- Update README with clear guidance
-- Optional git hook for commit warnings
-**Done When**: 
-- Warning appears when opening Claude in main
-- Clear redirection to blocklife command
-- Documentation updated
-- Accidental main work reduced to near-zero
-**Depends On**: TD_023 (Complete)
-
-**Problem Context**: With worktree system complete, nothing prevents accidentally working in main directory which loses isolation benefits and can create conflicts
-**Proposed Solution**: Gentle guardrails that remind users to use workspaces without being obstructive
-
-**Tech Lead Decision** (2025-08-20):
-- **Complexity Score**: 2/10
-- **Decision**: Approved as simple, non-intrusive safety guardrail
-- **Rationale**: PowerShell wrapper pattern matches existing tooling, allows bypass for legitimate work, minimal implementation risk
-- **Technical Guidance**: Use .claude-warning marker approach that can be checked by wrapper script for clean detection
-
-### TD_030: Simplify Persona Backlog Update Suggestions
+### TD_030: Simplify Persona Backlog Update Suggestions [Score: 50/100]
 **Status**: Approved
 **Owner**: DevOps Engineer
 **Size**: S (<4h)
@@ -156,7 +129,7 @@
 - **Rationale**: Reduces cognitive load, improves readability, no technical changes required, aligns with simplicity principle
 - **Implementation Note**: Update all persona docs to use bullet summaries instead of showing full backlog-assistant command syntax
 
-### TD_031: Add Verification Step for Subagent Work Completion
+### TD_031: Add Verification Step for Subagent Work Completion [Score: 45/100]
 **Status**: Approved
 **Owner**: DevOps Engineer
 **Size**: S (<4h)
@@ -184,35 +157,48 @@
 - Rationale: Addresses real trust-but-don't-verify gap in our automation
 - Owner: DevOps (workflow tooling and process automation)
 
+### TD_038: Create Architectural Consistency Validation System [Score: 65/100]
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: L (1-3 days)
+**Priority**: Important
+**Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
+**Created**: 2025-08-20
+
+**What**: Design and implement comprehensive consistency checker for post-migration validation
+**Why**: Major architecture shift from worktrees to multi-clone needs systematic validation to ensure nothing was missed
+**How**:
+- Create consistency-checker subagent or slash command
+- Validate all references updated (no worktree mentions remain)
+- Check persona documentation consistency across all 6 personas
+- Verify git workflow references are standard (no Sacred Sequence)
+- Validate Clean Architecture boundaries still enforced
+- Check Glossary term usage consistency
+- Ensure all paths reference correct clone directories
+- Verify Context7 integration points still valid
+
+**Done When**:
+- Consistency validation tool/subagent created
+- Can run full codebase scan in <30 seconds
+- Produces structured report of inconsistencies
+- Zero false positives on clean codebase
+- Catches all migration-related issues
+- Integrated into CI/CD pipeline as optional check
+- Documentation includes usage examples
+
+**Depends On**: TD_037 (personas must be updated first)
+
+**Problem Context**: We've made a fundamental architectural change (worktrees → clones) and updated many files. We need systematic validation that everything is consistent. Manual checking is error-prone and doesn't scale.
+
+**Reference**: https://github.com/centminmod/my-claude-code-setup demonstrates excellent patterns for custom commands and validation tools we can adapt.
+
+**Tech Lead Consideration**: Should this be a PowerShell tool, Python script, or Claude Code subagent? Each has trade-offs for maintenance and usage.
+
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_036: Simplify or Remove Sacred Sequence After Clone Migration
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: S (<4h)
-**Priority**: Ideas
-**Markers**: [SIMPLIFICATION] [GIT-WORKFLOW]
-**Created**: 2025-08-20
-
-**What**: Re-evaluate Sacred Sequence (TD_034) after multiple clone migration
-**Why**: With isolated clones, complex git aliases may be unnecessary overhead
-**How**: 
-- Assess if Sacred Sequence adds value in multi-clone environment
-- Consider removing custom aliases in favor of standard git commands
-- Rely on GitHub branch protection for enforcement
-- Keep only the truly valuable parts (if any)
-**Done When**: 
-- Decision made: Keep, simplify, or remove
-- If keeping: Document clear value proposition
-- If removing: Clean up all aliases and hooks
-- Standard git workflow documented clearly
-**Depends On**: TD_035 (must complete clone migration first)
-
-**Honest Assessment**: Sacred Sequence was a band-aid for worktree problems. With multiple clones providing natural isolation, we should question if custom git commands are worth the complexity. Standard git + GitHub protection might be simpler and more maintainable.
-
-### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation
+### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation [Score: 25/100]
 **Status**: Proposed
 **Owner**: Tech Lead
 **Size**: L (1-3 days)
@@ -240,35 +226,8 @@
 **Prototype Goal**: Evaluate if custom PowerShell tools reduce cognitive load and improve quality
 **Success Metrics**: Time saved, bugs prevented, developer experience improvement
 
-### TD_034: Enforce Up-to-Date Branch Requirement via Sacred Sequence Automation
-**Status**: Done
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [GIT] [PROCESS] [AUTOMATION]
-**Created**: 2025-08-20
-**Completed**: 2025-08-20
 
-**What**: Implement Sacred Sequence enforcement through smart git aliases and pre-push hooks
-**Why**: PR #49 conflict was caused by not fetching/pulling main first - AI agents forget the ritual
-**How**: 
-- ✅ Created smart git aliases (git newbranch, syncmain, sacred, checkfresh)
-- ✅ Implemented pre-push hook that blocks stale branches
-- ✅ Created installation script for easy deployment
-- ✅ Updated CLAUDE.md with mandatory AI agent commands
-- ✅ Updated GitWorkflow.md with Sacred Sequence enforcement documentation
-**Done When**: 
-- ✅ Smart aliases prevent creating stale branches
-- ✅ Pre-push hook blocks outdated branches from being pushed
-- ✅ GitWorkflow.md and CLAUDE.md updated with new workflow
-- ✅ AI agents can't accidentally create conflicts from stale branches
-**Depends On**: None
-
-**Problem Context**: PR #49 had conflicts because branch was created without fetching latest main. While GitWorkflow.md documents the Sacred Sequence, AI agents sometimes forget to follow it.
-**Solution Implemented**: Three-layer enforcement system - smart aliases (prevention), pre-push hooks (detection), and clear documentation (education). The `git newbranch` command automatically enforces the Sacred Sequence, making it impossible to create stale branches.
-**Implementation Notes**: Git aliases have some shell compatibility issues between Git Bash and PowerShell, but the critical pre-push hook works perfectly. This provides the essential safety net for preventing PR conflicts.
-
-### TD_032: Fix Persona Documentation Routing and Ownership Gaps
+### TD_032: Fix Persona Documentation Routing and Ownership Gaps [Score: 40/100]
 **Status**: Approved
 **Owner**: DevOps Engineer
 **Size**: M (4-8h)
@@ -297,48 +256,6 @@
 - Rationale: Addresses systematic routing confusion discovered during TD_029/030 review
 - Impact: Prevents future work misrouting and clarifies ownership
 - Pattern: Similar to tech-lead.md improvements just completed
-
-
-### TD_035: Migrate from Git Worktrees to Multiple Clones for Persona System
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: L (1-3 days)
-**Priority**: Important
-**Markers**: [ARCHITECTURE] [PERSONA-SYSTEM] [GIT-WORKFLOW]
-**Created**: 2025-08-20
-
-**What**: Replace current git worktree setup with independent clones for each persona
-**Why**: Worktrees add unnecessary complexity; clones provide better isolation and simpler mental model
-**How**: 
-- Create migration scripts to automate clone setup for all personas
-- Update GitWorkflow.md to reflect clone-based approach
-- Refactor Sacred Sequence scripts to work with independent repos
-- Create sync scripts to coordinate updates across clones
-- Update all persona documentation and CLAUDE.md files
-- Create automated setup script for new developers
-**Done When**: 
-- Each persona has independent clone (blocklife-dev-engineer, blocklife-debugger, etc.)
-- GitWorkflow.md updated with new clone-based flow
-- Sacred Sequence works across independent repos
-- Sync scripts enable coordinated updates when needed
-- All documentation consistent with clone approach
-- Zero references to worktree commands remain
-- Setup script creates all clones in one command
-**Depends On**: None
-
-**Rationale**: Analysis revealed that with terminal restart requirements for persona switching, multiple clones are superior to worktrees.      
-    its include:
-- Complete isolation per persona (no shared .git)
-- Simpler mental model (each persona owns a repo)
-- No "sacred main folder" complexity
-- Unique git config per persona
-- Trivial disaster recovery (just re-clone)
-- No worktree command learning curve
-
-**Migration Impact**: 
-- Disk space: +250MB (trivial in 2024)
-- Complexity: -90% (massive simplification)
-- Safety: +100% (complete isolation)
 
 
 
