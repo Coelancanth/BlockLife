@@ -2,6 +2,10 @@
 
 **IMPORTANT**: This is the ONLY git workflow guide. All personas and documentation reference this file.
 
+> 📦 **Multi-Clone Architecture Coming**: TD_035 will migrate from worktrees to multiple clones.  
+> See [GitWorkflow-MultiClone.md](GitWorkflow-MultiClone.md) for the new workflow design.  
+> This document will be updated when TD_035 is implemented.
+
 ## 🆕 Sacred Sequence Enforcement System (TD_034)
 
 **As of 2025-08-20**: Smart git commands and pre-push hooks now ENFORCE the Sacred Sequence automatically.
