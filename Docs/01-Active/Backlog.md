@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 051 (Last: TD_050 - 2025-08-21)  
+- **Next TD**: 052 (Last: TD_051 - 2025-01-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -94,6 +94,26 @@
 **Depends On**: None
 
 **Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.
+
+### TD_051: Implement Memory Bank Synchronization Architecture [Score: 45/100]
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: L (1-3 days)
+**Priority**: Important
+**Markers**: [ARCHITECTURE] [INFRASTRUCTURE] [MULTI-CLONE]
+**Created**: 2025-01-21
+
+**What**: Implement tiered Memory Bank synchronization across 6 persona clones
+**Why**: Context fragmentation across isolated clones reduces productivity; personas work without knowledge of recent discoveries
+**How**: See [Memory-Bank-Sync-Architecture.md](../../02-Design/Memory-Bank-Sync-Architecture.md) for complete design
+**Done When**:
+- Architecture approved via ADR
+- Sync scripts deployed to all clones
+- Harvest mechanisms tested
+- Success rate >99%
+**Depends On**: Tech Lead architectural review
+
+**Impact**: Enables cognitive continuity across personas, reducing duplicate discoveries and improving coordination.
 
 ### TD_047: Improve Persona Backlog Decision Protocol [Score: 20/100]
 **Status**: Proposed

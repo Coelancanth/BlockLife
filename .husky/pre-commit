@@ -1,17 +1,23 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "🎨 Checking code format..."
+echo "🎨 Auto-formatting code..."
 
-# Run format check on the solution file
-dotnet format BlockLife.sln --verify-no-changes --verbosity quiet
+# Auto-format the solution file
+dotnet format BlockLife.sln --verbosity quiet
 
 if [ $? -ne 0 ]; then
-  echo "❌ Format issues detected!"
+  echo "❌ Format command failed!"
   echo ""
-  echo "To fix: dotnet format"
   echo "To bypass: git commit --no-verify"
   exit 1
 fi
 
-echo "✅ Format check passed"
+# Check if formatting made changes
+if [[ -n $(git diff --name-only) ]]; then
+  echo "📝 Files were auto-formatted. Adding changes..."
+  git add -u
+  echo "✅ Format applied and staged"
+else
+  echo "✅ Code already properly formatted"
+fi

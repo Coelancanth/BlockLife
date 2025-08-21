@@ -71,12 +71,14 @@ You: "That sounds like over-engineering. The current DI
 
 **CRITICAL**: Memory Bank must be actively maintained to prevent context loss!
 
-### Quick Start
+### Quick Start Workflow Integration
 ```bash
-# At session start:
+# Start of work session (DO THIS FIRST):
 1. Check .claude/memory-bank/activeContext.md (if >7 days old, consider stale)
-2. Load relevant patterns.md if implementing
-3. Check lessons.md if debugging
+2. Review .claude/memory-bank/patterns.md (for implementation patterns)
+3. Understand .claude/memory-bank/decisions.md (for architectural context)
+4. Check .claude/memory-bank/lessons.md if debugging
+5. THEN proceed with Backlog.md workflow
 
 # During work:
 - Update after completing work items
@@ -86,6 +88,12 @@ You: "That sounds like over-engineering. The current DI
 # At session end:
 "Update memory bank"  # Saves current context
 ```
+
+### Integration with Development Workflow
+**Memory Bank comes FIRST** → Then Backlog → Then start work
+- Memory Bank provides context from previous sessions
+- Backlog provides current work items
+- Together they ensure continuity across sessions
 
 ### When to Update (MANDATORY)
 | Trigger | What to Record | File |
@@ -111,50 +119,20 @@ Do what has been asked; nothing more, nothing less.
 - ALWAYS prefer editing existing files
 - NEVER proactively create documentation unless requested
 
-## 📚 SIMPLIFIED DOCUMENTATION: Just Three Files
+## 📚 Essential Documentation
 
-**Everything you need in 3 documents:**
-1. **[HANDBOOK.md](Docs/03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Your daily companion (architecture, workflow, testing, patterns)
-2. **[GLOSSARY.md](Docs/03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Terms and vocabulary (check before naming)
-3. **[Workflow.md](Docs/01-Active/Workflow.md)** ⭐⭐⭐⭐ - Complete development workflow
+**Core References:**
+1. **[HANDBOOK.md](Docs/03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Architecture, patterns, testing
+2. **[GLOSSARY.md](Docs/03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - MANDATORY terms ("Turn" not "Round", "Merge" not "Match")
+3. **[Workflow.md](Docs/01-Active/Workflow.md)** ⭐⭐⭐⭐ - Development workflow & priorities
+4. **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** - Complete git guidance & troubleshooting
 
-**Architecture Decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Major technical decisions
-**Templates**: [Templates/](Docs/05-Templates/) - Work item templates
+**Additional Resources:**
+- **[ADR Directory](Docs/03-Reference/ADR/)** - Architecture decisions
+- **[Templates](Docs/05-Templates/)** - Work item templates
+- **[Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)** - API usage patterns
 
-## 📖 Language & Terminology
-
-**[Glossary.md](Docs/03-Reference/Glossary.md)** - Authoritative vocabulary for all code and documentation.
-- **MANDATORY**: All code must use these exact terms
-- **Examples**: "Turn" not "Round", "Tier" not "Level", "Merge" not "Match"
-- **Rule**: Check glossary before naming anything
-
-
-
-### Priority Decision Framework
-```
-🤔 Priority Decision Questions:
-1. **Blocking other work?** → 🔥 Critical
-2. **Current milestone dependency?** → 📈 Important  
-3. **Everything else** → 💡 Ideas
-
-🚨 Critical Indicators:
-- Production bugs affecting users
-- Dependency needed for current work
-- Blocker preventing team progress
-- Security vulnerability
-
-📈 Important Indicators:  
-- Current milestone features
-- Technical debt affecting velocity
-- Quality improvements needed
-- Performance optimizations
-
-💡 Ideas Indicators:
-- Nice-to-have features
-- Experimental concepts
-- Future considerations
-- Research spikes
-```
+**Priority Framework**: See [Workflow.md](Docs/01-Active/Workflow.md#priority-tiers) for detailed priority criteria (🔥 Critical / 📈 Important / 💡 Ideas)
 
 ## 🤖 Streamlined Persona System
 
@@ -330,168 +308,26 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 **Complete analysis**: [Context7LibraryMatrix.md](Docs/03-Reference/Context7/Context7LibraryMatrix.md)
 **Usage examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
 
-## 📖 Git Workflow - Simple & Standard
+## 📖 Git Workflow
 
-See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for complete git workflow documentation.
+**Complete Documentation**: [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md) - Includes troubleshooting & recovery
 
-### Multi-Clone Architecture
-
-The project uses multiple independent clones for persona isolation. Each persona works in its own repository clone with standard git commands.
-
-### Standard Git Workflow
-
+### Quick Reference
 ```bash
-# Starting new work:
-git checkout main
-git pull origin main
-git checkout -b feat/your-feature
-
-# Making changes:
-git add -A
-git commit -m "feat: description"
-
-# Pushing to remote:
-git push -u origin feat/your-feature
-
-# Creating PR:
-gh pr create --title "feat: title" --body "description"
+# Standard workflow for all personas:
+git checkout main && git pull origin main  # Always start fresh
+git checkout -b feat/your-feature          # Branch for work
+git add -A && git commit -m "feat: desc"   # Commit changes
+git push -u origin feat/your-feature       # Push to remote
+gh pr create --title "feat: title"         # Create PR
 ```
 
-### Key Points
+**Key Points:**
+- Multi-clone architecture (each persona has isolated clone)
+- Commits auto-use persona identity (e.g., dev-eng@blocklife)
+- Branch protection enforces quality gates
+- See [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md) for troubleshooting
 
-- Use standard git commands (no custom aliases needed)
-- Always branch from updated main
-- GitHub branch protection enforces safety
-- Each persona has its own isolated clone
-- Commits automatically use persona identity (e.g., dev-eng@blocklife)
-
-### Quick Reference Resources
-- **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)
-- **Architecture guidance**: [Architecture.md](Docs/03-Reference/Architecture.md)
-- **Architecture decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Documented architectural choices
-- **Agent patterns**: [QuickReference.md](Docs/03-Reference/QuickReference.md)
-- **Context7 examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
-
-## 🚀 Git Survival Guide
-
-### The Daily Workflow (90% of your needs)
-```bash
-# Start fresh work (ALWAYS sync first!)
-git fetch origin
-git checkout main && git pull origin main
-git checkout -b feat/what-im-building
-
-# Save your progress
-git add -A && git commit -m "feat: clear description"
-
-# Push to remote
-git push -u origin feat/what-im-building
-
-# Create PR (after push)
-gh pr create --title "feat: title" --body "description"
-```
-
-### 🚨 Panic Buttons (When Things Go Wrong)
-
-#### "I forgot to create a branch!"
-```bash
-git stash                          # Save uncommitted work
-git fetch origin                   # Get latest refs
-git checkout main                  # Switch to main
-git pull origin main               # Update main
-git checkout -b feat/proper-name  # Create branch from updated main
-git stash pop                      # Restore your work
-```
-
-#### "I messed up my last commit message!"
-```bash
-# If NOT pushed yet:
-git commit --amend -m "feat: better message"
-
-# If already pushed (use sparingly):
-git push --force-with-lease
-```
-
-#### "I need to undo my last commit!"
-```bash
-# Keep changes, just undo commit:
-git reset HEAD~1
-
-# Nuclear option - destroy commit and changes:
-git reset --hard HEAD~1
-```
-
-#### "I'm in merge conflict hell!"
-```bash
-# Accept all their changes:
-git checkout --theirs .
-git add -A && git commit
-
-# Accept all your changes:
-git checkout --ours .
-git add -A && git commit
-
-# Or manually fix conflicts in files, then:
-git add -A && git commit
-```
-
-#### "I need to update my branch with main!"
-```bash
-# Preferred - keeps history clean:
-git fetch origin
-git rebase origin/main
-
-# Alternative if rebase gets messy:
-git merge origin/main
-```
-
-#### "I committed to the wrong branch!"
-```bash
-# Get commit SHA first:
-git log -1 --format="%H"
-
-# Switch to correct branch:
-git checkout correct-branch
-git cherry-pick <commit-sha>
-
-# Remove from wrong branch:
-git checkout wrong-branch
-git reset HEAD~1 --hard
-```
-
-### 📝 Commit Message Quick Reference
-```bash
-feat:     # New feature
-fix:      # Bug fix
-refactor: # Code restructuring (no behavior change)
-test:     # Test additions/changes
-docs:     # Documentation only
-perf:     # Performance improvement
-chore:    # Maintenance tasks (deps, configs)
-```
-
-**Examples:**
-- `feat: add block rotation with Q/E keys`
-- `fix: prevent blocks from overlapping on placement`
-- `refactor: extract validation logic to separate service`
-- `test: add stress tests for concurrent block moves`
-
-### 🎯 Golden Rules
-1. **Never work directly on main** - Always branch
-2. **Commit often** - Small, focused commits > giant commits
-3. **Pull before branch** - Start from latest main
-4. **Write clear messages** - Your future self will thank you
-5. **When in doubt** - Ask before `--force` pushing
-
-### 🔥 Emergency Escape Hatch
-```bash
-# "I've completely broken everything and want to start over"
-git fetch origin                   # Get latest refs
-git checkout main
-git branch -D my-broken-branch     # Delete local branch
-git pull origin main               # Get fresh main
-git checkout -b feat/fresh-start   # Try again
-```
 
 ## 📦 PR Merge Strategy
 

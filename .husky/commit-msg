@@ -5,7 +5,7 @@
 commit_msg=$(cat "$1")
 
 # Define valid patterns
-conventional_pattern='^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor)(\([A-Z]{2}_[0-9]{3}\))?: .{1,72}$'
+conventional_pattern='^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor)(\([A-Za-z]{2}_[0-9]{3}\))?: .{1,72}$'
 merge_pattern='^Merge '
 revert_pattern='^Revert '
 
@@ -25,8 +25,9 @@ else
   echo ""
   echo "Examples:"
   echo "  feat(VS_003): add save system"
-  echo "  fix(BR_012): resolve race condition"
+  echo "  fix(BR_012): resolve race condition"  
   echo "  tech(TD_042): consolidate duplicate archives"
+  echo "  tech(td_042): lowercase also accepted"
   echo "  docs: update README with build instructions"
   echo ""
   echo "Your message: $commit_msg"
