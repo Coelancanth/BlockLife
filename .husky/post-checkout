@@ -3,17 +3,17 @@
 
 # Only run for branch checkouts (not file checkouts)
 if [ "$3" = "1" ]; then
-  current_branch=$(git rev-parse --abbrev-ref HEAD)
+  current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
   
-  # Skip for main branch
-  if [ "$current_branch" = "main" ]; then
+  # Skip for main branch or if branch detection failed
+  if [ "$current_branch" = "main" ] || [ "$current_branch" = "unknown" ]; then
     exit 0
   fi
   
-  # Fetch latest main silently
-  git fetch origin main --quiet 2>/dev/null
+  # Fetch latest main silently (with error handling)
+  git fetch origin main --quiet 2>/dev/null || true
   
-  # Check how far behind we are
+  # Check how far behind we are (with error handling)
   behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
   
   # Smart notifications based on staleness
@@ -37,8 +37,8 @@ if [ "$3" = "1" ]; then
     echo "📊 Branch Status: $current_branch is $behind commits behind main ✓"
   fi
   
-  # Check if branch has upstream
-  upstream=$(git rev-parse --abbrev-ref "$current_branch@{upstream}" 2>/dev/null)
+  # Check if branch has upstream (with proper error handling for husky's sh -e)
+  upstream=$(git rev-parse --abbrev-ref "$current_branch@{upstream}" 2>/dev/null || echo "")
   if [ -z "$upstream" ]; then
     echo "   💡 No upstream set. Push with: git push -u origin $current_branch"
   fi

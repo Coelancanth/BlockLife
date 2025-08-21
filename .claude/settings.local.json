@@ -51,7 +51,17 @@
       "Bash(chmod:*)",
       "Bash(dotnet husky:*)",
       "Bash(dotnet format style:*)",
-      "Bash(dotnet format:*)"
+      "Bash(dotnet format:*)",
+      "Bash(gh repo view:*)",
+      "Bash(git reset:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(time:*)",
+      "Bash(.husky/pre-commit test-misalign-msg.tmp)",
+      "Bash(.husky/pre-commit test-main-msg.tmp)",
+      "Bash(cat:*)",
+      "Bash(sh:*)",
+      "Bash(./scripts/core/build.ps1 test)",
+      "Bash(./scripts/branch-status-check.ps1)"
     ],
     "deny": [],
     "ask": [],

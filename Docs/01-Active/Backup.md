@@ -763,29 +763,3 @@ public Property DoubleSwap_ReturnsToOriginal()
 - Key: Not building from scratch - adapting existing successful implementations
 
 
-### TD_041: Verify and Document Persona Embodiment Flow [Score: 25/100]
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [DOCUMENTATION] [PROCESS] [VERIFICATION]
-**Created**: 2025-08-21
-
-**What**: Verify what actually happens when embodying personas and document the complete flow
-**Why**: Gap between documented behavior and actual behavior creates confusion; need to ensure personas follow intended workflow
-**How**:
-- Test embodying each persona and document actual behavior
-- Verify which docs are automatically read (Memory Bank, Backlog, etc.)
-- Check if personas follow the documented workflow steps
-- Identify gaps between intended and actual behavior
-- Update persona docs with accurate flow description
-- Create checklist of what SHOULD happen vs what DOES happen
-**Done When**:
-- Complete flow documented for each persona
-- Gaps between intended and actual behavior identified
-- Persona docs updated with accurate automation descriptions
-- Verification checklist created for future testing
-- Memory Bank integration verified in practice
-**Depends On**: None
-
-**Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.

@@ -4,11 +4,23 @@
 # Get current branch
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
-# Don't run on main branch
+# BLOCK direct pushes to main branch (TD_057)
 if [ "$current_branch" = "main" ]; then
-  echo "⚠️  Direct push to main branch is discouraged"
-  echo "   Consider creating a PR instead"
-  exit 0
+  echo ""
+  echo "🚨 BLOCKED: Direct push to main branch not allowed"
+  echo ""
+  echo "   Required workflow:"
+  echo "   1. Create feature branch: git checkout -b feat/your-feature"
+  echo "   2. Push feature branch: git push -u origin feat/your-feature"
+  echo "   3. Create PR: gh pr create --title \"your title\""
+  echo ""
+  echo "   Emergency override: git push --no-verify"
+  echo "   (Use override only for critical hotfixes)"
+  echo ""
+  echo "   Current branch: $current_branch"
+  echo "   Protocol: All changes require PR review"
+  echo ""
+  exit 1
 fi
 
 # Smart build - only if files changed
