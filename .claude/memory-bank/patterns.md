@@ -22,6 +22,13 @@
 **Rationale**: Prevents surprise conflicts during merge
 **Added**: 2025-08-21
 
+### Memory Bank Conflict Resolution 
+**Pattern**: Manual 3-way merge resolution for Memory Bank files
+**Example**: PR #57 rebase with activeContext.md, decisions.md, patterns.md conflicts
+**Rationale**: Memory Bank files updated on every branch create guaranteed conflicts
+**Process**: Read all versions → Write unified version → Continue rebase
+**Added**: 2025-08-21
+
 ## 🎯 Core Patterns
 
 ### Move Block Pattern (Gold Standard)

@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 043 (Last: TD_042 - 2025-08-21)  
+- **Next TD**: 051 (Last: TD_050 - 2025-08-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -129,6 +129,120 @@
 
 **Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.
 
+### TD_047: Improve Persona Backlog Decision Protocol [Score: 20/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [PROCESS] [DOCUMENTATION] [PERSONA-PROTOCOL]
+**Created**: 2025-08-21
+
+**What**: Define clear criteria for when personas should add items to the backlog vs. suggesting user do it
+**Why**: Current persona protocol causes confusion about when to auto-add vs. suggest backlog updates; need clear decision framework
+**How**:
+- Analyze current persona documentation for backlog protocols
+- Define clear criteria: "Auto-add when X, suggest when Y"
+- Create decision tree or flowchart for personas
+- Update all 6 persona documents with consistent protocol
+- Add examples of each scenario (auto-add vs. suggest)
+- Test protocol with each persona type to verify clarity
+**Done When**:
+- Clear decision criteria documented in each persona file
+- Consistent protocol across all 6 personas
+- Decision examples provided for common scenarios
+- Protocol tested and validated with representative cases
+**Depends On**: None
+
+**Problem Context**: DevOps Engineer and other personas inconsistently handle backlog updates - sometimes auto-adding, sometimes suggesting. Need clear protocol to eliminate confusion and ensure consistent behavior.
+
+### TD_048: Migrate FsCheck Property-Based Tests to 3.x API [Score: 30/100]
+**Status**: Proposed
+**Owner**: Test Specialist
+**Size**: M (4-8h)
+**Priority**: Important
+**Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
+**Created**: 2025-08-21
+
+**What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
+**Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
+**How**:
+- Research FsCheck 3.x API changes (use Context7 if available)
+- Update `Prop.ForAll` usage to new API patterns
+- Fix `Gen<T>`, `Arb`, and `Arbitrary<T>` usage
+- Resolve Property attribute conflicts with xUnit
+- Update custom generators in `BlockLifeGenerators.cs`
+- Update property tests in `SimplePropertyTests.cs`
+- Re-enable FsCheck.Xunit package reference
+- Move tests back from `FsCheck_Migration_TD047/` to proper location
+- Ensure all 7 property-based tests pass
+**Done When**:
+- All FsCheck tests compile with 3.x API
+- All property-based tests passing (7 tests)
+- FsCheck.Xunit package re-enabled in project
+- No references to old 2.x API patterns
+- Property tests moved back to proper test directory
+**Depends On**: None
+
+**Problem Context**: Package updates completed but FsCheck 3.x has extensive breaking changes requiring dedicated migration effort. Tests temporarily disabled to unblock other infrastructure updates.
+
+### TD_049: Add Git Branch Context Tracking to Memory Bank [Score: 40/100] ✅ COMPLETED
+**Status**: Done
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [INFRASTRUCTURE] [MEMORY-BANK] [GIT] [PERSONA-CONTEXT]
+**Created**: 2025-08-21
+**Completed**: 2025-08-21
+
+**What**: Enhance activeContext.md to track git branch state and uncommitted changes for each persona
+**Why**: Multi-clone architecture requires branch context preservation when switching personas; current Memory Bank loses critical git state
+
+**Implementation Completed**:
+✅ Enhanced activeContext.md with comprehensive git state tracking  
+✅ Added current branch, working directory status, recent commits tracking  
+✅ Created branch inventory with purposes and availability status  
+✅ Built automation script: `scripts/update-git-context.ps1`  
+✅ Provided complete documentation: `scripts/README-git-context.md`  
+✅ Tested and validated with real repository state  
+✅ Infrastructure gap resolved - persona workflow continuity established
+
+**Deliverables**:
+- Enhanced `.claude/memory-bank/activeContext.md` template
+- `scripts/update-git-context.ps1` - PowerShell automation
+- `scripts/README-git-context.md` - Usage documentation
+- Validated with DevOps Engineer persona workflow
+
+**Impact**: Multi-clone architecture now maintains git context across persona switches, enabling informed priority decisions and preventing duplicate infrastructure work.
+
+### TD_050: Enhance DevOps Engineer Protocol with activeContext Integration [Score: 30/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [INFRASTRUCTURE] [PERSONA-PROTOCOL] [MEMORY-BANK] [WORKFLOW]
+**Created**: 2025-08-21
+
+**What**: Integrate activeContext.md reading into DevOps Engineer persona workflow for infrastructure continuity
+**Why**: DevOps sessions benefit significantly from infrastructure context (git state, build health, completed work) that backlog alone cannot provide
+**How**:
+- Update DevOps Engineer persona document workflow steps
+- Add "Load Infrastructure Context" step after backlog review
+- Define activeContext freshness criteria (<7 days)
+- Specify context-informed prioritization process
+- Document reconciliation between backlog and context priorities
+- Add infrastructure state awareness to decision making
+- Test enhanced workflow with real DevOps scenarios
+**Done When**:
+- DevOps Engineer persona document updated with activeContext integration
+- Clear protocol for context freshness validation
+- Context-informed priority reconciliation documented
+- Enhanced workflow tested and validated
+- No workflow disruption for other personas
+- Infrastructure continuity demonstrated across sessions
+**Depends On**: None
+
+**Evidence Base**: Recent DevOps sessions show clear benefit from activeContext - avoided duplicate infrastructure checks, preserved completed package update status, enabled context-informed priority decisions on TD_049 criticality.
+
 ### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
 **Status**: Approved
 **Owner**: DevOps Engineer
@@ -171,6 +285,38 @@
 - Implementation: Follow memory-bank-synchronizer pattern for validation
 - Key: Not building from scratch - adapting existing successful implementations
 
+
+### TD_046: Complete Git Workflow Documentation [Score: 20/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [DOCUMENTATION] [WORKFLOW] [DEVELOPER-EXPERIENCE]
+**Created**: 2025-08-21
+
+**What**: Add missing git workflow protocols to HANDBOOK.md
+**Why**: Current workflow docs have gaps causing confusion about branch management and commit practices
+**How**:
+- **Remote branch cleanup**: When and how to clean (`git remote prune`, `git branch -d`)
+- **Branch switching triggers**: When to create new branch vs continue existing
+- **Small step commit protocol**: Guidelines for atomic commits and WIP handling
+- **Post-merge cleanup**: Standard steps after PR merge
+- Add to HANDBOOK.md Git Workflow section
+- Include examples and decision trees
+**Done When**:
+- Clear protocol for remote branch cleanup
+- Decision tree for when to create new branches
+- Guidelines for commit granularity (atomic vs WIP)
+- Post-merge cleanup checklist
+- Examples covering common scenarios
+- No confusion about basic git workflow decisions
+**Depends On**: None
+
+**Gap Analysis**:
+- ❌ No mention of `git remote prune origin`
+- ❌ No guidance on when to start fresh branch
+- ❌ No atomic commit guidelines
+- ❌ No post-merge cleanup protocol
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
