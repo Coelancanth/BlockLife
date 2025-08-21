@@ -63,40 +63,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_042: Consolidate Duplicate Archive Files [Score: 15/100]
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Critical
-**Markers**: [DATA-INTEGRITY] [INFRASTRUCTURE] [RISK]
-**Created**: 2025-08-21
-
-**What**: Merge two duplicate archive files into single authoritative source
-**Why**: Two archives (Archive.md and Completed_Backlog.md) create confusion, risk data loss, and increase maintenance burden
-**How**:
-- Merge all content from Docs/01-Active/Archive.md into Docs/07-Archive/Completed_Backlog.md
-- Preserve append-only safeguards and recovery protocols from Archive.md
-- Delete Archive.md after successful merge
-- Update all persona documentation to reference correct path
-- Update backlog-assistant with correct archive path
-- Add redirect note in 01-Active pointing to 07-Archive
-- Verify no references to old Archive.md remain
-**Done When**:
-- Single authoritative archive at Docs/07-Archive/Completed_Backlog.md
-- All 489 lines from Archive.md preserved in Completed_Backlog.md
-- No duplicate archive files exist
-- All personas use correct archive path
-- Git history shows clean consolidation
-- Safeguards section preserved
-**Depends On**: None
-
-**Problem Context**: 
-- Archive.md (489 lines, complete) in 01-Active folder
-- Completed_Backlog.md (265 lines, partial) in 07-Archive folder
-- Different items in each, creating confusion about which is authoritative
-- Risk of updates going to wrong file and data loss
-
-
 
 
 ## 📈 Important (Do Next)

@@ -56,19 +56,26 @@ Generated: [Use actual date/time from bash date command]
 ```
 
 ### 2. Archive Management
-Move completed/rejected items to Archive.md (NOT Backlog.md):
+Move completed/rejected items to Completed_Backlog.md (NOT Backlog.md):
+
+**⚠️ CRITICAL: APPEND-ONLY ARCHIVE PROTOCOL**
+- The archive file `Docs/07-Archive/Completed_Backlog.md` is APPEND-ONLY
+- NEVER delete, overwrite, or modify existing entries
+- ONLY add new content at the end of the file
+- Use Edit tool to append, NEVER Write tool
+- Preserve all existing content and formatting
 
 **WHERE to move items:**
 - FROM: Any section in Backlog.md (Critical/Important/Ideas/Blocked)
-- TO: `Docs/01-Active/Archive.md` file (separate from Backlog.md)
+- TO: `Docs/07-Archive/Completed_Backlog.md` file (separate from Backlog.md)
 - REMOVE the "## 📦 Archive" section from Backlog.md if it exists
 
 **WHAT to move:**
-- Items with Status = "Completed" or "Done" → Format and add to Archive.md
-- Items with Status = "Rejected" → Format with rejection reason in Archive.md
-- Transform to Archive.md format (see below)
+- Items with Status = "Completed" or "Done" → Format and append to Completed_Backlog.md
+- Items with Status = "Rejected" → Format with rejection reason and append to Completed_Backlog.md
+- Transform to archive format (see below)
 
-**HOW to format for Archive.md:**
+**HOW to format for Completed_Backlog.md:**
 ```markdown
 ### [Type]_[Number]: Title ✅ COMPLETED
 **Completed**: [Today's date from bash]
@@ -143,10 +150,10 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 
 1. **Run bash date** to get current timestamp
 2. **Read Backlog.md** from `Docs/01-Active/Backlog.md`
-3. **Read Archive.md** from `Docs/01-Active/Archive.md` (to append completed items)
+3. **Read Completed_Backlog.md** from `Docs/07-Archive/Completed_Backlog.md` (to append completed items)
 4. **Apply all mechanical rules** (move to archive, score, detect gaps)
 5. **Update Backlog.md** with Edit/MultiEdit tools (remove completed/rejected)
-6. **Update Archive.md** with new completed/rejected items
+6. **APPEND to Completed_Backlog.md** with new completed/rejected items (APPEND-ONLY)
 7. **Write ReviewGaps.md** to `Docs/01-Active/ReviewGaps.md`
 8. **Provide summary** of changes
 
@@ -154,7 +161,7 @@ Add scores as comments: `[Score: 85/100]` next to item titles.
 
 1. **Always update these files:**
    - `Docs/01-Active/Backlog.md` (remove completed/rejected items)
-   - `Docs/01-Active/Archive.md` (append completed/rejected items)
+   - `Docs/07-Archive/Completed_Backlog.md` (append completed/rejected items)
    - `Docs/01-Active/ReviewGaps.md` (complete regeneration)
 
 2. **Provide summary in response:**
@@ -188,7 +195,7 @@ bash date  # Returns: "Mon, Aug 18, 2025 8:30:00 AM"
 
 # Step 2: Read both files
 Read Docs/01-Active/Backlog.md
-Read Docs/01-Active/Archive.md
+Read Docs/07-Archive/Completed_Backlog.md
 
 # Step 3: Apply rules
 - Find TD_003 with Status="Completed" → Format for Archive.md
@@ -199,14 +206,16 @@ Read Docs/01-Active/Archive.md
 # Step 4: Update Backlog.md
 MultiEdit to remove completed/rejected items and add scores
 
-# Step 5: Update Archive.md  
+# Step 5: APPEND to Completed_Backlog.md (CRITICAL: APPEND-ONLY)
 Edit to append newly completed/rejected items with proper formatting
+⚠️ NEVER overwrite or delete existing entries - APPEND ONLY
+⚠️ Use Edit tool to add content at end of file only
 
 # Step 6: Generate ReviewGaps.md
 Write complete report to Docs/01-Active/ReviewGaps.md
 
 # Step 7: Summarize
-"Moved 2 items to Archive.md, scored 8 active items, found 3 review gaps"
+"Moved 2 items to Completed_Backlog.md, scored 8 active items, found 3 review gaps"
 ```
 
 You are mechanical and consistent. You prepare the backlog for strategic analysis.
