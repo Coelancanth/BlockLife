@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 060 (Last: TD_059 - 2025-08-22)  
+- **Next TD**: 063 (Last: TD_062 - 2025-08-22)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -141,42 +141,89 @@
 - Moved from Ideas to Important - routing confusion actively affecting productivity
 - Should be prioritized to prevent ongoing misrouting issues
 
-### TD_059: Multi-Branch Orchestration Intelligence [Score: 35/100]
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: M (4-8h)
-**Priority**: Important
-**Markers**: [AUTOMATION] [WORKFLOW] [INTELLIGENCE]
-**Created**: 2025-08-22
-
-**What**: Implement sophisticated multi-branch state management and PR orchestration for complex development scenarios
-**Why**: Current workflow intelligence handles single branches perfectly but lacks multi-branch coordination - critical gap for multiple concurrent work streams
-**How**:
-- Enhanced branch status analysis with priority scoring algorithm (0-100 scale)
-- Multi-stream context tracking in Memory Bank activeContext.md
-- Automated PR readiness assessment and sequencing recommendations
-- Cross-branch dependency detection and coordination guidance
-- Stale branch management with cleanup recommendations
-**Done When**:
-- Multi-branch status script provides intelligent PR priority ranking
-- Memory Bank tracks multiple work streams with context switching guidance
-- Automated detection of ready branches with actionable recommendations
-- Decision framework for stale/blocked branch management
-- Integration with existing TD_058 branch alignment intelligence
-**Depends On**: TD_058 (foundation of branch intelligence system)
-
-**Problem Context**: Real scenarios like "fix/critical-bug (complete) vs tech/feature (complete) vs feat/partial (60%)" require intelligent prioritization. Current system lacks multi-branch awareness for optimal work sequencing and PR timing decisions.
-
-**DevOps Engineer Decision** (2025-08-22):
-- Complexity Score: 35/100 (moderate scripting + intelligent algorithms)
-- Decision: Self-proposed as natural evolution of TD_058 branch intelligence
-- Rationale: Addresses real multi-branch coordination challenges discovered during TD_058 implementation
-- Impact: Transforms development from reactive branch management to proactive work stream orchestration
-- Implementation: Phase 1 (branch analysis) → Phase 2 (context tracking) → Phase 3 (automated orchestration)
-- Foundation: Builds directly on TD_057/058 enforcement and intelligence infrastructure
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+
+### TD_061: Automated Link Integrity Checking [Score: 20/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Ideas
+**Markers**: [TOOLING] [DOCUMENTATION] [QUALITY]
+**Created**: 2025-08-22
+
+**What**: Create intelligent link checking script with context-aware fix/remove suggestions
+**Why**: Frequent doc moves create broken links; deprecated docs need different handling than simple moves
+**How**:
+- Parse all .md files for markdown links using regex
+- Verify each linked file exists at specified path
+- Smart suggestions based on destination:
+  - If moved to 99-Deprecated/ → Suggest removal or replacement
+  - If moved elsewhere → Suggest path update
+  - If deleted → Suggest removal with warning
+- Check for non-deprecated alternatives when suggesting removal
+- Optional auto-fix mode with user confirmation
+- Integrate as pre-push warning (non-blocking)
+**Done When**:
+- Script detects all broken markdown links
+- Provides context-aware suggestions (fix/remove/replace)
+- Handles deprecation patterns intelligently
+- Integrated into workflow as pre-push warning
+- Zero false positives on valid links
+- Documentation updated with usage instructions
+**Depends On**: None
+
+**Problem Context**: Recent doc reorganizations (moving files to 99-Deprecated/) broke multiple links in CLAUDE.md and other docs. Manual link maintenance is error-prone. Need automated detection and correction suggestions.
+
+**Example Output**:
+```
+Checking 127 markdown files...
+Found 4 broken links:
+
+1. CLAUDE.md:129
+   Current: [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)
+   Found in: Docs/99-Deprecated/03-Reference/GitWorkflow.md
+   ⚠️  File has been DEPRECATED
+   Suggestion: REMOVE this reference (deprecated content)
+   Alternative: Link to [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md) instead
+   Action? (remove/update/skip)
+
+2. HANDBOOK.md:45  
+   Current: [Architecture.md](../03-Reference/Architecture.md)
+   Found in: Docs/99-Deprecated/03-Reference/Architecture.md
+   ⚠️  File has been DEPRECATED
+   Note: HANDBOOK.md now contains this content directly
+   Suggestion: REMOVE this link (content integrated into HANDBOOK)
+   Action? (remove/skip)
+
+3. tech-lead.md:314
+   Current: [Patterns.md](../03-Reference/Patterns.md)
+   Found in: Docs/02-Design/Patterns.md (moved, not deprecated)
+   ✅ File still active, just relocated
+   Suggestion: UPDATE path to Docs/02-Design/Patterns.md
+   Action? (update/skip)
+
+4. README.md:78
+   Current: [OldScript.ps1](scripts/OldScript.ps1)
+   Status: FILE DELETED (not found anywhere)
+   Suggestion: REMOVE this reference (script no longer exists)
+   Action? (remove/skip)
+```
+
+**Tech Lead Note** (2025-08-22):
+- Created after rejecting Foam as over-engineered solution
+- Directly addresses the broken links problem without adding complexity
+- Compatible with AI persona workflow (CLI-based)
+- Maintenance discipline tool, not new linking system
+- Enhanced with deprecation intelligence - knows when to remove vs update
+- Context-aware suggestions based on file destination (99-Deprecated/ = remove)
+
+**Implementation Strategy**:
+- Phase 1: Basic detection and path updates
+- Phase 2: Deprecation pattern recognition
+- Phase 3: Alternative suggestion engine (find non-deprecated versions)
 
 
 
