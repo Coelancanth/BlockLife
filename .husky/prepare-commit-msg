@@ -1,0 +1,40 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Only run for new commits (not amends or merges)
+if [ -z "$2" ]; then
+  # Get the current branch name
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  
+  # Extract work item from branch name if it exists
+  work_item=$(echo "$branch" | grep -oE '[A-Z]{2}_[0-9]{3}' | head -1)
+  
+  # If we found a work item and the message doesn't already have it
+  if [ -n "$work_item" ] && ! grep -q "$work_item" "$1"; then
+    # Read the current message
+    current_msg=$(cat "$1")
+    
+    # If message is empty or just has comments
+    if [ -z "$(echo "$current_msg" | grep -v '^#')" ]; then
+      # Suggest a format based on branch name
+      if echo "$branch" | grep -q "feat"; then
+        echo "feat($work_item): " > "$1"
+      elif echo "$branch" | grep -q "fix"; then
+        echo "fix($work_item): " > "$1"
+      elif echo "$branch" | grep -q "tech"; then
+        echo "tech($work_item): " > "$1"
+      else
+        echo "chore($work_item): " > "$1"
+      fi
+      
+      # Add helpful comments
+      echo "" >> "$1"
+      echo "# Work item $work_item detected from branch: $branch" >> "$1"
+      echo "# Complete the message above, then save and exit" >> "$1"
+      echo "#" >> "$1"
+      echo "# Format: <type>(<scope>): <description>" >> "$1"
+      echo "# Types: feat, fix, tech, docs, test, refactor, chore" >> "$1"
+      echo "# Keep under 72 characters" >> "$1"
+    fi
+  fi
+fi

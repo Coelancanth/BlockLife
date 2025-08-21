@@ -11,37 +11,63 @@ if [ "$current_branch" = "main" ]; then
   exit 0
 fi
 
-echo "🔨 Building solution..."
-dotnet build BlockLife.sln --nologo --verbosity quiet
+# Smart build - only if files changed
+echo "🔍 Checking for code changes..."
+changed_files=$(git diff --name-only origin/main...HEAD 2>/dev/null | grep -E '\.(cs|csproj|sln)$' | head -1)
 
-if [ $? -ne 0 ]; then
-  echo "❌ Build failed!"
-  echo "   Fix build errors before pushing"
-  exit 1
+if [ -n "$changed_files" ]; then
+  echo "🔨 Building solution (code changes detected)..."
+  dotnet build BlockLife.sln --nologo --verbosity quiet
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Build failed!"
+    echo "   Fix build errors before pushing"
+    echo "   To see details: dotnet build"
+    exit 1
+  fi
+  
+  echo "🧪 Running unit tests..."
+  # Run only fast unit tests, skip integration and performance tests
+  dotnet test BlockLife.sln --no-build \
+    --filter "Category!=Integration&Category!=Performance" \
+    --verbosity quiet
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Unit tests failed!"
+    echo "   To see details: dotnet test"
+    echo "   To bypass: git push --no-verify"
+    exit 1
+  fi
+else
+  echo "📝 No code changes detected - skipping build/test"
 fi
 
-echo "🧪 Running unit tests..."
-# Run only fast unit tests, skip integration and performance tests
-dotnet test BlockLife.sln --no-build \
-  --filter "Category!=Integration&Category!=Performance" \
-  --verbosity quiet
-
-if [ $? -ne 0 ]; then
-  echo "❌ Unit tests failed!"
-  echo "   Fix failing tests before pushing"
-  echo "   To bypass: git push --no-verify"
-  exit 1
-fi
-
-# Check if branch is stale
+# Check if branch is stale and offer to auto-rebase
 echo "🔄 Checking branch freshness..."
 git fetch origin main --quiet 2>/dev/null
 behind_count=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
 
 if [ "$behind_count" -gt 20 ]; then
-  echo "⚠️  WARNING: Branch is $behind_count commits behind main"
-  echo "   Strongly recommend: git rebase origin/main"
   echo ""
+  echo "⚠️  Branch is $behind_count commits behind main"
+  echo ""
+  echo "Would you like to rebase now? (recommended)"
+  echo "Press Enter to rebase, Ctrl+C to skip:"
+  read -r response
+  
+  if [ -z "$response" ]; then
+    echo "🔄 Rebasing on origin/main..."
+    git rebase origin/main
+    if [ $? -eq 0 ]; then
+      echo "✅ Rebase successful - push with: git push --force-with-lease"
+      exit 1  # Exit to let user push after rebase
+    else
+      echo "❌ Rebase has conflicts - resolve them and run: git rebase --continue"
+      exit 1
+    fi
+  fi
+elif [ "$behind_count" -gt 0 ]; then
+  echo "ℹ️  Branch is $behind_count commits behind main (acceptable)"
 fi
 
 echo "✅ All checks passed - ready to push!"

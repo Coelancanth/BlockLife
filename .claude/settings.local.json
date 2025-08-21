@@ -47,7 +47,8 @@
       "Bash(mcp__context7__get-library-docs:*)",
       "Bash(env)",
       "WebFetch(domain:context7.com)",
-      "Bash(gh pr view:*)"
+      "Bash(gh pr view:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": [],

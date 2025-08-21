@@ -16,7 +16,17 @@ if [ "$3" = "1" ]; then
   # Check how far behind we are
   behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
   
-  if [ "$behind" -gt 10 ]; then
+  # Smart notifications based on staleness
+  if [ "$behind" -gt 20 ]; then
+    echo ""
+    echo "🚨 Branch Health Check: $current_branch"
+    echo "   ⚠️  $behind commits behind main (high merge risk)"
+    echo "   "
+    echo "   Quick fix options:"
+    echo "   1. git rebase origin/main     (recommended - clean history)"
+    echo "   2. git merge origin/main      (if rebase is complex)"
+    echo ""
+  elif [ "$behind" -gt 10 ]; then
     echo ""
     echo "📊 Branch Status: $current_branch"
     echo "   ⚠️  $behind commits behind main"
@@ -24,8 +34,19 @@ if [ "$3" = "1" ]; then
     echo ""
   elif [ "$behind" -gt 0 ]; then
     echo ""
-    echo "📊 Branch Status: $current_branch"
-    echo "   ℹ️  $behind commits behind main"
-    echo ""
+    echo "📊 Branch Status: $current_branch is $behind commits behind main ✓"
+  fi
+  
+  # Check for uncommitted Memory Bank changes
+  memory_changes=$(git status --porcelain .claude/memory-bank/ 2>/dev/null)
+  if [ -n "$memory_changes" ]; then
+    echo "   📝 Uncommitted Memory Bank changes detected"
+    echo "      Run: ./scripts/memory-sync.ps1 save"
+  fi
+  
+  # Check if branch has upstream
+  upstream=$(git rev-parse --abbrev-ref "$current_branch@{upstream}" 2>/dev/null)
+  if [ -z "$upstream" ]; then
+    echo "   💡 No upstream set. Push with: git push -u origin $current_branch"
   fi
 fi

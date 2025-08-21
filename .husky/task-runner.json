@@ -2,20 +2,36 @@
   "version": "0.6.2",
   "tasks": [
     {
+      "name": "format-auto",
+      "command": "dotnet",
+      "args": ["format", "--verbosity", "quiet"],
+      "include": ["**/*.cs", "**/*.csproj"],
+      "description": "Auto-format code"
+    },
+    {
       "name": "format-check",
       "command": "dotnet",
       "args": ["format", "--verify-no-changes", "--verbosity", "quiet"],
-      "include": ["**/*.cs", "**/*.csproj"]
+      "include": ["**/*.cs", "**/*.csproj"],
+      "description": "Check formatting without changes"
     },
     {
       "name": "build-check",
       "command": "dotnet",
-      "args": ["build", "--nologo", "-v", "q"]
+      "args": ["build", "--nologo", "-v", "q"],
+      "description": "Quick build check"
     },
     {
       "name": "test-quick",
       "command": "dotnet",
-      "args": ["test", "--no-build", "--filter", "Category!=Integration&Category!=Performance", "-v", "q"]
+      "args": ["test", "--no-build", "--filter", "Category!=Integration&Category!=Performance", "-v", "q"],
+      "description": "Run fast unit tests only"
+    },
+    {
+      "name": "test-all",
+      "command": "dotnet",
+      "args": ["test", "--no-build", "-v", "q"],
+      "description": "Run all tests including integration"
     }
   ]
 }
