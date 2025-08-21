@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 050 (Last: TD_049 - 2025-08-21)  
+- **Next TD**: 051 (Last: TD_050 - 2025-08-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -212,6 +212,35 @@
 **Depends On**: None
 
 **Problem Context**: CRITICAL infrastructure gap - personas working on different branches lose context when switching. DevOps Engineer on `feat/td-042-consolidate-archives`, but Memory Bank doesn't track this. Multi-clone isolation is meaningless without branch context preservation.
+
+### TD_050: Enhance DevOps Engineer Protocol with activeContext Integration [Score: 30/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [INFRASTRUCTURE] [PERSONA-PROTOCOL] [MEMORY-BANK] [WORKFLOW]
+**Created**: 2025-08-21
+
+**What**: Integrate activeContext.md reading into DevOps Engineer persona workflow for infrastructure continuity
+**Why**: DevOps sessions benefit significantly from infrastructure context (git state, build health, completed work) that backlog alone cannot provide
+**How**:
+- Update DevOps Engineer persona document workflow steps
+- Add "Load Infrastructure Context" step after backlog review
+- Define activeContext freshness criteria (<7 days)
+- Specify context-informed prioritization process
+- Document reconciliation between backlog and context priorities
+- Add infrastructure state awareness to decision making
+- Test enhanced workflow with real DevOps scenarios
+**Done When**:
+- DevOps Engineer persona document updated with activeContext integration
+- Clear protocol for context freshness validation
+- Context-informed priority reconciliation documented
+- Enhanced workflow tested and validated
+- No workflow disruption for other personas
+- Infrastructure continuity demonstrated across sessions
+**Depends On**: None
+
+**Evidence Base**: Recent DevOps sessions show clear benefit from activeContext - avoided duplicate infrastructure checks, preserved completed package update status, enabled context-informed priority decisions on TD_049 criticality.
 
 ### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
 **Status**: Approved

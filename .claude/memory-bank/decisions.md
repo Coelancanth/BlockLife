@@ -4,7 +4,18 @@
 
 ## 🏗️ Major Decisions
 
-### 1. Documentation Consolidation (HANDBOOK.md) - 2025-08-21
+### 1. Git Workflow Documentation Gaps Identified - 2025-08-21
+**Decision**: Add comprehensive git workflow protocols to address user feedback
+**Rationale**: 
+- User questions exposed missing documentation for basic workflow decisions
+- No guidance on remote branch cleanup, branch switching triggers, or commit granularity
+- Current workflow docs show "how" but not "when" 
+- Need decision trees and protocols for common scenarios
+**Implementation**: TD_046 to add missing protocols to HANDBOOK.md
+**Impact**: Eliminates confusion about git workflow decisions
+**User Feedback**: Direct questions about remote cleanup, branching triggers, atomic commits
+
+### 2. Documentation Consolidation (HANDBOOK.md) - 2025-08-21
 **Decision**: Consolidate 12+ reference docs into single HANDBOOK.md
 **Rationale**: 
 - Massive duplication (Move Block in 4 places)
