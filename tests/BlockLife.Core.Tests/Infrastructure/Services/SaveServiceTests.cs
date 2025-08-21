@@ -83,11 +83,11 @@ namespace BlockLife.Core.Tests.Infrastructure.Services
         {
             // Arrange
             var oldSaveData = CreateTestSaveData() with { Version = 0 };
-            
+
             // Simulate saving old version by using export/import
             var exported = _saveService.ExportSave(oldSaveData);
             var modifiedExport = exported.Replace("\"version\": 1", "\"version\": 0");
-            
+
             // Act
             var imported = _saveService.ImportSave(modifiedExport);
 
@@ -233,14 +233,14 @@ namespace BlockLife.Core.Tests.Infrastructure.Services
             // Act
             var firstLoad = await _saveService.LoadAsync(slot: 94);
             await _saveService.SaveAsync(
-                firstLoad.Match(Succ: d => d, Fail: _ => saveData), 
+                firstLoad.Match(Succ: d => d, Fail: _ => saveData),
                 slot: 94);
             var secondLoad = await _saveService.LoadAsync(slot: 94);
 
             // Assert
             firstLoad.IsSucc.Should().BeTrue();
             secondLoad.IsSucc.Should().BeTrue();
-            
+
             secondLoad.Match(
                 Succ: data => data.Metadata.LoadCount.Should().Be(2),
                 Fail: _ => throw new Exception("Load should have succeeded")

@@ -1,0 +1,17 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🎨 Checking code format..."
+
+# Run format check on the solution file
+dotnet format BlockLife.sln --verify-no-changes --verbosity quiet
+
+if [ $? -ne 0 ]; then
+  echo "❌ Format issues detected!"
+  echo ""
+  echo "To fix: dotnet format"
+  echo "To bypass: git commit --no-verify"
+  exit 1
+fi
+
+echo "✅ Format check passed"

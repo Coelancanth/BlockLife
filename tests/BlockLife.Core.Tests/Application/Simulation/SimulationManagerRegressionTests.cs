@@ -61,9 +61,9 @@ public class SimulationManagerRegressionTests
 
         // Assert - Explicitly ensure it's NOT System.Collections.Generic.Queue
         effectQueueValue.Should().NotBeNull();
-        effectQueueValue.GetType().Name.Should().NotBe("Queue`1", 
+        effectQueueValue.GetType().Name.Should().NotBe("Queue`1",
             "SimulationManager must NOT use System.Collections.Generic.Queue - this is not thread-safe!");
-        
+
         // Additional check - ensure it's in the correct namespace
         effectQueueValue.GetType().Namespace.Should().Be("System.Collections.Concurrent",
             "Queue implementation must be from System.Collections.Concurrent namespace for thread safety");
@@ -112,7 +112,7 @@ public class SimulationManagerRegressionTests
         result1.IsSucc.Should().BeTrue("First effect should queue successfully");
         result2.IsSucc.Should().BeTrue("Second effect should queue successfully");
         result3.IsSucc.Should().BeTrue("Third effect should queue successfully");
-        
+
         _simulationManager.PendingEffectCount.Should().Be(3, "All three effects should be queued");
         _simulationManager.HasPendingEffects.Should().BeTrue("Should have pending effects");
     }
@@ -123,7 +123,7 @@ public class SimulationManagerRegressionTests
         // Arrange
         var effect1 = new BlockPlacedEffect(Guid.NewGuid(), new Vector2Int(0, 0), BlockLife.Core.Domain.Block.BlockType.Basic, DateTime.UtcNow);
         var effect2 = new BlockRemovedEffect(Guid.NewGuid(), new Vector2Int(1, 1), BlockLife.Core.Domain.Block.BlockType.Work, DateTime.UtcNow);
-        
+
         _simulationManager.QueueEffect(effect1);
         _simulationManager.QueueEffect(effect2);
 
@@ -136,7 +136,7 @@ public class SimulationManagerRegressionTests
         // Assert
         _simulationManager.HasPendingEffects.Should().BeFalse("All effects should be processed");
         _simulationManager.PendingEffectCount.Should().Be(0, "Queue should be empty after processing");
-        
+
         // Verify both effects were published
         _mockMediator.Verify(m => m.Publish(It.IsAny<INotification>(), default), Times.Exactly(2));
     }
@@ -181,7 +181,7 @@ public class SimulationManagerRegressionTests
                         BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
-                    
+
                     var result = _simulationManager.QueueEffect(effect);
                     result.IsSucc.Should().BeTrue($"Effect queuing should succeed for thread {threadId}, effect {j}");
                 }
@@ -221,9 +221,9 @@ public class SimulationManagerRegressionTests
                         BlockLife.Core.Domain.Block.BlockType.Basic,
                         DateTime.UtcNow
                     );
-                    
+
                     _simulationManager.QueueEffect(effect);
-                    
+
                     // Small delay to create realistic interleaving
                     await Task.Delay(1);
                 }
@@ -252,9 +252,9 @@ public class SimulationManagerRegressionTests
 
         // Assert
         _simulationManager.HasPendingEffects.Should().BeFalse("All effects should be processed");
-        
+
         // Verify all effects were published (some might be processed multiple times, but at least once each)
-        _mockMediator.Verify(m => m.Publish(It.IsAny<INotification>(), default), 
+        _mockMediator.Verify(m => m.Publish(It.IsAny<INotification>(), default),
             Times.AtLeast(producerThreads * effectsPerProducer));
     }
 

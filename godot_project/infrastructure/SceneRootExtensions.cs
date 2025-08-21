@@ -21,7 +21,7 @@ public static class SceneRootExtensions
             GD.PrintErr($"Cannot create presenter {typeof(TPresenter).Name}: SceneRoot or PresenterFactory is null");
             throw new System.InvalidOperationException("SceneRoot is not properly initialized");
         }
-        
+
         return sceneRoot.PresenterFactory.Create<TPresenter, TView>(view);
     }
 }

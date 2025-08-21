@@ -1,19 +1,45 @@
 # Architectural Decisions - BlockLife
 
+**Last Updated**: 2025-08-21
+
 ## 🏗️ Major Decisions
 
-### 1. Multi-Clone Architecture (2025-08)
+### 1. Husky.NET for Git Hooks (2025-08-21)
+**Decision**: Use Husky.NET instead of manual hooks or pre-commit
+**Rationale**: 
+- Zero-config across 6 persona clones
+- Automatic installation via dotnet restore
+- Native to .NET ecosystem
+- Committed .husky folder ensures consistency
+**Rejected**: 
+- pre-commit (Python dependency)
+- Manual scripts (maintenance burden)
+- Sacred Sequence (over-engineered)
+**Impact**: All personas get identical hooks automatically
+**Reference**: TD_039 implementation, PR #56
+
+### 2. Branch Naming Standardization (2025-08-21)
+**Decision**: Use underscores (VS_003) not hyphens (vs-003)
+**Rationale**: Match Backlog.md format exactly
+**Impact**: Updated CI, PR templates, design-guard
+**Migration**: All old branches must be renamed
+
+### 3. Multi-Clone Architecture (2025-08)
 **Decision**: Use 6 separate git clones for persona isolation
 **Rationale**: 
 - Prevents merge conflicts between personas
 - Allows parallel development
 - Simulates real team workflow
+- Standard git commands
+- No worktree complexity
+- Easy recovery (just re-clone)
 **Trade-offs**: 
 - More disk space usage
 - Need to manage multiple clones
 **Result**: ✅ Working well, clean separation
+**ADR**: ADR-002-persona-system-architecture.md
 
-### 2. Clean Architecture with MVP (2025-07)
+### 4. Clean Architecture with MVP (2025-07)
 **Decision**: Strict layer separation with MVP for UI
 **Rationale**:
 - Testable domain logic (pure C#)
@@ -23,8 +49,9 @@
 - More boilerplate code
 - Learning curve for team
 **Result**: ✅ Excellent testability, clear structure
+**Reference**: Architecture.md
 
-### 3. Functional Error Handling (LanguageExt)
+### 5. Functional Error Handling (LanguageExt)
 **Decision**: Use Fin<T> for all error handling
 **Rationale**:
 - No exceptions in domain logic
@@ -35,7 +62,7 @@
 - More verbose than try-catch
 **Result**: ✅ Fewer runtime errors, better error tracking
 
-### 4. Persona System for Development
+### 6. Persona System for Development
 **Decision**: 6 specialized personas with clear boundaries
 **Rationale**:
 - Simulates real team dynamics
@@ -46,7 +73,7 @@
 - Need clear handoff protocols
 **Result**: ✅ Better focus, clearer ownership
 
-### 5. Move Block as Reference Pattern
+### 7. Move Block as Reference Pattern
 **Decision**: One perfect implementation to copy
 **Rationale**:
 - Consistency across features
@@ -113,7 +140,7 @@
 **Complexity**: 7/10
 **Benefit**: 1/10 marginal gains
 
-### Worktree-based Development
+### Worktree-based Development (Sacred Sequence)
 **Rejected Because**: Conflicts and complexity
 **Replaced With**: Multi-clone architecture
 **Result**: Much cleaner workflow

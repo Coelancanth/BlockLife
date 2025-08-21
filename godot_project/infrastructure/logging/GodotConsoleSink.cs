@@ -60,29 +60,29 @@ public class GodotConsoleSink : ILogEventSink
     private static string EnhanceLineFormatting(string line)
     {
         // Highlight coordinate patterns like (X, Y) or X, Y with bright colors
-        line = System.Text.RegularExpressions.Regex.Replace(line, 
-            @"\((\d+),\s*(\d+)\)", 
+        line = System.Text.RegularExpressions.Regex.Replace(line,
+            @"\((\d+),\s*(\d+)\)",
             "[/color][color=orange]($1, $2)[/color][color=inherit]");
-        
+
         // Highlight standalone numbers that might be coordinates or important values
         line = System.Text.RegularExpressions.Regex.Replace(line,
             @"\b(\d+)x(\d+)\b",
             "[/color][color=lime]$1x$2[/color][color=inherit]");
-            
+
         // Highlight timing values (e.g., "7ms", "150ms")
         line = System.Text.RegularExpressions.Regex.Replace(line,
             @"\b(\d+)ms\b",
             "[/color][color=yellow]$1ms[/color][color=inherit]");
-            
+
         // Highlight SUCCESS/FAILED patterns
         line = System.Text.RegularExpressions.Regex.Replace(line,
             @"\b(SUCCESS|COMPLETED)\b",
             "[/color][color=lightgreen]$1[/color][color=inherit]");
-            
+
         line = System.Text.RegularExpressions.Regex.Replace(line,
             @"\b(FAILED|ERROR|CRITICAL)\b",
             "[/color][color=red]$1[/color][color=inherit]");
-            
+
         return line;
     }
 
@@ -112,7 +112,7 @@ public class GodotConsoleSink : ILogEventSink
                         => (_, output) => output.Write('\n'),
                     OutputProperties.TimestampPropertyName
                         => RenderTimestamp(propertyToken.Format),
-                    _ 
+                    _
                         => RenderProperty(propertyToken.PropertyName, propertyToken.Format),
                 },
                 _ => null,
@@ -143,7 +143,7 @@ public class GodotConsoleSink : ILogEventSink
                     propertyValue.Render(output, format, _formatProvider);
             };
         }
-}
+    }
 }
 
 public static class GodotSinkExtensions

@@ -19,11 +19,11 @@ public partial class BlockInputManager : Node
 {
     // Input configuration via resource (can be shared/saved)
     [Export] private InputMappings? _inputMappings;
-    
+
     private UnifiedInputHandler? _unifiedHandler;
     private InputStateManager? _stateManager;
     private ILogger? _logger;
-    
+
     private IDisposable? _cellClickedSubscription;
     private IDisposable? _cellHoveredSubscription;
 
@@ -31,70 +31,70 @@ public partial class BlockInputManager : Node
     {
         // Use default mappings if not configured in editor
         _inputMappings ??= InputMappings.CreateDefault();
-        
+
         // Pre-warm input system components to prevent first-operation delays
         var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
         await InputSystemInitializer.Initialize(this, sceneRoot?.Logger);
-        
+
         InitializeServices();
         SubscribeToEvents();
-        
-        _logger?.Debug("BlockInputManager initialized with mappings: {Mappings}", 
+
+        _logger?.Debug("BlockInputManager initialized with mappings: {Mappings}",
             _inputMappings.GetMappingDescription());
     }
-    
+
     private void InitializeServices()
     {
         var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
         _logger = sceneRoot?.Logger?.ForContext<BlockInputManager>();
-        
+
         if (sceneRoot?.ServiceProvider == null)
         {
             _logger?.Error("ServiceProvider not available");
             return;
         }
-        
+
         var mediator = sceneRoot.ServiceProvider.GetService<IMediator>();
         var gridStateService = sceneRoot.ServiceProvider.GetService<Core.Infrastructure.Services.IGridStateService>();
-        
+
         if (mediator == null || gridStateService == null)
         {
             _logger?.Error("Required services not available");
             return;
         }
-        
+
         // Initialize state manager and unified handler
         _stateManager = new InputStateManager(_logger);
         _unifiedHandler = new UnifiedInputHandler(mediator, gridStateService, _stateManager, _logger);
     }
-    
+
     private void SubscribeToEvents()
     {
         var gridView = GetParent();
         if (gridView == null) return;
-        
+
         var interactionController = gridView.GetNodeOrNull<GridInteractionController>("InteractionController");
         if (interactionController == null)
         {
             _logger?.Warning("GridInteractionController not found");
             return;
         }
-        
+
         _cellClickedSubscription = interactionController.GridCellClicked
             .Subscribe(async pos => await HandleCellClick(pos));
-            
+
         _cellHoveredSubscription = interactionController.GridCellHovered
             .Subscribe(pos => HandleCellHover(pos));
     }
-    
+
     public override void _UnhandledKeyInput(InputEvent @event)
     {
-        if (@event is not InputEventKey { Pressed: true } keyEvent) 
+        if (@event is not InputEventKey { Pressed: true } keyEvent)
             return;
-        
+
         if (_inputMappings == null || _unifiedHandler == null)
             return;
-            
+
         if (keyEvent.Keycode == _inputMappings.PlaceBlockKey)
         {
             _ = _unifiedHandler.HandlePlaceBlock();
@@ -111,7 +111,7 @@ public partial class BlockInputManager : Node
             GetViewport().SetInputAsHandled();
         }
     }
-    
+
     private async Task HandleCellClick(Vector2Int position)
     {
         // With drag-to-move system, clicks no longer select blocks
@@ -119,12 +119,12 @@ public partial class BlockInputManager : Node
         if (_unifiedHandler != null)
             await _unifiedHandler.HandleCellClick(position);
     }
-    
+
     private void HandleCellHover(Vector2Int position)
     {
         _unifiedHandler?.UpdateHoverPosition(position);
     }
-    
+
     public override void _ExitTree()
     {
         _cellClickedSubscription?.Dispose();

@@ -22,7 +22,7 @@ public sealed class UnifiedInputHandler : IDisposable
     private readonly IGridStateService _gridStateService;
     private readonly InputStateManager _stateManager;
     private readonly ILogger? _logger;
-    
+
     // Block type management
     private BlockType _currentBlockType = BlockType.Work;
     private readonly BlockType[] _availableTypes = new[]
@@ -34,11 +34,11 @@ public sealed class UnifiedInputHandler : IDisposable
         BlockType.Basic      // Gray
     };
     private int _currentTypeIndex = 0;
-    
+
     public BlockType CurrentBlockType => _currentBlockType;
-    
+
     public UnifiedInputHandler(
-        IMediator mediator, 
+        IMediator mediator,
         IGridStateService gridStateService,
         InputStateManager stateManager,
         ILogger? logger)
@@ -48,7 +48,7 @@ public sealed class UnifiedInputHandler : IDisposable
         _stateManager = stateManager;
         _logger = logger?.ForContext<UnifiedInputHandler>();
     }
-    
+
     /// <summary>
     /// Handles block placement at the current hover position.
     /// </summary>
@@ -58,12 +58,12 @@ public sealed class UnifiedInputHandler : IDisposable
             Some: async position =>
             {
                 _logger?.Debug("Placing {BlockType} block at {Position}", _currentBlockType, position);
-                
+
                 var command = new PlaceBlockCommand(position, _currentBlockType);
                 var result = await _mediator.Send(command);
-                
+
                 result.Match(
-                    Succ: _ => _logger?.Information("{BlockType} block placed at {Position}", 
+                    Succ: _ => _logger?.Information("{BlockType} block placed at {Position}",
                         _currentBlockType.GetDisplayName(), position),
                     Fail: error => _logger?.Warning("Failed to place block: {Error}", error.Message)
                 );
@@ -75,14 +75,14 @@ public sealed class UnifiedInputHandler : IDisposable
             }
         );
     }
-    
+
     /// <summary>
     /// Handles block inspection at the current hover position.
     /// </summary>
     public void HandleInspectBlock()
     {
         _stateManager.CurrentHoverPosition.Match(
-            Some: position => 
+            Some: position =>
             {
                 InspectPosition(position);
                 return LanguageExt.Unit.Default;
@@ -94,7 +94,7 @@ public sealed class UnifiedInputHandler : IDisposable
             }
         );
     }
-    
+
     /// <summary>
     /// Handles cell click for movement completion or deselection.
     /// With drag-to-move, this primarily handles placing dragged blocks.
@@ -110,17 +110,17 @@ public sealed class UnifiedInputHandler : IDisposable
                     Some: async blockId =>
                     {
                         _logger?.Debug("Moving block {BlockId} to {Position}", blockId, position);
-                        
+
                         var command = new MoveBlockCommand
                         {
                             BlockId = blockId,
                             ToPosition = position
                         };
-                        
+
                         var result = await _mediator.Send(command);
-                        
+
                         result.Match(
-                            Succ: _ => 
+                            Succ: _ =>
                             {
                                 _logger?.Information("Moved block {BlockId} to {Position}", blockId, position);
                                 _stateManager.ClearSelection();
@@ -147,7 +147,7 @@ public sealed class UnifiedInputHandler : IDisposable
             );
         }
     }
-    
+
     /// <summary>
     /// Cycles to the next available block type for placement.
     /// </summary>
@@ -157,7 +157,7 @@ public sealed class UnifiedInputHandler : IDisposable
         _currentBlockType = _availableTypes[_currentTypeIndex];
         _logger?.Information("Switched to {BlockType} blocks", _currentBlockType.GetDisplayName());
     }
-    
+
     /// <summary>
     /// Updates the hover position for the handler.
     /// </summary>
@@ -165,7 +165,7 @@ public sealed class UnifiedInputHandler : IDisposable
     {
         _stateManager.UpdateHoverPosition(position);
     }
-    
+
     /// <summary>
     /// Clears the hover position when cursor leaves grid.
     /// </summary>
@@ -173,7 +173,7 @@ public sealed class UnifiedInputHandler : IDisposable
     {
         _stateManager.ClearHoverPosition();
     }
-    
+
     /// <summary>
     /// Selects a block for movement operations.
     /// </summary>
@@ -181,7 +181,7 @@ public sealed class UnifiedInputHandler : IDisposable
     {
         _stateManager.SelectBlock(blockId, position);
     }
-    
+
     /// <summary>
     /// Clears the current block selection.
     /// </summary>
@@ -189,13 +189,13 @@ public sealed class UnifiedInputHandler : IDisposable
     {
         _stateManager.ClearSelection();
     }
-    
+
     private void InspectPosition(Vector2Int position)
     {
         _logger?.Debug("Inspecting position {Position}", position);
-        
+
         var blockAtPosition = _gridStateService.GetBlockAt(position);
-        
+
         blockAtPosition.Match(
             Some: block =>
             {
@@ -204,7 +204,7 @@ public sealed class UnifiedInputHandler : IDisposable
                 _logger?.Information("   BlockId: {BlockId}", block.Id);
                 _logger?.Information("   Type: {BlockType}", block.Type);
                 _logger?.Information("   CreatedAt: {CreatedAt}", block.CreatedAt);
-                
+
                 // Also print to Godot console for visibility
                 GD.Print($"=== BLOCK INSPECTION ===");
                 GD.Print($"Position: ({position.X}, {position.Y})");
@@ -222,14 +222,14 @@ public sealed class UnifiedInputHandler : IDisposable
             }
         );
     }
-    
+
     private Option<Guid> GetBlockAt(Vector2Int position)
     {
         return _gridStateService
             .GetBlockAt(position)
             .Map(block => block.Id);
     }
-    
+
     public void Dispose()
     {
         _stateManager?.Dispose();

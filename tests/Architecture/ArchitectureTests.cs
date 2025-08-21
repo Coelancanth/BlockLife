@@ -108,7 +108,7 @@ public class ArchitectureTests
     {
         // Regression test for HF_002 - Prevent use of non-thread-safe collections
         // This enforces that all Queue usage in Core assembly uses ConcurrentQueue
-        
+
         var violations = new List<string>();
         var allTypes = _coreAssembly.GetTypes();
 
@@ -142,7 +142,7 @@ public class ArchitectureTests
     private static void CheckFieldForThreadSafetyViolations(FieldInfo field, Type declaringType, List<string> violations)
     {
         var fieldType = field.FieldType;
-        
+
         // Check for System.Collections.Generic.Queue<T>
         if (IsNonThreadSafeQueue(fieldType))
         {
@@ -159,7 +159,7 @@ public class ArchitectureTests
     private static void CheckPropertyForThreadSafetyViolations(PropertyInfo property, Type declaringType, List<string> violations)
     {
         var propertyType = property.PropertyType;
-        
+
         // Check for System.Collections.Generic.Queue<T>
         if (IsNonThreadSafeQueue(propertyType))
         {

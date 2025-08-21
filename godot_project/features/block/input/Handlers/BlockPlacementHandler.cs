@@ -16,10 +16,10 @@ public sealed class BlockPlacementHandler
 {
     private readonly IMediator _mediator;
     private readonly ILogger? _logger;
-    
+
     // Current block type for placement - can be cycled through
     private BlockType _currentBlockType = BlockType.Work;
-    
+
     // Array of available block types for easy testing
     private readonly BlockType[] _availableTypes = new[]
     {
@@ -30,13 +30,13 @@ public sealed class BlockPlacementHandler
         BlockType.Basic      // Gray
     };
     private int _currentTypeIndex = 0;
-    
+
     public BlockPlacementHandler(IMediator mediator, ILogger? logger)
     {
         _mediator = mediator;
         _logger = logger?.ForContext<BlockPlacementHandler>();
     }
-    
+
     /// <summary>
     /// Handles the place block key press.
     /// Places a block at the current hover position if valid.
@@ -56,7 +56,7 @@ public sealed class BlockPlacementHandler
             }
         );
     }
-    
+
     /// <summary>
     /// Cycles to the next available block type for placement.
     /// Useful for testing different block types and swap mechanic.
@@ -65,25 +65,25 @@ public sealed class BlockPlacementHandler
     {
         _currentTypeIndex = (_currentTypeIndex + 1) % _availableTypes.Length;
         _currentBlockType = _availableTypes[_currentTypeIndex];
-        _logger?.Information("Switched to placing {BlockType} blocks (Color: {Color})", 
-            _currentBlockType.GetDisplayName(), 
+        _logger?.Information("Switched to placing {BlockType} blocks (Color: {Color})",
+            _currentBlockType.GetDisplayName(),
             _currentBlockType.GetColorHex());
     }
-    
+
     /// <summary>
     /// Gets the current block type that will be placed.
     /// </summary>
     public BlockType CurrentBlockType => _currentBlockType;
-    
+
     private async Task PlaceBlockAt(Vector2Int position)
     {
         var command = new PlaceBlockCommand(position, _currentBlockType);
         var result = await _mediator.Send(command);
-        
+
         result.Match(
-            Succ: _ => _logger?.Information("{BlockType} block placed successfully at {Position}", 
+            Succ: _ => _logger?.Information("{BlockType} block placed successfully at {Position}",
                 _currentBlockType.GetDisplayName(), position),
-            Fail: error => _logger?.Warning("Failed to place {BlockType} block at {Position}: {Error}", 
+            Fail: error => _logger?.Warning("Failed to place {BlockType} block at {Position}: {Error}",
                 _currentBlockType.GetDisplayName(), position, error.Message)
         );
     }

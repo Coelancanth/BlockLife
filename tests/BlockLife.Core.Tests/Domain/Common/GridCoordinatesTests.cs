@@ -117,8 +117,8 @@ namespace BlockLife.Core.Tests.Domain.Common
                     var original = new Vector2Int(x, y);
                     var index = GridCoordinates.ToIndex(original, _gridSize.X);
                     var recovered = GridCoordinates.FromIndex(index, _gridSize.X);
-                    
-                    recovered.Should().Be(original, 
+
+                    recovered.Should().Be(original,
                         $"Position ({x},{y}) -> index {index} -> position should be ({x},{y})");
                 }
             }

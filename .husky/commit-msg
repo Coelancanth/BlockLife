@@ -1,0 +1,34 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Read commit message
+commit_msg=$(cat "$1")
+
+# Define valid patterns
+conventional_pattern='^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor)(\([A-Z]{2}_[0-9]{3}\))?: .{1,72}$'
+merge_pattern='^Merge '
+revert_pattern='^Revert '
+
+# Check message format
+if echo "$commit_msg" | grep -qE "$merge_pattern|$revert_pattern"; then
+  # Allow merge and revert commits
+  exit 0
+elif echo "$commit_msg" | grep -qE "$conventional_pattern"; then
+  echo "✅ Commit message validated"
+  exit 0
+else
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Expected: <type>(<scope>): <description>"
+  echo ""
+  echo "Valid types: feat, fix, tech, docs, test, perf, build, ci, chore, refactor"
+  echo ""
+  echo "Examples:"
+  echo "  feat(VS_003): add save system"
+  echo "  fix(BR_012): resolve race condition"
+  echo "  tech(TD_042): consolidate duplicate archives"
+  echo "  docs: update README with build instructions"
+  echo ""
+  echo "Your message: $commit_msg"
+  exit 1
+fi

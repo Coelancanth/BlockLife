@@ -31,7 +31,7 @@ namespace BlockLife.Core.Infrastructure.Services
         {
             _logger = logger;
             _migrations = migrations.OrderBy(m => m.FromVersion).ToList();
-            
+
             // Configure JSON serialization with Newtonsoft.Json
             // Handles 'required' properties and domain models better than System.Text.Json
             _jsonSettings = new JsonSerializerSettings
@@ -55,7 +55,7 @@ namespace BlockLife.Core.Infrastructure.Services
             try
             {
                 var filePath = GetSaveFilePath(slot);
-                
+
                 // Update timestamps
                 var dataToSave = saveData with
                 {
@@ -65,10 +65,10 @@ namespace BlockLife.Core.Infrastructure.Services
 
                 // Serialize to JSON using Newtonsoft.Json
                 var json = JsonConvert.SerializeObject(dataToSave, _jsonSettings);
-                
+
                 // Write to file
                 await File.WriteAllTextAsync(filePath, json);
-                
+
                 _logger.LogInformation("Game saved to slot {Slot}", slot);
                 return FinSucc(unit);
             }
@@ -84,7 +84,7 @@ namespace BlockLife.Core.Infrastructure.Services
             try
             {
                 var filePath = GetSaveFilePath(slot);
-                
+
                 if (!File.Exists(filePath))
                 {
                     return FinFail<SaveData>(Error.New($"No save found in slot {slot}"));
@@ -93,7 +93,7 @@ namespace BlockLife.Core.Infrastructure.Services
                 // Read and deserialize using Newtonsoft.Json
                 var json = await File.ReadAllTextAsync(filePath);
                 var saveData = JsonConvert.DeserializeObject<SaveData>(json, _jsonSettings);
-                
+
                 if (saveData == null)
                 {
                     return FinFail<SaveData>(Error.New("Failed to deserialize save data"));
@@ -101,7 +101,7 @@ namespace BlockLife.Core.Infrastructure.Services
 
                 // Migrate if needed
                 var migrated = await MigrateToLatestAsync(saveData);
-                
+
                 return migrated.Match(
                     Succ: data =>
                     {
@@ -113,17 +113,17 @@ namespace BlockLife.Core.Infrastructure.Services
                                 LoadCount = data.Metadata.LoadCount + 1
                             }
                         };
-                        
+
                         _logger.LogInformation(
-                            "Game loaded from slot {Slot} (version {Version})", 
+                            "Game loaded from slot {Slot} (version {Version})",
                             slot, saveData.Version);
-                        
+
                         return FinSucc(loaded);
                     },
                     Fail: error =>
                     {
                         _logger.LogError(
-                            "Failed to migrate save from version {Version}: {Error}", 
+                            "Failed to migrate save from version {Version}: {Error}",
                             saveData.Version, error.Message);
                         return FinFail<SaveData>(error);
                     });
@@ -146,13 +146,13 @@ namespace BlockLife.Core.Infrastructure.Services
             try
             {
                 var filePath = GetSaveFilePath(slot);
-                
+
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
                     _logger.LogInformation("Save deleted from slot {Slot}", slot);
                 }
-                
+
                 return await Task.FromResult(FinSucc(unit));
             }
             catch (Exception ex)
@@ -167,7 +167,7 @@ namespace BlockLife.Core.Infrastructure.Services
             try
             {
                 var filePath = GetSaveFilePath(slot);
-                
+
                 if (!File.Exists(filePath))
                 {
                     return None;
@@ -209,7 +209,7 @@ namespace BlockLife.Core.Infrastructure.Services
             try
             {
                 var saveData = JsonConvert.DeserializeObject<SaveData>(saveString, _jsonSettings);
-                
+
                 if (saveData == null)
                 {
                     return FinFail<SaveData>(Error.New("Invalid save data format"));
@@ -246,14 +246,14 @@ namespace BlockLife.Core.Infrastructure.Services
             }
 
             _logger.LogInformation(
-                "Migrating save from version {FromVersion} to {ToVersion}", 
+                "Migrating save from version {FromVersion} to {ToVersion}",
                 currentData.Version, SaveData.CURRENT_VERSION);
 
             // Apply migrations in sequence
             while (currentData.Version < SaveData.CURRENT_VERSION)
             {
                 var migration = _migrations.FirstOrDefault(m => m.CanMigrate(currentData));
-                
+
                 if (migration == null)
                 {
                     return FinFail<SaveData>(Error.New(
@@ -261,11 +261,11 @@ namespace BlockLife.Core.Infrastructure.Services
                 }
 
                 _logger.LogDebug(
-                    "Applying migration: {Description} (v{From} -> v{To})", 
+                    "Applying migration: {Description} (v{From} -> v{To})",
                     migration.Description, migration.FromVersion, migration.ToVersion);
 
                 var result = migration.Migrate(currentData);
-                
+
                 if (result.IsFail)
                 {
                     return result;

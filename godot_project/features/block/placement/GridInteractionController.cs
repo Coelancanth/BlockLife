@@ -14,49 +14,49 @@ public partial class GridInteractionController : Control, IGridInteractionView
 {
     [Export] public Vector2I GridSize { get; set; } = new(10, 10);
     [Export] public float CellSize { get; set; } = 64f;
-    
+
     // Reactive Streams
     private readonly Subject<Vector2Int> _cellClicked = new();
     private readonly Subject<Vector2Int> _cellHovered = new();
     private readonly Subject<Vector2Int> _cellExited = new();
-    
+
     // Drag Streams (Phase 1 Foundation)
     private readonly Subject<Vector2Int> _dragStarted = new();
     private readonly Subject<Vector2Int> _dragMoved = new();
     private readonly Subject<Vector2Int> _dragEnded = new();
-    
+
     private Option<Vector2Int> _hoveredCell = None;
     private bool _isInputEnabled = true;
-    
+
     // Drag state (Phase 1 Foundation)
     private Vector2 _dragStartMousePos;
     private bool _isDragging = false;
     private const float DRAG_THRESHOLD = 5.0f;
-    
+
     public override void _Ready()
     {
         // Enable mouse input
         MouseFilter = Control.MouseFilterEnum.Pass;
-        
+
         // Set up control size based on grid
         CustomMinimumSize = new Vector2(GridSize.X * CellSize, GridSize.Y * CellSize);
         Size = CustomMinimumSize;
-        
+
         var logger = GetNode<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
         logger?.Debug("GridInteractionController ready with size {GridWidth}x{GridHeight}, cell size {CellSize}", GridSize.X, GridSize.Y, CellSize);
-        
+
         // Force initial draw of the grid
         QueueRedraw();
     }
-    
+
     public override void _GuiInput(InputEvent @event)
     {
-        if (!IsInputEnabled) 
+        if (!IsInputEnabled)
         {
             // Trace: Input is disabled, ignoring event
             return;
         }
-        
+
         switch (@event)
         {
             case InputEventMouseButton mouseButton when mouseButton.ButtonIndex == MouseButton.Left:
@@ -81,11 +81,11 @@ public partial class GridInteractionController : Control, IGridInteractionView
                     _isDragging = false;
                 }
                 break;
-                
+
             case InputEventMouseMotion mouseMotion:
                 // Handle regular hover motion
                 HandleMouseMotion(mouseMotion.Position);
-                
+
                 // Handle drag detection and movement
                 if (mouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
                 {
@@ -103,19 +103,19 @@ public partial class GridInteractionController : Control, IGridInteractionView
                 break;
         }
     }
-    
+
     public override void _ExitTree()
     {
         _cellClicked.Dispose();
         _cellHovered.Dispose();
         _cellExited.Dispose();
-        
+
         // Dispose drag streams
         _dragStarted.Dispose();
         _dragMoved.Dispose();
         _dragEnded.Dispose();
     }
-    
+
     public override void _Notification(int what)
     {
         if (what == NotificationMouseExit)
@@ -123,17 +123,17 @@ public partial class GridInteractionController : Control, IGridInteractionView
             // Handle mouse leaving the control entirely
             _hoveredCell.IfSome(pos => _cellExited.OnNext(pos));
             _hoveredCell = None;
-            
+
             // Redraw to clear hover highlight
             QueueRedraw();
         }
     }
-    
+
     private void HandleMouseClick(Vector2 mousePosition)
     {
         var gridPosition = ScreenToGridPositionInternal(mousePosition);
         // Trace: HandleMouseClick - mousePosition and gridPosition
-        
+
         if (IsValidGridPosition(gridPosition))
         {
             // Trace: Valid grid position, emitting cell clicked event
@@ -146,11 +146,11 @@ public partial class GridInteractionController : Control, IGridInteractionView
             // Trace: Invalid grid position, ignoring click
         }
     }
-    
+
     private void HandleMouseMotion(Vector2 mousePosition)
     {
         var gridPosition = ScreenToGridPositionInternal(mousePosition);
-        
+
         if (IsValidGridPosition(gridPosition))
         {
             // Check if we're entering a new cell
@@ -158,16 +158,16 @@ public partial class GridInteractionController : Control, IGridInteractionView
                 Some: pos => pos.X != gridPosition.X || pos.Y != gridPosition.Y,
                 None: () => true
             );
-            
+
             if (isNewCell)
             {
                 // Exited previous cell
                 _hoveredCell.IfSome(pos => _cellExited.OnNext(pos));
-                
+
                 // Entered new cell
                 _hoveredCell = Some(gridPosition);
                 _cellHovered.OnNext(gridPosition);
-                
+
                 // Redraw to update hover highlight
                 QueueRedraw();
             }
@@ -177,34 +177,34 @@ public partial class GridInteractionController : Control, IGridInteractionView
             // Exited grid entirely
             _hoveredCell.IfSome(pos => _cellExited.OnNext(pos));
             _hoveredCell = None;
-            
+
             // Redraw to clear hover highlight
             QueueRedraw();
         }
     }
-    
+
     private bool IsValidGridPosition(Vector2Int position) =>
         position.X >= 0 && position.Y >= 0 &&
         position.X < GridSize.X && position.Y < GridSize.Y;
-    
+
     // Interface Implementation
     public IObservable<Vector2Int> GridCellClicked => _cellClicked.AsObservable();
     public IObservable<Vector2Int> GridCellHovered => _cellHovered.AsObservable();
     public IObservable<Vector2Int> GridCellExited => _cellExited.AsObservable();
-    
+
     // Drag Events (Phase 1 Foundation)
     public IObservable<Vector2Int> DragStarted => _dragStarted.AsObservable();
     public IObservable<Vector2Int> DragMoved => _dragMoved.AsObservable();
     public IObservable<Vector2Int> DragEnded => _dragEnded.AsObservable();
-    
+
     public bool IsInputEnabled
     {
         get => _isInputEnabled;
         set => _isInputEnabled = value;
     }
-    
+
     public Option<Vector2Int> HoveredCell => _hoveredCell;
-    
+
     public Vector2Int ScreenToGridPosition(object screenPosition)
     {
         if (screenPosition is Vector2 vec2)
@@ -216,41 +216,41 @@ public partial class GridInteractionController : Control, IGridInteractionView
         }
         throw new ArgumentException("screenPosition must be a Godot Vector2");
     }
-    
+
     public object GridToScreenPosition(Vector2Int gridPosition) =>
         new Vector2(gridPosition.X * CellSize, gridPosition.Y * CellSize);
-    
+
     // Internal helper that uses actual types
     private Vector2Int ScreenToGridPositionInternal(Vector2 screenPosition) =>
         new(
             Mathf.FloorToInt(screenPosition.X / CellSize),
             Mathf.FloorToInt(screenPosition.Y / CellSize)
         );
-    
+
     private Vector2 GridToScreenPositionInternal(Vector2Int gridPosition) =>
         new(gridPosition.X * CellSize, gridPosition.Y * CellSize);
-    
+
     // Debug Drawing (optional - helps visualize grid)
     public override void _Draw()
     {
         // Draw grid lines for debugging
         var gridColor = new Color(0.5f, 0.5f, 0.5f, 0.8f); // Lighter and more opaque
         var lineWidth = 2.0f; // Thicker lines for visibility
-        
+
         // Vertical lines
         for (int x = 0; x <= GridSize.X; x++)
         {
             var xPos = x * CellSize;
             DrawLine(new Vector2(xPos, 0), new Vector2(xPos, GridSize.Y * CellSize), gridColor, lineWidth);
         }
-        
+
         // Horizontal lines  
         for (int y = 0; y <= GridSize.Y; y++)
         {
             var yPos = y * CellSize;
             DrawLine(new Vector2(0, yPos), new Vector2(GridSize.X * CellSize, yPos), gridColor, lineWidth);
         }
-        
+
         // Draw border with thicker lines
         var borderColor = new Color(0.7f, 0.7f, 0.7f, 1.0f);
         var borderWidth = 3.0f;
@@ -260,7 +260,7 @@ public partial class GridInteractionController : Control, IGridInteractionView
         DrawLine(new Vector2(maxX, 0), new Vector2(maxX, maxY), borderColor, borderWidth);
         DrawLine(new Vector2(maxX, maxY), new Vector2(0, maxY), borderColor, borderWidth);
         DrawLine(new Vector2(0, maxY), new Vector2(0, 0), borderColor, borderWidth);
-        
+
         // Highlight hovered cell
         _hoveredCell.IfSome(pos =>
         {
@@ -271,7 +271,7 @@ public partial class GridInteractionController : Control, IGridInteractionView
             DrawRect(rect, new Color(1, 1, 1, 0.2f)); // More visible highlight
         });
     }
-    
+
     // Force redraw when hover changes
     private void OnHoverChanged()
     {

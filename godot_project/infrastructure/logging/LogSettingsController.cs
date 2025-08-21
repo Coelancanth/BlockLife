@@ -17,9 +17,9 @@ public partial class LogSettingsController : Node
 {
     // This dictionary is no longer exported but is still public so SceneRoot can read its initial values.
     public global::Godot.Collections.Dictionary<string, int> CategoryLogLevelOverrides { get; set; } = new();
-    
+
     public int DefaultLogLevel { get; set; } = (int)LogEventLevel.Information;
-    
+
     private ILogger? _logger;
     private LoggingLevelSwitch? _masterSwitch;
     private IDictionary<string, LoggingLevelSwitch>? _categorySwitches;
@@ -58,7 +58,7 @@ public partial class LogSettingsController : Node
         foreach (var category in logCategories)
         {
             if (string.IsNullOrEmpty(category)) continue;
-            
+
             properties.Add(new Dictionary
             {
                 { "name", $"category_{category}" },
@@ -119,7 +119,7 @@ public partial class LogSettingsController : Node
         _masterSwitch = masterSwitch;
         _categorySwitches = categorySwitches;
 
-        _lastKnownDefaultLevel = -1; 
+        _lastKnownDefaultLevel = -1;
     }
 
     public override void _Process(double delta)

@@ -30,7 +30,7 @@ namespace BlockLife.Core.Domain.Common
                     $"{context}: X={pos.X} out of range [0,{gridSize.X})",
                     nameof(pos));
             }
-            
+
             if (pos.Y < 0 || pos.Y >= gridSize.Y)
             {
                 throw new ArgumentException(

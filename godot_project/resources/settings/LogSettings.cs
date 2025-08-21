@@ -18,7 +18,7 @@ namespace BlockLife.godot_project.resources.settings;
 public partial class LogSettings : Resource
 {
     #region Log Level Documentation
-    
+
     /// <summary>
     /// Log Level Guidelines:
     /// 
@@ -47,7 +47,7 @@ public partial class LogSettings : Resource
     ///   - Use: Always enabled
     /// </summary>
     private const string LogLevelDocumentation = "See tooltips for each level";
-    
+
     #endregion
     [Export(PropertyHint.Enum, "Verbose:0,Debug:1,Information:2,Warning:3,Error:4,Fatal:5")]
     [ExportGroup("Log Levels")]
@@ -64,7 +64,7 @@ public partial class LogSettings : Resource
     [Export]
     [ExportGroup("Category Overrides")]
     public bool VerboseCommands { get; set; } = false;
-    
+
     /// <summary>
     /// Enable debug logging for Queries (useful for debugging read operations)
     /// </summary>
@@ -91,13 +91,13 @@ public partial class LogSettings : Resource
     public Dictionary<string, LogEventLevel> GetCategoryLogLevels()
     {
         var result = new Dictionary<string, LogEventLevel>();
-        
+
         // Simple verbose flags instead of complex arrays
         if (VerboseCommands)
             result["Commands"] = LogEventLevel.Debug;
         if (VerboseQueries)
             result["Queries"] = LogEventLevel.Debug;
-            
+
         return result;
     }
 }

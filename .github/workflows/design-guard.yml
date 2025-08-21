@@ -23,11 +23,11 @@ jobs:
             const branchName = context.payload.pull_request.head.ref;
             const prNumber = context.payload.pull_request.number;
             
-            // Pattern: feat/vs-003-description or fix/br-002-description
+            // Pattern: feat/VS_003-description or fix/BR_012-description
             const patterns = {
-              vs: /^feat\/vs-(\d{3})/i,
-              br: /^fix\/br-(\d{3})/i,
-              td: /^feat\/td-(\d{3})/i
+              vs: /^feat\/VS_(\d{3})/,
+              br: /^fix\/BR_(\d{3})/,
+              td: /^tech\/TD_(\d{3})/
             };
             
             let itemType = null;

@@ -38,7 +38,7 @@ public partial class DebugLogManager : Control
     private void PopulateControls()
     {
         if (_logSettingsContainer is null) return;
-        
+
         // Clear any existing controls
         foreach (var child in _logSettingsContainer.GetChildren())
         {
@@ -68,7 +68,7 @@ public partial class DebugLogManager : Control
     private void AddLogLevelControl(string name, LoggingLevelSwitch levelSwitch)
     {
         if (_logSettingsContainer is null) return;
-        
+
         var hbox = new HBoxContainer();
         var label = new Label { Text = name };
         var optionButton = new OptionButton();

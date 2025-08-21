@@ -13,14 +13,14 @@ namespace BlockLife.godot_project.features.block.input;
 public sealed class InputStateManager : IDisposable
 {
     private readonly ILogger? _logger;
-    
+
     // Selection state
     private Option<Guid> _selectedBlockId = None;
     private Option<Vector2Int> _selectedBlockPosition = None;
-    
+
     // Hover state
     private Option<Vector2Int> _currentHoverPosition = None;
-    
+
     // Input mode state
     public enum InputMode
     {
@@ -29,21 +29,21 @@ public sealed class InputStateManager : IDisposable
         Dragging,   // Dragging a block
         Inspection  // Inspecting blocks
     }
-    
+
     private InputMode _currentMode = InputMode.Normal;
-    
+
     // Properties
     public Option<Guid> SelectedBlockId => _selectedBlockId;
     public Option<Vector2Int> SelectedBlockPosition => _selectedBlockPosition;
     public Option<Vector2Int> CurrentHoverPosition => _currentHoverPosition;
     public InputMode CurrentMode => _currentMode;
     public bool HasSelection => _selectedBlockId.IsSome;
-    
+
     public InputStateManager(ILogger? logger)
     {
         _logger = logger?.ForContext<InputStateManager>();
     }
-    
+
     /// <summary>
     /// Sets the current input mode.
     /// </summary>
@@ -55,7 +55,7 @@ public sealed class InputStateManager : IDisposable
             _currentMode = mode;
         }
     }
-    
+
     /// <summary>
     /// Selects a block at the given position.
     /// </summary>
@@ -65,7 +65,7 @@ public sealed class InputStateManager : IDisposable
         _selectedBlockPosition = Some(position);
         _logger?.Debug("Block {BlockId} selected at position {Position}", blockId, position);
     }
-    
+
     /// <summary>
     /// Clears the current selection.
     /// </summary>
@@ -74,11 +74,11 @@ public sealed class InputStateManager : IDisposable
         var hadSelection = _selectedBlockId.IsSome;
         _selectedBlockId = None;
         _selectedBlockPosition = None;
-        
+
         if (hadSelection)
         {
             _logger?.Debug("Block selection cleared");
-            
+
             // Reset to normal mode when selection is cleared
             if (_currentMode == InputMode.Dragging)
             {
@@ -86,7 +86,7 @@ public sealed class InputStateManager : IDisposable
             }
         }
     }
-    
+
     /// <summary>
     /// Updates the current hover position.
     /// </summary>
@@ -94,7 +94,7 @@ public sealed class InputStateManager : IDisposable
     {
         _currentHoverPosition = Some(position);
     }
-    
+
     /// <summary>
     /// Clears the hover position when cursor leaves the grid.
     /// </summary>
@@ -102,7 +102,7 @@ public sealed class InputStateManager : IDisposable
     {
         _currentHoverPosition = None;
     }
-    
+
     /// <summary>
     /// Checks if the selected block can move to the target position.
     /// </summary>
@@ -113,7 +113,7 @@ public sealed class InputStateManager : IDisposable
             None: () => false
         );
     }
-    
+
     /// <summary>
     /// Checks if a modifier key is being held for special operations.
     /// </summary>
@@ -123,7 +123,7 @@ public sealed class InputStateManager : IDisposable
         // For now, returning false as placeholder
         return false;
     }
-    
+
     public void Dispose()
     {
         ClearSelection();

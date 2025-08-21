@@ -16,7 +16,7 @@ public class BlockMovementNotificationBridgeTests
         // 1. MoveBlockCommandHandlerTests - verifies notifications are published
         // 2. BlockPlacementIntegrationTest - verifies end-to-end notification flow
         // 3. Architecture tests - ensures proper event patterns
-        
+
         // This is a infrastructure component that's best tested through
         // its actual usage rather than in isolation.
         Assert.True(true, "See integration tests for actual coverage");

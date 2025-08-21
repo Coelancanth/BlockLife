@@ -73,7 +73,7 @@ namespace BlockLife.Core.Features.Block.Drag.Presenters
                     // Show visual feedback
                     View?.ShowDragFeedback(blockId, startPosition);
                     View?.UpdateDragPreview(startPosition, true);
-                    
+
                     // Show range indicators for Phase 2
                     if (ShouldShowRangeIndicators())
                     {
@@ -97,16 +97,16 @@ namespace BlockLife.Core.Features.Block.Drag.Presenters
 
             // Update preview position in service
             var updateResult = _dragStateService.UpdatePreviewPosition(currentPosition);
-            
+
             updateResult.Match(
                 Succ: _ =>
                 {
                     // Check if this is a valid drop location
                     bool isValidDrop = IsValidDropPosition(currentPosition);
-                    
+
                     // Update visual preview
                     View?.UpdateDragPreview(currentPosition, isValidDrop);
-                    
+
                     // Check range for Phase 2
                     if (ShouldEnforceRangeLimits() && !_dragStateService.IsWithinDragRange(currentPosition))
                     {

@@ -15,38 +15,38 @@ public static class PerformanceProfiler
     private static readonly Dictionary<string, List<long>> _timings = new();
     private static readonly Dictionary<string, Stopwatch> _activeTimers = new();
     private static ILogger? _logger;
-    
+
     public static void Initialize(ILogger logger)
     {
         _logger = logger?.ForContext("SourceContext", "Performance");
-        
+
         // Pre-warm Stopwatch to avoid JIT compilation on first click
         // This moves the ~280ms initialization cost to startup time
         var initTimer = new Stopwatch();
         initTimer.Start();
-        
+
         // Create and use a Stopwatch to trigger JIT compilation
         var warmupStopwatch = new Stopwatch();
         warmupStopwatch.Start();
         warmupStopwatch.Stop();
-        
+
         initTimer.Stop();
-        
+
         // Verify pre-warming worked (should be fast after first Stopwatch creation)
         var verifyTimer = new Stopwatch();
         verifyTimer.Start();
         verifyTimer.Stop();
-        
-        _logger?.Debug("PerformanceProfiler pre-warmed in {InitMs}ms (verification: {VerifyMs}ms)", 
+
+        _logger?.Debug("PerformanceProfiler pre-warmed in {InitMs}ms (verification: {VerifyMs}ms)",
             initTimer.ElapsedMilliseconds, verifyTimer.ElapsedMilliseconds);
-        
+
         // Runtime assertion - if verification takes >10ms, pre-warming failed
         if (verifyTimer.ElapsedMilliseconds > 10)
         {
             _logger?.Warning("Pre-warming may have failed - verification took {Ms}ms", verifyTimer.ElapsedMilliseconds);
         }
     }
-    
+
     /// <summary>
     /// Start timing an operation.
     /// </summary>
@@ -56,12 +56,12 @@ public static class PerformanceProfiler
         {
             _logger?.Warning("Timer {Operation} already running, restarting", operationName);
         }
-        
+
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         _activeTimers[operationName] = stopwatch;
     }
-    
+
     /// <summary>
     /// Stop timing an operation and record the result.
     /// </summary>
@@ -72,20 +72,20 @@ public static class PerformanceProfiler
             _logger?.Warning("Timer {Operation} not found", operationName);
             return -1;
         }
-        
+
         stopwatch.Stop();
         var elapsedMs = stopwatch.ElapsedMilliseconds;
-        
+
         // Store timing
         if (!_timings.ContainsKey(operationName))
         {
             _timings[operationName] = new List<long>();
         }
         _timings[operationName].Add(elapsedMs);
-        
+
         // Clean up
         _activeTimers.Remove(operationName);
-        
+
         // Log if requested or if timing exceeds threshold
         if (logImmediately || elapsedMs > 16) // 16ms = 60fps frame budget
         {
@@ -93,19 +93,19 @@ public static class PerformanceProfiler
             // Use Debug for slow operations, Verbose for normal timings
             if (elapsedMs > 33)
             {
-                _logger?.Debug("{Level} {Operation} took {ElapsedMs}ms", 
+                _logger?.Debug("{Level} {Operation} took {ElapsedMs}ms",
                     warningLevel, operationName, elapsedMs);
             }
             else
             {
-                _logger?.Verbose("{Level} {Operation} took {ElapsedMs}ms", 
+                _logger?.Verbose("{Level} {Operation} took {ElapsedMs}ms",
                     warningLevel, operationName, elapsedMs);
             }
         }
-        
+
         return elapsedMs;
     }
-    
+
     /// <summary>
     /// Measure a synchronous operation.
     /// </summary>
@@ -121,7 +121,7 @@ public static class PerformanceProfiler
             StopTimer(operationName, true);
         }
     }
-    
+
     /// <summary>
     /// Measure a void operation.
     /// </summary>
@@ -137,35 +137,35 @@ public static class PerformanceProfiler
             StopTimer(operationName, true);
         }
     }
-    
+
     /// <summary>
     /// Print performance report.
     /// </summary>
     public static void PrintReport()
     {
         _logger?.Debug("===== PERFORMANCE REPORT =====");
-        
+
         foreach (var kvp in _timings.OrderByDescending(x => x.Value.Average()))
         {
             var operation = kvp.Key;
             var times = kvp.Value;
-            
+
             if (times.Count == 0) continue;
-            
+
             var avg = times.Average();
             var min = times.Min();
             var max = times.Max();
             var count = times.Count;
-            
+
             var status = avg > 33 ? "❌ CRITICAL" : avg > 16 ? "⚠️ WARNING" : "✅ OK";
-            
+
             _logger?.Debug("{Status} {Operation}: Avg={Avg:F1}ms, Min={Min}ms, Max={Max}ms, Count={Count}",
                 status, operation, avg, min, max, count);
         }
-        
+
         _logger?.Debug("==============================");
     }
-    
+
     /// <summary>
     /// Clear all recorded timings.
     /// </summary>
@@ -175,7 +175,7 @@ public static class PerformanceProfiler
         _activeTimers.Clear();
         _logger?.Debug("Performance profiler reset");
     }
-    
+
     /// <summary>
     /// Get average timing for an operation.
     /// </summary>
@@ -183,7 +183,7 @@ public static class PerformanceProfiler
     {
         if (!_timings.TryGetValue(operationName, out var times) || times.Count == 0)
             return 0;
-        
+
         return times.Average();
     }
 }

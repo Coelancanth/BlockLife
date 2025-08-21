@@ -29,7 +29,7 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
     private readonly System.Threading.Timer _flushTimer;
     private readonly StringBuilder _batchBuffer = new(4096);
     private volatile bool _disposed;
-    
+
     // Rate limiting to prevent UI freezing
     private const int MaxBatchSize = 50;
     private const int FlushIntervalMs = 100;
@@ -39,12 +39,12 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
         _richTextLabelRef = new WeakReference<RichTextLabel>(richTextLabel);
         _enableRichText = enableRichText;
         _maxLines = maxLines;
-        
+
         if (GodotObject.IsInstanceValid(richTextLabel))
         {
             richTextLabel.BbcodeEnabled = true;
         }
-        
+
         // Batched processing to prevent performance issues
         _flushTimer = new System.Threading.Timer(FlushBatch, null, FlushIntervalMs, FlushIntervalMs);
     }
@@ -52,15 +52,15 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
     public void Emit(LogEvent logEvent)
     {
         if (_disposed) return;
-        
+
         try
         {
-            var message = _enableRichText 
-                ? FormatRichText(logEvent) 
+            var message = _enableRichText
+                ? FormatRichText(logEvent)
                 : logEvent.RenderMessage();
-                
+
             _logQueue.Enqueue(message);
-            
+
             // Prevent unbounded growth
             while (_logQueue.Count > _maxLines * 2)
             {
@@ -77,19 +77,19 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
     {
         if (_disposed || !_richTextLabelRef.TryGetTarget(out var richTextLabel) || !GodotObject.IsInstanceValid(richTextLabel))
             return;
-            
+
         try
         {
             _batchBuffer.Clear();
             int count = 0;
-            
+
             while (_logQueue.TryDequeue(out var message) && count < MaxBatchSize)
             {
                 if (_batchBuffer.Length > 0) _batchBuffer.AppendLine();
                 _batchBuffer.Append(message);
                 count++;
             }
-            
+
             if (_batchBuffer.Length > 0)
             {
                 richTextLabel.CallDeferred(nameof(AppendBatchSafe), _batchBuffer.ToString());
@@ -105,7 +105,7 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
     {
         if (!_richTextLabelRef.TryGetTarget(out var richTextLabel) || !GodotObject.IsInstanceValid(richTextLabel))
             return;
-            
+
         try
         {
             // Simple but effective line management approach
@@ -117,7 +117,7 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
                 var keepLines = lines.Skip(Math.Max(0, lines.Length - _maxLines + MaxBatchSize)).ToArray();
                 richTextLabel.Text = string.Join('\n', keepLines);
             }
-            
+
             if (richTextLabel.Text.Length > 0)
             {
                 richTextLabel.AppendText("\n" + batchText);
@@ -126,7 +126,7 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
             {
                 richTextLabel.AppendText(batchText);
             }
-            
+
             // Auto-scroll to bottom
             richTextLabel.ScrollToLine(richTextLabel.GetLineCount() - 1);
         }
@@ -148,20 +148,20 @@ public class RichTextLabelSink : ILogEventSink, IDisposable
             LogEventLevel.Fatal => "red",
             _ => "white"
         };
-        
+
         logEvent.Properties.TryGetValue("SourceContext", out var sourceContext);
         var context = sourceContext?.ToString().Trim('"') ?? "Default";
-        
+
         return $"[color={color}][{logEvent.Level.ToString().ToUpper()}] [{context}] {logEvent.RenderMessage()}[/color]";
     }
-    
+
     public void Dispose()
     {
         if (_disposed) return;
         _disposed = true;
-        
+
         _flushTimer?.Dispose();
-        
+
         // Final flush
         FlushBatch(null);
     }

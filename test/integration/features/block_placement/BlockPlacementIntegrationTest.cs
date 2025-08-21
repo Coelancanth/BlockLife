@@ -38,10 +38,10 @@ namespace BlockLife.test.integration.features.block_placement
             // Get the scene tree from the test node itself
             _sceneTree = GetTree();
             _sceneTree.Should().NotBeNull("scene tree must be available");
-            
+
             // Get SceneRoot autoload - should be available in Godot context
             var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
-            
+
             if (sceneRoot == null)
             {
                 // If SceneRoot doesn't exist, we're not in a proper Godot context
@@ -49,25 +49,25 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.PrintErr("SceneRoot not found - test must be run from Godot editor with SceneRoot autoload");
                 return;
             }
-            
+
             // Get service provider
             var serviceProviderField = typeof(SceneRoot).GetField("_serviceProvider",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             _serviceProvider = serviceProviderField?.GetValue(sceneRoot) as IServiceProvider;
             _serviceProvider.Should().NotBeNull("service provider must be initialized");
-            
+
             // Create test scene as a child of this test node
             _testScene = await CreateTestScene();
             _testScene.Should().NotBeNull("test scene must be created");
-            
+
             // Get controllers
             _gridController = _testScene!.GetNode<GridInteractionController>("GridView/GridInteractionController");
             _visualController = _testScene.GetNode<BlockVisualizationController>("GridView/BlockVisualizationController");
-            
+
             _gridController.Should().NotBeNull("grid controller must exist in scene");
             _visualController.Should().NotBeNull("visualization controller must exist in scene");
         }
-        
+
         /// <summary>
         /// Creates a test scene with proper structure (COPIED from SimpleSceneTest)
         /// </summary>
@@ -77,27 +77,27 @@ namespace BlockLife.test.integration.features.block_placement
             var root = new Node2D();
             root.Name = "TestRoot";
             AddChild(root);
-            
+
             // Create GridView structure
             var gridView = new GridView();
             gridView.Name = "GridView";
             root.AddChild(gridView);
-            
+
             var gridController = new GridInteractionController();
             gridController.Name = "GridInteractionController";
             gridView.AddChild(gridController);
-            
+
             var visualController = new BlockVisualizationController();
             visualController.Name = "BlockVisualizationController";
             gridView.AddChild(visualController);
-            
+
             var blockContainer = new Node2D();
             blockContainer.Name = "BlockContainer";
             visualController.AddChild(blockContainer);
-            
+
             // Let everything initialize
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-            
+
             return root;
         }
 
@@ -149,22 +149,22 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             TestLogger.Log("=== Starting ClickOnGrid_PlacesBlock_CompleteFlow ===");
             GD.Print("[TEST] === Starting ClickOnGrid_PlacesBlock_CompleteFlow ===");
-            
+
             // TRACE: Check initial block count
             var initialBlockContainer = _visualController!.BlockContainer;
             TestLogger.Log($"TEST TRACE: ClickOnGrid starting with {initialBlockContainer?.GetChildCount() ?? -1} blocks");
             GD.Print($"[TEST] ClickOnGrid starting with {initialBlockContainer?.GetChildCount() ?? -1} blocks");
-            
+
             // Arrange
             var clickPosition = new Vector2Int(5, 5);
             var worldPosition = new Vector2(clickPosition.X * 64 + 32, clickPosition.Y * 64 + 32);
-            
+
             // Get the grid state service from real SceneRoot
             var gridState = GetRequiredService<IGridStateService>();
-            
+
             // Verify grid is initially empty
             var initialBlock = gridState.GetBlockAt(clickPosition);
             initialBlock.ShouldBeNone("grid should be empty initially");
@@ -176,28 +176,28 @@ namespace BlockLife.test.integration.features.block_placement
                 ButtonIndex = MouseButton.Left,
                 Pressed = true
             };
-            
+
             _gridController!._GuiInput(clickEvent);
-            
+
             // Wait for async operations to complete
             await WaitMilliseconds(100);
 
             // Assert - Verify core state updated
             var placedBlock = gridState.GetBlockAt(clickPosition);
             placedBlock.ShouldBeSome("block should be placed after click");
-            
+
             // Wait for async operations to complete (notification pipeline)
             await WaitMilliseconds(500);
-            
+
             // Assert - Verify visual state updated
             var blockContainer = _visualController!.BlockContainer;
             blockContainer.Should().NotBeNull("block container must exist");
             blockContainer!.GetChildCount().Should().Be(1, "exactly one visual block should be created");
-            
+
             // Verify the visual block is at correct position
             var visualBlock = blockContainer.GetChild(0) as Node2D;
             visualBlock.Should().NotBeNull("visual block should exist");
-            visualBlock!.Position.Should().Be(new Vector2(clickPosition.X * 64, clickPosition.Y * 64), 
+            visualBlock!.Position.Should().Be(new Vector2(clickPosition.X * 64, clickPosition.Y * 64),
                 "visual block should be at the correct grid position");
         }
 
@@ -215,11 +215,11 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var clickPosition = new Vector2Int(3, 3);
             var worldPosition = new Vector2(clickPosition.X * 64 + 32, clickPosition.Y * 64 + 32);
-            
+
             var clickEvent = new InputEventMouseButton
             {
                 Position = worldPosition,
@@ -238,7 +238,7 @@ namespace BlockLife.test.integration.features.block_placement
             // Assert - Should only have one block
             var blockContainer = _visualController!.BlockContainer;
             blockContainer!.GetChildCount().Should().Be(1, "only one block should exist despite multiple clicks");
-            
+
             // Verify no duplicate blocks in core state
             var gridState = GetRequiredService<IGridStateService>();
             var block = gridState.GetBlockAt(clickPosition);
@@ -259,7 +259,7 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var positions = new[]
             {
@@ -279,16 +279,16 @@ namespace BlockLife.test.integration.features.block_placement
                     ButtonIndex = MouseButton.Left,
                     Pressed = true
                 };
-                
+
                 _gridController!._GuiInput(clickEvent);
                 await WaitMilliseconds(50);
             }
 
             // Assert - All blocks should be placed
             var blockContainer = _visualController!.BlockContainer;
-            blockContainer!.GetChildCount().Should().Be(positions.Length, 
+            blockContainer!.GetChildCount().Should().Be(positions.Length,
                 "all {0} blocks should be placed", positions.Length);
-            
+
             // Verify each position has a block in core state
             var gridState = GetRequiredService<IGridStateService>();
             foreach (var pos in positions)
@@ -311,11 +311,11 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var invalidPosition = new Vector2Int(100, 100); // Way outside 10x10 grid
             var worldPosition = new Vector2(invalidPosition.X * 64 + 32, invalidPosition.Y * 64 + 32);
-            
+
             var clickEvent = new InputEventMouseButton
             {
                 Position = worldPosition,
@@ -329,7 +329,7 @@ namespace BlockLife.test.integration.features.block_placement
 
             // Assert - No blocks should be placed
             var blockContainer = _visualController!.BlockContainer;
-            blockContainer!.GetChildCount().Should().Be(0, 
+            blockContainer!.GetChildCount().Should().Be(0,
                 "no blocks should be placed for invalid position");
         }
 
@@ -346,7 +346,7 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var positions = new Vector2Int[25];
             int index = 0;
@@ -368,20 +368,20 @@ namespace BlockLife.test.integration.features.block_placement
                     ButtonIndex = MouseButton.Left,
                     Pressed = true
                 };
-                
+
                 _gridController!._GuiInput(clickEvent);
                 // Minimal delay to simulate rapid clicking
                 await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
             }
-            
+
             // Wait for all processing to complete
             await WaitMilliseconds(500);
 
             // Assert - All blocks should be placed
             var blockContainer = _visualController!.BlockContainer;
-            blockContainer!.GetChildCount().Should().Be(25, 
+            blockContainer!.GetChildCount().Should().Be(25,
                 "all 25 blocks from rapid clicking should be placed");
-            
+
             // Verify core state
             var gridState = GetRequiredService<IGridStateService>();
             foreach (var pos in positions)
