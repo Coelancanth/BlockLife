@@ -346,7 +346,7 @@ When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
    - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
-   - Run ./scripts/branch-status-check.ps1 (git intelligence and branch status)
+   - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current feature development status and user-facing priorities
 
 2. **Auto-Review Backlog & CurrentState** ✅

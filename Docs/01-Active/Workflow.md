@@ -4,7 +4,7 @@
 1. **Check Memory Bank** first: `.claude/memory-bank/activeContext.md`
 2. **Review patterns**: `.claude/memory-bank/patterns.md` 
 3. **Understand decisions**: `.claude/memory-bank/decisions.md`
-4. **Check branch status**: `./scripts/branch-status-check.ps1` (branch intelligence)
+4. **Check branch status**: `./scripts/git/branch-status-check.ps1` (branch intelligence)
 5. **Then proceed** with workflow below
 
 ### Branch Workflow Integration
@@ -432,13 +432,13 @@ Before writing code with unfamiliar APIs:
 |-------|-------|----------|
 | **"Merge conflicts"** | Branch behind main | `git rebase origin/main` or create fresh branch |
 | **"PR already exists"** | Working on merged branch | Run `./scripts/branch-cleanup.ps1` to clean up |
-| **"No such branch"** | Branch name mismatch | Use `./scripts/branch-status-check.ps1` for guidance |
+| **"No such branch"** | Branch name mismatch | Use `./scripts/git/branch-status-check.ps1` for guidance |
 | **"Working on wrong item"** | Branch/work item misalignment | Create new branch for current work item |
 
 ### Quick Commands
 ```bash
 # Check branch intelligence before starting work
-./scripts/branch-status-check.ps1
+./scripts/git/branch-status-check.ps1
 
 # Clean up merged branches automatically
 ./scripts/branch-cleanup.ps1
