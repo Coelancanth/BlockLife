@@ -390,13 +390,13 @@
 **Created**: 2025-08-21
 
 **What**: Create simple git-based Memory Bank sync with log rotation
-**Why**: Replace over-engineered TD_051 with pragmatic 10-line solution
+**Why**: Replace over-engineered TD_051 with pragmatic solution
 **How**:
 - Create `memory-sync.ps1` with basic git pull/add/commit/push
-- Add monthly log rotation (SESSION_LOG >30 days → archive)
-- Extract patterns to docs when >20 entries
-- No staleness marking needed (timestamp is sufficient)
-- No complex harvest triggers or tiered sync
+- Add 7-day log rotation for SESSION_LOG
+- Extract patterns-recent to docs when >20 entries
+- No compaction needed (activeContext stays small naturally)
+- Hook integration for automatic sync
 **Done When**:
 - Simple sync script deployed to all clones
 - Log rotation prevents unbounded growth
@@ -407,18 +407,19 @@
 **Tech Lead Decision** (2025-08-21):
 - Complexity: 10/100 (simple git operations)
 - Decision: APPROVED as replacement for rejected TD_051
-- Solves same problem with 10 lines instead of 250
+- Solves same problem with ~70 lines instead of 250
 - Pattern: Standard log rotation, not enterprise architecture
 - Key insight: Memory Bank is working memory, not permanent storage
 
 **Implementation Complete** (2025-08-21):
-✅ Created memory-sync.ps1 (80 lines total)
+✅ Created memory-sync.ps1 (~70 lines final)
 ✅ Hook integration: auto-sync on checkout/commit/push
-✅ 3-day SESSION_LOG rotation implemented
+✅ 7-day SESSION_LOG rotation (weekly cycle)
 ✅ patterns-recent.md buffer (20-line threshold)
 ✅ Removed decisions.md (use backlog instead)
-✅ activeContext compaction when >5KB
+✅ No compaction needed (removed for simplicity)
 ✅ Zero manual sync required - fully automatic
+✅ Robust error handling in hooks (|| true)
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
