@@ -85,19 +85,81 @@ Y↑
 
 ### Quick Decision Matrix
 
-| Work Type | Goes To | Key Responsibility |
-|-----------|---------|-------------------|
-| New Features | Product Owner | Creates VS items |
-| Technical Planning | Tech Lead | Breaks down, approves TD |
-| Implementation | Dev Engineer | Builds features |
-| Testing | Test Specialist | Creates tests, finds bugs |
-| Complex Bugs (>30min) | Debugger Expert | Deep investigation |
-| CI/CD & Tools | DevOps Engineer | Automation, infrastructure |
+| Work Type | Goes To | Key Responsibility | Don't Send To |
+|-----------|---------|-------------------|---------------|
+| New Features | Product Owner | Creates VS items | Tech Lead (until defined) |
+| Technical Planning | Tech Lead | Breaks down, approves TD | Dev Engineer (direct) |
+| Implementation | Dev Engineer | Builds features | Test Specialist (too early) |
+| Testing | Test Specialist | Creates tests, finds bugs | Dev Engineer (for strategy) |
+| Complex Bugs (>30min) | Debugger Expert | Deep investigation | Dev Engineer (timebox exceeded) |
+| CI/CD & Tools | DevOps Engineer | Automation, infrastructure | Dev Engineer (for scripts) |
+
+### Detailed Work Routing Rules
+
+#### 🎯 By Work Category
+
+| Category | Primary Owner | Secondary Owner | Never Route To |
+|----------|--------------|-----------------|----------------|
+| **Requirements & Features** |
+| User stories | Product Owner | - | Tech Lead (before definition) |
+| Acceptance criteria | Product Owner | Test Specialist | Dev Engineer |
+| Priority decisions | Product Owner | - | Any technical persona |
+| **Architecture & Design** |
+| Pattern selection | Tech Lead | - | Dev Engineer |
+| ADR creation | Tech Lead | - | Test Specialist |
+| System design | Tech Lead | - | DevOps Engineer |
+| **Implementation** |
+| Feature coding | Dev Engineer | - | Test Specialist |
+| Bug fixes (<30min) | Dev Engineer | - | Debugger Expert |
+| Refactoring | Dev Engineer | Tech Lead (approval) | Test Specialist |
+| **Quality & Testing** |
+| Test strategy | Test Specialist | - | Dev Engineer |
+| Unit test creation | Test Specialist | Dev Engineer (TDD green) | Product Owner |
+| Bug reports | Test Specialist | Debugger Expert (complex) | Product Owner |
+| **Infrastructure** |
+| Build scripts | DevOps Engineer | - | Dev Engineer |
+| CI/CD pipeline | DevOps Engineer | - | Test Specialist |
+| Automation tools | DevOps Engineer | - | Tech Lead |
+| **Investigation** |
+| Complex bugs | Debugger Expert | - | Dev Engineer (after 30min) |
+| Performance issues | Debugger Expert | DevOps Engineer | Test Specialist |
+| State corruption | Debugger Expert | - | Product Owner |
+
+#### 🔄 Handoff Triggers
+
+| From | To | When |
+|------|-----|------|
+| Product Owner | Tech Lead | VS item fully defined with acceptance criteria |
+| Tech Lead | Dev Engineer | Technical approach documented and approved |
+| Test Specialist | Dev Engineer | Failing tests written (TDD red phase) |
+| Dev Engineer | Test Specialist | Implementation complete, ready for validation |
+| Dev Engineer | Debugger Expert | 30min debugging timebox exceeded |
+| Debugger Expert | Dev Engineer | Root cause identified with clear fix |
+| DevOps Engineer | Dev Engineer | Automation requires business logic changes |
+| Any Persona | Product Owner | Requirements unclear or need priority decision |
+
+#### ⚠️ Common Routing Mistakes
+
+| Wrong Route | Right Route | Why |
+|-------------|------------|-----|
+| PO → Dev for requirements | PO → Tech Lead → Dev | Tech Lead needs to plan approach |
+| Dev → PO for bugs | Dev → Test Specialist | Test validates, PO accepts features |
+| Test → Dev for test strategy | Test owns strategy | Dev implements, doesn't design tests |
+| Dev → DevOps for simple scripts | Dev implements | DevOps for infrastructure only |
+| Tech Lead → Debugger for design | Tech Lead owns | Debugger investigates, not designs |
+
+#### 🎲 When in Doubt
+
+1. **Feature Work**: Product Owner → Tech Lead → Dev Engineer → Test Specialist
+2. **Bug Work**: Test Specialist → Debugger Expert (if complex) → Dev Engineer
+3. **Infrastructure**: DevOps Engineer (unless business logic involved)
+4. **30-Minute Rule**: Any debugging > 30min → Debugger Expert
+5. **Approval Needed**: All TD items → Tech Lead for approval
 
 ### Work Item Types
-- **VS_xxx**: Vertical Slice (new feature)
-- **BR_xxx**: Bug Report (investigation)
-- **TD_xxx**: Technical Debt (refactoring)
+- **VS_xxx**: Vertical Slice (new feature) - Owner: Product Owner → Tech Lead → Dev
+- **BR_xxx**: Bug Report (defect) - Owner: Test Specialist → Debugger/Dev
+- **TD_xxx**: Technical Debt (improvement) - Owner: Tech Lead (approval) → Dev
 
 ---
 

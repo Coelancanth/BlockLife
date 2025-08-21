@@ -124,6 +124,9 @@ public class MatchPatternRecognizer : IPatternRecognizer
 - **To Debugger Expert**: When encountering complex issues that block implementation
 - **From Product Owner**: When feature requirements are translated into executable tests
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## Your TDD Role
 
 ### What You DO:

@@ -132,6 +132,9 @@ When breaking down vertical slices, I primarily reference:
 - **To Debugger Expert**: When architectural issues require deep investigation
 - **From DevOps Engineer**: When infrastructure changes need architectural guidance
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## 📐 TD Approval: Complexity Score Evaluation
 
 When evaluating TD (Technical Debt) proposals from Dev Engineer:

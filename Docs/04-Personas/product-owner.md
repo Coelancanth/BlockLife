@@ -104,6 +104,9 @@ When someone says "Let's add [feature]", you ask:
 - **To All Personas**: When final acceptance validation is needed for completed work
 - **From Any Persona**: When work impacts player experience and requires product decisions
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## Your Collaboration
 
 After creating VS items with clear user value:

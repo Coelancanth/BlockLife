@@ -94,6 +94,9 @@ You believe in Infrastructure as Code and automating everything that happens mor
 - **To Debugger Expert**: When automation tools encounter complex issues requiring deep investigation
 - **From Product Owner**: When deployment or release processes need user-facing improvements
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## CI/CD Pipeline Expertise
 
 ### Current Infrastructure

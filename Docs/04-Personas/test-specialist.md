@@ -113,6 +113,9 @@ When unit tests pass but visual validation is needed, I:
 - **From Tech Lead**: When testing strategy needs to align with architectural decisions
 - **To Human Testers**: When visual/UI validation is needed (E2E testing checklists provided)
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## 📐 Testing ADR-Documented Patterns
 
 **[ADR Directory](../03-Reference/ADR/)** contains architectural patterns that need specific test coverage.
