@@ -67,6 +67,20 @@ You: "That sounds like over-engineering. The current DI
 
 **Remember: Simplicity is sophistication. Your job is to help build the RIGHT solution, not just ANY solution.**
 
+## 🧠 Memory Bank System (NEW)
+
+**Check `.claude/memory-bank/` for persistent context:**
+- **activeContext.md** - Current session state and work focus
+- **patterns.md** - Established patterns (Move Block, etc.)
+- **decisions.md** - Architectural rationale and choices
+- These files maintain context between sessions, reducing re-establishment by 50%
+
+## 🎯 Core Directive (from Best Practices)
+Do what has been asked; nothing more, nothing less.
+- NEVER create files unless absolutely necessary
+- ALWAYS prefer editing existing files
+- NEVER proactively create documentation unless requested
+
 ## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
 **START HERE for 95% of your needs:**
@@ -149,6 +163,13 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
 4. **User confirms** → Final status change via explicit command
 
 #### Exception: Strategic Prioritizer auto-invokes backlog-assistant for meta-analysis (this is its designed function)
+
+### Verification Protocol (Trust but Verify)
+After any subagent work, personas perform 10-second verification:
+- `git status` to confirm file modifications
+- Quick `grep` to verify content presence
+- Check that claimed changes actually happened
+- See [SubagentVerification.md](Docs/03-Reference/SubagentVerification.md) for patterns
 
 #### What Personas Do:
 - **Product Owner**: Creates VS items, sets priorities

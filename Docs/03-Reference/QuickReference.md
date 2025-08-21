@@ -1,5 +1,23 @@
 # 🤖 Agent Quick Reference
 
+## 🧠 Memory Bank System (NEW)
+**Persistent context between sessions**: `.claude/memory-bank/`
+- **activeContext.md** - Current work focus (check first!)
+- **patterns.md** - Established patterns to follow
+- **decisions.md** - Why we made certain choices
+
+## ✅ Verification Protocol
+**Trust but Verify** - 10-second checks after subagent work:
+- `./scripts/verify-subagent.ps1 -Type backlog`
+- See [SubagentVerification.md](SubagentVerification.md) for patterns
+
+## 📊 Best Practices (from Community)
+**Quick Wins to adopt**:
+- Memory Bank (✅ implemented)
+- Chain of Draft mode for conciseness
+- Parallel task processing with TodoWrite
+- See [ClaudeCodeBestPractices.md](ClaudeCodeBestPractices.md) for full list
+
 ## 🎯 Reference Implementation (GOLD STANDARD)
 **Copy this for ALL new work**: `src/Features/Block/Move/`
 - File structure, naming, patterns

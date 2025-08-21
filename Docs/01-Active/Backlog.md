@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 039 (Last: TD_038 - 2025-08-20)  
+- **Next TD**: 043 (Last: TD_042 - 2025-08-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -63,74 +63,76 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### TD_042: Consolidate Duplicate Archive Files [Score: 15/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Critical
+**Markers**: [DATA-INTEGRITY] [INFRASTRUCTURE] [RISK]
+**Created**: 2025-08-21
+
+**What**: Merge two duplicate archive files into single authoritative source
+**Why**: Two archives (Archive.md and Completed_Backlog.md) create confusion, risk data loss, and increase maintenance burden
+**How**:
+- Merge all content from Docs/01-Active/Archive.md into Docs/07-Archive/Completed_Backlog.md
+- Preserve append-only safeguards and recovery protocols from Archive.md
+- Delete Archive.md after successful merge
+- Update all persona documentation to reference correct path
+- Update backlog-assistant with correct archive path
+- Add redirect note in 01-Active pointing to 07-Archive
+- Verify no references to old Archive.md remain
+**Done When**:
+- Single authoritative archive at Docs/07-Archive/Completed_Backlog.md
+- All 489 lines from Archive.md preserved in Completed_Backlog.md
+- No duplicate archive files exist
+- All personas use correct archive path
+- Git history shows clean consolidation
+- Safeguards section preserved
+**Depends On**: None
+
+**Problem Context**: 
+- Archive.md (489 lines, complete) in 01-Active folder
+- Completed_Backlog.md (265 lines, partial) in 07-Archive folder
+- Different items in each, creating confusion about which is authoritative
+- Risk of updates going to wrong file and data loss
+
 
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-
-### TD_030: Simplify Persona Backlog Update Suggestions [Score: 50/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [UX] [PRODUCTIVITY]
-**Created**: 2025-08-20
-
-**What**: Personas should provide concise task summaries instead of detailed backlog-assistant commands
-**Why**: Current pattern shows full command syntax which is verbose and intimidating for users, reduces readability
-**How**: 
-- Update all persona documentation to suggest summaries in bullet points
-- User can request command generation if needed
-- Focus on WHAT changed not HOW to update
-**Done When**: 
-- All personas provide clean summaries like "Mark VS_004 complete, Create TD_031 for refactoring"
-- Commands only generated on explicit request
-- Documentation updated
-**Depends On**: None
-
-**Problem**: Personas currently suggest long, detailed backlog-assistant commands that are hard to read and review
-**Better Approach**: Simple bullet summaries that user can easily understand and approve
-
-**Tech Lead Decision** (2025-08-20):
-- **Complexity Score**: 1/10
-- **Decision**: Approved as pure documentation improvement
-- **Rationale**: Reduces cognitive load, improves readability, no technical changes required, aligns with simplicity principle
-- **Implementation Note**: Update all persona docs to use bullet summaries instead of showing full backlog-assistant command syntax
-
-### TD_031: Add Verification Step for Subagent Work Completion [Score: 45/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [PROCESS] [QUALITY]
-**Created**: 2025-08-20
-
-**What**: Create verification mechanism to confirm subagent tasks are actually completed
-**Why**: Currently operating on trust without verification - subagents report completion but we don't verify
-**How**: 
-- Add post-subagent verification step in workflows
-- Create simple verification scripts/patterns
-- Document verification protocol for each subagent type
-- Consider adding automated checks where possible
-**Done When**: 
-- Verification patterns documented for all subagents
-- Scripts/tools created for common verifications
-- Process integrated into persona workflows
-- False completion reports detectible
-**Depends On**: None
-
-**Tech Lead Decision** (2025-08-20):
-- Complexity Score: 3/10
-- Decision: Auto-approved as process improvement
-- Rationale: Addresses real trust-but-don't-verify gap in our automation
-- Owner: DevOps (workflow tooling and process automation)
-
-### TD_038: Create Architectural Consistency Validation System [Score: 65/100]
+### TD_041: Verify and Document Persona Embodiment Flow [Score: 25/100]
 **Status**: Proposed
-**Owner**: Tech Lead
-**Size**: L (1-3 days)
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [DOCUMENTATION] [PROCESS] [VERIFICATION]
+**Created**: 2025-08-21
+
+**What**: Verify what actually happens when embodying personas and document the complete flow
+**Why**: Gap between documented behavior and actual behavior creates confusion; need to ensure personas follow intended workflow
+**How**:
+- Test embodying each persona and document actual behavior
+- Verify which docs are automatically read (Memory Bank, Backlog, etc.)
+- Check if personas follow the documented workflow steps
+- Identify gaps between intended and actual behavior
+- Update persona docs with accurate flow description
+- Create checklist of what SHOULD happen vs what DOES happen
+**Done When**:
+- Complete flow documented for each persona
+- Gaps between intended and actual behavior identified
+- Persona docs updated with accurate automation descriptions
+- Verification checklist created for future testing
+- Memory Bank integration verified in practice
+**Depends On**: None
+
+**Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.
+
+### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: M (4-8h)
 **Priority**: Important
 **Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
 **Created**: 2025-08-20
@@ -162,13 +164,63 @@
 
 **Reference**: https://github.com/centminmod/my-claude-code-setup demonstrates excellent patterns for custom commands and validation tools we can adapt.
 
-**Tech Lead Consideration**: Should this be a PowerShell tool, Python script, or Claude Code subagent? Each has trade-offs for maintenance and usage.
+**Tech Lead Decision** (2025-08-21):
+- Complexity Score: 35/100 (pattern copying from reference repos, not creating from scratch)
+- Decision: Approved with focused scope
+- Rationale: Proven patterns exist in centminmod/my-claude-code-setup we can directly adapt
+- Implementation: Follow memory-bank-synchronizer pattern for validation
+- Key: Not building from scratch - adapting existing successful implementations
+
+### TD_039: Implement Husky.NET and EditorConfig for Enhanced Developer Workflow [Score: 40/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: M (4-8h)
+**Priority**: Important
+**Markers**: [TOOLING] [DEVELOPER-EXPERIENCE] [QUALITY]
+**Created**: 2025-08-20
+
+**What**: Integrate Husky.NET for cross-platform git hooks and enhance EditorConfig for consistent code formatting
+**Why**: Manual hook installation × 6 clones = error-prone; need automatic propagation across all persona clones
+**How**:
+- Install and configure Husky.NET for cross-platform git hooks
+- Migrate existing pre-commit and pre-push hooks to Husky.NET
+- Enhance .editorconfig with comprehensive C# and Godot settings
+- Add format verification to pre-commit hooks
+- Configure auto-formatting rules for common scenarios
+- Document setup process for new developers
+- Ensure compatibility with VS Code, Visual Studio, and Rider
+
+**Done When**:
+- Husky.NET installed and working on Windows/Mac/Linux
+- All existing git hooks migrated to Husky.NET
+- EditorConfig covers all file types in project
+- Pre-commit hook validates formatting
+- Documentation updated with setup instructions
+- Works seamlessly with multi-clone architecture
+- Zero manual configuration needed for new developers
+
+**Depends On**: None
+
+**Problem Context**: Current git hooks require PowerShell and manual installation. Code formatting inconsistencies create unnecessary PR review friction. Husky.NET provides automatic, cross-platform hook installation, while enhanced EditorConfig ensures consistent formatting regardless of editor choice.
+
+**Reference**: 
+- Husky.NET: https://github.com/alirezanet/Husky.Net
+- EditorConfig: https://editorconfig.org/
+
+**Tech Lead Decision** (2025-08-21):
+- Complexity Score: 40/100
+- Decision: Approved - critical for multi-clone architecture
+- Rationale: With 6 separate persona clones, manual hook management is unsustainable
+- Note: Not about cross-platform, about managing hooks across multiple clones
+- Impact: Eliminates manual hook installation and ensures consistency
+
+**Implementation Notes**: Should integrate cleanly with our multi-clone setup since each clone can have its own Husky configuration. Consider adding format-on-save configurations for popular editors.
 
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation [Score: 25/100]
+### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation [Score: 60/100]
 **Status**: Proposed
 **Owner**: Tech Lead
 **Size**: L (1-3 days)
@@ -178,6 +230,7 @@
 
 **What**: Create custom PowerShell tool for Claude Code to validate architecture and patterns
 **Why**: Current validation requires multiple grep/read operations; structured validation would catch issues early
+**Note**: Revisit after TD_038 and TD_040 implementation to learn from patterns
 **How**: 
 - Implement after TD_029/030 to compare approaches
 - Create validate-architecture.ps1 with structured output
