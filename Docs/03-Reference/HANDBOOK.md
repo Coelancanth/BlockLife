@@ -54,60 +54,17 @@ Y↑
 
 ## 💻 Development Workflow
 
-### Git Workflow (Standard Commands + Smart Hooks)
-
-#### Daily Flow
-```bash
-# Start new work
-git checkout main && git pull origin main
-git checkout -b feat/VS_003-feature-name
-
-# Make changes
-git add -A
-git commit -m "feat(VS_003): clear description"
-
-# Stay synchronized
-git fetch origin && git rebase origin/main
-
-# Push changes (hooks run automatically)
-git push -u origin feat/VS_003-feature-name
-
-# Create PR
-gh pr create --title "feat(VS_003): Title" --body "Description"
-```
-
-#### Branch Naming
+### Branch Naming Convention (CRITICAL)
 - **Feature**: `feat/VS_003-description`
 - **Bug Fix**: `fix/BR_012-description`
 - **Tech Debt**: `tech/TD_042-description`
-- **Use underscores**: `VS_003` not `vs-003`
+- **Use underscores**: `VS_003` not `vs-003` (matches Backlog.md)
 
-#### Automated Hooks (via Husky.NET)
-- **pre-commit**: Format validation
-- **commit-msg**: Conventional commits enforcement
-- **pre-push**: Build + unit tests
-- Auto-installed on `dotnet build` - zero config needed
-
-### Memory Bank System
-
-**Location**: `.claude/memory-bank/`
-
-#### When to Update
-- ✅ After completing work items
-- ✅ When discovering patterns (saves >10min)
-- ✅ After fixing bugs (took >30min)
-- ✅ Making architectural decisions
-- ❌ NOT for trivial changes or WIP
-
-#### Structure
-```
-.claude/memory-bank/
-├── activeContext.md    # Current work (expires: 7 days)
-├── patterns.md         # Proven patterns
-├── decisions.md        # Architecture choices
-├── lessons.md          # Bug fixes & gotchas
-└── SESSION_LOG.md      # Session history (30 days)
-```
+### Memory Bank Protocol (Post TD_054)
+- **Location**: `.claude/memory-bank/activeContext.md` (local-only, in .gitignore)
+- **When to update**: Pre-push hook reminds you
+- **What to record**: High-value context only (decisions, patterns, blockers, all git status)
+- **No buffers**: Valuable patterns → Docs/03-Reference/ immediately or delete
 
 ### Build & Test Commands
 
@@ -191,6 +148,66 @@ option.IfSome(entity => {
 ```
 
 **Key Rule**: Everything returns `Fin<T>` - no exceptions thrown
+
+---
+
+## 📐 Implementation Patterns
+
+### Git Hook Auto-Installation
+**Pattern**: Configure Husky in .csproj for zero-config setup  
+**Example**: `BlockLife.Core.csproj:22-25`  
+**Rationale**: Hooks auto-install on `dotnet tool restore` across all clones  
+
+### Branch Naming Convention  
+**Pattern**: Use underscores for work items (VS_003 not vs-003)  
+**Example**: `feat/VS_003-save-system`  
+**Rationale**: Matches Backlog.md format exactly  
+
+### CI Branch Freshness Check
+**Pattern**: Fail PRs that are >20 commits behind main  
+**Example**: `.github/workflows/ci.yml:49-99`  
+**Rationale**: Prevents surprise conflicts during merge  
+
+---
+
+## 🚫 Anti-Patterns to Avoid
+
+### ❌ Direct Godot Access from Domain
+```csharp
+// WRONG - Never reference Godot in domain
+public class BlockService {
+    private Node2D _sprite; 
+}
+```
+
+### ❌ Skipping Error Handling
+```csharp
+// WRONG - Assumes success
+var result = service.Execute();
+return result.Value;
+
+// RIGHT - Handle both paths  
+return service.Execute()
+    .Match(
+        success => success,
+        failure => HandleError(failure)
+    );
+```
+
+### ❌ Creating Files Without Need
+- Never create documentation proactively
+- Always prefer editing existing files
+- Only create files when explicitly required
+
+### ❌ Comments Unless Asked
+```csharp
+// WRONG (unless requested)
+// This method moves the block
+public void MoveBlock() { }
+
+// RIGHT - Clean code without comments
+public void MoveBlock() { }
+```
 
 ---
 
@@ -292,10 +309,21 @@ grep "Status: Completed"
    - **Fix**: Use `build.ps1 test` not `test-only`
 
 3. **Husky Hook Path**
-   - **Issue**: Hooks not executing
-   - **Fix**: Verify `git config --get core.hookspath` shows `.husky`
+   - **Issue**: Hooks not executing after installation
+   - **Fix**: `dotnet husky install` sets core.hookspath automatically
+   - **Debug**: `git config --get core.hookspath` should return `.husky`
 
-4. **dotnet format Needs .sln**
+4. **CI Status Job Dependencies**
+   - **Issue**: Status job fails with missing dependency
+   - **Fix**: Include all jobs in needs array: `[build-and-test, code-quality, branch-freshness]`
+   - **Location**: `.github/workflows/ci.yml:278`
+
+5. **Documentation Sprawl**
+   - **Issue**: Same info in 4+ files, hard to find anything
+   - **Solution**: Consolidated into HANDBOOK.md (4,675 → 800 lines)
+   - **Lesson**: Enforce single source of truth ruthlessly
+
+6. **dotnet format Needs .sln**
    - **Issue**: "找到 MSBuild 项目文件"
    - **Fix**: Specify `BlockLife.sln` explicitly
 
@@ -303,38 +331,80 @@ grep "Status: Completed"
 
 ## 🎯 Quick Commands
 
-### Most Used Commands
+### Testing Commands
 ```bash
-# Build & test
-./scripts/core/build.ps1 test
-
-# Check what changed
-git status
-
-# Find something in code
-grep -r "pattern" src/
-
-# Run specific test
+# Run specific test suite
 dotnet test --filter "FullyQualifiedName~MoveBlock"
 
-# Create PR
-gh pr create --title "feat: title" --body "description"
-```
-
-### Verification Commands
-```bash
-# Was file modified?
-git status | grep filename
-
-# Is content present?
-grep "search term" file.md
-
-# Check build status
-dotnet build --no-restore
-
-# Run quick tests
+# Run unit tests only (skip integration)
 dotnet test --no-build --filter "Category!=Integration"
+
+# Quick build check
+dotnet build --no-restore
 ```
+
+---
+
+## 🎯 Technology Decisions
+
+### Build System: MSBuild + PowerShell
+**Why**: Cross-platform support, familiar to C# developers  
+**Alternative Considered**: Make, CMake  
+**Decision Factor**: Windows-first development environment  
+
+### Test Framework: XUnit + GdUnit4
+**Why**: XUnit for domain, GdUnit4 for Godot integration  
+**Alternative Considered**: NUnit, MSTest  
+**Decision Factor**: Better async support in XUnit  
+
+### DI Container: Microsoft.Extensions.DependencyInjection
+**Why**: Standard, well-documented, integrated with .NET  
+**Alternative Considered**: Autofac, Unity  
+**Decision Factor**: Simplicity and standards compliance  
+
+### State Management: Service-based with DI
+**Why**: Simple, testable, no hidden dependencies  
+**Alternative Considered**: Redux-style, Event sourcing  
+**Decision Factor**: Complexity not justified for current scope  
+
+### Git Strategy: Feature Branches + Squash Merge
+**Why**: Clean main history, detailed feature history  
+**Alternative**: GitFlow, GitHub Flow  
+**Decision Factor**: Simplicity with safety  
+
+### Git Hooks: Husky.NET
+**Why**: Zero-config across clones, automatic installation  
+**Alternative Considered**: pre-commit (Python), manual scripts  
+**Decision Factor**: Native to .NET ecosystem  
+
+---
+
+## ❌ Rejected Approaches
+
+### Microservices Architecture
+**Rejected Because**: Over-engineering for a game  
+**Complexity**: 9/10  
+**Benefit**: 2/10 for current scope  
+
+### Event Sourcing
+**Rejected Because**: Unnecessary complexity  
+**Complexity**: 8/10  
+**Benefit**: 1/10 for current needs  
+
+### Custom Build System
+**Rejected Because**: MSBuild works fine  
+**Complexity**: 7/10  
+**Benefit**: 1/10 marginal gains  
+
+### Worktree-based Development (Sacred Sequence)
+**Rejected Because**: Conflicts and complexity  
+**Replaced With**: Multi-clone architecture  
+**Result**: Much cleaner workflow  
+
+### Complex Memory Bank Sync (TD_051)
+**Rejected Because**: Over-engineered 250-line solution  
+**Replaced With**: Local-only Memory Bank (TD_053/054)  
+**Result**: Radical simplification  
 
 ---
 

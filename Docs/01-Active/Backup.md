@@ -681,3 +681,111 @@ public Property DoubleSwap_ReturnsToOriginal()
 - **Future**: Property tests integrated with 1000+ generated cases
 - Edge cases discovered are documented
 - CI pipeline includes property test execution
+
+
+### TD_048: Migrate FsCheck Property-Based Tests to 3.x API [Score: 30/100]
+**Status**: Approved
+**Owner**: Test Specialist
+**Size**: M (4-8h)
+**Priority**: Important
+**Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
+**Created**: 2025-08-21
+
+**What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
+**Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
+**How**:
+- Research FsCheck 3.x API changes (use Context7 if available)
+- Update `Prop.ForAll` usage to new API patterns
+- Fix `Gen<T>`, `Arb`, and `Arbitrary<T>` usage
+- Resolve Property attribute conflicts with xUnit
+- Update custom generators in `BlockLifeGenerators.cs`
+- Update property tests in `SimplePropertyTests.cs`
+- Re-enable FsCheck.Xunit package reference
+- Move tests back from `FsCheck_Migration_TD047/` to proper location
+- Ensure all 7 property-based tests pass
+**Done When**:
+- All FsCheck tests compile with 3.x API
+- All property-based tests passing (7 tests)
+- FsCheck.Xunit package re-enabled in project
+- No references to old 2.x API patterns
+- Property tests moved back to proper test directory
+**Depends On**: None
+
+**Problem Context**: Package updates completed but FsCheck 3.x has extensive breaking changes requiring dedicated migration effort. Tests temporarily disabled to unblock other infrastructure updates.
+
+**Tech Lead Decision** (2025-08-21):
+- Actual Complexity: 35/100 (slightly underestimated due to API redesign)
+- Decision: APPROVED - Legitimate technical debt from package updates
+- FsCheck 3.x is fundamental API redesign, not just version bump
+- Property testing provides valuable edge case coverage for game logic
+- Migration necessary to re-enable 7 disabled tests
+
+### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: M (4-8h)
+**Priority**: Important
+**Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
+**Created**: 2025-08-20
+
+**What**: Design and implement comprehensive consistency checker for post-migration validation
+**Why**: Major architecture shift from worktrees to multi-clone needs systematic validation to ensure nothing was missed
+**How**:
+- Create consistency-checker subagent or slash command
+- Validate all references updated (no worktree mentions remain)
+- Check persona documentation consistency across all 6 personas
+- Verify git workflow references are standard (no Sacred Sequence)
+- Validate Clean Architecture boundaries still enforced
+- Check Glossary term usage consistency
+- Ensure all paths reference correct clone directories
+- Verify Context7 integration points still valid
+
+**Done When**:
+- Consistency validation tool/subagent created
+- Can run full codebase scan in <30 seconds
+- Produces structured report of inconsistencies
+- Zero false positives on clean codebase
+- Catches all migration-related issues
+- Integrated into CI/CD pipeline as optional check
+- Documentation includes usage examples
+
+**Depends On**: TD_037 (personas must be updated first)
+
+**Problem Context**: We've made a fundamental architectural change (worktrees → clones) and updated many files. We need systematic validation that everything is consistent. Manual checking is error-prone and doesn't scale.
+
+**Reference**: https://github.com/centminmod/my-claude-code-setup demonstrates excellent patterns for custom commands and validation tools we can adapt.
+
+**Tech Lead Decision** (2025-08-21):
+- Complexity Score: 35/100 (pattern copying from reference repos, not creating from scratch)
+- Decision: Approved with focused scope
+- Rationale: Proven patterns exist in centminmod/my-claude-code-setup we can directly adapt
+- Implementation: Follow memory-bank-synchronizer pattern for validation
+- Key: Not building from scratch - adapting existing successful implementations
+
+
+### TD_041: Verify and Document Persona Embodiment Flow [Score: 25/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [DOCUMENTATION] [PROCESS] [VERIFICATION]
+**Created**: 2025-08-21
+
+**What**: Verify what actually happens when embodying personas and document the complete flow
+**Why**: Gap between documented behavior and actual behavior creates confusion; need to ensure personas follow intended workflow
+**How**:
+- Test embodying each persona and document actual behavior
+- Verify which docs are automatically read (Memory Bank, Backlog, etc.)
+- Check if personas follow the documented workflow steps
+- Identify gaps between intended and actual behavior
+- Update persona docs with accurate flow description
+- Create checklist of what SHOULD happen vs what DOES happen
+**Done When**:
+- Complete flow documented for each persona
+- Gaps between intended and actual behavior identified
+- Persona docs updated with accurate automation descriptions
+- Verification checklist created for future testing
+- Memory Bank integration verified in practice
+**Depends On**: None
+
+**Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.

@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 056 (Last: TD_055 - 2025-08-21)  
+- **Next TD**: 057 (Last: TD_056 - 2025-08-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -63,10 +63,48 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### TD_056: Fix Pre-Commit Hook Memory Bank File Handling [Score: 15/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Critical
+**Markers**: [INFRASTRUCTURE] [GIT-HOOKS] [MEMORY-BANK]
+**Created**: 2025-08-21
+
+**What**: Update pre-commit hook to handle Memory Bank files being local-only and potentially deleted
+**Why**: Current pre-commit hook fails when Memory Bank files don't exist, requiring --no-verify to bypass during legitimate commits - ESCALATED TO CRITICAL as this blocks quality gates and forces bypassing all pre-commit protections
+**How**:
+- Update .husky/pre-commit to handle missing Memory Bank files gracefully
+- Remove or conditionally execute `git add .claude/memory-bank/*.md 2>/dev/null` 
+- Ensure hook works correctly when Memory Bank is local-only (in .gitignore)
+- Add error handling for scenarios where Memory Bank directory doesn't exist
+- Test hook behavior with both existing and deleted Memory Bank files
+- Maintain formatting functionality while fixing Memory Bank handling
+**Done When**:
+- Pre-commit hook runs successfully without Memory Bank files present
+- No need for --no-verify when committing legitimate Memory Bank changes
+- Hook gracefully handles both local-only and tracked Memory Bank states
+- Formatting functionality preserved and working correctly
+- Documentation updated if hook behavior changes significantly
+**Depends On**: None
+
+**Problem Context**: During TD_053/TD_054 commit, pre-commit hook failed because it tried to add Memory Bank files that were intentionally deleted/untracked. This forces use of --no-verify, which bypasses all hook protections including code formatting.
+
+**Tech Lead Decision** (2025-08-21):
+- Complexity: 10/100 (overestimated - simple line removal)
+- Decision: APPROVED - Critical infrastructure fix
+- Priority Escalation: Important → Critical (blocks all quality gates)
+- Root Cause: Hook written before Memory Bank became local-only (TD_053/TD_054)
+- Safety Impact: Forces --no-verify usage, bypassing code formatting and all pre-commit protections
+- Implementation: Remove line 7 entirely (simplest solution)
+- Timeline: <1 hour (remove one line, test)
+- Pattern: Direct fix, no architectural risk
+
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
 
 ### TD_055: Define Branch and Commit Decision Protocols [Score: 35/100]
 **Status**: Proposed
