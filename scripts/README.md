@@ -2,6 +2,11 @@
 
 Organized automation tools for building, testing, git workflow, and development productivity.
 
+📚 **Essential Reading:**
+- **[Developer Guide](DEVELOPER_GUIDE.md)** - Complete usage documentation
+- **[Quick Reference](QUICK_REFERENCE.md)** - Print-friendly cheat sheet  
+- **[Husky Guide](HUSKY_GUIDE.md)** - Git hooks comprehensive guide
+
 ## 🚀 Quick Start
 
 ### Essential Build Commands
@@ -18,57 +23,62 @@ Organized automation tools for building, testing, git workflow, and development 
 ```
 
 ### Git Workflow Setup
-```powershell
-# Windows
-./scripts/git/install-hooks.ps1   # Install git hooks
+**Note**: Git hooks are managed by Husky.NET (installed automatically during build).  
+No manual installation required - hooks are in `.husky/` directory.
 
-# Linux/Mac
-./scripts/git/install-hooks.sh    # Install git hooks
+### Persona System Setup
+```powershell
+# Set up all 6 persona clones (one-time)
+./scripts/persona/setup-personas.ps1
+
+# Sync all persona repositories (weekly or when switching between personas)
+./scripts/persona/sync-personas.ps1
+
+# Install Claude protection for main directory (optional)
+./scripts/protection/install-claude-protection.ps1
 ```
 
-### Verification Scripts (NEW)
+### Branch Management Tools
 ```powershell
-# Verify subagent work completion
-./scripts/verify-subagent.ps1 -Type backlog
-./scripts/verify-subagent.ps1 -Type general -CheckFiles "*.cs"
+# Intelligent branch status checking (for AI persona embodiment)
+./scripts/branch-status-check.ps1
 
-# Quick backlog update verification
-./scripts/verify-backlog-update.ps1
-./scripts/verify-backlog-update.ps1 -ItemNumber "TD_041"
+# Automated cleanup for merged PRs
+./scripts/branch-cleanup.ps1
+./scripts/branch-cleanup.ps1 feat/VS_003-specific-branch
+
+# Check current branch alignment with work items
+source ./scripts/branch-status-check.sh    # Linux/Mac
 ```
 
 ## 📁 Directory Structure
 
-### **core/** - Essential Operations
+### **core/** - Build System
 - `build.ps1/.sh` - Build automation (build, test, clean, run)
 - Complete build lifecycle management
 - [📖 Documentation](core/README.md)
 
-### **git/** - Git Workflow  
-- `hooks/` - Pre-commit build validation, pre-checkout naming
-- `install-hooks.ps1/.sh` - Hook installation
-- Branch naming and workflow enforcement
-- [📖 Documentation](git/README.md)
+### **persona/** - Multi-Clone System  
+- `setup-personas.ps1` - Creates 6 isolated persona clones
+- `sync-personas.ps1` - Syncs all persona repositories
+- Complete isolation for persona-based development
+- [📖 Documentation](persona/README.md)
 
-### **test/** - Testing Automation *(Future)*
-- Comprehensive test execution and reporting
-- Code coverage and performance benchmarking
-- [📖 Documentation](test/README.md)
+### **protection/** - Development Safeguards
+- `install-claude-protection.ps1` - Prevents accidental main directory usage
+- Encourages proper persona workspace usage
 
-### **dev/** - Development Utilities *(Future)*
-- Environment setup and health checks
-- Multi-persona development tools (TD_023)
-- [📖 Documentation](dev/README.md)
+### **Root Utilities**
+- `verify-subagent.ps1` - Trust-but-verify subagent work completion
+- `verify-backlog-update.ps1` - Quick backlog update verification
 
-### **deploy/** - Deployment Automation *(Future)*
-- Game packaging and release management
-- Multi-platform deployment
-- [📖 Documentation](deploy/README.md)
+### **deprecated/** - Archived Scripts
+- Obsolete scripts from previous architectural approaches
+- Maintained for recovery if needed
+- [📖 Documentation](deprecated/README.md)
 
-### **utils/** - Shared Utilities *(Future)*
-- Common functions and cross-platform helpers
-- Standardized error handling and validation
-- [📖 Documentation](utils/README.md)
+### **Future Expansion Areas**
+- `test/`, `dev/`, `deploy/`, `utils/` - Placeholder directories for growth
 
 ## CI/CD Integration
 
@@ -84,10 +94,18 @@ These scripts are used by:
 3. **Portable** - Works on Windows, Linux, and Mac
 4. **Focused** - Does one thing well
 
-## Adding New Scripts
+## Developer Onboarding
 
+### New to the project?
+1. Read the **[Developer Guide](DEVELOPER_GUIDE.md)** (5-minute quick start)
+2. Set up persona workspaces: `./scripts/persona/setup-personas.ps1`
+3. Test the build system: `./scripts/core/build.ps1 test`
+4. Keep the **[Quick Reference](QUICK_REFERENCE.md)** handy
+
+### Adding New Scripts
 When adding automation:
-1. Keep it simple - avoid over-engineering
+1. Keep it simple - avoid over-engineering  
 2. Document usage clearly
 3. Support both Windows and Linux when possible
 4. Test locally before committing
+5. Follow the existing patterns in `core/` and `persona/` directories
