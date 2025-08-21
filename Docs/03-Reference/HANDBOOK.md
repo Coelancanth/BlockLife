@@ -377,6 +377,52 @@ dotnet build --no-restore
 **Alternative Considered**: pre-commit (Python), manual scripts  
 **Decision Factor**: Native to .NET ecosystem  
 
+### Critical Warning Enforcement (TD_057)
+**Defense in Depth**: Multi-layer protection against protocol violations
+
+**Enforcement Levels**:
+1. **Client-Side Blocking** (`.husky/pre-push`): 
+   - Direct main push → `exit 1` (BLOCKS push)
+   - Clear workflow guidance with emergency override
+   - Override: `git push --no-verify` (emergencies only)
+
+2. **Server-Side Protection** (GitHub Branch Protection):
+   - Required: Enable "Restrict pushes to matching branches" 
+   - Required: Set "Enforce admins" to true
+   - Effect: Makes direct main push technically impossible
+
+3. **Quality Gates**: All PRs must pass CI before merge
+
+**Override Protocol**: 
+- Emergency hotfixes only: Use `--no-verify` + immediate PR
+- Document override reason in commit message
+- Never override for convenience
+
+### Branch Alignment Intelligence (TD_058)
+**Semantic Workflow Validation**: Educational guidance at commit time
+
+**Validation Layers**:
+1. **Work Item Alignment** (`.husky/pre-commit`):
+   - Detects branch context vs commit content mismatches
+   - Example: TD work on VS branch → Educational warning
+   - Performance: <0.5s execution time
+
+2. **Work Type Consistency**:
+   - Validates branch type (feat/, tech/, fix/) vs commit type
+   - Exception handling: docs and test commits accepted everywhere
+   - Clear guidance for type misalignments
+
+3. **Main Branch Detection** (Backup):
+   - Warns about upcoming pre-push block
+   - Provides feature branch creation guidance
+
+**Educational Approach**: 
+- Non-blocking warnings with actionable advice
+- Clear explanations of expected alignment
+- Integration with existing atomic commit guidance
+
+**Success Metrics**: Reduction in mixed-concern PRs, improved git history clarity
+
 ---
 
 ## ❌ Rejected Approaches

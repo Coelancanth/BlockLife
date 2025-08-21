@@ -251,8 +251,13 @@ date  # Get current date/time before creating dated documents
 - Use `test` before committing (builds + tests)
 - Use `test-only` for rapid development (tests only, not safe for commits)
 
-**Pre-commit Hook Enforcement:**
-- Git pre-commit hook automatically runs `./scripts/core/build.ps1 test` (Windows) or `./scripts/core/build.sh test` (Linux/Mac)
+**Pre-commit Hook Intelligence (Enhanced):**
+- **Atomic Commit Guidance**: Educational checklist for proper commit structure
+- **Branch Alignment Validation** (TD_058): Semantic workflow intelligence
+  - Work item alignment: Warns if TD work on VS branch (or vice versa)  
+  - Work type consistency: Validates feat/, tech/, fix/ branch vs commit types
+  - Performance: <0.5s execution time, non-blocking educational warnings
+- **Build Validation**: Automatically runs `./scripts/core/build.ps1 test` (Windows) or `./scripts/core/build.sh test` (Linux/Mac)
 - **Cannot commit** if build fails - this catches Godot compilation issues
 - Hook can be bypassed in emergencies with `git commit --no-verify` (use sparingly)
 
