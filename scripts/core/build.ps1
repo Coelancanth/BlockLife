@@ -1,3 +1,4 @@
+#!/usr/bin/env pwsh
 # BlockLife Build Script
 # Simple, no over-complexity approach
 

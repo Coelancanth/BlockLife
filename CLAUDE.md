@@ -160,7 +160,7 @@ mcp__context7__get-library-docs "/louthy/language-ext" --topic "Error Fin bind c
 
 ## 📖 Git Workflow
 
-**Essential**: Check branch status before starting work: `./scripts/branch-status-check.ps1`
+**Essential**: Check branch status before starting work: `./scripts/git/branch-status-check.ps1`
 
 **Complete Protocols**: [BranchAndCommitDecisionProtocols.md](Docs/02-Design/Protocols/GitWorkflow/BranchAndCommitDecisionProtocols.md)
 **Architecture Details**: [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md) - Multi-clone setup, troubleshooting

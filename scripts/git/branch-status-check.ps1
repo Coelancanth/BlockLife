@@ -1,3 +1,4 @@
+#!/usr/bin/env pwsh
 # Branch Status Check for AI Persona Embodiment (Windows PowerShell)
 # Usage: .\scripts\branch-status-check.ps1
 

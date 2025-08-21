@@ -1,3 +1,4 @@
+#!/usr/bin/env pwsh
 # Install REAL Claude Protection that actually works
 # This intercepts the 'claude' command that users actually type
 

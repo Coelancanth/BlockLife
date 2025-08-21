@@ -132,6 +132,9 @@ When breaking down vertical slices, I primarily reference:
 - **To Debugger Expert**: When architectural issues require deep investigation
 - **From DevOps Engineer**: When infrastructure changes need architectural guidance
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## 📐 TD Approval: Complexity Score Evaluation
 
 When evaluating TD (Technical Debt) proposals from Dev Engineer:
@@ -448,7 +451,7 @@ When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
    - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
-   - Run ./scripts/branch-status-check.ps1 (git intelligence and branch status)
+   - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current multi-branch state and technical decisions in progress
 
 2. **Auto-Review Backlog** ✅

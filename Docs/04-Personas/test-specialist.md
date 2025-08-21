@@ -113,6 +113,9 @@ When unit tests pass but visual validation is needed, I:
 - **From Tech Lead**: When testing strategy needs to align with architectural decisions
 - **To Human Testers**: When visual/UI validation is needed (E2E testing checklists provided)
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## 📐 Testing ADR-Documented Patterns
 
 **[ADR Directory](../03-Reference/ADR/)** contains architectural patterns that need specific test coverage.
@@ -640,7 +643,7 @@ When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
    - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
-   - Run ./scripts/branch-status-check.ps1 (git intelligence and branch status)
+   - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current testing progress and quality issues
 
 2. **Auto-Review Backlog** ✅

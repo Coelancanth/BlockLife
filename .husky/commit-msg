@@ -3,33 +3,165 @@
 
 # Read commit message
 commit_msg=$(cat "$1")
+commit_msg_first_line=$(echo "$commit_msg" | head -n 1)
 
 # Define valid patterns
-conventional_pattern='^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor)(\([A-Za-z]{2}_[0-9]{3}\))?: .{1,72}$'
+conventional_pattern='^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor|style)(\([A-Za-z]{2,3}_[0-9]{3}\))?: .{1,72}$'
 merge_pattern='^Merge '
 revert_pattern='^Revert '
+wip_pattern='^(WIP|wip):'
+
+# Function to analyze commit message and provide specific feedback
+analyze_commit_message() {
+  local msg="$1"
+  
+  # Check for common issues
+  if echo "$msg" | grep -qE '^[A-Z]'; then
+    if ! echo "$msg" | grep -qE '^(Merge|Revert|WIP)'; then
+      echo "  ⚠  Type should be lowercase (found: '$(echo "$msg" | cut -d: -f1)')"
+    fi
+  fi
+  
+  # Check if colon is missing
+  if ! echo "$msg" | grep -q ':'; then
+    echo "  ⚠  Missing colon after type/scope"
+    echo "     Example: feat: add new feature"
+    return
+  fi
+  
+  # Extract type and check if valid
+  local type=$(echo "$msg" | sed -n 's/^\([a-z]*\).*/\1/p')
+  if [ -n "$type" ]; then
+    if ! echo "$type" | grep -qE '^(feat|fix|tech|docs|test|perf|build|ci|chore|refactor|style)$'; then
+      echo "  ⚠  Invalid type: '$type'"
+      echo "     Valid types: feat, fix, tech, docs, test, perf, build, ci, chore, refactor, style"
+    fi
+  fi
+  
+  # Check scope format if present
+  if echo "$msg" | grep -qE '^\w+\([^)]+\):'; then
+    local scope=$(echo "$msg" | sed -n 's/^[a-z]*(\([^)]*\)).*/\1/p')
+    if [ -n "$scope" ]; then
+      if ! echo "$scope" | grep -qE '^[A-Za-z]{2,3}_[0-9]{3}$'; then
+        echo "  ⚠  Invalid scope format: '($scope)'"
+        echo "     Expected: Work item like VS_001, TD_042, BR_012"
+        echo "     Or omit scope entirely for general changes"
+      fi
+    fi
+  fi
+  
+  # Check description length
+  local desc_with_type=$(echo "$msg" | cut -d' ' -f1)
+  local full_length=${#msg}
+  if [ $full_length -gt 72 ]; then
+    echo "  ⚠  Message too long: $full_length characters (max: 72)"
+    echo "     Consider shortening the description"
+  fi
+  
+  # Check for missing space after colon
+  if echo "$msg" | grep -qE ':[^ ]'; then
+    echo "  ⚠  Missing space after colon"
+    echo "     Should be: 'type: description' not 'type:description'"
+  fi
+  
+  # Check for empty description
+  if echo "$msg" | grep -qE ': *$'; then
+    echo "  ⚠  Empty description"
+    echo "     Add a meaningful description after the colon"
+  fi
+}
 
 # Check message format
 if echo "$commit_msg" | grep -qE "$merge_pattern|$revert_pattern"; then
   # Allow merge and revert commits
+  echo "✅ Merge/Revert commit detected - allowed"
   exit 0
-elif echo "$commit_msg" | grep -qE "$conventional_pattern"; then
+elif echo "$commit_msg" | grep -qE "$wip_pattern"; then
+  # Allow WIP commits for local development
+  echo "⚠️  WIP commit detected - remember to squash before merging"
+  exit 0
+elif echo "$commit_msg_first_line" | grep -qE "$conventional_pattern"; then
   echo "✅ Commit message validated"
+  
+  # Additional helpful validation
+  type=$(echo "$commit_msg_first_line" | cut -d'(' -f1 | cut -d':' -f1)
+  
+  # Provide helpful context based on type
+  case "$type" in
+    feat)
+      echo "   ℹ️  Feature commit - adding new functionality"
+      ;;
+    fix)
+      echo "   ℹ️  Bug fix - resolving an issue"
+      ;;
+    refactor)
+      echo "   ℹ️  Refactoring - improving code without changing behavior"
+      ;;
+    tech)
+      echo "   ℹ️  Technical improvement - architecture, performance, tooling"
+      ;;
+    docs)
+      echo "   ℹ️  Documentation update"
+      ;;
+    test)
+      echo "   ℹ️  Test addition or modification"
+      ;;
+    build)
+      echo "   ℹ️  Build system or dependency change"
+      ;;
+    ci)
+      echo "   ℹ️  CI/CD configuration change"
+      ;;
+    chore)
+      echo "   ℹ️  Maintenance task"
+      ;;
+    style)
+      echo "   ℹ️  Code style/formatting change"
+      ;;
+  esac
+  
   exit 0
 else
   echo "❌ Invalid commit message format!"
   echo ""
-  echo "Expected: <type>(<scope>): <description>"
+  echo "Expected format: <type>(<scope>): <description>"
+  echo "Or:              <type>: <description>"
   echo ""
-  echo "Valid types: feat, fix, tech, docs, test, perf, build, ci, chore, refactor"
+  echo "Valid types:"
+  echo "  • feat     - New feature or functionality"
+  echo "  • fix      - Bug fix or issue resolution"
+  echo "  • refactor - Code improvement without behavior change"
+  echo "  • tech     - Technical improvements (architecture, tools)"
+  echo "  • docs     - Documentation changes only"
+  echo "  • test     - Adding or updating tests"
+  echo "  • perf     - Performance improvements"
+  echo "  • build    - Build system or dependency changes"
+  echo "  • ci       - CI/CD configuration changes"
+  echo "  • chore    - Maintenance tasks, no code change"
+  echo "  • style    - Code style/formatting (no logic change)"
+  echo ""
+  echo "Valid scopes (optional):"
+  echo "  • Work items: VS_001, TD_042, BR_012"
+  echo "  • Can be omitted for general changes"
   echo ""
   echo "Examples:"
   echo "  feat(VS_003): add save system"
-  echo "  fix(BR_012): resolve race condition"  
-  echo "  tech(TD_042): consolidate duplicate archives"
-  echo "  tech(td_042): lowercase also accepted"
+  echo "  fix(BR_012): resolve race condition in block spawner"
+  echo "  refactor: reorganize script directory structure"
+  echo "  tech(TD_042): consolidate duplicate archive logic"
   echo "  docs: update README with build instructions"
   echo ""
-  echo "Your message: $commit_msg"
+  echo "Your message: $commit_msg_first_line"
+  echo ""
+  echo "Detailed analysis:"
+  analyze_commit_message "$commit_msg_first_line"
+  echo ""
+  echo "💡 Tips:"
+  echo "  • Keep the first line under 72 characters"
+  echo "  • Use imperative mood ('add' not 'added')"
+  echo "  • Capitalize the description after type"
+  echo "  • Reference work items when applicable"
+  echo "  • Use 'refactor' for code reorganization"
+  echo ""
   exit 1
 fi

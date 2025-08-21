@@ -108,5 +108,5 @@ Discovered unrelated issue? → New branch
 ## References
 - [BranchAndCommitDecisionProtocols.md](../../02-Design/BranchAndCommitDecisionProtocols.md) - Full implementation details
 - [TD_055](../../01-Active/Backlog.md) - Original problem statement and solution
-- [HUSKY_GUIDE.md](../../../scripts/HUSKY_GUIDE.md) - Git hooks documentation
+- [GUIDE.md](../../../scripts/GUIDE.md) - Complete scripts guide including git hooks
 - [Memory Bank activeContext.md](../../../.claude/memory-bank/activeContext.md) - DevOps session insights on AI paradigm shift

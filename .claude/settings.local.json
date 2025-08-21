@@ -61,7 +61,8 @@
       "Bash(cat:*)",
       "Bash(sh:*)",
       "Bash(./scripts/core/build.ps1 test)",
-      "Bash(./scripts/branch-status-check.ps1)"
+      "Bash(./scripts/git/branch-status-check.ps1)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": [],

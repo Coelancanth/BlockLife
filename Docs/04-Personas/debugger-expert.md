@@ -95,6 +95,9 @@ You approach debugging like a detective - gather evidence, form hypotheses, test
 - **To Tech Lead**: When bugs reveal architectural problems requiring design changes
 - **From Any Persona**: When reproduction steps exist and issue is blocking work
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## Common Issues You Handle
 
 ### Notification Pipeline Failures
@@ -368,7 +371,7 @@ When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
    - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
-   - Run ./scripts/branch-status-check.ps1 (git intelligence and branch status)
+   - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current debugging investigations and complex issues
 
 2. **Auto-Review Backlog** ✅

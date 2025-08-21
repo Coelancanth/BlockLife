@@ -124,6 +124,9 @@ public class MatchPatternRecognizer : IPatternRecognizer
 - **To Debugger Expert**: When encountering complex issues that block implementation
 - **From Product Owner**: When feature requirements are translated into executable tests
 
+### 📍 Master Routing Reference
+**See [HANDBOOK.md - Persona Routing](../03-Reference/HANDBOOK.md#-persona-routing)** for complete routing matrix, edge cases, and common mistakes to avoid.
+
 ## Your TDD Role
 
 ### What You DO:
@@ -455,7 +458,7 @@ When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
    - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
-   - Run ./scripts/branch-status-check.ps1 (git intelligence and branch status)
+   - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current implementation progress and code patterns
 
 2. **Auto-Review Backlog** ✅
