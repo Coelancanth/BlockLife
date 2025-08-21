@@ -63,35 +63,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_042: Consolidate Duplicate Archive Files [Score: 15/100] ✅ COMPLETED
-**Status**: Done
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Critical
-**Markers**: [DATA-INTEGRITY] [INFRASTRUCTURE] [RISK]
-**Created**: 2025-08-21
-**Completed**: 2025-08-21
-
-**What**: Merge two duplicate archive files into single authoritative source
-**Why**: Two archives (Archive.md and Completed_Backlog.md) create confusion, risk data loss, and increase maintenance burden
-
-**Implementation Completed**:
-✅ Merged all 488 lines from Archive.md into Completed_Backlog.md  
-✅ Preserved critical safeguards (append-only rules, recovery protocols)  
-✅ Updated backlog-assistant.md with correct archive path  
-✅ Updated strategic-prioritizer.md references  
-✅ Created redirect notice at Docs/01-Active/ARCHIVE_MOVED.md  
-✅ Deleted duplicate Archive.md file safely  
-✅ Verified no broken references remain  
-
-**Deliverables**:
-- Single authoritative archive: `Docs/07-Archive/Completed_Backlog.md` (396 lines)
-- Updated agent references: backlog-assistant.md, strategic-prioritizer.md
-- Migration notice: `Docs/01-Active/ARCHIVE_MOVED.md`
-
-**Impact**: Data integrity risk eliminated, single source of truth established, organizational memory preserved and consolidated.
-
-
 
 
 ## 📈 Important (Do Next)
