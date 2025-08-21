@@ -1,6 +1,6 @@
 ## 📋 Work Item Reference
-<!-- For VS/BR/TD items, use branch naming: feat/vs-XXX-description -->
-**Work Item**: <!-- e.g., VS_003, BR_002, TD_009 -->
+<!-- For VS/BR/TD items, use branch naming: feat/VS_XXX-description -->
+**Work Item**: <!-- e.g., VS_003, BR_012, TD_042 -->
 **Backlog Link**: <!-- Link to item in Docs/01-Active/Backlog.md -->
 
 ## 📝 What Changed
@@ -8,7 +8,7 @@
 
 ## ✅ Checklist
 <!-- Check all that apply -->
-- [ ] Branch follows naming convention (`feat/vs-XXX`, `fix/br-XXX`, `feat/td-XXX`)
+- [ ] Branch follows naming convention (`feat/VS_XXX`, `fix/BR_XXX`, `tech/TD_XXX`)
 - [ ] Work item exists in Backlog.md
 - [ ] Tests added/updated
 - [ ] Build passes locally (`./scripts/core/build.ps1 test`)

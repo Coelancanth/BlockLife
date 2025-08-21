@@ -46,9 +46,61 @@ jobs:
         fi
         echo "✅ No merge conflicts"
 
+  branch-freshness:
+    name: Check Branch Freshness
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history to compare
+        
+    - name: Check if PR is stale
+      run: |
+        echo "🔍 Checking branch freshness..."
+        
+        # Get the base branch (usually main)
+        BASE_BRANCH=${{ github.base_ref }}
+        
+        # Fetch latest base branch
+        git fetch origin $BASE_BRANCH
+        
+        # Count commits behind
+        BEHIND=$(git rev-list --count HEAD..origin/$BASE_BRANCH)
+        
+        echo "📊 Branch is $BEHIND commits behind $BASE_BRANCH"
+        
+        if [ "$BEHIND" -gt 20 ]; then
+          echo "::error::Branch is too far behind $BASE_BRANCH ($BEHIND commits). Please rebase your branch."
+          echo "## ❌ Branch Too Stale" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This branch is **$BEHIND commits** behind \`$BASE_BRANCH\`." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please run:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "git fetch origin" >> $GITHUB_STEP_SUMMARY
+          echo "git rebase origin/$BASE_BRANCH" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        elif [ "$BEHIND" -gt 10 ]; then
+          echo "::warning::Branch is $BEHIND commits behind $BASE_BRANCH. Consider rebasing soon."
+          echo "## ⚠️ Branch Getting Stale" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This branch is **$BEHIND commits** behind \`$BASE_BRANCH\`." >> $GITHUB_STEP_SUMMARY
+          echo "Consider rebasing to avoid future conflicts." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ Branch is reasonably up-to-date"
+          echo "## ✅ Branch Freshness OK" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Branch is $BEHIND commits behind \`$BASE_BRANCH\`." >> $GITHUB_STEP_SUMMARY
+        fi
+
   build-and-test:
     name: Build & Test
-    needs: quick-check
+    needs: [quick-check, branch-freshness]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     
@@ -223,7 +275,7 @@ jobs:
   # Final status check for branch protection
   ci-status:
     name: CI Status
-    needs: [build-and-test, code-quality]
+    needs: [build-and-test, code-quality, branch-freshness]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -236,9 +288,16 @@ jobs:
           exit 1
         fi
         
-        if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ needs.code-quality.result }}" != "success" ]; then
-          echo "❌ Code Quality checks failed"
-          exit 1
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          if [ "${{ needs.code-quality.result }}" != "success" ]; then
+            echo "❌ Code Quality checks failed"
+            exit 1
+          fi
+          
+          if [ "${{ needs.branch-freshness.result }}" != "success" ] && [ "${{ needs.branch-freshness.result }}" != "skipped" ]; then
+            echo "❌ Branch freshness check failed"
+            exit 1
+          fi
         fi
         
         echo "✅ All CI checks passed!"

@@ -10,7 +10,7 @@ public interface IGridInteractionView
     IObservable<Vector2Int> GridCellClicked { get; }
     IObservable<Vector2Int> GridCellHovered { get; }
     IObservable<Vector2Int> GridCellExited { get; }
-    
+
     // Drag Events (Phase 1 Foundation)
     IObservable<Vector2Int> DragStarted { get; }
     IObservable<Vector2Int> DragMoved { get; }

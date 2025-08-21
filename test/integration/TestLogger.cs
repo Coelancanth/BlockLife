@@ -8,7 +8,7 @@ namespace BlockLife.test.integration
     {
         private static readonly string LogPath = Path.Combine(@"C:\Users\Coel\Documents\Godot\blocklife", "test_debug.log");
         private static readonly object _lock = new object();
-        
+
         static TestLogger()
         {
             // Clear the log file at the start
@@ -18,7 +18,7 @@ namespace BlockLife.test.integration
             }
             catch { }
         }
-        
+
         public static void Log(string message, [CallerMemberName] string caller = "", [CallerFilePath] string file = "")
         {
             lock (_lock)
@@ -32,7 +32,7 @@ namespace BlockLife.test.integration
                 catch { }
             }
         }
-        
+
         public static string GetLogPath() => LogPath;
     }
 }

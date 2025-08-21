@@ -63,7 +63,7 @@ namespace BlockLife.Core.Features.Block.Drag.Commands
                     Succ: _ => Error.New("UNKNOWN", "Unknown error"),
                     Fail: e => e
                 );
-                _logger.Error("Failed to start drag for BlockId {BlockId}: {Error}", 
+                _logger.Error("Failed to start drag for BlockId {BlockId}: {Error}",
                     request.BlockId, error.Message);
                 return Task.FromResult(FinFail<LanguageExt.Unit>(error));
             }

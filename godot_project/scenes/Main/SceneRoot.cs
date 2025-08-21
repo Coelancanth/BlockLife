@@ -47,11 +47,11 @@ public partial class SceneRoot : Node
         // --- 1. Enforce Singleton Pattern with thread-safe mutex protection ---
         lock (_initLock)
         {
-            if (Instance != null) 
+            if (Instance != null)
             {
                 GD.PrintErr("FATAL: A second SceneRoot was instantiated. Destroying self to prevent multiple DI containers.");
-                QueueFree(); 
-                return; 
+                QueueFree();
+                return;
             }
             Instance = this;
         }
@@ -68,7 +68,7 @@ public partial class SceneRoot : Node
             // CRITICAL: Never crash on initialization - provide diagnostics and continue
             GD.PrintErr($"FATAL: SceneRoot initialization failed: {ex.Message}");
             GD.PrintErr($"Stack Trace: {ex.StackTrace}");
-            
+
             // Create minimal fallback setup so the game can still run
             CreateFallbackSetup();
         }
@@ -110,19 +110,19 @@ public partial class SceneRoot : Node
                 GD.PrintErr($"SceneRoot: Failed to initialize RichTextLabel sink: {ex.Message}. In-game console disabled.");
             }
         }
-        
+
         // --- 4. Initialize DI Container with Enhanced GameStrapper ---
         try
         {
             // Create GodotConsoleSink for console output (always)
             var godotConsoleSink = new GodotConsoleSink(
-                "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}", 
+                "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}",
                 null);
-            
+
             // Use legacy API with GodotConsoleSink for console output
             var masterSwitch = new LoggingLevelSwitch(_logSettings.DefaultLogLevel);
             var categorySwitches = new Dictionary<string, LoggingLevelSwitch>();
-            
+
             _serviceProvider = GameStrapper.Initialize(masterSwitch, categorySwitches, godotConsoleSink, _richTextSink);
             GD.Print("DI Container initialized successfully with GodotConsoleSink for console output");
         }
@@ -131,19 +131,19 @@ public partial class SceneRoot : Node
             GD.PrintErr($"CRITICAL: Failed to initialize DI container with new API: {ex.Message}");
             throw; // Will be caught by outer try-catch for fallback
         }
-        
+
         // --- 5. Retrieve Services from DI Container ---
         try
         {
             PresenterFactory = _serviceProvider.GetRequiredService<IPresenterFactory>();
             Logger = _serviceProvider.GetRequiredService<ILogger>();
-            
+
             // Confirm successful initialization
             Logger.ForContext("SourceContext", LogCategory.Core)
                   .Information("🚀 SceneRoot initialized successfully - Advanced Logger & GameStrapper active");
-                  
+
             Logger.ForContext("SourceContext", LogCategory.DI)
-                  .Debug("DI Container validated and ready with {ServiceCount} registered services", 
+                  .Debug("DI Container validated and ready with {ServiceCount} registered services",
                          _serviceProvider.GetType().GetProperty("Services")?.GetValue(_serviceProvider) ?? "unknown");
         }
         catch (Exception ex)
@@ -156,17 +156,17 @@ public partial class SceneRoot : Node
     private void CreateFallbackSetup()
     {
         GD.PrintErr("Creating minimal fallback setup to prevent application crash...");
-        
+
         try
         {
             // Create absolute minimal setup using legacy API as emergency fallback
             var masterSwitch = new LoggingLevelSwitch(LogEventLevel.Warning);
             var categorySwitches = new Dictionary<string, LoggingLevelSwitch>();
             var godotConsoleSink = new GodotConsoleSink(GodotSinkExtensions.DefaultGodotSinkOutputTemplate, null);
-            
+
             _serviceProvider = GameStrapper.Initialize(masterSwitch, categorySwitches, godotConsoleSink, null);
             PresenterFactory = _serviceProvider.GetRequiredService<IPresenterFactory>();
-            
+
             GD.PrintErr("Fallback setup complete - Application can continue with limited functionality");
         }
         catch (Exception fallbackEx)
@@ -189,17 +189,17 @@ public partial class SceneRoot : Node
                     disposableSink.Dispose();
                     _richTextSink = null;
                 }
-                
+
                 // 2. Dispose of DI container and all registered services
                 if (_serviceProvider is IDisposable disposableProvider)
                 {
                     disposableProvider.Dispose();
                     _serviceProvider = null;
                 }
-                
+
                 // 3. Clear presenter factory reference
                 PresenterFactory = null;
-                
+
                 GD.Print("SceneRoot cleanup completed successfully");
             }
             catch (Exception ex)

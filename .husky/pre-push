@@ -1,0 +1,47 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Get current branch
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Don't run on main branch
+if [ "$current_branch" = "main" ]; then
+  echo "⚠️  Direct push to main branch is discouraged"
+  echo "   Consider creating a PR instead"
+  exit 0
+fi
+
+echo "🔨 Building solution..."
+dotnet build BlockLife.sln --nologo --verbosity quiet
+
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed!"
+  echo "   Fix build errors before pushing"
+  exit 1
+fi
+
+echo "🧪 Running unit tests..."
+# Run only fast unit tests, skip integration and performance tests
+dotnet test BlockLife.sln --no-build \
+  --filter "Category!=Integration&Category!=Performance" \
+  --verbosity quiet
+
+if [ $? -ne 0 ]; then
+  echo "❌ Unit tests failed!"
+  echo "   Fix failing tests before pushing"
+  echo "   To bypass: git push --no-verify"
+  exit 1
+fi
+
+# Check if branch is stale
+echo "🔄 Checking branch freshness..."
+git fetch origin main --quiet 2>/dev/null
+behind_count=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+
+if [ "$behind_count" -gt 20 ]; then
+  echo "⚠️  WARNING: Branch is $behind_count commits behind main"
+  echo "   Strongly recommend: git rebase origin/main"
+  echo ""
+fi
+
+echo "✅ All checks passed - ready to push!"

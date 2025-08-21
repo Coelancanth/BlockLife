@@ -67,13 +67,43 @@ You: "That sounds like over-engineering. The current DI
 
 **Remember: Simplicity is sophistication. Your job is to help build the RIGHT solution, not just ANY solution.**
 
-## 🧠 Memory Bank System (NEW)
+## 🧠 Memory Bank System - ACTIVE MAINTENANCE REQUIRED
 
-**Check `.claude/memory-bank/` for persistent context:**
-- **activeContext.md** - Current session state and work focus
-- **patterns.md** - Established patterns (Move Block, etc.)
-- **decisions.md** - Architectural rationale and choices
-- These files maintain context between sessions, reducing re-establishment by 50%
+**CRITICAL**: Memory Bank must be actively maintained to prevent context loss!
+
+### Quick Start
+```bash
+# At session start:
+1. Check .claude/memory-bank/activeContext.md (if >7 days old, consider stale)
+2. Load relevant patterns.md if implementing
+3. Check lessons.md if debugging
+
+# During work:
+- Update after completing work items
+- Record patterns when discovered
+- Save lessons from complex bugs (>30min)
+
+# At session end:
+"Update memory bank"  # Saves current context
+```
+
+### When to Update (MANDATORY)
+| Trigger | What to Record | File |
+|---------|---------------|------|
+| Work item done | Status, next item | activeContext.md |
+| Pattern found | Pattern + example | patterns.md |
+| Bug fixed (>30min) | Root cause + fix | lessons.md |
+| Architecture decision | Choice + rationale | decisions.md |
+| Session end | Current state | activeContext.md |
+
+### Memory Bank Files
+- **activeContext.md** - Current work state (expires: 7 days)
+- **patterns.md** - Proven patterns with examples (persistent)
+- **decisions.md** - Architecture choices & rationale (persistent)  
+- **lessons.md** - Bug fixes & gotchas (persistent)
+- **SESSION_LOG.md** - Update history (rolling 30 days)
+
+**Full Protocol**: [MemoryBankProtocol.md](Docs/03-Reference/MemoryBankProtocol.md) - Detailed update rules, templates, examples
 
 ## 🎯 Core Directive (from Best Practices)
 Do what has been asked; nothing more, nothing less.

@@ -1,0 +1,31 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Only run for branch checkouts (not file checkouts)
+if [ "$3" = "1" ]; then
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+  
+  # Skip for main branch
+  if [ "$current_branch" = "main" ]; then
+    exit 0
+  fi
+  
+  # Fetch latest main silently
+  git fetch origin main --quiet 2>/dev/null
+  
+  # Check how far behind we are
+  behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+  
+  if [ "$behind" -gt 10 ]; then
+    echo ""
+    echo "📊 Branch Status: $current_branch"
+    echo "   ⚠️  $behind commits behind main"
+    echo "   💡 Consider: git rebase origin/main"
+    echo ""
+  elif [ "$behind" -gt 0 ]; then
+    echo ""
+    echo "📊 Branch Status: $current_branch"
+    echo "   ℹ️  $behind commits behind main"
+    echo ""
+  fi
+fi

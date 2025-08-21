@@ -35,10 +35,10 @@ namespace BlockLife.test.integration.features.block_placement
             // Get the scene tree from the test node itself
             _sceneTree = GetTree();
             _sceneTree.Should().NotBeNull("scene tree must be available");
-            
+
             // Get SceneRoot autoload - should be available in Godot context
             var sceneRoot = _sceneTree!.Root.GetNodeOrNull<SceneRoot>("/root/SceneRoot");
-            
+
             if (sceneRoot == null)
             {
                 // If SceneRoot doesn't exist, we're not in a proper Godot context
@@ -46,21 +46,21 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.PrintErr("SceneRoot not found - test must be run from Godot editor with SceneRoot autoload");
                 return;
             }
-            
+
             // Get service provider
             var serviceProviderField = typeof(SceneRoot).GetField("_serviceProvider",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             _serviceProvider = serviceProviderField?.GetValue(sceneRoot) as IServiceProvider;
             _serviceProvider.Should().NotBeNull("service provider must be initialized");
-            
+
             // Create test scene as a child of this test node
             _testScene = await CreateTestScene();
             _testScene.Should().NotBeNull("test scene must be created");
-            
+
             // Get controllers
             _gridController = _testScene!.GetNode<GridInteractionController>("GridView/GridInteractionController");
             _visualController = _testScene.GetNode<BlockVisualizationController>("GridView/BlockVisualizationController");
-            
+
             _gridController.Should().NotBeNull("grid controller must exist in scene");
             _visualController.Should().NotBeNull("visualization controller must exist in scene");
         }
@@ -91,32 +91,32 @@ namespace BlockLife.test.integration.features.block_placement
                 await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
                 return scene;
             }
-            
+
             // Otherwise create scene programmatically
             var root = new Node2D();
             root.Name = "TestRoot";
             AddChild(root);
-            
+
             // Create GridView structure
             var gridView = new GridView();
             gridView.Name = "GridView";
             root.AddChild(gridView);
-            
+
             var gridController = new GridInteractionController();
             gridController.Name = "GridInteractionController";
             gridView.AddChild(gridController);
-            
+
             var visualController = new BlockVisualizationController();
             visualController.Name = "BlockVisualizationController";
             gridView.AddChild(visualController);
-            
+
             var blockContainer = new Node2D();
             blockContainer.Name = "BlockContainer";
             visualController.AddChild(blockContainer);
-            
+
             // Let everything initialize
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-            
+
             return root;
         }
 
@@ -132,10 +132,10 @@ namespace BlockLife.test.integration.features.block_placement
                 ButtonIndex = MouseButton.Left,
                 Pressed = true
             };
-            
+
             // Send input to the controller
             _gridController!.GetViewport().PushInput(clickEvent);
-            
+
             // Also send the release event
             var releaseEvent = new InputEventMouseButton
             {
@@ -144,9 +144,9 @@ namespace BlockLife.test.integration.features.block_placement
                 ButtonIndex = MouseButton.Left,
                 Pressed = false
             };
-            
+
             _gridController.GetViewport().PushInput(releaseEvent);
-            
+
             // Wait for processing
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         }
@@ -162,11 +162,11 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var clickPosition = new Vector2Int(5, 5);
             var worldPosition = new Vector2(clickPosition.X * 64 + 32, clickPosition.Y * 64 + 32);
-            
+
             var gridState = _serviceProvider.GetRequiredService<IGridStateService>();
             var initialBlock = gridState.GetBlockAt(clickPosition);
             initialBlock.ShouldBeNone("grid should be empty initially");
@@ -179,7 +179,7 @@ namespace BlockLife.test.integration.features.block_placement
             // Assert
             var placedBlock = gridState.GetBlockAt(clickPosition);
             placedBlock.ShouldBeSome("block should be placed after click");
-            
+
             var blockContainer = _visualController!.GetNode("BlockContainer");
             blockContainer.GetChildCount().Should().Be(1, "exactly one visual block should exist");
         }
@@ -195,7 +195,7 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var positions = new[]
             {
@@ -211,13 +211,13 @@ namespace BlockLife.test.integration.features.block_placement
                 await SimulateClick(worldPos);
                 await Task.Delay(50);
             }
-            
+
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
             // Assert
             var blockContainer = _visualController!.GetNode("BlockContainer");
             AssertInt(blockContainer.GetChildCount()).IsEqual(positions.Length);
-            
+
             var gridState = _serviceProvider.GetRequiredService<IGridStateService>();
             foreach (var pos in positions)
             {
@@ -237,7 +237,7 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange
             var clickPosition = new Vector2Int(4, 4);
             var worldPosition = new Vector2(clickPosition.X * 64 + 32, clickPosition.Y * 64 + 32);
@@ -248,7 +248,7 @@ namespace BlockLife.test.integration.features.block_placement
                 await SimulateClick(worldPosition);
                 await Task.Delay(50);
             }
-            
+
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
             // Assert - Only one block
@@ -267,7 +267,7 @@ namespace BlockLife.test.integration.features.block_placement
                 GD.Print("Skipping test - not in proper Godot context");
                 return;
             }
-            
+
             // Arrange - Position outside 10x10 grid
             var invalidPosition = new Vector2Int(100, 100);
             var worldPosition = new Vector2(invalidPosition.X * 64 + 32, invalidPosition.Y * 64 + 32);

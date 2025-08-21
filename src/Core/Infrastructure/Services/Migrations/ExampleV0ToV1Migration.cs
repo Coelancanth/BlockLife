@@ -18,11 +18,11 @@ namespace BlockLife.Core.Infrastructure.Services.Migrations
         {
             // For saves without version (version 0), we just need to set the version
             // All other data remains compatible
-            
+
             var migrated = data with
             {
                 Version = ToVersion,
-                
+
                 // Ensure metadata exists with defaults if missing
                 Metadata = data.Metadata ?? new SaveMetadata
                 {
@@ -31,7 +31,7 @@ namespace BlockLife.Core.Infrastructure.Services.Migrations
                     PlayTimeSeconds = 0,
                     LoadCount = 1
                 },
-                
+
                 // Ensure settings exist with defaults if missing
                 Settings = data.Settings ?? new GameSettings
                 {

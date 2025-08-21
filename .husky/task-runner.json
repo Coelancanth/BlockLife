@@ -1,0 +1,21 @@
+{
+  "version": "0.6.2",
+  "tasks": [
+    {
+      "name": "format-check",
+      "command": "dotnet",
+      "args": ["format", "--verify-no-changes", "--verbosity", "quiet"],
+      "include": ["**/*.cs", "**/*.csproj"]
+    },
+    {
+      "name": "build-check",
+      "command": "dotnet",
+      "args": ["build", "--nologo", "-v", "q"]
+    },
+    {
+      "name": "test-quick",
+      "command": "dotnet",
+      "args": ["test", "--no-build", "--filter", "Category!=Integration&Category!=Performance", "-v", "q"]
+    }
+  ]
+}

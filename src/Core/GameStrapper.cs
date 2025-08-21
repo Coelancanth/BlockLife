@@ -143,7 +143,7 @@ public static class GameStrapper
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
             BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
-        
+
         // Drag command handlers
         services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.StartDragCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CompleteDragCommandHandler>();
@@ -191,9 +191,9 @@ public static class GameStrapper
             .MinimumLevel.ControlledBy(masterSwitch)
             .Enrich.FromLogContext()
             // Filter out pre-warming messages
-            .Filter.ByExcluding(evt => 
-                evt.Properties.ContainsKey("PreWarm") || 
-                evt.Properties.ContainsKey("SourceContext") && 
+            .Filter.ByExcluding(evt =>
+                evt.Properties.ContainsKey("PreWarm") ||
+                evt.Properties.ContainsKey("SourceContext") &&
                 evt.Properties["SourceContext"].ToString().Contains("PreWarm"))
             .WriteTo.Sink(godotConsoleSink);
 
@@ -236,9 +236,9 @@ public static class GameStrapper
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Application", "BlockLife")
                 // Filter out pre-warming messages
-                .Filter.ByExcluding(evt => 
-                    evt.Properties.ContainsKey("PreWarm") || 
-                    evt.Properties.ContainsKey("SourceContext") && 
+                .Filter.ByExcluding(evt =>
+                    evt.Properties.ContainsKey("PreWarm") ||
+                    evt.Properties.ContainsKey("SourceContext") &&
                     evt.Properties["SourceContext"].ToString().Contains("PreWarm"))
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}");
 
@@ -344,7 +344,7 @@ public static class GameStrapper
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
             BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
-        
+
         // Drag command handlers
         services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.StartDragCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Drag.Commands.CompleteDragCommandHandler>();
@@ -364,7 +364,7 @@ public static class GameStrapper
         // --- Save System with Versioning (TD_015) ---
         services.AddSingleton<BlockLife.Core.Infrastructure.Services.ISaveService,
             BlockLife.Core.Infrastructure.Services.SaveService>();
-        
+
         // Register all save migrations (they'll be injected as IEnumerable)
         services.AddTransient<BlockLife.Core.Domain.Save.ISaveMigration,
             BlockLife.Core.Infrastructure.Services.Migrations.ExampleV0ToV1Migration>();

@@ -14,13 +14,13 @@ public sealed class BlockInspectionHandler
 {
     private readonly IGridStateService _gridStateService;
     private readonly ILogger? _logger;
-    
+
     public BlockInspectionHandler(IGridStateService gridStateService, ILogger? logger)
     {
         _gridStateService = gridStateService;
         _logger = logger?.ForContext<BlockInspectionHandler>();
     }
-    
+
     /// <summary>
     /// Handles the inspect block key press.
     /// Logs detailed information about the block at the hover position.
@@ -28,7 +28,7 @@ public sealed class BlockInspectionHandler
     public void HandleInspectKey(Option<Vector2Int> hoverPosition)
     {
         hoverPosition.Match(
-            Some: position => 
+            Some: position =>
             {
                 InspectPosition(position);
                 return Unit.Default;
@@ -40,13 +40,13 @@ public sealed class BlockInspectionHandler
             }
         );
     }
-    
+
     private void InspectPosition(Vector2Int position)
     {
         _logger?.Debug("Inspecting position {Position}", position);
-        
+
         var blockAtPosition = _gridStateService.GetBlockAt(position);
-        
+
         blockAtPosition.Match(
             Some: block =>
             {
@@ -60,7 +60,7 @@ public sealed class BlockInspectionHandler
             }
         );
     }
-    
+
     private void LogBlockInfo(Core.Domain.Block.Block block, Vector2Int position)
     {
         _logger?.Information("BLOCK INFO at {Position}:", position);
@@ -70,7 +70,7 @@ public sealed class BlockInspectionHandler
         _logger?.Information("   CreatedAt: {CreatedAt}", block.CreatedAt);
         _logger?.Information("   LastModifiedAt: {LastModifiedAt}", block.LastModifiedAt);
     }
-    
+
     private void PrintToConsole(Core.Domain.Block.Block block, Vector2Int position)
     {
         GD.Print($"=== BLOCK INSPECTION ===");
@@ -81,14 +81,14 @@ public sealed class BlockInspectionHandler
         GD.Print($"LastModifiedAt: {block.LastModifiedAt:yyyy-MM-dd HH:mm:ss}");
         GD.Print($"========================");
     }
-    
+
     private void LogEmptyPosition(Vector2Int position)
     {
         _logger?.Information("EMPTY POSITION at {Position}:", position);
         _logger?.Information("   No block present");
         _logger?.Information("   Is Valid Position: {IsValid}", _gridStateService.IsValidPosition(position));
     }
-    
+
     private void PrintEmptyToConsole(Vector2Int position)
     {
         GD.Print($"=== POSITION INSPECTION ===");

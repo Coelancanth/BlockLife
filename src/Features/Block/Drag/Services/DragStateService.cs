@@ -44,7 +44,7 @@ namespace BlockLife.Core.Features.Block.Drag.Services
                 DragStartTime = DateTime.UtcNow
             };
 
-            _logger.Debug("Started drag for block {BlockId} from position {Position}", 
+            _logger.Debug("Started drag for block {BlockId} from position {Position}",
                 blockId, originalPosition);
             return FinSucc(Unit.Default);
         }
@@ -58,8 +58,8 @@ namespace BlockLife.Core.Features.Block.Drag.Services
             }
 
             _currentState = _currentState with { PreviewPosition = previewPosition };
-            
-            _logger.Verbose("Updated drag preview position to {Position} for block {BlockId}", 
+
+            _logger.Verbose("Updated drag preview position to {Position} for block {BlockId}",
                 previewPosition, _currentState.BlockId);
             return FinSucc(Unit.Default);
         }
@@ -73,7 +73,7 @@ namespace BlockLife.Core.Features.Block.Drag.Services
             }
 
             var dragDuration = DateTime.UtcNow - _currentState.DragStartTime;
-            _logger.Debug("Completed drag for block {BlockId} after {Duration}ms", 
+            _logger.Debug("Completed drag for block {BlockId} after {Duration}ms",
                 _currentState.BlockId, dragDuration.TotalMilliseconds);
 
             _currentState = DragState.None;
@@ -101,9 +101,9 @@ namespace BlockLife.Core.Features.Block.Drag.Services
             }
 
             // Calculate Manhattan distance (grid-based movement)
-            var distance = Math.Abs(targetPosition.X - OriginalPosition.X) + 
+            var distance = Math.Abs(targetPosition.X - OriginalPosition.X) +
                           Math.Abs(targetPosition.Y - OriginalPosition.Y);
-            
+
             return distance <= maxRange;
         }
 

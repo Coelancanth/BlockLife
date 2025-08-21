@@ -15,12 +15,12 @@ namespace BlockLife.Core.Tests.Performance;
 public class ViewLayerPerformanceTest
 {
     private readonly ITestOutputHelper _output;
-    
+
     public ViewLayerPerformanceTest(ITestOutputHelper output)
     {
         _output = output;
     }
-    
+
     [Fact]
     [Trait("Category", "Performance")]
     public async Task BlockMovementAnimation_ShouldCompleteWithinTargetTime()
@@ -29,32 +29,32 @@ public class ViewLayerPerformanceTest
         var animationMs = 150; // Animation speed for each operation
         var targetMs = animationMs * 2; // Two animations: show + update position
         var tolerance = 50; // Allow some variance for system performance
-        
+
         // Create a mock visualization controller
         var controller = new TestableBlockVisualizationController
         {
             AnimationSpeed = 0.15f,
             EnableAnimations = true
         };
-        
+
         var blockId = Guid.NewGuid();
         var fromPosition = new Vector2Int(0, 0);
         var toPosition = new Vector2Int(5, 5);
-        
+
         // Act
         var stopwatch = Stopwatch.StartNew();
         await controller.ShowBlockAsync(blockId, fromPosition, BlockType.Basic);
         await controller.UpdateBlockPositionAsync(blockId, toPosition);
         stopwatch.Stop();
-        
+
         // Assert
         _output.WriteLine($"Block movement completed in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"Target: {targetMs}ms (+/- {tolerance}ms)");
-        
+
         // Visual update should complete near our combined animation time
         Assert.InRange(stopwatch.ElapsedMilliseconds, 0, targetMs + tolerance);
     }
-    
+
     [Fact]
     [Trait("Category", "Performance")]
     public async Task InstantMode_ShouldHaveNoAnimationDelay()
@@ -65,26 +65,26 @@ public class ViewLayerPerformanceTest
             AnimationSpeed = 0.15f,
             EnableAnimations = false // Instant mode
         };
-        
+
         var blockId = Guid.NewGuid();
         var fromPosition = new Vector2Int(0, 0);
         var toPosition = new Vector2Int(5, 5);
-        
+
         // Act
         var stopwatch = Stopwatch.StartNew();
         await controller.ShowBlockAsync(blockId, fromPosition, BlockType.Basic);
         await controller.UpdateBlockPositionAsync(blockId, toPosition);
         stopwatch.Stop();
-        
+
         // Assert
         _output.WriteLine($"Instant mode completed in {stopwatch.ElapsedMilliseconds}ms");
-        
+
         // Should be essentially instant (< 50ms for method calls on CI)
         // Increased threshold for CI environments which can be slower
-        Assert.True(stopwatch.ElapsedMilliseconds < 50, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 50,
             $"Instant mode took {stopwatch.ElapsedMilliseconds}ms, expected < 50ms");
     }
-    
+
     [Theory]
     [Trait("Category", "Performance")]
     [InlineData(0.05f, 50)]
@@ -100,23 +100,23 @@ public class ViewLayerPerformanceTest
             AnimationSpeed = speed,
             EnableAnimations = true
         };
-        
+
         var blockId = Guid.NewGuid();
         var position = new Vector2Int(3, 3);
-        
+
         // Act
         var stopwatch = Stopwatch.StartNew();
         await controller.ShowBlockAsync(blockId, position, BlockType.Basic);
         stopwatch.Stop();
-        
+
         // Assert
         _output.WriteLine($"Animation speed {speed}f completed in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"Expected: ~{expectedMs}ms");
-        
+
         // Allow 50ms tolerance for system variance
         Assert.InRange(stopwatch.ElapsedMilliseconds, 0, expectedMs + 50);
     }
-    
+
     /// <summary>
     /// Testable version of BlockVisualizationController that doesn't require Godot runtime.
     /// </summary>
@@ -124,7 +124,7 @@ public class ViewLayerPerformanceTest
     {
         public float AnimationSpeed { get; set; } = 0.15f;
         public bool EnableAnimations { get; set; } = true;
-        
+
         public async Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type)
         {
             if (EnableAnimations)
@@ -134,7 +134,7 @@ public class ViewLayerPerformanceTest
             }
             // Instant if animations disabled
         }
-        
+
         public async Task UpdateBlockPositionAsync(Guid blockId, Vector2Int position)
         {
             if (EnableAnimations)

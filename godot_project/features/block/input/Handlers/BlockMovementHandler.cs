@@ -21,9 +21,9 @@ public sealed class BlockMovementHandler
     private readonly IGridStateService _gridStateService;
     private readonly BlockSelectionManager _selectionManager;
     private readonly ILogger? _logger;
-    
+
     public BlockMovementHandler(
-        IMediator mediator, 
+        IMediator mediator,
         IGridStateService gridStateService,
         BlockSelectionManager selectionManager,
         ILogger? logger)
@@ -33,7 +33,7 @@ public sealed class BlockMovementHandler
         _selectionManager = selectionManager;
         _logger = logger?.ForContext<BlockMovementHandler>();
     }
-    
+
     /// <summary>
     /// Handles cell clicks for block movement completion.
     /// With drag-to-move, clicking on a block no longer selects it (drag does that).
@@ -51,12 +51,12 @@ public sealed class BlockMovementHandler
             // Just log that a click occurred on a block (drag handles selection)
             var blockAtPosition = GetBlockAt(position);
             blockAtPosition.IfSome(blockId =>
-                _logger?.Debug("Click on block {BlockId} at {Position} - use drag to move blocks", 
+                _logger?.Debug("Click on block {BlockId} at {Position} - use drag to move blocks",
                     blockId, position)
             );
         }
     }
-    
+
     private async Task HandleMoveOrDeselect(Vector2Int position)
     {
         if (_selectionManager.CanMoveSelectedTo(position))
@@ -79,9 +79,9 @@ public sealed class BlockMovementHandler
             _selectionManager.ClearSelection();
         }
     }
-    
+
     // HandleSelection method removed - selection is now handled by drag-to-move
-    
+
     private async Task MoveBlock(Guid blockId, Vector2Int toPosition)
     {
         var command = new MoveBlockCommand
@@ -89,18 +89,18 @@ public sealed class BlockMovementHandler
             BlockId = blockId,
             ToPosition = toPosition
         };
-        
-        _logger?.Information("Sending MoveBlockCommand for block {BlockId} to position {ToPosition}", 
+
+        _logger?.Information("Sending MoveBlockCommand for block {BlockId} to position {ToPosition}",
             blockId, toPosition);
-        
+
         try
         {
             var result = await _mediator.Send(command);
-            
+
             result.Match(
-                Succ: _ => _logger?.Debug("Successfully moved block {BlockId} to {ToPosition}", 
+                Succ: _ => _logger?.Debug("Successfully moved block {BlockId} to {ToPosition}",
                     blockId, toPosition),
-                Fail: error => _logger?.Warning("Failed to move block {BlockId}: {Error}", 
+                Fail: error => _logger?.Warning("Failed to move block {BlockId}: {Error}",
                     blockId, error.Message)
             );
         }
@@ -109,7 +109,7 @@ public sealed class BlockMovementHandler
             _logger?.Error(ex, "Unexpected error moving block {BlockId}", blockId);
         }
     }
-    
+
     private Option<Guid> GetBlockAt(Vector2Int position)
     {
         return _gridStateService

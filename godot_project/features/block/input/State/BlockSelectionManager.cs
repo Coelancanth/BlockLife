@@ -13,25 +13,25 @@ namespace BlockLife.godot_project.features.block.input.State;
 public sealed class BlockSelectionManager : IDisposable
 {
     private readonly ILogger? _logger;
-    
+
     // Selection state
     private Option<Guid> _selectedBlockId = None;
     private Option<Vector2Int> _selectedBlockPosition = None;
-    
+
     // Hover state
     private Option<Vector2Int> _currentHoverPosition = None;
-    
+
     public Option<Guid> SelectedBlockId => _selectedBlockId;
     public Option<Vector2Int> SelectedBlockPosition => _selectedBlockPosition;
     public Option<Vector2Int> CurrentHoverPosition => _currentHoverPosition;
-    
+
     public bool HasSelection => _selectedBlockId.IsSome;
-    
+
     public BlockSelectionManager(ILogger? logger)
     {
         _logger = logger?.ForContext<BlockSelectionManager>();
     }
-    
+
     /// <summary>
     /// Selects a block at the given position.
     /// </summary>
@@ -41,7 +41,7 @@ public sealed class BlockSelectionManager : IDisposable
         _selectedBlockPosition = Some(position);
         _logger?.Debug("Block {BlockId} selected at position {Position}", blockId, position);
     }
-    
+
     /// <summary>
     /// Clears the current selection.
     /// </summary>
@@ -50,11 +50,11 @@ public sealed class BlockSelectionManager : IDisposable
         var hadSelection = _selectedBlockId.IsSome;
         _selectedBlockId = None;
         _selectedBlockPosition = None;
-        
+
         if (hadSelection)
             _logger?.Debug("Block selection cleared");
     }
-    
+
     /// <summary>
     /// Updates the current hover position.
     /// </summary>
@@ -62,7 +62,7 @@ public sealed class BlockSelectionManager : IDisposable
     {
         _currentHoverPosition = Some(position);
     }
-    
+
     /// <summary>
     /// Clears the hover position when cursor leaves the grid.
     /// </summary>
@@ -70,7 +70,7 @@ public sealed class BlockSelectionManager : IDisposable
     {
         _currentHoverPosition = None;
     }
-    
+
     /// <summary>
     /// Checks if the selected block can move to the target position.
     /// </summary>
@@ -81,7 +81,7 @@ public sealed class BlockSelectionManager : IDisposable
             None: () => false
         );
     }
-    
+
     public void Dispose()
     {
         ClearSelection();

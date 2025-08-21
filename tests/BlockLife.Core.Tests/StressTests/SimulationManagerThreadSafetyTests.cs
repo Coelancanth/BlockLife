@@ -56,7 +56,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
         const int threadCount = 100;
         const int effectsPerThread = 100;
         const int totalExpectedEffects = threadCount * effectsPerThread;
-        
+
         var errors = new ConcurrentBag<string>();
         var effectsQueued = new ConcurrentBag<Guid>();
 
@@ -112,7 +112,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
         const int producerThreads = 20;
         const int effectsPerProducer = 50;
         const int totalExpectedEffects = producerThreads * effectsPerProducer;
-        
+
         var publishedNotifications = new ConcurrentBag<INotification>();
         var errors = new ConcurrentBag<string>();
 
@@ -173,7 +173,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         await simulationManager.ProcessQueuedEffectsAsync();
                         processedCount = publishedNotifications.Count;
                     }
-                    
+
                     // Small delay to allow producers to add more effects
                     await Task.Delay(5);
                 }
@@ -298,7 +298,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
         const int threadCount = 50;
         const int operationsPerThread = 200;
         const int warmupOperations = 100;
-        
+
         // Warmup phase to avoid JIT compilation during measurement
         for (int i = 0; i < warmupOperations; i++)
         {
@@ -311,7 +311,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
             _simulation.QueueEffect(warmupEffect);
         }
         await _simulation.ProcessQueuedEffectsAsync(); // Clear warmup effects
-        
+
         var stopwatch = Stopwatch.StartNew();
         var errors = new ConcurrentBag<string>();
         var slowOperations = new ConcurrentBag<double>();
@@ -369,14 +369,14 @@ public class SimulationManagerThreadSafetyTests : IDisposable
 
         // More lenient assertions appropriate for CI environments
         errors.Should().BeEmpty("No errors should occur during performance test");
-        
+
         // Use environment-aware thresholds
-        var isCI = Environment.GetEnvironmentVariable("CI") == "true" || 
+        var isCI = Environment.GetEnvironmentVariable("CI") == "true" ||
                    Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         var maxAvgTime = isCI ? 5.0 : 1.0; // More lenient on CI
         var maxSlowPercentage = isCI ? 10.0 : 5.0; // Allow up to 10% slow ops on CI
-        
-        avgTimePerOperation.Should().BeLessThan(maxAvgTime, 
+
+        avgTimePerOperation.Should().BeLessThan(maxAvgTime,
             $"Average operation time should be under {maxAvgTime}ms (CI={isCI})");
         slowOperationPercentage.Should().BeLessThan(maxSlowPercentage,
             $"Less than {maxSlowPercentage}% of operations should be slow (CI={isCI})");
@@ -427,7 +427,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
 
                         var result = _simulation.QueueEffect(effect);
                     }
-                    
+
                     // The important thing is that it doesn't throw an exception
                     // The specific behavior (success/failure) is implementation-dependent
                 }
@@ -435,7 +435,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                 {
                     // Some exceptions might be expected (ArgumentNullException), 
                     // but no threading-related exceptions should occur
-                    if (ex.Message.Contains("thread") || ex.Message.Contains("concurrent") || 
+                    if (ex.Message.Contains("thread") || ex.Message.Contains("concurrent") ||
                         ex.Message.Contains("race") || ex.Message.Contains("deadlock"))
                     {
                         errors.Add($"Thread-related error in thread {threadId}: {ex.Message}");
@@ -448,7 +448,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
 
         // Assert
         _output.WriteLine($"Completed null effect handling test with {errors.Count} thread-related errors");
-        
+
         // Only thread-related errors are failures - regular ArgumentNullExceptions are fine
         errors.Should().BeEmpty("No thread-related errors should occur during null effect handling");
     }

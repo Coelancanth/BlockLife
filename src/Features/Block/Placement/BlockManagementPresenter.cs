@@ -28,7 +28,7 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
 
     // Track current placement mode (for future enhancement)
     private BlockType _currentBlockType = BlockType.Basic;
-    
+
     // Control automatic placement behavior - can be disabled for manual placement control
     public bool AutoPlaceOnClick { get; set; } = false; // Changed default to false
 
@@ -179,9 +179,9 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
     {
         try
         {
-            _logger.LogDebug("Updating view for moved block {BlockId} from {FromPosition} to {ToPosition}", 
+            _logger.LogDebug("Updating view for moved block {BlockId} from {FromPosition} to {ToPosition}",
                 notification.BlockId, notification.FromPosition, notification.ToPosition);
-            
+
             await View.Visualization.UpdateBlockPositionAsync(
                 notification.BlockId,
                 notification.ToPosition
