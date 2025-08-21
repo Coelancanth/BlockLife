@@ -13,7 +13,13 @@ fi
 
 # Smart build - only if files changed
 echo "🔍 Checking for code changes..."
-changed_files=$(git diff --name-only origin/main...HEAD 2>/dev/null | grep -E '\.(cs|csproj|sln)$' | head -1)
+# Robust check that handles missing origin/main
+if git rev-parse --verify origin/main >/dev/null 2>&1; then
+  changed_files=$(git diff --name-only origin/main...HEAD 2>/dev/null | grep -E '\.(cs|csproj|sln)$' | head -1)
+else
+  # Fallback: check recent commits if origin/main doesn't exist
+  changed_files=$(git diff --name-only HEAD~3...HEAD 2>/dev/null | grep -E '\.(cs|csproj|sln)$' | head -1)
+fi
 
 if [ -n "$changed_files" ]; then
   echo "🔨 Building solution (code changes detected)..."
@@ -26,11 +32,22 @@ if [ -n "$changed_files" ]; then
     exit 1
   fi
   
-  echo "🧪 Running unit tests..."
-  # Run only fast unit tests, skip integration and performance tests
-  dotnet test BlockLife.sln --no-build \
+  echo "🔍 Running comprehensive static analysis..."
+  # Build already enforces code style (EnforceCodeStyleInBuild=true + TreatWarningsAsErrors=true)
+  # Adding extra analyzer checks for deeper quality validation
+  dotnet format analyzers BlockLife.sln --verify-no-changes --verbosity quiet
+  if [ $? -ne 0 ]; then
+    echo "❌ Advanced code analysis issues found!"
+    echo "   Fix with: dotnet format analyzers BlockLife.sln"
+    echo "   To bypass: git push --no-verify" 
+    exit 1
+  fi
+  
+  echo "🧪 Running fast unit tests..."
+  # Run only fast unit tests with timeout to prevent hanging
+  timeout 30s dotnet test BlockLife.sln --no-build \
     --filter "Category!=Integration&Category!=Performance" \
-    --verbosity quiet
+    --verbosity quiet --logger "console;verbosity=minimal"
   
   if [ $? -ne 0 ]; then
     echo "❌ Unit tests failed!"
@@ -42,35 +59,32 @@ else
   echo "📝 No code changes detected - skipping build/test"
 fi
 
-# Check if branch is stale and offer to auto-rebase
+# Check if branch is stale - non-interactive warnings only
 echo "🔄 Checking branch freshness..."
-git fetch origin main --quiet 2>/dev/null
-behind_count=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
-
-if [ "$behind_count" -gt 20 ]; then
-  echo ""
-  echo "⚠️  Branch is $behind_count commits behind main"
-  echo ""
-  echo "Would you like to rebase now? (recommended)"
-  echo "Press Enter to rebase, Ctrl+C to skip:"
-  read -r response
+if git fetch origin main --quiet 2>/dev/null; then
+  behind_count=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
   
-  if [ -z "$response" ]; then
-    echo "🔄 Rebasing on origin/main..."
-    git rebase origin/main
-    if [ $? -eq 0 ]; then
-      echo "✅ Rebase successful - push with: git push --force-with-lease"
-      exit 1  # Exit to let user push after rebase
-    else
-      echo "❌ Rebase has conflicts - resolve them and run: git rebase --continue"
-      exit 1
-    fi
+  if [ "$behind_count" -gt 20 ]; then
+    echo ""
+    echo "⚠️  WARNING: Branch is $behind_count commits behind main"
+    echo "   Consider rebasing before push: git rebase origin/main"
+    echo "   Or use: git push --no-verify to skip this check"
+  elif [ "$behind_count" -gt 5 ]; then
+    echo "ℹ️  Branch is $behind_count commits behind main (consider updating)"
   fi
-elif [ "$behind_count" -gt 0 ]; then
-  echo "ℹ️  Branch is $behind_count commits behind main (acceptable)"
+else
+  echo "⚠️  Could not fetch origin/main - check network connection"
 fi
 
-# Memory Bank is now local-only per TD_053 - no sync needed
-# The .git/hooks/pre-push will provide a reminder to update activeContext.md
+# Memory Bank context reminder (TD_053) - integrated into Husky hook
+if [ "$current_branch" != "main" ] && [ -n "$changed_files" ]; then
+  echo ""
+  echo "────────────────────────────────────────────────────────"
+  echo "💡 CONTEXT REMINDER: Consider updating activeContext.md"
+  echo ""
+  echo "  If this work is significant, update:"
+  echo "  .claude/memory-bank/activeContext.md"
+  echo "────────────────────────────────────────────────────────"
+fi
 
 echo "✅ All checks passed - ready to push!"

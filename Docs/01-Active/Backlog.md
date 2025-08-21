@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-21
+**Last Updated**: 2025-08-22
 
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
@@ -63,84 +63,45 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_056: Fix Pre-Commit Hook Memory Bank File Handling [Score: 15/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Critical
-**Markers**: [INFRASTRUCTURE] [GIT-HOOKS] [MEMORY-BANK]
-**Created**: 2025-08-21
-
-**What**: Update pre-commit hook to handle Memory Bank files being local-only and potentially deleted
-**Why**: Current pre-commit hook fails when Memory Bank files don't exist, requiring --no-verify to bypass during legitimate commits - ESCALATED TO CRITICAL as this blocks quality gates and forces bypassing all pre-commit protections
-**How**:
-- Update .husky/pre-commit to handle missing Memory Bank files gracefully
-- Remove or conditionally execute `git add .claude/memory-bank/*.md 2>/dev/null` 
-- Ensure hook works correctly when Memory Bank is local-only (in .gitignore)
-- Add error handling for scenarios where Memory Bank directory doesn't exist
-- Test hook behavior with both existing and deleted Memory Bank files
-- Maintain formatting functionality while fixing Memory Bank handling
-**Done When**:
-- Pre-commit hook runs successfully without Memory Bank files present
-- No need for --no-verify when committing legitimate Memory Bank changes
-- Hook gracefully handles both local-only and tracked Memory Bank states
-- Formatting functionality preserved and working correctly
-- Documentation updated if hook behavior changes significantly
-**Depends On**: None
-
-**Problem Context**: During TD_053/TD_054 commit, pre-commit hook failed because it tried to add Memory Bank files that were intentionally deleted/untracked. This forces use of --no-verify, which bypasses all hook protections including code formatting.
-
-**Tech Lead Decision** (2025-08-21):
-- Complexity: 10/100 (overestimated - simple line removal)
-- Decision: APPROVED - Critical infrastructure fix
-- Priority Escalation: Important → Critical (blocks all quality gates)
-- Root Cause: Hook written before Memory Bank became local-only (TD_053/TD_054)
-- Safety Impact: Forces --no-verify usage, bypassing code formatting and all pre-commit protections
-- Implementation: Remove line 7 entirely (simplest solution)
-- Timeline: <1 hour (remove one line, test)
-- Pattern: Direct fix, no architectural risk
-
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-
-### TD_055: Define Branch and Commit Decision Protocols [Score: 35/100]
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: M (4-8h)
+### TD_041: Verify and Document Persona Embodiment Flow [Score: 20/100]
+**Status**: Approved ✅
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
 **Priority**: Important
-**Markers**: [PROCESS] [DOCUMENTATION] [WORKFLOW]
+**Markers**: [DOCUMENTATION] [PROCESS] [VERIFICATION]
 **Created**: 2025-08-21
 
-**What**: Create clear decision protocols for branching and commit strategies
-**Why**: "New work = new branch" and "atomic commits" are oversimplified; real scenarios need nuanced decisions
+**What**: Verify what actually happens when embodying personas and document the complete flow
+**Why**: Gap between documented behavior and actual behavior creates confusion; need to ensure personas follow intended workflow
 **How**:
-- Define "new work" vs "continuing work" with concrete examples
-- Create decision tree for branch creation scenarios
-- Define "atomic commit" for BlockLife context
-- Address work continuity (multi-day tasks)
-- Handle context switching protocols
-- Document in persona protocols or HANDBOOK.md
+- Test embodying each persona and document actual behavior
+- Verify which docs are automatically read (Memory Bank, Backlog, etc.)
+- Check if personas follow the documented workflow steps
+- Identify gaps between intended and actual behavior
+- Update persona docs with accurate flow description
+- Create checklist of what SHOULD happen vs what DOES happen
 **Done When**:
-- Clear definition of when to create new branches
-- Atomic commit guidelines with examples
-- Decision tree for common scenarios
-- Personas have actionable branch/commit guidance
-- No ambiguity about work continuity
+- Complete flow documented for each persona
+- Gaps between intended and actual behavior identified
+- Persona docs updated with accurate automation descriptions
+- Verification checklist created for future testing
+- Memory Bank integration verified in practice
 **Depends On**: None
 
-**Problem Context**: Current guidance "new work = new branch" is undefined. Is fixing a typo "new work"? Continuing yesterday's TD? Found bug while working on VS? These decisions aren't obvious and need clear protocols. Similarly, pre-push hook can't enforce atomic commits retroactively - need pre-commit guidance.
+**Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.
 
-**Key Questions to Answer**:
-- When is work "new" enough for a new branch?
-- How to handle multi-day work items?
-- What makes a commit "atomic" in BlockLife?
-- Should quick fixes get branches?
-- How to handle discovered issues while working?
-
-**Tech Lead Note**: This complexity was hidden by claiming things were "obvious" - they're actually undefined, which is worse than complex.
+**Tech Lead Decision** (2025-08-22):
+- Complexity Score: 20/100 (simpler than estimated)
+- Decision: APPROVED - Critical verification work
+- Rationale: Must verify documentation matches reality before building more persona features
+- Impact: Will reveal gaps between aspirational and actual persona automation
+- Guidance: Use empirical testing protocol - for each persona, document EXACTLY what happens vs. what's documented
+- Expected finding: Most "automated" behaviors likely need explicit prompting
 
 
 

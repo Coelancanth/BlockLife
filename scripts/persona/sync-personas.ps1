@@ -8,6 +8,12 @@
 .DESCRIPTION
     Fetches latest changes from origin for all persona clones.
     Shows status and divergence information for each clone.
+    
+    WHEN TO USE:
+    - Weekly sync to keep all personas up to date
+    - After major changes to main branch
+    - Before switching between multiple personas
+    - NOT needed for single-persona development
 
 .PARAMETER Path
     Base directory containing persona clones. Defaults to parent of current directory.
