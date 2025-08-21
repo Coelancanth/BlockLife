@@ -57,4 +57,4 @@ See [template.md](template.md) for the standard ADR format.
 
 - [Michael Nygard's ADR Introduction](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
 - [ADR GitHub Organization](https://adr.github.io/)
-- [Architecture.md](../Architecture.md) - Our architectural principles
+- [HANDBOOK.md](../HANDBOOK.md) - Our architectural principles and practices
