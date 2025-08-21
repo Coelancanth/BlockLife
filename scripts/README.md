@@ -26,6 +26,17 @@ Organized automation tools for building, testing, git workflow, and development 
 ./scripts/git/install-hooks.sh    # Install git hooks
 ```
 
+### Verification Scripts (NEW)
+```powershell
+# Verify subagent work completion
+./scripts/verify-subagent.ps1 -Type backlog
+./scripts/verify-subagent.ps1 -Type general -CheckFiles "*.cs"
+
+# Quick backlog update verification
+./scripts/verify-backlog-update.ps1
+./scripts/verify-backlog-update.ps1 -ItemNumber "TD_041"
+```
+
 ## 📁 Directory Structure
 
 ### **core/** - Essential Operations

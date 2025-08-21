@@ -67,6 +67,20 @@ You: "That sounds like over-engineering. The current DI
 
 **Remember: Simplicity is sophistication. Your job is to help build the RIGHT solution, not just ANY solution.**
 
+## 🧠 Memory Bank System (NEW)
+
+**Check `.claude/memory-bank/` for persistent context:**
+- **activeContext.md** - Current session state and work focus
+- **patterns.md** - Established patterns (Move Block, etc.)
+- **decisions.md** - Architectural rationale and choices
+- These files maintain context between sessions, reducing re-establishment by 50%
+
+## 🎯 Core Directive (from Best Practices)
+Do what has been asked; nothing more, nothing less.
+- NEVER create files unless absolutely necessary
+- ALWAYS prefer editing existing files
+- NEVER proactively create documentation unless requested
+
 ## 📚 REORGANIZED DOCUMENTATION: The Essential Four
 
 **START HERE for 95% of your needs:**
@@ -149,6 +163,13 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
 4. **User confirms** → Final status change via explicit command
 
 #### Exception: Strategic Prioritizer auto-invokes backlog-assistant for meta-analysis (this is its designed function)
+
+### Verification Protocol (Trust but Verify)
+After any subagent work, personas perform 10-second verification:
+- `git status` to confirm file modifications
+- Quick `grep` to verify content presence
+- Check that claimed changes actually happened
+- See [SubagentVerification.md](Docs/03-Reference/SubagentVerification.md) for patterns
 
 #### What Personas Do:
 - **Product Owner**: Creates VS items, sets priorities
@@ -280,72 +301,40 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 **Complete analysis**: [Context7LibraryMatrix.md](Docs/03-Reference/Context7/Context7LibraryMatrix.md)
 **Usage examples**: [Context7Examples.md](Docs/03-Reference/Context7/Context7Examples.md)
 
-## ⚠️ CRITICAL: Git Workflow Requirements - SACRED SEQUENCE ENFORCED
+## 📖 Git Workflow - Simple & Standard
 
-**🚨 AI AGENTS MUST USE SMART GIT COMMANDS - VIOLATIONS WILL BE BLOCKED**
+See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for complete git workflow documentation.
 
-See **[GitWorkflow.md](Docs/03-Reference/GitWorkflow.md)** for the SINGLE SOURCE OF TRUTH on git operations.
+### Multi-Clone Architecture
 
-### 🔴 MANDATORY FOR ALL AI AGENTS:
+The project uses multiple independent clones for persona isolation. Each persona works in its own repository clone with standard git commands.
 
-**NEVER use `git checkout -b` directly!**  
-**ALWAYS use: `git newbranch <branch-name>`**
-
-This smart command automatically:
-1. Fetches latest from origin
-2. Updates main branch
-3. Creates new branch from fresh main
-4. Prevents PR conflicts before they happen
-
-### Sacred Sequence Commands (USE THESE):
-
-```bash
-# ✅ CORRECT - Creating a new branch:
-git newbranch feat/save-system
-
-# ✅ CORRECT - Updating current branch:
-git syncmain
-
-# ✅ CORRECT - Checking branch status:
-git sacred
-
-# ❌ WRONG - Never do this:
-git checkout -b feat/save-system  # This will be BLOCKED
-```
-
-### AI Workflow Requirements:
-
-1. **CREATE branches**: Use `git newbranch` (enforces Sacred Sequence)
-2. **UPDATE branches**: Use `git syncmain` (auto-fetches and rebases)
-3. **CHECK status**: Use `git sacred` (shows sync status)
-4. **OUTPUT each command**: Show what you're doing
-5. **HANDLE rejections**: If pre-push hook blocks, run `git syncmain`
-
-### Enforcement Layers:
-
-- **Layer 1**: Smart aliases prevent mistakes (`git newbranch`)
-- **Layer 2**: Pre-push hooks block stale branches
-- **Layer 3**: GitHub protection requires up-to-date branches
-- **Result**: Zero PR conflicts from outdated branches
-
-### Example AI Workflow:
+### Standard Git Workflow
 
 ```bash
 # Starting new work:
-> git sacred                    # Check current status
-> git newbranch feat/br-004-fix # Create from fresh main
-✅ Sacred Sequence complete!
+git checkout main
+git pull origin main
+git checkout -b feat/your-feature
 
-# Before pushing:
-> git checkfresh                # Verify still current
-> git push -u origin feat/br-004-fix
+# Making changes:
+git add -A
+git commit -m "feat: description"
 
-# If blocked by pre-push hook:
-> git syncmain                  # Auto-fix the issue
-> git push
+# Pushing to remote:
+git push -u origin feat/your-feature
+
+# Creating PR:
+gh pr create --title "feat: title" --body "description"
 ```
 
-**Installation**: Run `./scripts/git/install-hooks.ps1` (Windows) or `./scripts/git/install-hooks.sh` (Linux/Mac)
+### Key Points
+
+- Use standard git commands (no custom aliases needed)
+- Always branch from updated main
+- GitHub branch protection enforces safety
+- Each persona has its own isolated clone
+- Commits automatically use persona identity (e.g., dev-eng@blocklife)
 
 ### Quick Reference Resources
 - **Development workflow**: [Workflow.md](Docs/01-Active/Workflow.md)

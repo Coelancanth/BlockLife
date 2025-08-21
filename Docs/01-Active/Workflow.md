@@ -1,5 +1,11 @@
 # Backlog Workflow
 
+## 📝 Quick Start Checklist
+1. **Check Memory Bank** first: `.claude/memory-bank/activeContext.md`
+2. **Review patterns**: `.claude/memory-bank/patterns.md` 
+3. **Understand decisions**: `.claude/memory-bank/decisions.md`
+4. **Then proceed** with workflow below
+
 ## 🧠 Owner-Based Ultra-Think Protocol
 
 ### Core Principle
@@ -34,18 +40,21 @@ Time: 7 minutes (5 min thinking + 2 min suggestion)
 
 ### How to Suggest (Not Auto-Execute)
 ```bash
-# After making your decision:
-"Suggest updating backlog:
+# After making your decision, present as bullet points:
+**Suggested backlog updates:**
 - Move TD_013 to Critical
 - Update status to Approved
 - Add my decision notes
 - Archive completed items
 
-Would you like me to draft the backlog-assistant command?"
-
-# USER decides whether to execute:
-/task backlog-assistant "Update backlog..."
+# User can request command generation if needed
 ```
+
+### Verification After Updates
+When subagent completes work, verify with:
+- `./scripts/verify-subagent.ps1 -Type backlog`
+- Or manual: `git status | grep Backlog.md`
+- See [SubagentVerification.md](../03-Reference/SubagentVerification.md)
 
 ### What Each Persona Suggests (User Executes)
 | Persona | Focus On (High-Value) | Suggests for User (Not Auto-Execute) |

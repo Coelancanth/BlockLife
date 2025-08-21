@@ -20,6 +20,8 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 - **[GitWorkflow.md](03-Reference/GitWorkflow.md)** - Git procedures (MANDATORY)
 - **[ThinSliceProtocol.md](03-Reference/ThinSliceProtocol.md)** - VS sizing rules
 - **[Context7/](03-Reference/Context7/)** - Library documentation guides
+- **[SubagentVerification.md](03-Reference/SubagentVerification.md)** ⭐ - Trust but Verify protocol
+- **[ClaudeCodeBestPractices.md](03-Reference/ClaudeCodeBestPractices.md)** ⭐ - Community patterns to adopt
 
 ### [04-Personas/](04-Personas/) - AI Persona Definitions
 - Individual persona files for each role
@@ -39,15 +41,18 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 ## 🚀 Quick Start
 
 ### For New Contributors
-1. Read [Workflow.md](01-Active/Workflow.md) - Understand the development process
-2. Check [Backlog.md](01-Active/Backlog.md) - See current priorities
-3. Review [Architecture.md](03-Reference/Architecture.md) - Understand the codebase
+1. **NEW**: Check `.claude/memory-bank/activeContext.md` - Current session state
+2. Read [Workflow.md](01-Active/Workflow.md) - Understand the development process
+3. Check [Backlog.md](01-Active/Backlog.md) - See current priorities
+4. Review [Architecture.md](03-Reference/Architecture.md) - Understand the codebase
 
 ### For AI Personas
-1. Your definition is in [04-Personas/](04-Personas/)
-2. Check [Backlog.md](01-Active/Backlog.md) for your assigned items
-3. Reference [02-Design/Vision.md](02-Design/Vision.md) for game design
-4. Follow [GitWorkflow.md](03-Reference/GitWorkflow.md) religiously
+1. **NEW**: Check `.claude/memory-bank/` for context first
+2. Your definition is in [04-Personas/](04-Personas/)
+3. Check [Backlog.md](01-Active/Backlog.md) for your assigned items
+4. Reference [02-Design/Vision.md](02-Design/Vision.md) for game design
+5. Follow [GitWorkflow.md](03-Reference/GitWorkflow.md) religiously
+6. **NEW**: Verify subagent work with [SubagentVerification.md](03-Reference/SubagentVerification.md)
 
 ### For Game Design
 1. [Vision.md](02-Design/Vision.md) - Primary design document
