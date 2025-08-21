@@ -380,6 +380,36 @@
 - Moved from Ideas to Important - routing confusion actively affecting productivity
 - Should be prioritized to prevent ongoing misrouting issues
 
+### TD_052: Implement Simple Memory Bank Sync and Maintenance [Score: 10/100]
+**Status**: Approved
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Important
+**Markers**: [INFRASTRUCTURE] [MEMORY-BANK] [SIMPLE]
+**Created**: 2025-08-21
+
+**What**: Create simple git-based Memory Bank sync with log rotation
+**Why**: Replace over-engineered TD_051 with pragmatic 10-line solution
+**How**:
+- Create `memory-sync.ps1` with basic git pull/add/commit/push
+- Add monthly log rotation (SESSION_LOG >30 days → archive)
+- Extract patterns to docs when >20 entries
+- No staleness marking needed (timestamp is sufficient)
+- No complex harvest triggers or tiered sync
+**Done When**:
+- Simple sync script deployed to all clones
+- Log rotation prevents unbounded growth
+- Memory Bank stays under 200KB total
+- No synchronization conflicts
+**Depends On**: None
+
+**Tech Lead Decision** (2025-08-21):
+- Complexity: 10/100 (simple git operations)
+- Decision: APPROVED as replacement for rejected TD_051
+- Solves same problem with 10 lines instead of 250
+- Pattern: Standard log rotation, not enterprise architecture
+- Key insight: Memory Bank is working memory, not permanent storage
+
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 

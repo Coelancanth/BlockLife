@@ -1,86 +1,45 @@
-# Troubleshooting & Known Issues
+# Lessons Learned (Bug Fixes & Gotchas)
+**Last Updated**: 2025-08-21
 
-## 🔧 Common Issues and Solutions
+## Documentation Sprawl Creates Confusion
+**Issue**: Same information in 4+ files, hard to find anything
+**Root Cause**: Easier to create new docs than maintain existing
+**Solution**: Consolidated into HANDBOOK.md (89% reduction)
+**Metric**: 4,675 lines → 800 lines, 100% value retained
+**Lesson**: Enforce single source of truth ruthlessly
+**Date**: 2025-08-21
 
-### Issue: Tests pass but Godot won't compile
-**Symptom**: Unit tests green, but game won't run
-**Root Cause**: Tests only validate C# domain, not Godot integration
-**Solution**: Always run `./scripts/core/build.ps1 test` before committing
-**Prevention**: Pre-commit hook now enforces build + test
+## Husky.NET Sets core.hookspath
+**Issue**: Hooks not executing after installation
+**Root Cause**: Git needs core.hookspath set to .husky
+**Solution**: `dotnet husky install` sets this automatically
+**Debug**: `git config --get core.hookspath` should return ".husky"
+**Time Wasted**: 35 minutes
+**Date**: 2025-08-21
 
-### Issue: Glossary violations in code
-**Symptom**: Using "merge" instead of "match", "level" instead of "tier"
-**Root Cause**: Natural language habits override project vocabulary
-**Solution**: Search and replace with correct terms from Glossary.md
-**Prevention**: Regular glossary validation checks
+## CI Must Include branch-freshness Dependencies
+**Issue**: CI status job failed with missing dependency
+**Root Cause**: Forgot to add branch-freshness to needs array
+**Solution**: `needs: [build-and-test, code-quality, branch-freshness]`
+**Location**: `.github/workflows/ci.yml:278`
+**Date**: 2025-08-21
 
-### Issue: Subagent reports completion but nothing changed
-**Symptom**: backlog-assistant says "updated" but git shows no changes
-**Root Cause**: Various subagent failures or partial completions
-**Solution**: Use verification scripts: `./scripts/verify-subagent.ps1`
-**Prevention**: Always perform 10-second verification after subagent work
+## Chinese Workflow Document Was Wrong Location
+**Issue**: Chinese Git workflow guide in wrong folder
+**Root Cause**: Placed in 01-Active instead of 03-Reference
+**Solution**: Deleted entirely (not needed)
+**Lesson**: Check document location matches purpose
+**Date**: 2025-08-21
 
-### Issue: Context lost between sessions
-**Symptom**: Have to re-explain project state each time
-**Root Cause**: No persistent memory between sessions
-**Solution**: Check `.claude/memory-bank/activeContext.md` first
-**Prevention**: Update Memory Bank files after significant work
+## Build Must Include Godot for Full Validation
+**Issue**: C# tests pass but game won't compile
+**Root Cause**: Tests only validate pure C# layer
+**Solution**: build.ps1 'test' command now builds everything
+**Fixed**: 2025-08-15
 
-### Issue: Persona handoffs confusion
-**Symptom**: Work routed to wrong persona, unclear ownership
-**Root Cause**: Overlapping responsibilities not well defined
-**Solution**: Check routing matrix in QuickReference.md
-**Prevention**: Clear "Work I Don't Accept" sections in persona docs
-
-## 🐛 Known Bugs
-
-### BR_001: Race condition in notification pipeline
-**Status**: Fixed, regression test added
-**Lesson**: Always unsubscribe events in Dispose()
-
-### BR_002: Memory leak from static event handlers
-**Status**: Fixed, pattern documented
-**Lesson**: Use weak references for static events
-
-## 📝 Lessons Learned
-
-### From TD Implementation
-- Simple solutions often better than complex ones
-- Move Block pattern works for 90% of features
-- Don't create abstraction until needed twice
-
-### From Persona System
-- Clear boundaries prevent confusion
-- Handoff protocols essential
-- Single owner per item reduces conflicts
-
-### From Testing
-- TDD for domain logic saves time
-- Integration tests catch Godot issues
-- Stress tests (F1-F10) reveal race conditions
-
-## 🔍 Debugging Tips
-
-### For Notification Issues
-1. Check command publishes notification
-2. Verify handler bridges to presenter
-3. Confirm presenter subscribes in Initialize()
-4. Validate presenter disposes properly
-5. Test notification reaches view
-
-### For State Issues
-1. Identify all state sources
-2. Check for dual sources of truth
-3. Verify single registration in DI
-4. Test state consistency under load
-5. Add state validation checks
-
-### For Performance Issues
-1. Profile with dotnet-trace
-2. Check for unnecessary allocations
-3. Look for synchronous I/O
-4. Verify efficient collection usage
-5. Consider caching expensive operations
-
----
-*Living document - update when new issues discovered or resolved*
+## GdUnit4 Requires [TestSuite] Attribute
+**Issue**: Tests not discovered by runner
+**Root Cause**: Missing [TestSuite] on test class
+**Solution**: All test classes need [TestSuite] attribute
+**Time Wasted**: 45 minutes
+**Date**: 2025-08-10

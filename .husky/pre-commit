@@ -3,6 +3,9 @@
 
 echo "🎨 Auto-formatting code..."
 
+# Auto-stage Memory Bank changes if any
+git add .claude/memory-bank/*.md 2>/dev/null
+
 # Auto-format the solution file
 dotnet format BlockLife.sln --verbosity quiet
 
