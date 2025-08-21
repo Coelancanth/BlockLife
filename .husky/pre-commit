@@ -1,23 +1,13 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "🎨 Auto-formatting code..."
+# AI Persona Guidance - Atomic Commit Reminder
+echo "💡 AI Persona Reminder: Ensure Atomic Commits"
+echo "   ✓ This commit does exactly ONE logical thing"
+echo "   ✓ All staged files relate to the same change"  
+echo "   ✓ Could be described in a single sentence"
+echo "   ✓ Tests updated for this specific change only"
+echo ""
 
-# Auto-format the solution file
-dotnet format BlockLife.sln --verbosity quiet
-
-if [ $? -ne 0 ]; then
-  echo "❌ Format command failed!"
-  echo ""
-  echo "To bypass: git commit --no-verify"
-  exit 1
-fi
-
-# Check if formatting made changes
-if [[ -n $(git diff --name-only) ]]; then
-  echo "📝 Files were auto-formatted. Adding changes..."
-  git add -u
-  echo "✅ Format applied and staged"
-else
-  echo "✅ Code already properly formatted"
-fi
+# Architecture: Formatting enforced by build system (TreatWarningsAsErrors=true)
+# Architecture: Static analysis runs in pre-push for comprehensive validation
