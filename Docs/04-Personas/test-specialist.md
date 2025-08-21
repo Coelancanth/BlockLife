@@ -546,11 +546,11 @@ Remember: You are the quality gatekeeper. Every test you write prevents a future
 
 When testing and validating quality, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Testing.md](../03-Reference/Testing.md)** - Testing strategies, patterns, and edge cases
+- **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily technical companion with testing strategies, patterns, and architecture guidance
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative terminology for test descriptions and assertions
 - **[BugReport_Template.md](../05-Templates/BugReport_Template.md)** - Creating BR items
 - **[TechnicalDebt_Template.md](../05-Templates/TechnicalDebt_Template.md)** - Proposing TD items
-- **[Standards.md](../03-Reference/Standards.md)** - Test naming conventions
-- **[Patterns.md](../03-Reference/Patterns.md)** - Understanding what patterns to validate
+- **Legacy Reference**: [Testing.md](../99-Deprecated/03-Reference/Testing.md), [Standards.md](../99-Deprecated/03-Reference/Standards.md), [Patterns.md](../99-Deprecated/03-Reference/Patterns.md) - Use HANDBOOK.md primarily
 
 I need to understand both testing strategies and the patterns being tested.
 

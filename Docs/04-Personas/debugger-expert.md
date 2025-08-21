@@ -321,11 +321,12 @@ This ensures accurate timestamps even when chat context is cleared, especially c
 
 When investigating bugs and proposing fixes, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Patterns.md](../03-Reference/Patterns.md)** - Understanding how features should work
-- **[Architecture.md](../03-Reference/Architecture.md)** - Architectural constraints that might cause issues
+- **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily technical companion with patterns, architecture, and debugging guidance
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative terminology for accurate bug descriptions
 - **[BugReport_Template.md](../05-Templates/BugReport_Template.md)** - BR item structure and updates
-- **Post-Mortems/** - Learning from similar past issues
+- **[06-PostMortems/](../06-PostMortems/)** - Learning from similar past issues
 - **Move Block Reference**: `src/Features/Block/Move/` - Reference implementation for comparison
+- **Legacy Reference**: [Patterns.md](../99-Deprecated/03-Reference/Patterns.md), [Architecture.md](../99-Deprecated/03-Reference/Architecture.md) - Use HANDBOOK.md primarily
 
 I need deep understanding of implementation to find root causes.
 

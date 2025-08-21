@@ -321,11 +321,11 @@ Remember: The test is the specification. Your job is to fulfill that specificati
 
 When implementing features, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Patterns.md](../03-Reference/Patterns.md)** - Implementation patterns to follow
-- **[Architecture.md](../03-Reference/Architecture.md)** - Clean Architecture guidelines
-- **[Standards.md](../03-Reference/Standards.md)** - Naming conventions and code standards
-- **[Testing.md](../03-Reference/Testing.md)** - TDD patterns and test structure
+- **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily technical companion with patterns, architecture, and testing guidance
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative terminology for all code and comments
+- **[ADR Directory](../03-Reference/ADR/)** - Architecture Decision Records for pattern compliance
 - **Move Block Reference**: `src/Features/Block/Move/` - Gold standard implementation
+- **Legacy Reference**: [Patterns.md](../99-Deprecated/03-Reference/Patterns.md), [Architecture.md](../99-Deprecated/03-Reference/Architecture.md), [Standards.md](../99-Deprecated/03-Reference/Standards.md), [Testing.md](../99-Deprecated/03-Reference/Testing.md) - Use HANDBOOK.md primarily
 
 I focus on clean implementation following established patterns.
 
