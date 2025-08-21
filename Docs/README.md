@@ -5,23 +5,21 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 ## 📂 Documentation Structure
 
 ### [01-Active/](01-Active/) - Daily Working Documents
-- **[Backlog.md](01-Active/Backlog.md)** - Current work items and priorities
+- **[Backlog.md](01-Active/Backlog.md)** - Current work items and priorities (TD focus)
+- **[Backup.md](01-Active/Backup.md)** - VS content storage (prevents backlog bloat)
 - **[Workflow.md](01-Active/Workflow.md)** - Development workflow and processes
+- **[README.md](01-Active/README.md)** - Navigation guide for active documents
 
 ### [02-Design/](02-Design/) - Game Design & Vision
 - **[Vision.md](02-Design/Vision.md)** - Complete consolidated game design vision
-- **[Mechanics/](02-Design/Mechanics/)** - Detailed game mechanics
+- **[README.md](02-Design/README.md)** - Design directory navigation
 
-### [03-Reference/](03-Reference/) - Technical Guidelines
-- **[Architecture.md](03-Reference/Architecture.md)** - Clean Architecture principles
-- **[Patterns.md](03-Reference/Patterns.md)** - Code patterns and examples
-- **[Standards.md](03-Reference/Standards.md)** - Naming and coding standards
-- **[Testing.md](03-Reference/Testing.md)** - Testing strategies
-- **[GitWorkflow.md](03-Reference/GitWorkflow.md)** - Git procedures (MANDATORY)
-- **[ThinSliceProtocol.md](03-Reference/ThinSliceProtocol.md)** - VS sizing rules
-- **[Context7/](03-Reference/Context7/)** - Library documentation guides
-- **[SubagentVerification.md](03-Reference/SubagentVerification.md)** ⭐ - Trust but Verify protocol
-- **[ClaudeCodeBestPractices.md](03-Reference/ClaudeCodeBestPractices.md)** ⭐ - Community patterns to adopt
+### [03-Reference/](03-Reference/) - Current Technical Guidelines
+- **[HANDBOOK.md](03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily companion (architecture, workflow, testing, patterns)
+- **[Glossary.md](03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative vocabulary for all code
+- **[CurrentImplementationStatus.md](03-Reference/CurrentImplementationStatus.md)** - Implementation status vs. vision
+- **[ADR/](03-Reference/ADR/)** - Architecture Decision Records
+- **[README.md](03-Reference/README.md)** - Reference directory navigation
 
 ### [04-Personas/](04-Personas/) - AI Persona Definitions
 - Individual persona files for each role
@@ -36,28 +34,32 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 
 ### [07-Archive/](07-Archive/) - Completed Work
 - **[Completed_Backlog.md](07-Archive/Completed_Backlog.md)** - Finished work items
+- **[Future-Ideas/](07-Archive/Future-Ideas/)** - Future feature concepts
 - **[Historical/](07-Archive/Historical/)** - Deprecated documentation
+
+### [99-Deprecated/](99-Deprecated/) - Legacy Documentation
+- **[03-Reference/](99-Deprecated/03-Reference/)** - Old reference documentation (Architecture.md, Testing.md, GitWorkflow.md, etc.)
+- **[README.md](99-Deprecated/README.md)** - Deprecation information
 
 ## 🚀 Quick Start
 
 ### For New Contributors
-1. **NEW**: Check `.claude/memory-bank/activeContext.md` - Current session state
-2. Read [Workflow.md](01-Active/Workflow.md) - Understand the development process
-3. Check [Backlog.md](01-Active/Backlog.md) - See current priorities
-4. Review [Architecture.md](03-Reference/Architecture.md) - Understand the codebase
+1. Check `.claude/memory-bank/activeContext.md` - Current session state
+2. Read [HANDBOOK.md](03-Reference/HANDBOOK.md) - Essential daily companion
+3. Check [Backlog.md](01-Active/Backlog.md) - Current TD items and priorities
+4. Review [Workflow.md](01-Active/Workflow.md) - Development processes
 
-### For AI Personas
-1. **NEW**: Check `.claude/memory-bank/` for context first
+### For AI Personas  
+1. Check `.claude/memory-bank/` for context first
 2. Your definition is in [04-Personas/](04-Personas/)
-3. Check [Backlog.md](01-Active/Backlog.md) for your assigned items
-4. Reference [02-Design/Vision.md](02-Design/Vision.md) for game design
-5. Follow [GitWorkflow.md](03-Reference/GitWorkflow.md) religiously
-6. **NEW**: Verify subagent work with [SubagentVerification.md](03-Reference/SubagentVerification.md)
+3. Check [Backlog.md](01-Active/Backlog.md) for TD items you own
+4. Reference [Glossary.md](03-Reference/Glossary.md) before naming anything
+5. **Legacy docs**: Architecture, Testing, GitWorkflow in [99-Deprecated/03-Reference/](99-Deprecated/03-Reference/)
+6. Use [HANDBOOK.md](03-Reference/HANDBOOK.md) as primary technical reference
 
 ### For Game Design
-1. [Vision.md](02-Design/Vision.md) - Primary design document
-2. [Mechanics/](02-Design/Mechanics/) - Detailed specifications
-3. User is the Game Designer - these are reference only
+1. [Vision.md](02-Design/Vision.md) - Primary design document  
+2. User is the Game Designer - this is reference only
 
 ## 📋 Document Maintenance
 
@@ -70,16 +72,17 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 
 ### By Purpose
 - **What to work on?** → [01-Active/Backlog.md](01-Active/Backlog.md)
-- **How to work?** → [01-Active/Workflow.md](01-Active/Workflow.md)
-- **Game mechanics?** → [02-Design/](02-Design/)
-- **Code patterns?** → [03-Reference/](03-Reference/)
+- **How to work?** → [01-Active/Workflow.md](01-Active/Workflow.md) + [03-Reference/HANDBOOK.md](03-Reference/HANDBOOK.md)
+- **Game mechanics?** → [02-Design/Vision.md](02-Design/Vision.md)
+- **Technical guidance?** → [03-Reference/HANDBOOK.md](03-Reference/HANDBOOK.md)
 - **Past issues?** → [06-PostMortems/](06-PostMortems/)
+- **Legacy docs?** → [99-Deprecated/03-Reference/](99-Deprecated/03-Reference/)
 
 ### By Role
 - **Product Owner** → Design docs, then create VS items
-- **Tech Lead** → Reference docs for architecture decisions
-- **Dev Engineer** → Patterns and standards for implementation
-- **Test Specialist** → Testing strategies and bug templates
+- **Tech Lead** → HANDBOOK.md for architecture decisions  
+- **Dev Engineer** → HANDBOOK.md for patterns and standards
+- **Test Specialist** → Templates and post-mortem analysis
 
 ## 📝 Key Principles
 

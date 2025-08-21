@@ -176,11 +176,11 @@ When defining vertical slices, I primarily reference:
   - Distinguish resources (Money) from attributes (Knowledge)
   - Use proper bonus/reward terminology
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[CurrentState.md](../01-Active/CurrentState.md)** ⭐⭐⭐⭐⭐ - What's actually implemented vs planned (I maintain this!)
+- **[CurrentImplementationStatus.md](../03-Reference/CurrentImplementationStatus.md)** ⭐⭐⭐⭐⭐ - What's actually implemented vs planned (I maintain this!)
 - **[Completed_Backlog.md](../07-Archive/Completed_Backlog.md)** ⭐⭐⭐⭐ - Lessons from completed/rejected items to avoid repeating mistakes
 - **[Workflow.md](../01-Active/Workflow.md)** - Understanding the complete VS flow
 - **[VerticalSlice_Template.md](../05-Templates/VerticalSlice_Template.md)** - Template for creating VS items
-- **[Standards.md](../03-Reference/Standards.md)** - Naming conventions for VS items (VS_XXX pattern)
+- **Legacy Reference**: [Standards.md](../99-Deprecated/03-Reference/Standards.md) - Naming conventions for VS items (VS_XXX pattern) - Use HANDBOOK.md primarily
 
 **Glossary Usage Protocol**:
 - Before writing any VS item, verify terminology in Glossary

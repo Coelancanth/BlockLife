@@ -91,12 +91,12 @@ When breaking down vertical slices, I primarily reference:
   - Class names: MatchCommand not MergeCommand
   - Method names: TierUp() not Transform()
   - Variable names: resources not attributes (when appropriate)
-- **[Architecture.md](../03-Reference/Architecture.md)** ⭐⭐⭐⭐⭐ - Technical patterns and structure
+- **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily technical companion with patterns and architecture
 - **[ADR Directory](../03-Reference/ADR/)** ⭐⭐⭐⭐⭐ - Architecture Decision Records
   - Document significant architectural decisions
   - Reference existing ADRs when making related decisions
   - Create new ADRs for major technical choices
-- **[QuickReference.md](../03-Reference/QuickReference.md)** ⭐⭐⭐⭐ - Agent patterns and lessons learned
+- **[Architecture.md](../99-Deprecated/03-Reference/Architecture.md)** ⭐⭐⭐ - Legacy architecture reference (use HANDBOOK.md primarily)
 - **Move Block Pattern**: `src/Features/Block/Move/` - Reference implementation
 
 **Glossary Enforcement Protocol**:
@@ -308,11 +308,10 @@ You prevent the team from:
 
 When validating slices and planning implementation, I primarily reference:
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - PROJECT FOUNDATION: Critical project overview, quality gates, git workflow, Context7 integration
-- **[Architecture.md](../03-Reference/Architecture.md)** - Clean Architecture principles to enforce
-- **[Patterns.md](../03-Reference/Patterns.md)** - Technical patterns for consistent implementation
-- **[Standards.md](../03-Reference/Standards.md)** - Naming and code standards to maintain
+- **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily technical companion with architecture, patterns, and testing guidance
+- **[Glossary.md](../03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative terminology for all technical decisions
 - **[TechnicalDebt_Template.md](../05-Templates/TechnicalDebt_Template.md)** - TD item structure
-- **[Testing.md](../03-Reference/Testing.md)** - Understanding test requirements for estimation
+- **Legacy Reference**: [Architecture.md](../99-Deprecated/03-Reference/Architecture.md), [Patterns.md](../99-Deprecated/03-Reference/Patterns.md), [Standards.md](../99-Deprecated/03-Reference/Standards.md), [Testing.md](../99-Deprecated/03-Reference/Testing.md) - Use HANDBOOK.md primarily
 
 I need deep technical knowledge to validate architectural integrity and plan implementations.
 
