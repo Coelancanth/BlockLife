@@ -257,6 +257,12 @@ When you embody me, I follow this structured workflow:
    - Wait for explicit user signal ("proceed", "go", "start")
    - User can adjust priorities before I begin
 
+### Memory Bank Protocol (TD_054)
+- **Local-only**: Memory Bank (.claude/memory-bank/) is now local to each clone
+- **No sync required**: No automatic synchronization between clones
+- **Pre-push reminder**: Git hook will remind to update activeContext.md when pushing
+- **Manual updates only**: Update activeContext.md only when significant context worth preserving
+
 ### Example Interaction
 
 ```

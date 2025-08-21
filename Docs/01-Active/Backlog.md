@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 013 (Last: BR_012 - 2025-08-21)
-- **Next TD**: 053 (Last: TD_052 - 2025-08-21)  
+- **Next TD**: 056 (Last: TD_055 - 2025-08-21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -68,283 +68,44 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### TD_041: Verify and Document Persona Embodiment Flow [Score: 25/100]
+### TD_055: Define Branch and Commit Decision Protocols [Score: 35/100]
 **Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [DOCUMENTATION] [PROCESS] [VERIFICATION]
-**Created**: 2025-08-21
-
-**What**: Verify what actually happens when embodying personas and document the complete flow
-**Why**: Gap between documented behavior and actual behavior creates confusion; need to ensure personas follow intended workflow
-**How**:
-- Test embodying each persona and document actual behavior
-- Verify which docs are automatically read (Memory Bank, Backlog, etc.)
-- Check if personas follow the documented workflow steps
-- Identify gaps between intended and actual behavior
-- Update persona docs with accurate flow description
-- Create checklist of what SHOULD happen vs what DOES happen
-**Done When**:
-- Complete flow documented for each persona
-- Gaps between intended and actual behavior identified
-- Persona docs updated with accurate automation descriptions
-- Verification checklist created for future testing
-- Memory Bank integration verified in practice
-**Depends On**: None
-
-**Problem Context**: We've documented elaborate workflows but haven't verified personas actually follow them. Need empirical testing to ensure documentation matches reality.
-
-### TD_051: Implement Memory Bank Synchronization Architecture [Score: 45/100]
-**Status**: Rejected
 **Owner**: Tech Lead
-**Size**: L (1-3 days)
-**Priority**: Important
-**Markers**: [ARCHITECTURE] [INFRASTRUCTURE] [MULTI-CLONE]
-**Created**: 2025-01-21
-
-**What**: Implement tiered Memory Bank synchronization across 6 persona clones
-**Why**: Context fragmentation across isolated clones reduces productivity; personas work without knowledge of recent discoveries
-**How**: See [Memory-Bank-Sync-Architecture.md](../../02-Design/Memory-Bank-Sync-Architecture.md) for complete design
-**Done When**:
-- Architecture approved via ADR
-- Sync scripts deployed to all clones
-- Harvest mechanisms tested
-- Success rate >99%
-**Depends On**: Tech Lead architectural review
-
-**Impact**: Enables cognitive continuity across personas, reducing duplicate discoveries and improving coordination.
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 25/100 (overestimated by 20 points)
-- Decision: REJECTED - Over-engineered solution for simple problem
-- Red Flags: New architectural layers, complex "harvest" patterns, different sync frequencies
-- Simpler Alternative (Complexity: 10/100):
-  ```powershell
-  # Simple memory-sync.ps1 (10 lines vs 250)
-  git pull origin main --rebase
-  git add .claude/memory-bank/
-  git commit -m "Memory Bank sync: $(date)"
-  git push origin main
-  ```
-- Memory Bank maintenance: Simple log rotation every 30 days, extract patterns >20 to docs
-- No need for tiered sync, buffer patterns, or harvest triggers
-
-### TD_047: Improve Persona Backlog Decision Protocol [Score: 20/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [PROCESS] [DOCUMENTATION] [PERSONA-PROTOCOL]
-**Created**: 2025-08-21
-
-**What**: Define clear criteria for when personas should add items to the backlog vs. suggesting user do it
-**Why**: Current persona protocol causes confusion about when to auto-add vs. suggest backlog updates; need clear decision framework
-**How**:
-- Analyze current persona documentation for backlog protocols
-- Define clear criteria: "Auto-add when X, suggest when Y"
-- Create decision tree or flowchart for personas
-- Update all 6 persona documents with consistent protocol
-- Add examples of each scenario (auto-add vs. suggest)
-- Test protocol with each persona type to verify clarity
-**Done When**:
-- Clear decision criteria documented in each persona file
-- Consistent protocol across all 6 personas
-- Decision examples provided for common scenarios
-- Protocol tested and validated with representative cases
-**Depends On**: None
-
-**Problem Context**: DevOps Engineer and other personas inconsistently handle backlog updates - sometimes auto-adding, sometimes suggesting. Need clear protocol to eliminate confusion and ensure consistent behavior.
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 15/100 (accurate estimate)
-- Decision: APPROVED - Addresses real confusion in persona workflows
-- Pattern Match: Follows existing protocol documentation patterns
-- No architectural risk, simple documentation update
-
-### TD_048: Migrate FsCheck Property-Based Tests to 3.x API [Score: 30/100]
-**Status**: Approved
-**Owner**: Test Specialist
 **Size**: M (4-8h)
 **Priority**: Important
-**Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
+**Markers**: [PROCESS] [DOCUMENTATION] [WORKFLOW]
 **Created**: 2025-08-21
 
-**What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
-**Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
+**What**: Create clear decision protocols for branching and commit strategies
+**Why**: "New work = new branch" and "atomic commits" are oversimplified; real scenarios need nuanced decisions
 **How**:
-- Research FsCheck 3.x API changes (use Context7 if available)
-- Update `Prop.ForAll` usage to new API patterns
-- Fix `Gen<T>`, `Arb`, and `Arbitrary<T>` usage
-- Resolve Property attribute conflicts with xUnit
-- Update custom generators in `BlockLifeGenerators.cs`
-- Update property tests in `SimplePropertyTests.cs`
-- Re-enable FsCheck.Xunit package reference
-- Move tests back from `FsCheck_Migration_TD047/` to proper location
-- Ensure all 7 property-based tests pass
+- Define "new work" vs "continuing work" with concrete examples
+- Create decision tree for branch creation scenarios
+- Define "atomic commit" for BlockLife context
+- Address work continuity (multi-day tasks)
+- Handle context switching protocols
+- Document in persona protocols or HANDBOOK.md
 **Done When**:
-- All FsCheck tests compile with 3.x API
-- All property-based tests passing (7 tests)
-- FsCheck.Xunit package re-enabled in project
-- No references to old 2.x API patterns
-- Property tests moved back to proper test directory
+- Clear definition of when to create new branches
+- Atomic commit guidelines with examples
+- Decision tree for common scenarios
+- Personas have actionable branch/commit guidance
+- No ambiguity about work continuity
 **Depends On**: None
 
-**Problem Context**: Package updates completed but FsCheck 3.x has extensive breaking changes requiring dedicated migration effort. Tests temporarily disabled to unblock other infrastructure updates.
+**Problem Context**: Current guidance "new work = new branch" is undefined. Is fixing a typo "new work"? Continuing yesterday's TD? Found bug while working on VS? These decisions aren't obvious and need clear protocols. Similarly, pre-push hook can't enforce atomic commits retroactively - need pre-commit guidance.
 
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 35/100 (slightly underestimated due to API redesign)
-- Decision: APPROVED - Legitimate technical debt from package updates
-- FsCheck 3.x is fundamental API redesign, not just version bump
-- Property testing provides valuable edge case coverage for game logic
-- Migration necessary to re-enable 7 disabled tests
+**Key Questions to Answer**:
+- When is work "new" enough for a new branch?
+- How to handle multi-day work items?
+- What makes a commit "atomic" in BlockLife?
+- Should quick fixes get branches?
+- How to handle discovered issues while working?
 
-### TD_049: Add Git Branch Context Tracking to Memory Bank [Score: 40/100] ✅ COMPLETED
-**Status**: Done
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [INFRASTRUCTURE] [MEMORY-BANK] [GIT] [PERSONA-CONTEXT]
-**Created**: 2025-08-21
-**Completed**: 2025-08-21
-
-**What**: Enhance activeContext.md to track git branch state and uncommitted changes for each persona
-**Why**: Multi-clone architecture requires branch context preservation when switching personas; current Memory Bank loses critical git state
-
-**Implementation Completed**:
-✅ Enhanced activeContext.md with comprehensive git state tracking  
-✅ Added current branch, working directory status, recent commits tracking  
-✅ Created branch inventory with purposes and availability status  
-✅ Built automation script: `scripts/update-git-context.ps1`  
-✅ Provided complete documentation: `scripts/README-git-context.md`  
-✅ Tested and validated with real repository state  
-✅ Infrastructure gap resolved - persona workflow continuity established
-
-**Deliverables**:
-- Enhanced `.claude/memory-bank/activeContext.md` template
-- `scripts/update-git-context.ps1` - PowerShell automation
-- `scripts/README-git-context.md` - Usage documentation
-- Validated with DevOps Engineer persona workflow
-
-**Impact**: Multi-clone architecture now maintains git context across persona switches, enabling informed priority decisions and preventing duplicate infrastructure work.
-
-### TD_050: Enhance DevOps Engineer Protocol with activeContext Integration [Score: 30/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [INFRASTRUCTURE] [PERSONA-PROTOCOL] [MEMORY-BANK] [WORKFLOW]
-**Created**: 2025-08-21
-
-**What**: Integrate activeContext.md reading into DevOps Engineer persona workflow for infrastructure continuity
-**Why**: DevOps sessions benefit significantly from infrastructure context (git state, build health, completed work) that backlog alone cannot provide
-**How**:
-- Update DevOps Engineer persona document workflow steps
-- Add "Load Infrastructure Context" step after backlog review
-- Define activeContext freshness criteria (<7 days)
-- Specify context-informed prioritization process
-- Document reconciliation between backlog and context priorities
-- Add infrastructure state awareness to decision making
-- Test enhanced workflow with real DevOps scenarios
-**Done When**:
-- DevOps Engineer persona document updated with activeContext integration
-- Clear protocol for context freshness validation
-- Context-informed priority reconciliation documented
-- Enhanced workflow tested and validated
-- No workflow disruption for other personas
-- Infrastructure continuity demonstrated across sessions
-**Depends On**: None
-
-**Evidence Base**: Recent DevOps sessions show clear benefit from activeContext - avoided duplicate infrastructure checks, preserved completed package update status, enabled context-informed priority decisions on TD_049 criticality.
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 10/100 (significantly overestimated)
-- Decision: APPROVED - Simple documentation update with proven value
-- Just adding file read step to existing workflow
-- Evidence from TD_049 shows clear productivity benefit
-- Implementation: Update DevOps persona doc, add activeContext check
-
-### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: M (4-8h)
-**Priority**: Important
-**Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
-**Created**: 2025-08-20
-
-**What**: Design and implement comprehensive consistency checker for post-migration validation
-**Why**: Major architecture shift from worktrees to multi-clone needs systematic validation to ensure nothing was missed
-**How**:
-- Create consistency-checker subagent or slash command
-- Validate all references updated (no worktree mentions remain)
-- Check persona documentation consistency across all 6 personas
-- Verify git workflow references are standard (no Sacred Sequence)
-- Validate Clean Architecture boundaries still enforced
-- Check Glossary term usage consistency
-- Ensure all paths reference correct clone directories
-- Verify Context7 integration points still valid
-
-**Done When**:
-- Consistency validation tool/subagent created
-- Can run full codebase scan in <30 seconds
-- Produces structured report of inconsistencies
-- Zero false positives on clean codebase
-- Catches all migration-related issues
-- Integrated into CI/CD pipeline as optional check
-- Documentation includes usage examples
-
-**Depends On**: TD_037 (personas must be updated first)
-
-**Problem Context**: We've made a fundamental architectural change (worktrees → clones) and updated many files. We need systematic validation that everything is consistent. Manual checking is error-prone and doesn't scale.
-
-**Reference**: https://github.com/centminmod/my-claude-code-setup demonstrates excellent patterns for custom commands and validation tools we can adapt.
-
-**Tech Lead Decision** (2025-08-21):
-- Complexity Score: 35/100 (pattern copying from reference repos, not creating from scratch)
-- Decision: Approved with focused scope
-- Rationale: Proven patterns exist in centminmod/my-claude-code-setup we can directly adapt
-- Implementation: Follow memory-bank-synchronizer pattern for validation
-- Key: Not building from scratch - adapting existing successful implementations
+**Tech Lead Note**: This complexity was hidden by claiming things were "obvious" - they're actually undefined, which is worse than complex.
 
 
-### TD_046: Complete Git Workflow Documentation [Score: 20/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [DOCUMENTATION] [WORKFLOW] [DEVELOPER-EXPERIENCE]
-**Created**: 2025-08-21
 
-**What**: Add missing git workflow protocols to HANDBOOK.md
-**Why**: Current workflow docs have gaps causing confusion about branch management and commit practices
-**How**:
-- **Remote branch cleanup**: When and how to clean (`git remote prune`, `git branch -d`)
-- **Branch switching triggers**: When to create new branch vs continue existing
-- **Small step commit protocol**: Guidelines for atomic commits and WIP handling
-- **Post-merge cleanup**: Standard steps after PR merge
-- Add to HANDBOOK.md Git Workflow section
-- Include examples and decision trees
-**Done When**:
-- Clear protocol for remote branch cleanup
-- Decision tree for when to create new branches
-- Guidelines for commit granularity (atomic vs WIP)
-- Post-merge cleanup checklist
-- Examples covering common scenarios
-- No confusion about basic git workflow decisions
-**Depends On**: None
-
-**Gap Analysis**:
-- ❌ No mention of `git remote prune origin`
-- ❌ No guidance on when to start fresh branch
-- ❌ No atomic commit guidelines
-- ❌ No post-merge cleanup protocol
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 15/100 (accurate estimate)
-- Decision: APPROVED - Addresses real daily friction points
-- Gap analysis confirms missing critical protocols
-- Low effort documentation with high value return
-- Implementation: Add to HANDBOOK.md Git Workflow section
 
 ### TD_032: Fix Persona Documentation Routing and Ownership Gaps [Score: 40/100]
 **Status**: Approved
@@ -380,87 +141,8 @@
 - Moved from Ideas to Important - routing confusion actively affecting productivity
 - Should be prioritized to prevent ongoing misrouting issues
 
-### TD_052: Implement Simple Memory Bank Sync and Maintenance [Score: 10/100] ✅ COMPLETED
-**Status**: Done
-**Owner**: DevOps Engineer
-**Completed**: 2025-08-21
-**Size**: S (<4h)
-**Priority**: Important
-**Markers**: [INFRASTRUCTURE] [MEMORY-BANK] [SIMPLE]
-**Created**: 2025-08-21
-
-**What**: Create simple git-based Memory Bank sync with log rotation
-**Why**: Replace over-engineered TD_051 with pragmatic solution
-**How**:
-- Create `memory-sync.ps1` with basic git pull/add/commit/push
-- Add 7-day log rotation for SESSION_LOG
-- Extract patterns-recent to docs when >20 entries
-- No compaction needed (activeContext stays small naturally)
-- Hook integration for automatic sync
-**Done When**:
-- Simple sync script deployed to all clones
-- Log rotation prevents unbounded growth
-- Memory Bank stays under 200KB total
-- No synchronization conflicts
-**Depends On**: None
-
-**Tech Lead Decision** (2025-08-21):
-- Complexity: 10/100 (simple git operations)
-- Decision: APPROVED as replacement for rejected TD_051
-- Solves same problem with ~70 lines instead of 250
-- Pattern: Standard log rotation, not enterprise architecture
-- Key insight: Memory Bank is working memory, not permanent storage
-
-**Implementation Complete** (2025-08-21):
-✅ Created memory-sync.ps1 (~70 lines final)
-✅ Hook integration: auto-sync on checkout/commit/push
-✅ 7-day SESSION_LOG rotation (weekly cycle)
-✅ patterns-recent.md buffer (20-line threshold)
-✅ Removed decisions.md (use backlog instead)
-✅ No compaction needed (removed for simplicity)
-✅ Zero manual sync required - fully automatic
-✅ Robust error handling in hooks (|| true)
-
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
-
-### TD_033: Create PowerShell Custom Tool Prototype for Architecture Validation [Score: 60/100]
-**Status**: Approved (Ideas)
-**Owner**: DevOps Engineer
-**Size**: L (1-3 days)
-**Priority**: Ideas
-**Markers**: [ARCHITECTURE] [TOOLING] [PROTOTYPE]
-**Created**: 2025-08-20
-
-**What**: Create custom PowerShell tool for Claude Code to validate architecture and patterns
-**Why**: Current validation requires multiple grep/read operations; structured validation would catch issues early
-**Note**: Revisit after TD_038 and TD_040 implementation to learn from patterns
-**How**: 
-- Implement after TD_029/030 to compare approaches
-- Create validate-architecture.ps1 with structured output
-- Check Clean Architecture boundaries
-- Validate Glossary term usage in code
-- Compare against Move Block reference pattern
-- Return JSON with violations and suggestions
-**Done When**: 
-- Tool validates architecture rules programmatically
-- Returns structured data Claude can interpret
-- Demonstrates clear value over manual checking
-- Decision made on wider custom tool adoption
-**Depends On**: TD_029, TD_030 (learn from implementation)
-
-**Problem Context**: We manually check architecture compliance through multiple file reads and greps. A custom tool could provide instant, structured feedback.
-**Prototype Goal**: Evaluate if custom PowerShell tools reduce cognitive load and improve quality
-**Success Metrics**: Time saved, bugs prevented, developer experience improvement
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 40/100 (overestimated, can leverage existing patterns)
-- Decision: APPROVED for Ideas backlog - Worth exploring but not urgent
-- PowerShell validation tools proven in centminmod examples
-- Prototype approach correct - test value before wider adoption
-- Owner reassigned to DevOps Engineer (tooling expertise)
-
-
 
 
 
@@ -468,6 +150,7 @@
 
 ## 🚧 Currently Blocked
 *None*
+
 
 ---
 

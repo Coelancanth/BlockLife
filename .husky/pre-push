@@ -70,9 +70,7 @@ elif [ "$behind_count" -gt 0 ]; then
   echo "ℹ️  Branch is $behind_count commits behind main (acceptable)"
 fi
 
-# Sync Memory Bank before push (if available)
-if [ -f "scripts/memory-sync.ps1" ]; then
-  powershell -ExecutionPolicy Bypass -File scripts/memory-sync.ps1 -Operation push 2>/dev/null || true
-fi
+# Memory Bank is now local-only per TD_053 - no sync needed
+# The .git/hooks/pre-push will provide a reminder to update activeContext.md
 
 echo "✅ All checks passed - ready to push!"

@@ -97,4 +97,9 @@ icon.svg.import
 # Git worktrees for isolated persona workspaces
 personas/
 # Note: These are git worktrees created by scripts/persona/switch-persona.ps1
-# They should NOT be committed to the repository  
+# They should NOT be committed to the repository
+
+# --- Memory Bank (Local Only) ---
+# Memory Bank is now local-only per TD_053
+# Each developer/clone maintains their own context
+.claude/memory-bank/  
