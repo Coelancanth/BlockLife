@@ -1,6 +1,28 @@
-# Shared Utilities
+# Utility Scripts
 
-Common functions and utilities used across all script categories.
+General-purpose utility and helper scripts.
+
+## 🔧 Available Scripts
+
+### validate-scripts.ps1
+**Purpose**: Validate script consistency and standards compliance
+```powershell
+# Check all scripts for issues
+./scripts/utils/validate-scripts.ps1
+
+# Auto-fix issues where possible
+./scripts/utils/validate-scripts.ps1 -Fix
+
+# Verbose output
+./scripts/utils/validate-scripts.ps1 -Verbose
+```
+
+**What it checks**:
+- ✅ Shebang line (`#!/usr/bin/env pwsh`)
+- ✅ Error handling (`$ErrorActionPreference = 'Stop'`)
+- ✅ Naming convention (verb-noun format)
+- ✅ Documentation headers (.SYNOPSIS/.DESCRIPTION)
+- ✅ Cross-platform support for critical scripts
 
 ## Planned Utilities
 

@@ -35,20 +35,25 @@ No manual installation required - hooks are in `.husky/` directory.
 ./scripts/persona/sync-personas.ps1
 
 # Install Claude protection for main directory (optional)
-./scripts/protection/install-claude-protection.ps1
+./scripts/setup/install-claude-protection.ps1
 ```
 
-### Branch Management Tools
+### Git Workflow Tools
 ```powershell
-# Intelligent branch status checking (for AI persona embodiment)
-./scripts/branch-status-check.ps1
+# Branch status and PR checking
+./scripts/git/branch-status-check.ps1                 # Windows
+source ./scripts/git/branch-status-check.sh           # Linux/Mac
 
-# Automated cleanup for merged PRs
-./scripts/branch-cleanup.ps1
-./scripts/branch-cleanup.ps1 feat/VS_003-specific-branch
+# Intelligent branch cleanup with git fetch --prune
+./scripts/git/branch-cleanup.ps1                      # Clean current branch
+./scripts/git/branch-cleanup.ps1 feat/VS_003          # Clean specific branch
+./scripts/git/branch-cleanup.ps1 feat/VS_003 -Force   # Force cleanup if needed
 
-# Check current branch alignment with work items
-source ./scripts/branch-status-check.sh    # Linux/Mac
+# Key Features:
+# - Uses git fetch --prune to sync with remote state
+# - Detects merged PRs even after remote deletion
+# - Safe unmerged change detection
+# - Provides helpful guidance for edge cases
 ```
 
 ## 📁 Directory Structure
@@ -58,24 +63,27 @@ source ./scripts/branch-status-check.sh    # Linux/Mac
 - Complete build lifecycle management
 - [📖 Documentation](core/README.md)
 
+### **git/** - Git Workflow Tools
+- `branch-status-check.ps1/.sh` - Check branch and PR status
+- `branch-cleanup.ps1` - Clean merged branches intelligently
+- Git workflow automation and helpers
+- [📖 Documentation](git/README.md)
+
 ### **persona/** - Multi-Clone System  
 - `setup-personas.ps1` - Creates 6 isolated persona clones
 - `sync-personas.ps1` - Syncs all persona repositories
 - Complete isolation for persona-based development
 - [📖 Documentation](persona/README.md)
 
-### **protection/** - Development Safeguards
-- `install-claude-protection.ps1` - Prevents accidental main directory usage
-- Encourages proper persona workspace usage
+### **setup/** - Initial Setup & Configuration
+- `install-claude-protection.ps1` - Protect main directory
+- Environment configuration scripts
+- [📖 Documentation](setup/README.md)
 
-### **Root Utilities**
-- `verify-subagent.ps1` - Trust-but-verify subagent work completion
-- `verify-backlog-update.ps1` - Quick backlog update verification
-
-### **deprecated/** - Archived Scripts
-- Obsolete scripts from previous architectural approaches
-- Maintained for recovery if needed
-- [📖 Documentation](deprecated/README.md)
+### **verification/** - Trust-but-Verify Tools
+- `verify-subagent.ps1` - Verify AI subagent work
+- `verify-backlog-update.ps1` - Quick backlog checks
+- [📖 Documentation](verification/README.md)
 
 ### **Future Expansion Areas**
 - `test/`, `dev/`, `deploy/`, `utils/` - Placeholder directories for growth
