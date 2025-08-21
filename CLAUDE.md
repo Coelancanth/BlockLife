@@ -78,7 +78,8 @@ You: "That sounds like over-engineering. The current DI
 2. Review .claude/memory-bank/patterns.md (for implementation patterns)
 3. Understand .claude/memory-bank/decisions.md (for architectural context)
 4. Check .claude/memory-bank/lessons.md if debugging
-5. THEN proceed with Backlog.md workflow
+5. Run ./scripts/branch-status-check.ps1 (branch intelligence)
+6. THEN proceed with Backlog.md workflow
 
 # During work:
 - Update after completing work items
@@ -210,7 +211,7 @@ After any subagent work, personas perform 10-second verification:
 
 BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP pattern. Uses CQRS with functional programming (LanguageExt.Core) and pure C# core.
 
-**🎮 Game Design**: See `Docs/02-Design/` for complete game mechanics and vision. The user is the Game Designer - these docs are sacred reference material.
+**🎮 Game Design**: See `Docs/02-Design/Game/` for complete game mechanics and vision. The user is the Game Designer - these docs are sacred reference material.
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
@@ -312,12 +313,49 @@ mcp__context7__get-library-docs "/websites/mikeschulze_github_io-gdunit4" --topi
 
 **Complete Documentation**: [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md) - Includes troubleshooting & recovery
 
+### Branch Decision Protocol
+
+**CRITICAL**: Use intelligent branch decision making for AI personas:
+
+```bash
+# Before starting work, check branch status:
+./scripts/branch-status-check.ps1
+
+# Follow decision tree:
+# - On main? → Always create feature branch
+# - Different work item? → New branch  
+# - Quick fix (<30min)? → Stay on current branch
+# - Multi-session work? → New branch
+# - Different persona? → Consider new branch
+```
+
+**Branch Intelligence Features:**
+- ✅ **PR status checking** - Open, merged, closed analysis
+- ✅ **Branch freshness** - Behind/ahead commit tracking  
+- ✅ **Automated cleanup** - `./scripts/branch-cleanup.ps1` for merged PRs
+- ✅ **Decision guidance** - Context-aware recommendations
+
+**Complete Protocol**: [BranchAndCommitDecisionProtocols.md](Docs/02-Design/Protocols/BranchAndCommitDecisionProtocols.md)
+**Architectural Decision**: [ADR-003](Docs/03-Reference/ADR/ADR-003-ai-persona-git-workflow.md) - Educational approach rationale
+
+### Atomic Commits & Cleanup
+
+**Atomic Commit Standard**: One logical change describable in a single sentence.
+
+**Post-Merge Cleanup**:
+```bash
+# After PR is merged:
+./scripts/branch-cleanup.ps1               # Automated cleanup of merged branch
+git checkout main && git pull origin main  # Return to fresh main
+```
+
 ### Quick Reference
 ```bash
 # Standard workflow for all personas:
 git checkout main && git pull origin main  # Always start fresh
-git checkout -b feat/your-feature          # Branch for work
-git add -A && git commit -m "feat: desc"   # Commit changes
+./scripts/branch-status-check.ps1          # Check branch intelligence
+git checkout -b feat/your-feature          # Branch for work (if recommended)
+git add -A && git commit -m "feat: desc"   # Commit changes (atomic commit guidance shows)
 git push -u origin feat/your-feature       # Push to remote
 gh pr create --title "feat: title"         # Create PR
 ```
@@ -326,6 +364,7 @@ gh pr create --title "feat: title"         # Create PR
 - Multi-clone architecture (each persona has isolated clone)
 - Commits auto-use persona identity (e.g., dev-eng@blocklife)
 - Branch protection enforces quality gates
+- AI persona branch intelligence prevents common workflow issues
 - See [GitWorkflow.md](Docs/03-Reference/GitWorkflow.md) for troubleshooting
 
 

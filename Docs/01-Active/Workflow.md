@@ -4,7 +4,20 @@
 1. **Check Memory Bank** first: `.claude/memory-bank/activeContext.md`
 2. **Review patterns**: `.claude/memory-bank/patterns.md` 
 3. **Understand decisions**: `.claude/memory-bank/decisions.md`
-4. **Then proceed** with workflow below
+4. **Check branch status**: `./scripts/branch-status-check.ps1` (branch intelligence)
+5. **Then proceed** with workflow below
+
+### Branch Workflow Integration
+**CRITICAL**: AI personas must make intelligent branch decisions before starting work.
+
+**Quick Decision Guide:**
+- **On main?** → Always create feature branch for work items
+- **Different work item?** → New branch (feat/VS_XXX, tech/TD_XXX, fix/BR_XXX)  
+- **Quick fix (<30min)?** → Consider staying on current branch
+- **Multi-session work?** → New branch required
+- **Stale branch (>10 commits behind)?** → Consider fresh branch
+
+**Complete Protocols**: [BranchAndCommitDecisionProtocols.md](../02-Design/Protocols/BranchAndCommitDecisionProtocols.md)
 
 ## 🧠 Owner-Based Ultra-Think Protocol
 
@@ -12,10 +25,18 @@
 Each backlog item has a **single Owner** who is responsible for decisions and progress. When embodying a persona:
 
 1. **Filter** for items you own
-2. **Ultra-Think** if Status=Proposed (automatic 5-15 min deep analysis)
-3. **Quick Scan** other owned items (<2 min updates)
-4. **Update** backlog with decisions
-5. **Reassign** owner when handing off
+2. **Check branch alignment** with current work item (use branch status script)
+3. **Ultra-Think** if Status=Proposed (automatic 5-15 min deep analysis)
+4. **Quick Scan** other owned items (<2 min updates)
+5. **Update** backlog with decisions
+6. **Reassign** owner when handing off
+
+### Branch Alignment During Persona Work
+**Before starting implementation work:**
+- Verify current branch matches work item scope
+- Create new branch if working on different item type (VS→TD, TD→BR)
+- Use branch cleanup automation for merged/stale branches
+- Follow atomic commit guidance during implementation
 
 ### Ultra-Think Triggers
 - **Automatic**: Owner + Status=Proposed
@@ -145,6 +166,15 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
                     ↓                           ↓
                 (TD approve)            Debugger Expert (OWNS BR)
 ```
+
+### Branch Considerations During Handoffs
+- **Product Owner → Tech Lead**: Usually same branch (review phase)
+- **Tech Lead → Dev Engineer**: New branch if implementing approved item (feat/VS_XXX)
+- **Dev Engineer → Test Specialist**: Same branch (testing implementation)
+- **Test Specialist → DevOps**: Same branch (CI/CD validation) OR new branch for deployment
+- **Bug Discovery**: New branch for BR items (fix/BR_XXX-description)
+
+**Key Principle**: Branch alignment with work item type and persona scope
 
 ## VS (Vertical Slice) Flow with Ownership
 ```
@@ -397,8 +427,22 @@ Before writing code with unfamiliar APIs:
 - [ ] **Review existing patterns** in `src/Features/Block/Move/`
 - [ ] **Map integration points** if replacing features (find ALL old code)
 
+### Branch-Related Troubleshooting
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| **"Merge conflicts"** | Branch behind main | `git rebase origin/main` or create fresh branch |
+| **"PR already exists"** | Working on merged branch | Run `./scripts/branch-cleanup.ps1` to clean up |
+| **"No such branch"** | Branch name mismatch | Use `./scripts/branch-status-check.ps1` for guidance |
+| **"Working on wrong item"** | Branch/work item misalignment | Create new branch for current work item |
+
 ### Quick Commands
 ```bash
+# Check branch intelligence before starting work
+./scripts/branch-status-check.ps1
+
+# Clean up merged branches automatically
+./scripts/branch-cleanup.ps1
+
 # Find where a class is actually defined
 Grep "class PlaceBlockCommand" src/
 

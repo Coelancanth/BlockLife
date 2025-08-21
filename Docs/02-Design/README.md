@@ -1,17 +1,21 @@
-# Game Design Documentation
+# BlockLife Design Documentation
 
-This folder contains the creative vision for BlockLife.
+This folder contains both game design and development workflow design specifications.
 
 ## 📚 Document Structure
 
-### Single Source of Truth
-- **[Vision.md](Vision.md)** ⭐⭐⭐⭐⭐ - THE complete game design document
-  - Core mechanics (Triple Town merging, auto-spawn, chains)
-  - Future systems (life stages, personality, narratives)
-  - Design philosophy and player experience goals
+### Game Design
+- **[Game/](Game/)** - Creative vision and game mechanics
+  - **[Vision.md](Game/Vision.md)** ⭐⭐⭐⭐⭐ - THE complete game design document
+  - Core mechanics, future systems, design philosophy
+
+### Development Protocols
+- **[Protocols/](Protocols/)** - Workflow design and AI persona protocols
+  - **[BranchAndCommitDecisionProtocols.md](Protocols/BranchAndCommitDecisionProtocols.md)** ⭐⭐⭐⭐⭐ - Git workflow protocols
+  - Decision trees, automation systems, quality standards
 
 ### Archived Ideas
-- **[/07-Archive/Future-Ideas/](../07-Archive/Future-Ideas/)** - Premature detailed specs
+- **[../07-Archive/Future-Ideas/](../07-Archive/Future-Ideas/)** - Premature detailed specs
   - Moved here to prevent confusion
   - Will be resurrected only when needed
   - Not promises, just possibilities
@@ -19,47 +23,44 @@ This folder contains the creative vision for BlockLife.
 
 ## 🎮 For AI Personas
 
-**IMPORTANT**: The user is the Game Designer. These documents represent their creative vision.
+### Game Design (Creative Authority: User)
+**IMPORTANT**: The user is the Game Designer. Game design documents represent their creative vision.
+- **Reference Only** - Never modify game design without Game Designer approval
+- **Ask When Unclear** - If design intent is ambiguous, ask the user
+- **Build What's in Backlog** - Not everything in Vision is approved for building
 
-### How to Use These Docs
+### Development Protocols (Implementation Authority: DevOps Engineer)
+**IMPORTANT**: Development protocols define how we work, not what we build.
+- **Follow Decision Trees** - Use documented protocols for workflow decisions
+- **Leverage Automation** - Use provided scripts and intelligent tooling
+- **Suggest Improvements** - Identify gaps or unclear scenarios in protocols
 
-1. **Vision.md Only** - This is THE design reference (ignore archived ideas)
-2. **Reference Only** - Never modify without Game Designer approval
-3. **Ask When Unclear** - If design intent is ambiguous, ask the user
-4. **Build What's in Backlog** - Not everything in Vision is approved for building
+## 🎯 Domain Separation
 
-### Current Implementation Priority
+### Game Design Domain
+- **What**: Game mechanics, player experience, creative vision
+- **Authority**: Game Designer (User)
+- **Documents**: Game/Vision.md
+- **Modification**: Requires explicit Game Designer approval
 
-1. **VS_003** - Triple-merge system (same-type only)
-2. **VS_004** - Auto-spawn system
-3. **VS_005** - Chain reactions
-4. Everything else in Vision.md is FUTURE possibility
+### Development Protocol Domain  
+- **What**: Workflow processes, automation, quality standards
+- **Authority**: DevOps Engineer + Tech Lead
+- **Documents**: Protocols/ folder
+- **Modification**: Can be improved based on development experience
 
-## 🚀 Design Philosophy
+## 📋 Quick Navigation
 
-BlockLife is about simulating the human experience through game mechanics:
-- Every mechanic should tell a story
-- Time should feel meaningful
-- Choices should have weight
-- No perfect path exists
+### For Game Implementation
+1. Read **[Game/Vision.md](Game/Vision.md)** for creative requirements
+2. Check **[Backlog.md](../01-Active/Backlog.md)** for approved work items
+3. Follow implementation patterns in **[HANDBOOK.md](../03-Reference/HANDBOOK.md)**
 
-## 📝 Important Notes
-
-- **Vision.md is the ONLY active design document**
-- **Backlog.md defines what's actually being built**
-- **Archived ideas are NOT commitments**
-- Features in Vision.md are possibilities, not promises
-- User (Game Designer) maintains sole creative authority
-
-## 🎯 Current Game Focus
-
-**Core Loop Being Built (VS_003-005):**
-```
-Move Block → Check for 3+ Merge → Merge → Check for Chains → Score → Spawn New Block
-```
-
-Everything else (life stages, personality, etc.) comes AFTER we validate this is fun.
+### For Workflow Decisions
+1. Read **[Protocols/](Protocols/)** for workflow guidance
+2. Use automation scripts in **[scripts/](../../scripts/)**
+3. Follow git protocols and quality standards
 
 ---
 
-*Build the fun first. Add depth later. Document only what exists.*
+*Separate concerns: Game design defines WHAT to build, protocols define HOW to build it.*
