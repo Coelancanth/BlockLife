@@ -175,7 +175,7 @@ These documents define **how we work** rather than **what we build**. They estab
 ### Architecture Context
 - **[ADR Directory](../../03-Reference/ADR/)** - Architectural decisions
 - **[GitWorkflow.md](../../03-Reference/GitWorkflow.md)** - Git implementation details
-- **[HUSKY_GUIDE.md](../../../scripts/HUSKY_GUIDE.md)** - Git hooks comprehensive guide
+- **[GUIDE.md](../../../scripts/GUIDE.md)** - Complete scripts guide including git hooks
 
 ---
 

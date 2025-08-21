@@ -73,4 +73,4 @@ git push --no-verify
 - Update Memory Bank when hooks remind you
 
 ---
-**Full Guide**: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
+**Full Guide**: [GUIDE.md](GUIDE.md)
