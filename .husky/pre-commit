@@ -9,5 +9,146 @@ echo "   ✓ Could be described in a single sentence"
 echo "   ✓ Tests updated for this specific change only"
 echo ""
 
+# Branch Alignment Intelligence (TD_058) - Semantic Workflow Validation
+perform_branch_alignment_check() {
+    local commit_msg_file="$1"
+    
+    # Input validation - graceful handling of edge cases
+    if [ -z "$commit_msg_file" ] || [ ! -f "$commit_msg_file" ]; then
+        return 0  # Skip validation if no commit message file
+    fi
+    
+    # Fast path: Get current branch and commit message efficiently
+    local current_branch
+    current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return 0
+    
+    local commit_msg
+    commit_msg=$(cat "$commit_msg_file" 2>/dev/null) || return 0
+    
+    # Skip empty commits or merge commits
+    if [ -z "$commit_msg" ] || echo "$commit_msg" | grep -q "^Merge\|^Revert"; then
+        return 0
+    fi
+    
+    # Layer 1: Work Item Alignment Validation
+    check_work_item_alignment "$current_branch" "$commit_msg"
+    
+    # Layer 2: Work Type Consistency Validation  
+    check_work_type_alignment "$current_branch" "$commit_msg"
+    
+    # Layer 3: Main Branch Detection (Backup to pre-push)
+    check_main_branch_warning "$current_branch"
+}
+
+check_work_item_alignment() {
+    local branch="$1"
+    local commit_msg="$2"
+    
+    # Extract work items using optimized regex with error handling
+    local branch_item
+    branch_item=$(echo "$branch" | grep -o '[A-Z]\+_[0-9]\+' | head -1 || true)
+    
+    local commit_items
+    commit_items=$(echo "$commit_msg" | grep -o '[A-Z]\+_[0-9]\+' || true)
+    
+    # Only validate if both branch and commit have work items
+    if [ -n "$branch_item" ] && [ -n "$commit_items" ]; then
+        # Check for alignment - any commit work item matches branch work item
+        local alignment_found=false
+        for commit_item in $commit_items; do
+            if [ "$commit_item" = "$branch_item" ]; then
+                alignment_found=true
+                break
+            fi
+        done
+        
+        # Provide educational guidance for misalignments
+        if [ "$alignment_found" = false ]; then
+            echo "🤔 Branch Alignment Check:"
+            echo "   Branch context: $branch_item"
+            echo "   Commit mentions: $(echo $commit_items | tr '\n' ' ' | sed 's/ $//' || echo $commit_items)"
+            echo "   💡 Consider: Are you on the right branch for this work?"
+            echo "   📋 Expected: Commit should relate to $branch_item work"
+            echo ""
+        fi
+    fi
+}
+
+check_work_type_alignment() {
+    local branch="$1" 
+    local commit_msg="$2"
+    
+    # Extract branch type and commit type efficiently with error handling
+    local branch_type
+    branch_type=$(echo "$branch" | cut -d'/' -f1 || echo "")
+    
+    local commit_type
+    commit_type=$(echo "$commit_msg" | grep -o '^[a-z]\+' | head -1 || echo "")
+    
+    # Skip validation for docs and test commits (acceptable everywhere)
+    if echo "$commit_type" | grep -E '^(docs|test)$' >/dev/null 2>&1 || true; then
+        if [ "$commit_type" = "docs" ] || [ "$commit_type" = "test" ]; then
+            return 0
+        fi
+    fi
+    
+    # Skip validation if no clear types detected
+    if [ -z "$branch_type" ] || [ -z "$commit_type" ]; then
+        return 0
+    fi
+    
+    # Validate type alignment with clear guidance
+    case "$branch_type" in
+        "feat"|"feature")
+            if ! echo "$commit_type" | grep -E '^(feat|feature)$' >/dev/null 2>&1; then
+                echo "🔄 Work Type Alignment:"
+                echo "   Feature branch but '$commit_type' commit type"
+                echo "   💡 Expected: feat commits on feature branches"
+                echo "   ℹ️  Exception: docs and test commits are acceptable"
+                echo ""
+            fi
+            ;;
+        "tech"|"refactor")
+            if ! echo "$commit_type" | grep -E '^(tech|refactor)$' >/dev/null 2>&1; then
+                echo "🔄 Work Type Alignment:"
+                echo "   Tech debt branch but '$commit_type' commit type"
+                echo "   💡 Expected: tech or refactor commits on tech branches"
+                echo "   ℹ️  Exception: docs and test commits are acceptable"
+                echo ""
+            fi
+            ;;
+        "fix"|"hotfix")
+            if ! echo "$commit_type" | grep -E '^(fix|hotfix)$' >/dev/null 2>&1; then
+                echo "🔄 Work Type Alignment:"
+                echo "   Bug fix branch but '$commit_type' commit type"
+                echo "   💡 Expected: fix commits on bug fix branches"
+                echo "   ℹ️  Exception: docs and test commits are acceptable"
+                echo ""
+            fi
+            ;;
+    esac
+}
+
+check_main_branch_warning() {
+    local branch="$1"
+    
+    # Main branch warning (complements pre-push blocking)
+    if [ "$branch" = "main" ]; then
+        echo "⚠️  MAIN BRANCH DETECTED"
+        echo "   Pre-push hook will block this push"
+        echo "   💡 Recommended: git checkout -b feat/your-feature"
+        echo "   📋 All work should be done on feature branches"
+        echo ""
+    fi
+}
+
+# Execute branch alignment check if commit message file provided
+if [ -n "$1" ]; then
+    perform_branch_alignment_check "$1"
+fi
+
 # Architecture: Formatting enforced by build system (TreatWarningsAsErrors=true)
 # Architecture: Static analysis runs in pre-push for comprehensive validation
+
+# Always allow commit to proceed (educational only, never blocking)
+exit 0
