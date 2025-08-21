@@ -50,8 +50,8 @@ if [ "$3" = "1" ]; then
     echo "   💡 No upstream set. Push with: git push -u origin $current_branch"
   fi
   
-  # Auto-sync Memory Bank on branch switch
+  # Auto-sync Memory Bank on branch switch (if available)
   if [ -f "scripts/memory-sync.ps1" ]; then
-    powershell -ExecutionPolicy Bypass -File scripts/memory-sync.ps1 -Operation pull 2>/dev/null
+    powershell -ExecutionPolicy Bypass -File scripts/memory-sync.ps1 -Operation pull 2>/dev/null || true
   fi
 fi

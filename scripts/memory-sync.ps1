@@ -1,15 +1,14 @@
 # Memory Bank Synchronization Script
 # Simple, elegant, automatic via git hooks
 param(
-    [ValidateSet("pull", "push", "sync", "compact", "status")]
+    [ValidateSet("pull", "push", "sync", "status")]
     [string]$Operation = "sync"
 )
 
 $ErrorActionPreference = "SilentlyContinue"
 $memoryPath = ".claude/memory-bank"
-$maxLogDays = 3
+$maxLogDays = 7  # Weekly rotation
 $maxPatternsLines = 20
-$maxContextSize = 5000  # 5KB
 
 # Ensure Memory Bank exists
 if (-not (Test-Path $memoryPath)) {
@@ -17,15 +16,17 @@ if (-not (Test-Path $memoryPath)) {
 }
 
 function Invoke-Pull {
+    # Only sync if Memory Bank exists in origin/main
     git fetch origin main --quiet 2>$null
-    git checkout origin/main -- "$memoryPath/*.md" 2>$null
-    if ($?) {
+    $files = git ls-tree -r origin/main --name-only "$memoryPath" 2>$null
+    if ($files) {
+        git checkout origin/main -- "$memoryPath/*.md" 2>$null
         Write-Host "✅ Memory loaded" -ForegroundColor Green -NoNewline
     }
 }
 
 function Invoke-Push {
-    # Rotate old SESSION_LOG entries (>3 days)
+    # Rotate old SESSION_LOG entries (>7 days)
     $logFile = "$memoryPath/SESSION_LOG.md"
     if (Test-Path $logFile) {
         $content = Get-Content $logFile
@@ -68,34 +69,7 @@ function Invoke-Push {
     }
 }
 
-function Invoke-Compact {
-    # Compact activeContext if too large
-    $contextFile = "$memoryPath/activeContext.md"
-    if (Test-Path $contextFile) {
-        $size = (Get-Item $contextFile).Length
-        if ($size -gt $maxContextSize) {
-            Write-Host "🗜️ Compacting activeContext ($([math]::Round($size/1024, 1))KB → <5KB)..." -ForegroundColor Cyan
-            
-            # Keep only essential sections
-            $content = Get-Content $contextFile -Raw
-            $compacted = @"
-# Active Context - BlockLife Development
-
-**Last Updated**: $(Get-Date -Format "yyyy-MM-dd HH:mm")
-**Compacted**: Previous context archived
-
-## Current Work
-- Branch: $(git branch --show-current)
-- Status: Compacted (see git log for history)
-
-## Recent Items
-[Context compacted - check git history for details]
-"@
-            $compacted | Set-Content $contextFile
-            Write-Host "✅ Compacted" -ForegroundColor Green
-        }
-    }
-}
+# Compact function removed - activeContext naturally stays small
 
 function Get-Status {
     Write-Host "`n📊 Memory Bank Status" -ForegroundColor Cyan
@@ -124,6 +98,5 @@ switch ($Operation) {
         Invoke-Pull
         Invoke-Push
     }
-    "compact" { Invoke-Compact }
     "status" { Get-Status }
 }

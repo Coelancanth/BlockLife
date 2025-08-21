@@ -48,7 +48,8 @@
       "Bash(env)",
       "WebFetch(domain:context7.com)",
       "Bash(gh pr view:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(dotnet husky:*)"
     ],
     "deny": [],
     "ask": [],

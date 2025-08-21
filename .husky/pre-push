@@ -70,9 +70,9 @@ elif [ "$behind_count" -gt 0 ]; then
   echo "ℹ️  Branch is $behind_count commits behind main (acceptable)"
 fi
 
-# Sync Memory Bank before push
+# Sync Memory Bank before push (if available)
 if [ -f "scripts/memory-sync.ps1" ]; then
-  powershell -ExecutionPolicy Bypass -File scripts/memory-sync.ps1 -Operation push 2>/dev/null
+  powershell -ExecutionPolicy Bypass -File scripts/memory-sync.ps1 -Operation push 2>/dev/null || true
 fi
 
 echo "✅ All checks passed - ready to push!"
