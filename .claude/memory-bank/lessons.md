@@ -1,6 +1,14 @@
 # Lessons Learned (Bug Fixes & Gotchas)
 **Last Updated**: 2025-08-21
 
+## Documentation Sprawl Creates Confusion
+**Issue**: Same information in 4+ files, hard to find anything
+**Root Cause**: Easier to create new docs than maintain existing
+**Solution**: Consolidated into HANDBOOK.md (89% reduction)
+**Metric**: 4,675 lines → 800 lines, 100% value retained
+**Lesson**: Enforce single source of truth ruthlessly
+**Date**: 2025-08-21
+
 ## Husky.NET Sets core.hookspath
 **Issue**: Hooks not executing after installation
 **Root Cause**: Git needs core.hookspath set to .husky

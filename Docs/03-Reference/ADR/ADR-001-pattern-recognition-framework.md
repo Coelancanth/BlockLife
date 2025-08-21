@@ -190,6 +190,6 @@ public void Resolve_ConflictingPatterns_ChoosesHighestPriority()
 
 ## References
 - [VS_003A Backlog Item](../../../01-Active/Backlog.md#vs_003a-match-3-with-attributes-phase-1)
-- [Architecture.md](../Architecture.md)
+- [HANDBOOK.md](../HANDBOOK.md)
 - [Clean Architecture Principles](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Open/Closed Principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle)

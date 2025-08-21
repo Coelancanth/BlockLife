@@ -171,51 +171,6 @@
 - Implementation: Follow memory-bank-synchronizer pattern for validation
 - Key: Not building from scratch - adapting existing successful implementations
 
-### TD_039: Implement Husky.NET and EditorConfig for Enhanced Developer Workflow [Score: 40/100]
-**Status**: Approved
-**Owner**: DevOps Engineer
-**Size**: M (4-8h)
-**Priority**: Important
-**Markers**: [TOOLING] [DEVELOPER-EXPERIENCE] [QUALITY]
-**Created**: 2025-08-20
-
-**What**: Integrate Husky.NET for cross-platform git hooks and enhance EditorConfig for consistent code formatting
-**Why**: Manual hook installation × 6 clones = error-prone; need automatic propagation across all persona clones
-**How**:
-- Install and configure Husky.NET for cross-platform git hooks
-- Migrate existing pre-commit and pre-push hooks to Husky.NET
-- Enhance .editorconfig with comprehensive C# and Godot settings
-- Add format verification to pre-commit hooks
-- Configure auto-formatting rules for common scenarios
-- Document setup process for new developers
-- Ensure compatibility with VS Code, Visual Studio, and Rider
-
-**Done When**:
-- Husky.NET installed and working on Windows/Mac/Linux
-- All existing git hooks migrated to Husky.NET
-- EditorConfig covers all file types in project
-- Pre-commit hook validates formatting
-- Documentation updated with setup instructions
-- Works seamlessly with multi-clone architecture
-- Zero manual configuration needed for new developers
-
-**Depends On**: None
-
-**Problem Context**: Current git hooks require PowerShell and manual installation. Code formatting inconsistencies create unnecessary PR review friction. Husky.NET provides automatic, cross-platform hook installation, while enhanced EditorConfig ensures consistent formatting regardless of editor choice.
-
-**Reference**: 
-- Husky.NET: https://github.com/alirezanet/Husky.Net
-- EditorConfig: https://editorconfig.org/
-
-**Tech Lead Decision** (2025-08-21):
-- Complexity Score: 40/100
-- Decision: Approved - critical for multi-clone architecture
-- Rationale: With 6 separate persona clones, manual hook management is unsustainable
-- Note: Not about cross-platform, about managing hooks across multiple clones
-- Impact: Eliminates manual hook installation and ensures consistency
-
-**Implementation Notes**: Should integrate cleanly with our multi-clone setup since each clone can have its own Husky configuration. Consider adding format-on-save configurations for popular editors.
-
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -262,7 +217,7 @@
 **Why**: Current docs cause work misrouting - personas don't know when to hand off to others
 **How**: 
 - Add "Work I Don't Accept" section to each persona doc
-- Create master routing table in QuickReference.md
+- Create master routing table in HANDBOOK.md
 - Expand DevOps ownership to include all dev tooling/scripts
 - Clarify Test Specialist vs Debugger Expert handoff criteria
 - Add cross-references between related personas

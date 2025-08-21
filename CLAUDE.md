@@ -103,7 +103,7 @@ You: "That sounds like over-engineering. The current DI
 - **lessons.md** - Bug fixes & gotchas (persistent)
 - **SESSION_LOG.md** - Update history (rolling 30 days)
 
-**Full Protocol**: [MemoryBankProtocol.md](Docs/03-Reference/MemoryBankProtocol.md) - Detailed update rules, templates, examples
+**Memory Bank Details**: See HANDBOOK.md > Memory Bank System
 
 ## 🎯 Core Directive (from Best Practices)
 Do what has been asked; nothing more, nothing less.
@@ -111,16 +111,15 @@ Do what has been asked; nothing more, nothing less.
 - ALWAYS prefer editing existing files
 - NEVER proactively create documentation unless requested
 
-## 📚 REORGANIZED DOCUMENTATION: The Essential Four
+## 📚 SIMPLIFIED DOCUMENTATION: Just Three Files
 
-**START HERE for 95% of your needs:**
-1. **[Workflow.md](Docs/01-Active/Workflow.md)** ⭐⭐⭐⭐⭐ - Complete development workflow  
-2. **[QuickReference.md](Docs/03-Reference/QuickReference.md)** ⭐⭐⭐⭐⭐ - All agent patterns and **lessons learned**
-3. **[Architecture.md](Docs/03-Reference/Architecture.md)** ⭐⭐⭐⭐ - Core architectural principles
-4. **[Templates/](Docs/05-Templates/)** ⭐⭐⭐⭐ - Work item templates
+**Everything you need in 3 documents:**
+1. **[HANDBOOK.md](Docs/03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Your daily companion (architecture, workflow, testing, patterns)
+2. **[GLOSSARY.md](Docs/03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Terms and vocabulary (check before naming)
+3. **[Workflow.md](Docs/01-Active/Workflow.md)** ⭐⭐⭐⭐ - Complete development workflow
 
-**Architecture Decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Major technical decisions are documented as ADRs
-**Navigation**: [README.md](Docs/README.md) for user journey navigation.
+**Architecture Decisions**: [ADR Directory](Docs/03-Reference/ADR/) - Major technical decisions
+**Templates**: [Templates/](Docs/05-Templates/) - Work item templates
 
 ## 📖 Language & Terminology
 

@@ -4,7 +4,21 @@
 
 ## 🏗️ Major Decisions
 
-### 1. Husky.NET for Git Hooks (2025-08-21)
+### 1. Documentation Consolidation (HANDBOOK.md) - 2025-08-21
+**Decision**: Consolidate 12+ reference docs into single HANDBOOK.md
+**Rationale**: 
+- Massive duplication (Move Block in 4 places)
+- Hard to find information (4,675 lines to search)
+- Maintenance burden (updates needed in multiple files)
+- Single source of truth principle violated
+**Implementation**: 
+- Created HANDBOOK.md with all valuable content
+- Archived old docs to Docs/99-Deprecated/
+- 89% reduction (4,675 → 800 lines)
+**Impact**: Faster information discovery, easier maintenance
+**Rejected**: Keeping separate specialized documents
+
+### 2. Husky.NET for Git Hooks (2025-08-21)
 **Decision**: Use Husky.NET instead of manual hooks or pre-commit
 **Rationale**: 
 - Zero-config across 6 persona clones
@@ -18,13 +32,13 @@
 **Impact**: All personas get identical hooks automatically
 **Reference**: TD_039 implementation, PR #56
 
-### 2. Branch Naming Standardization (2025-08-21)
+### 3. Branch Naming Standardization (2025-08-21)
 **Decision**: Use underscores (VS_003) not hyphens (vs-003)
 **Rationale**: Match Backlog.md format exactly
 **Impact**: Updated CI, PR templates, design-guard
 **Migration**: All old branches must be renamed
 
-### 3. Multi-Clone Architecture (2025-08)
+### 4. Multi-Clone Architecture (2025-08)
 **Decision**: Use 6 separate git clones for persona isolation
 **Rationale**: 
 - Prevents merge conflicts between personas
@@ -39,7 +53,7 @@
 **Result**: ✅ Working well, clean separation
 **ADR**: ADR-002-persona-system-architecture.md
 
-### 4. Clean Architecture with MVP (2025-07)
+### 5. Clean Architecture with MVP (2025-07)
 **Decision**: Strict layer separation with MVP for UI
 **Rationale**:
 - Testable domain logic (pure C#)
@@ -51,7 +65,7 @@
 **Result**: ✅ Excellent testability, clear structure
 **Reference**: Architecture.md
 
-### 5. Functional Error Handling (LanguageExt)
+### 6. Functional Error Handling (LanguageExt)
 **Decision**: Use Fin<T> for all error handling
 **Rationale**:
 - No exceptions in domain logic
@@ -62,7 +76,7 @@
 - More verbose than try-catch
 **Result**: ✅ Fewer runtime errors, better error tracking
 
-### 6. Persona System for Development
+### 7. Persona System for Development
 **Decision**: 6 specialized personas with clear boundaries
 **Rationale**:
 - Simulates real team dynamics
@@ -73,7 +87,7 @@
 - Need clear handoff protocols
 **Result**: ✅ Better focus, clearer ownership
 
-### 7. Move Block as Reference Pattern
+### 8. Move Block as Reference Pattern
 **Decision**: One perfect implementation to copy
 **Rationale**:
 - Consistency across features
