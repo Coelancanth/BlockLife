@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 069 (Last: TD_068 - 2025-08-22)  
+- **Next TD**: 071 (Last: TD_070 - 2025-08-23)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -68,33 +68,49 @@
 ### TD_068: Fix DI Registration for VS_003A CQRS Handlers
 **Status**: Proposed
 **Owner**: Dev Engineer
-**Size**: S (<4h)
+**Size**: S (<30min)
 **Priority**: Critical
 **Created**: 2025-08-22 23:41
-**Complexity Score**: 4/10
+**Updated**: 2025-08-23 01:38 (Test Specialist complete analysis)
+**Complexity Score**: 2/10 (reduced from 4/10 - simple fix identified)
 **Pattern Match**: Follows existing MediatR handler registration patterns from Move Block
-**Simpler Alternative**: Manual registration vs auto-discovery (2-hour version)
+**Related**: PM_003 (post-mortem documenting this issue)
 
-**Problem**: VS_003A Phase 4 CQRS handlers broke 13 DI tests that were previously passing
-**What**: Register new CQRS handlers in DI container to fix failing DI validation tests
-**Why**: Phase 4 added ApplyMatchRewardsCommandHandler, CreatePlayerCommandHandler, GetCurrentPlayerQueryHandler but didn't register them in DI
-**How**: 
-- Add handler registrations to DI container configuration
-- Follow existing MediatR registration patterns from Move Block handlers
-- Ensure all new IRequestHandler implementations are properly registered
-- Fix both test-time and runtime DI container validation
+**Problem**: VS_003A Phase 4 CQRS handlers broke 13 DI tests (affecting ALL stress tests)
+**What**: Fix namespace mismatch and register IPlayerStateService to restore DI resolution
+**Why**: Handlers in wrong namespace are invisible to MediatR assembly scanning
+
+**Root Causes Identified**:
+1. **Namespace Issue**: All 6 Phase 4 files use `BlockLife.Features.*` instead of `BlockLife.Core.Features.*`
+2. **Missing Service**: `IPlayerStateService` not registered in GameStrapper
+
+**Impact Analysis** (13 total failures):
+- 2 DI Resolution tests (direct validation)
+- 2 DI Lifetime tests (can't validate lifetimes)
+- 6 SimulationManager stress tests (fail at constructor)
+- 4 SimplifiedStressTest tests (fail at constructor)
+- Note: Stress tests aren't actually broken - they just can't initialize!
+
+**How to Fix** (15-minute fix):
+1. Fix namespace in 6 files (change `BlockLife.Features` → `BlockLife.Core.Features`):
+   - ApplyMatchRewardsCommand.cs:7
+   - ApplyMatchRewardsCommandHandler.cs:11
+   - CreatePlayerCommand.cs:5
+   - CreatePlayerCommandHandler.cs:11
+   - GetCurrentPlayerQuery.cs:5
+   - GetCurrentPlayerQueryHandler.cs:11
+2. Add to GameStrapper.RegisterCoreServices() around line 346:
+   ```csharp
+   services.AddSingleton<IPlayerStateService, PlayerStateService>();
+   ```
 
 **Done When**:
-- All 13 previously failing DI tests pass
-- CQRS handlers can be resolved from DI container
-- No regressions in existing DI registrations
-- Build and test pipeline passes without DI errors
+- All 13 failing tests pass
+- All 320 tests in suite pass
+- Stress tests actually run (not fail at setup)
+- Pipeline unblocked
 
-**Files Affected**:
-- DI configuration/startup files (locate existing MediatR registrations)
-- Potentially test setup if different DI configuration used in tests
-
-**Root Cause**: Our Phase 4 implementation added new MediatR handlers without registering them in the DI container, causing DI validation tests to fail when they try to resolve all registered services.
+**Test Specialist Validation**: This is a trivial fix once identified. The hard part was diagnosis (1+ hour), not the fix (15 min).
 
 
 
@@ -577,6 +593,82 @@ public static class BlockTypeRewards
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+### TD_070: Session Log Should Include Date, Not Just Time
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Ideas
+**Created**: 2025-08-23 01:48
+**Complexity Score**: 1/10
+**Pattern Match**: Simple format update to existing scripts
+**Test Specialist Note**: Discovered during session handoff - time-only entries become ambiguous
+
+**Problem**: Session log entries only show HH:MM without date, making historical tracking difficult
+**What**: Update session log format to include date (YYYY-MM-DD HH:MM or similar)
+**Why**: After midnight or days later, time-only entries are ambiguous and hard to correlate
+
+**How**: 
+- Update embody scripts to include date in session log entries
+- Consider ISO 8601 format (2025-08-23 01:48) for clarity
+- Update existing Memory Bank protocol documentation
+- Ensure all personas use consistent format
+
+**Done When**:
+- Session log entries include full date and time
+- Format is consistent across all personas
+- MEMORY_BANK_PROTOCOL.md updated with new format
+- Existing entries optionally backfilled with dates from context
+
+**Value**: Better historical tracking, clearer handoffs, easier debugging of multi-day work
+
+### TD_069: Roslyn Analyzer for Namespace-Folder Alignment
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: M (4-8h)
+**Priority**: Ideas
+**Created**: 2025-08-23 01:31
+**Complexity Score**: 6/10
+**Pattern Match**: Standard Roslyn analyzer pattern with MSBuild integration
+**Related**: PM_003 (Namespace DI Resolution failure)
+
+**Problem**: Namespace misalignment with folder structure causes silent MediatR registration failures
+**What**: Create custom Roslyn analyzer to enforce namespace matches folder structure for handlers
+**Why**: Prevent DI resolution failures at compile-time instead of runtime, as documented in PM_003
+
+**How**: 
+- Create Roslyn analyzer project targeting .NET Standard 2.0
+- Implement analyzer checking namespace against file path for IRequestHandler implementations
+- Report diagnostic error when namespace doesn't match expected pattern
+- Add auto-fix code action to correct namespace automatically
+- Package as NuGet for easy integration
+
+**Technical Approach**:
+```csharp
+// Example analyzer logic
+if (typeSymbol.AllInterfaces.Any(i => i.Name == "IRequestHandler")) {
+    var expectedNamespace = GetExpectedNamespace(syntaxTree.FilePath);
+    if (typeSymbol.ContainingNamespace.ToString() != expectedNamespace) {
+        ReportDiagnostic(DiagnosticSeverity.Error, 
+            $"Handler namespace must be '{expectedNamespace}'");
+    }
+}
+```
+
+**Done When**:
+- Analyzer detects namespace-folder misalignment at compile time
+- Auto-fix corrects namespace with single click
+- All existing handlers pass validation
+- Integrated into build pipeline via PackageReference
+- Documentation added to HANDBOOK.md
+
+**Value**: 
+- Shifts detection left from runtime to compile-time
+- Prevents entire class of DI registration failures
+- Saves debugging time (PM_003 took 1+ hour to diagnose)
+- Enforces architectural boundaries automatically
+
+**Test Specialist Note**: This would have caught TD_068 immediately during development, preventing 13 test failures and pipeline blockage.
 
 ### TD_067: Refine Active Context Protocol - Preserve Multi-Phase Learnings
 **Status**: Proposed
