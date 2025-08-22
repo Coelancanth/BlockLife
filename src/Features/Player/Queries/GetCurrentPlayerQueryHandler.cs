@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Features.Player.Queries
+namespace BlockLife.Core.Features.Player.Queries
 {
     /// <summary>
     /// Handler for GetCurrentPlayerQuery - Implements functional CQRS pattern with Fin&lt;T&gt; monads.

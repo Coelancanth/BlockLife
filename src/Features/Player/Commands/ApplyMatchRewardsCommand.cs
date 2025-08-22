@@ -4,7 +4,7 @@ using LanguageExt;
 using System;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Features.Player.Commands
+namespace BlockLife.Core.Features.Player.Commands
 {
     /// <summary>
     /// Command to apply resource and attribute rewards from match-3 patterns.

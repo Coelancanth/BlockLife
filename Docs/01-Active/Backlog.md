@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 071 (Last: TD_070 - 2025-08-23)  
+- **Next TD**: 072 (Last: TD_071 - 2025-08-22)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -65,59 +65,66 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_068: Fix DI Registration for VS_003A CQRS Handlers
-**Status**: Proposed
-**Owner**: Dev Engineer
-**Size**: S (<30min)
-**Priority**: Critical
-**Created**: 2025-08-22 23:41
-**Updated**: 2025-08-23 01:38 (Test Specialist complete analysis)
-**Complexity Score**: 2/10 (reduced from 4/10 - simple fix identified)
-**Pattern Match**: Follows existing MediatR handler registration patterns from Move Block
-**Related**: PM_003 (post-mortem documenting this issue)
-
-**Problem**: VS_003A Phase 4 CQRS handlers broke 13 DI tests (affecting ALL stress tests)
-**What**: Fix namespace mismatch and register IPlayerStateService to restore DI resolution
-**Why**: Handlers in wrong namespace are invisible to MediatR assembly scanning
-
-**Root Causes Identified**:
-1. **Namespace Issue**: All 6 Phase 4 files use `BlockLife.Features.*` instead of `BlockLife.Core.Features.*`
-2. **Missing Service**: `IPlayerStateService` not registered in GameStrapper
-
-**Impact Analysis** (13 total failures):
-- 2 DI Resolution tests (direct validation)
-- 2 DI Lifetime tests (can't validate lifetimes)
-- 6 SimulationManager stress tests (fail at constructor)
-- 4 SimplifiedStressTest tests (fail at constructor)
-- Note: Stress tests aren't actually broken - they just can't initialize!
-
-**How to Fix** (15-minute fix):
-1. Fix namespace in 6 files (change `BlockLife.Features` → `BlockLife.Core.Features`):
-   - ApplyMatchRewardsCommand.cs:7
-   - ApplyMatchRewardsCommandHandler.cs:11
-   - CreatePlayerCommand.cs:5
-   - CreatePlayerCommandHandler.cs:11
-   - GetCurrentPlayerQuery.cs:5
-   - GetCurrentPlayerQueryHandler.cs:11
-2. Add to GameStrapper.RegisterCoreServices() around line 346:
-   ```csharp
-   services.AddSingleton<IPlayerStateService, PlayerStateService>();
-   ```
-
-**Done When**:
-- All 13 failing tests pass
-- All 320 tests in suite pass
-- Stress tests actually run (not fail at setup)
-- Pipeline unblocked
-
-**Test Specialist Validation**: This is a trivial fix once identified. The hard part was diagnosis (1+ hour), not the fix (15 min).
-
-
+*None*
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
+### TD_069: Critical Namespace Analyzer (Simplified)
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: S (2h)
+**Priority**: Important
+**Created**: 2025-08-22
 
+**What**: Roslyn analyzer for assembly boundary safety ONLY
+**Why**: Prevent MediatR discovery failures (like TD_068) without pedantic rules
+**How**:
+- Check: src/ files use BlockLife.Core.* namespace (not BlockLife.*)
+- Check: test/ files use BlockLife.Core.Tests.* namespace
+- NOT checking: Folder structure matching or Commands/Queries subfolder requirements
+**Done When**:
+- TD_068 scenario impossible to repeat
+- No false positives on legacy code patterns
+- Zero pedantic folder-matching rules
+
+**Test Specialist Note**: Simplified after realizing strict folder-namespace matching was causing more problems than it solved. Focus only on what actually breaks (assembly boundaries for MediatR).
+
+### TD_070: DI Registration Compile-Time Validator
+**Status**: Proposed  
+**Owner**: Tech Lead
+**Size**: S (3h)
+**Priority**: Important
+**Created**: 2025-08-22
+
+**What**: Build-time validation for critical service registrations
+**Why**: Missing DI registrations cause cascade test failures that mask root cause
+**How**:
+- Source generator or build task to validate GameStrapper registrations
+- Check all interfaces have implementations registered
+- Verify MediatR handler discovery
+**Done When**:
+- Build fails if critical services not registered
+- Clear error messages identify missing registrations
+- No more "13 tests fail from 1 missing service"
+
+### TD_071: Test Categories for Faster Feedback
+**Status**: Proposed
+**Owner**: Test Specialist  
+**Size**: S (2h)
+**Priority**: Important
+**Created**: 2025-08-22
+
+**What**: Categorize tests for staged execution (Architecture/Integration/Stress)
+**Why**: Get faster feedback on architectural issues before running slow tests
+**How**:
+- Add [Trait("Category", "Architecture")] to fast validation tests
+- Configure pre-commit hook to run only Architecture category
+- CI pipeline runs categories in stages
+**Done When**:
+- Architecture tests complete in <5 seconds
+- Pre-commit catches namespace/DI issues immediately
+- CI fails fast on architectural violations
 
 ### VS_003A: Match-3 with Attributes (Phase 2 APPROVED) [Score: 95/100]
 **Status**: Approved for Phase 3 ✅
@@ -622,53 +629,6 @@ public static class BlockTypeRewards
 
 **Value**: Better historical tracking, clearer handoffs, easier debugging of multi-day work
 
-### TD_069: Roslyn Analyzer for Namespace-Folder Alignment
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: M (4-8h)
-**Priority**: Ideas
-**Created**: 2025-08-23 01:31
-**Complexity Score**: 6/10
-**Pattern Match**: Standard Roslyn analyzer pattern with MSBuild integration
-**Related**: PM_003 (Namespace DI Resolution failure)
-
-**Problem**: Namespace misalignment with folder structure causes silent MediatR registration failures
-**What**: Create custom Roslyn analyzer to enforce namespace matches folder structure for handlers
-**Why**: Prevent DI resolution failures at compile-time instead of runtime, as documented in PM_003
-
-**How**: 
-- Create Roslyn analyzer project targeting .NET Standard 2.0
-- Implement analyzer checking namespace against file path for IRequestHandler implementations
-- Report diagnostic error when namespace doesn't match expected pattern
-- Add auto-fix code action to correct namespace automatically
-- Package as NuGet for easy integration
-
-**Technical Approach**:
-```csharp
-// Example analyzer logic
-if (typeSymbol.AllInterfaces.Any(i => i.Name == "IRequestHandler")) {
-    var expectedNamespace = GetExpectedNamespace(syntaxTree.FilePath);
-    if (typeSymbol.ContainingNamespace.ToString() != expectedNamespace) {
-        ReportDiagnostic(DiagnosticSeverity.Error, 
-            $"Handler namespace must be '{expectedNamespace}'");
-    }
-}
-```
-
-**Done When**:
-- Analyzer detects namespace-folder misalignment at compile time
-- Auto-fix corrects namespace with single click
-- All existing handlers pass validation
-- Integrated into build pipeline via PackageReference
-- Documentation added to HANDBOOK.md
-
-**Value**: 
-- Shifts detection left from runtime to compile-time
-- Prevents entire class of DI registration failures
-- Saves debugging time (PM_003 took 1+ hour to diagnose)
-- Enforces architectural boundaries automatically
-
-**Test Specialist Note**: This would have caught TD_068 immediately during development, preventing 13 test failures and pipeline blockage.
 
 ### TD_067: Refine Active Context Protocol - Preserve Multi-Phase Learnings
 **Status**: Proposed
@@ -703,6 +663,23 @@ if (typeSymbol.AllInterfaces.Any(i => i.Name == "IRequestHandler")) {
 
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
+
+### TD_068: Fix DI Registration for VS_003A CQRS Handlers ✅
+**Status**: Done
+**Owner**: Dev Engineer
+**Size**: S (<30min) - Actual: 15min
+**Priority**: Critical
+**Created**: 2025-08-22 23:41
+**Completed**: 2025-08-22
+**Pattern Match**: Follows existing MediatR handler registration patterns from Move Block
+**Related**: PM_003 (post-mortem documenting this issue)
+
+**Solution Delivered**:
+- Fixed namespace issues in 7 source files + 5 supporting files (BlockLife.Features → BlockLife.Core.Features)
+- Added IPlayerStateService registration to GameStrapper
+- Result: All 13 failing tests now pass (stress tests were never broken, just couldn't initialize)
+- Remaining 4 failures are pre-existing architectural test issues unrelated to TD_068
+- **Impact**: Unblocked pipeline and enabled all stress tests to run properly
 
 ### TD_065: Automate Memory Bank Rotation ✅
 **Status**: Done

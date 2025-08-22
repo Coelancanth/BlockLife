@@ -136,9 +136,10 @@ public class MediatRHandlerRegistrationTests
         // Arrange
         var mediator = _serviceProvider.GetRequiredService<IMediator>();
         
-        // Find all command/query types (requests)
+        // Find all command/query types (requests) - exclude interfaces and abstract classes
         var requestTypes = _coreAssembly.GetTypes()
-            .Where(t => t.GetInterfaces().Any(i => i == typeof(IRequest) || 
+            .Where(t => !t.IsInterface && !t.IsAbstract &&
+                       t.GetInterfaces().Any(i => i == typeof(IRequest) || 
                 (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>))))
             .ToList();
 

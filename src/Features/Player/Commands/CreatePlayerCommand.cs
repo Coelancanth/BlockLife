@@ -2,7 +2,7 @@ using BlockLife.Core.Application.Commands;
 using BlockLife.Core.Domain.Player;
 using System;
 
-namespace BlockLife.Features.Player.Commands
+namespace BlockLife.Core.Features.Player.Commands
 {
     /// <summary>
     /// Command to create a new player with initial state.

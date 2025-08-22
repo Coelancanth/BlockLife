@@ -2,7 +2,7 @@ using BlockLife.Core.Application.Commands;
 using BlockLife.Core.Domain.Player;
 using System;
 
-namespace BlockLife.Features.Player.Queries
+namespace BlockLife.Core.Features.Player.Queries
 {
     /// <summary>
     /// Query to retrieve the current player state.

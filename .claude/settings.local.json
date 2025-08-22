@@ -73,7 +73,8 @@
       "Bash(./scripts/utils/fix-session-log-order.ps1 -ValidateOnly)",
       "Bash(./scripts/utils/fix-session-log-order.ps1 -DryRun)",
       "Bash(./scripts/utils/check-session-log-health.ps1)",
-      "Bash(./scripts/utils/fix-session-log-order.ps1)"
+      "Bash(./scripts/utils/fix-session-log-order.ps1)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": [],

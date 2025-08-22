@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Features.Player.Commands
+namespace BlockLife.Core.Features.Player.Commands
 {
     /// <summary>
     /// Handler for CreatePlayerCommand - Implements functional CQRS pattern with Fin&lt;T&gt; monads.

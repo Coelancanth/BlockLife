@@ -1,6 +1,6 @@
 using BlockLife.Core.Domain.Player;
 using BlockLife.Core.Infrastructure.Services;
-using BlockLife.Features.Player.Queries;
+using BlockLife.Core.Features.Player.Queries;
 using FluentAssertions;
 using LanguageExt;
 using Moq;

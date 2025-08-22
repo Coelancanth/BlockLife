@@ -186,14 +186,17 @@ public class HandlerDependencyValidationTests
         
         foreach (var type in commandsAndQueries)
         {
+            // Filter out init-only properties (they're immutable after construction)
             var publicSetters = type.GetProperties()
-                .Where(p => p.CanWrite && p.SetMethod?.IsPublic == true)
+                .Where(p => p.CanWrite && 
+                           p.SetMethod?.IsPublic == true &&
+                           !p.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Any(m => m.Name == "IsExternalInit"))
                 .ToList();
                 
             if (publicSetters.Any())
             {
                 var setterNames = string.Join(", ", publicSetters.Select(p => p.Name));
-                violations.Add($"{type.Name} has public setters: {setterNames}");
+                violations.Add($"{type.Name} has mutable public setters: {setterNames}");
             }
         }
 
