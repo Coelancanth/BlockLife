@@ -6,7 +6,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 065 (Last: TD_064 - 2025-08-22)  
+- **Next TD**: 066 (Last: TD_065 - 2025-08-22)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -389,6 +389,32 @@ public static class BlockTypeRewards
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+### TD_065: Automate Memory Bank Rotation
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Ideas
+**Created**: 2025-08-22
+
+**What**: Create automated rotation scripts for Memory Bank files per protocol
+**Why**: Manual rotation is error-prone and likely to be forgotten
+**How**:
+- PowerShell script for monthly session-log rotation
+- PowerShell script for quarterly active context archival
+- Git hook or scheduled task to trigger rotations
+- Auto-create archive directory structure
+- Keep last N archives, delete older ones
+**Done When**:
+- Scripts rotate files according to MEMORY_BANK_PROTOCOL.md
+- Old archives are cleaned up automatically
+- Can be triggered manually or via schedule
+**Depends On**: None
+
+**Tech Lead Notes** (2025-08-22):
+- Complexity Score: 2/10 - straightforward scripting
+- Pattern match: Similar to existing embody.ps1 file management
+- Low priority - manual rotation works fine for now
 
 
 
