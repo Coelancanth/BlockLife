@@ -1,14 +1,19 @@
 # Backlog Workflow
 
 ## 📝 Quick Start Checklist
-1. **Check Memory Bank** first: `.claude/memory-bank/activeContext.md`
-2. **Review patterns**: `.claude/memory-bank/patterns.md` 
-3. **Understand decisions**: `.claude/memory-bank/decisions.md`
-4. **Check branch status**: `./scripts/git/branch-status-check.ps1` (branch intelligence)
+1. **Run embody [persona]** - v4.0 auto-syncs and loads context automatically
+2. **Check Memory Bank** if needed: `.claude/memory-bank/active/[persona].md`
+3. **Review patterns**: `.claude/memory-bank/patterns.md` 
+4. **Understand decisions**: `.claude/memory-bank/decisions.md`
 5. **Then proceed** with workflow below
 
 ### Branch Workflow Integration
 **CRITICAL**: AI personas must make intelligent branch decisions before starting work.
+
+**NEW: Automatic Sync Resolution** 🎯
+- Use `git sync` instead of manual pull/rebase - handles squash merges automatically
+- After PR merge: `pr merge` or `git sync` - no manual conflict resolution needed
+- Embody v4.0 auto-syncs on every persona switch
 
 **Quick Decision Guide:**
 - **On main?** → Always create feature branch for work items
@@ -94,6 +99,13 @@ When subagent completes work, verify with:
 - **User maintains control** over backlog changes
 - **Consistent formatting** when user chooses to delegate
 - **Higher quality decisions** with proper separation of concerns
+
+### 🤖 Git Automation Support (v4.0)
+The persona system now includes automatic git state resolution:
+- **Squash merges handled automatically** - No manual conflict resolution
+- **Embody auto-syncs** - Every persona switch ensures clean state
+- **Smart sync** - `git sync` chooses optimal strategy (reset vs rebase)
+- Focus on your work, not git mechanics!
 
 ### ⚠️ CRITICAL: Backlog-Assistant Protocol
 
@@ -437,6 +449,14 @@ Before writing code with unfamiliar APIs:
 
 ### Quick Commands
 ```bash
+# NEW: Smart sync (handles squash merges automatically)
+git sync
+
+# NEW: PR workflow with auto-sync
+pr create   # Create PR from current branch
+pr merge    # Merge PR and auto-sync dev/main
+pr status   # Check PR and sync status
+
 # Check branch intelligence before starting work
 ./scripts/git/branch-status-check.ps1
 
