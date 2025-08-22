@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-22 23:32
+**Last Updated**: 2025-08-22 23:42
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 068 (Last: TD_067 - 2025-08-22)  
+- **Next TD**: 069 (Last: TD_068 - 2025-08-22)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -64,6 +64,37 @@
 
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
+
+### TD_068: Fix DI Registration for VS_003A CQRS Handlers
+**Status**: Proposed
+**Owner**: Dev Engineer
+**Size**: S (<4h)
+**Priority**: Critical
+**Created**: 2025-08-22 23:41
+**Complexity Score**: 4/10
+**Pattern Match**: Follows existing MediatR handler registration patterns from Move Block
+**Simpler Alternative**: Manual registration vs auto-discovery (2-hour version)
+
+**Problem**: VS_003A Phase 4 CQRS handlers broke 13 DI tests that were previously passing
+**What**: Register new CQRS handlers in DI container to fix failing DI validation tests
+**Why**: Phase 4 added ApplyMatchRewardsCommandHandler, CreatePlayerCommandHandler, GetCurrentPlayerQueryHandler but didn't register them in DI
+**How**: 
+- Add handler registrations to DI container configuration
+- Follow existing MediatR registration patterns from Move Block handlers
+- Ensure all new IRequestHandler implementations are properly registered
+- Fix both test-time and runtime DI container validation
+
+**Done When**:
+- All 13 previously failing DI tests pass
+- CQRS handlers can be resolved from DI container
+- No regressions in existing DI registrations
+- Build and test pipeline passes without DI errors
+
+**Files Affected**:
+- DI configuration/startup files (locate existing MediatR registrations)
+- Potentially test setup if different DI configuration used in tests
+
+**Root Cause**: Our Phase 4 implementation added new MediatR handlers without registering them in the DI container, causing DI validation tests to fail when they try to resolve all registered services.
 
 
 
