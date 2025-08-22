@@ -1,6 +1,8 @@
 # BlockLife Development Backlog
 
 **Last Updated**: 2025-08-22
+**Last Aging Check**: 2025-08-22
+> 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
