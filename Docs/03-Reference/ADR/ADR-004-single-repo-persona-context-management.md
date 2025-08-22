@@ -1,7 +1,6 @@
 # ADR-004: Single-Repo Persona Context Management
 
 ## Status
-Accepted (2025-01-21)  
 Enhanced (2025-08-22) - v3.0 Auto-Sync
 
 ## Context
@@ -309,15 +308,13 @@ This ADR embodies that principle: removing unnecessary complexity to reveal the 
 
   Start Fresh Day
         ↓
-  [1. EMBODY] → embody.ps1 tech-lead
+  [1. CLAUDE] → "embody tech-lead" (runs embody.ps1)
         ↓
-  [2. CLAUDE] → /clear → "embody tech-lead"
+  [2. WORK] → Review, Decide, Commit frequently
         ↓
-  [3. WORK] → Review, Decide, Commit frequently
+  [3. SWITCH] → /clear → "embody dev-engineer" (runs embody.ps1)
         ↓
-  [4. SWITCH] → switch-persona.ps1 -To dev-engineer
-        ↓
-  [5. LOOP] → Back to step 2 with new persona
+  [4. LOOP] → Back to step 2 with new persona
 
   Detailed Step-by-Step Workflow
 
@@ -333,30 +330,22 @@ This ADR embodies that principle: removing unnecessary complexity to reveal the 
   # Check which persona was last active
   git config user.name
 
-  Step 2: Choose Starting Persona
+  Step 2: Start Claude Session with Chosen Persona
 
-  # Based on priorities, embody first persona
-  ./scripts/persona/embody.ps1 tech-lead
-
-  What happens:
-  - ✅ Pulls latest from main (enforced)
-  - 📝 Shows any uncommitted work (advisory)
-  - 🔧 Sets git identity to Tech Lead
-  - 📚 Loads .claude/memory-bank/active/tech-lead.md
-  - 📜 Shows recent session log entries
-  - 📋 Lists backlog items assigned to Tech Lead
-
-  Step 3: Start Claude Session
-
-  # In Claude
-  /clear
+  # In Claude, simply type:
   embody tech-lead
 
-  Claude's response:
+  Claude automatically:
+  - Executes: ./scripts/persona/embody.ps1 tech-lead
+  - Which handles:
+    - ✅ Pulls latest from main (with auto-sync v3.0)
+    - 📝 Stashes/restores uncommitted work if needed
+    - 🔧 Sets git identity to Tech Lead
+    - 📚 Shows .claude/memory-bank/active/tech-lead.md
+    - 📜 Shows recent session log entries
+    - 📋 Lists backlog items assigned to Tech Lead
   - Reads persona definition from Docs/04-Personas/tech-lead.md
-  - Executes: git pull origin main --ff-only && git status
-  - Loads active context from .claude/memory-bank/active/tech-lead.md
-  - Checks Docs/01-Active/Backlog.md for assigned work
+  - Loads active context and backlog
   - Presents current state and awaits direction
 
   ---
@@ -393,40 +382,33 @@ This ADR embodies that principle: removing unnecessary complexity to reveal the 
   ---
   🔄 PHASE 3: Switching Personas
 
-  Step 1: Initiate Switch
+  Step 1: Finish Current Work
 
-  ./scripts/persona/switch-persona.ps1 -To dev-engineer
+  As current persona (e.g., Tech Lead):
+  - Commit any valuable work: git commit -m "decision: approved TD_014"
+  - Update active context: .claude/memory-bank/active/tech-lead.md
+  - Add session log entry:
+    ### 10:45 - Tech Lead
+    **Did**: Approved TD_014 with complexity score 3
+    **Next**: Ready for Dev Engineer implementation
+    **Note**: Pattern framework approach recommended
 
-  What happens:
-  1. Detects current persona from git config
-  2. Checks uncommitted work:
-    - If clean → proceeds
-    - If dirty → prompts to commit
-  3. Updates active context: active/tech-lead.md
-  4. Logs session: Adds entry to session-log.md
-  5. Pushes if needed: Prompts if commits unpushed
-  6. Calls embody.ps1: Automatically embodies Dev Engineer
+  Step 2: Switch in Claude
 
-  Step 2: The Handoff Entry
-
-  # Added to session-log.md:
-  ### 10:45 - Tech Lead
-  - **Switching to**: Dev Engineer
-  - **Last Commit**: "decision: approve TD_014 with complexity score 3"
-  - **Handoff Notes**: TD_014 approved, ready for implementation
-  - **Status**: Switching personas
-
-  Step 3: New Persona Takes Over
-
-  # Now as Dev Engineer
-  /clear  # In Claude
+  # Clear Claude's context and embody new persona
+  /clear
   embody dev-engineer
 
-  Dev Engineer sees:
-  - Tech Lead's handoff in session log
-  - TD_014 marked as approved in Backlog
-  - Clean working directory
-  - Ready to implement
+  Claude automatically:
+  - Executes: ./scripts/persona/embody.ps1 dev-engineer
+  - Which handles:
+    - Auto-sync with main (stash/pull/rebase as needed)
+    - Updates git identity to Dev Engineer
+    - Shows dev-engineer active context
+    - Lists Dev Engineer's backlog items
+  - Loads Dev Engineer persona definition
+  - Sees Tech Lead's handoff in session log
+  - Ready to implement TD_014
 
   ---
   🔁 PHASE 4: The Daily Rhythm
@@ -434,20 +416,20 @@ This ADR embodies that principle: removing unnecessary complexity to reveal the 
   Typical Day Flow
 
   Morning: Planning & Architecture
-  embody.ps1 product-owner    # Define new VS items
-  switch-persona.ps1 -To tech-lead  # Review and break down
+  embody product-owner        # Define new VS items
+  /clear → embody tech-lead   # Review and break down
 
   Midday: Implementation
-  switch-persona.ps1 -To dev-engineer  # Build features
+  /clear → embody dev-engineer  # Build features
   # Multiple commits during implementation
 
   Afternoon: Quality & Testing
-  switch-persona.ps1 -To test-specialist  # Add test coverage
+  /clear → embody test-specialist  # Add test coverage
   # Debug if issues found
-  switch-persona.ps1 -To debugger-expert  # Investigate complex issues
+  /clear → embody debugger-expert  # Investigate complex issues
 
   End of Day: Cleanup & Automation
-  switch-persona.ps1 -To devops-engineer  # Optimize scripts, CI/CD
+  /clear → embody devops-engineer  # Optimize scripts, CI/CD
   # Final push and PR if feature complete
 
   ---
@@ -494,22 +476,21 @@ This ADR embodies that principle: removing unnecessary complexity to reveal the 
   ---
   🚀 Quick Command Reference
 
-  # Start work as persona
-  ./scripts/persona/embody.ps1 tech-lead
+  # Start work as persona (in Claude)
+  embody tech-lead
 
-  # Switch with handoff
-  ./scripts/persona/switch-persona.ps1 -To dev-engineer
+  # Switch personas (in Claude)
+  /clear
+  embody dev-engineer
 
-  # Quick switch (if clean)
-  ./scripts/persona/switch-persona.ps1 -To test-specialist -Message "Quick test check"
+  # Emergency switch with uncommitted work
+  # (embody.ps1 v3.0 auto-handles stashing)
+  /clear
+  embody debugger-expert
 
-  # Emergency switch (leaves changes)
-  git stash push -m "WIP: emergency switch"
-  ./scripts/persona/embody.ps1 debugger-expert
-
-  # Return after emergency
-  ./scripts/persona/embody.ps1 dev-engineer
-  git stash pop
+  # Manual git operations if needed
+  git commit -m "WIP: stopping point"
+  git push origin main
 
   ---
   📊 Workflow Success Metrics
