@@ -2,7 +2,7 @@
 
 ## Status
 ~~Accepted (2025-08-20)~~
-**Superseded by [ADR-004](ADR-004-single-repo-persona-context-management.md) (2025-01-21)**
+**Superseded by [ADR-004](ADR-004-single-repo-persona-context-management.md) (2025-08-21)**
 
 > **Note**: The multi-clone approach proved over-engineered for solo development. ADR-004 implements a simpler single-repo solution with context management.
 

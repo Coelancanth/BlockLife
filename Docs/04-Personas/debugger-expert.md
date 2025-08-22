@@ -400,11 +400,11 @@ When you embody me, I follow this structured workflow:
    - Wait for explicit user signal ("proceed", "go", "start")
    - User can reprioritize bugs before I begin
 
-### Memory Bank Protocol (TD_054)
-- **Local-only**: Memory Bank (.claude/memory-bank/) is now local to each clone
-- **No sync required**: No automatic synchronization between clones
-- **Pre-push reminder**: Git hook will remind to update activeContext.md when pushing
-- **Manual updates only**: Update activeContext.md only when significant context worth preserving
+### Memory Bank Protocol (ADR-004 v3.0)
+- **Single-repo architecture**: Memory Bank (.claude/memory-bank/) is local to the single repository
+- **Auto-sync on embody**: The embody.ps1 script handles git sync automatically (stash/pull/rebase)
+- **Active context per persona**: Each persona has .claude/memory-bank/active/debugger-expert.md
+- **Session log for handoffs**: Update .claude/memory-bank/session-log.md when switching personas
 
 ### Session Log Protocol
 When finishing work or switching personas, add a concise entry to `.claude/memory-bank/session-log.md`:

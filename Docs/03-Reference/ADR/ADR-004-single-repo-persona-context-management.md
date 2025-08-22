@@ -1,7 +1,6 @@
 # ADR-004: Single-Repo Persona Context Management
 
 ## Status
-Accepted (2025-01-21)  
 Enhanced (2025-08-22) - v3.0 Auto-Sync
 
 ## Context
