@@ -65,37 +65,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_013: CI Workflow Fails on Main Branch After Merge
-**Status**: Done
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Critical
-**Markers**: [CI/CD] [WORKFLOW] [BRANCH-PROTECTION]
-**Created**: 2025-08-22
-
-**What**: CI workflow falsely fails on main branch pushes due to incorrect job dependencies
-**Why**: Post-merge CI failures create false alarms and mask real issues
-**Root Cause**: `build-and-test` job depends on `branch-freshness`, but `branch-freshness` only runs on PRs (skipped on main), causing `build-and-test` to be skipped, which triggers failure in `ci-status`
-**Impact**: Makes it appear that merges are bypassing failing CI when protection is actually working correctly
-
-**How**: 
-- Remove `branch-freshness` from `build-and-test` dependencies
-- Add conditional logic to only run when `quick-check` succeeds
-- Enhanced logging in `ci-status` job for better debugging
-- Maintain proper branch protection (only "Build & Test" required for PRs)
-
-**Done When**:
-- CI workflow runs successfully on main branch pushes
-- `build-and-test` job runs independently of `branch-freshness` 
-- Branch protection rules remain intact
-- Post-merge CI failures eliminated
-
-**DevOps Engineer Decision** (2025-08-22):
-- **FIXED**: Updated `.github/workflows/ci.yml` with corrected dependencies
-- **Tested**: Local build passes, workflow logic verified
-- **Root cause**: Workflow design flaw, not branch protection issue
-- **Impact**: Eliminates false CI failure alarms after legitimate merges
-
 
 
 ## 📈 Important (Do Next)
@@ -104,20 +73,22 @@
 
 
 ### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
-**Status**: Approved
+**Status**: Approved - PHASE-BASED IMPLEMENTATION
 **Owner**: Tech Lead → Dev Engineer
-**Size**: M (6.5 hours - updated estimate)
+**Size**: M (6.5 hours across 5 phases)
 **Priority**: Important
 **Created**: 2025-08-19
 **Reset**: 2025-08-22 (Aging clock starts fresh from today)
-**Last Updated**: 2025-08-22
+**Last Updated**: 2025-08-22 (Restructured into testable phases)
 **Depends On**: None
 
 **What**: Match 3+ adjacent same-type blocks to clear them and earn attributes
 **Why**: Proves core resource economy loop before adding complexity
 
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED for implementation with Pattern Recognition Architecture**
+**Tech Lead Decision** (2025-08-22):
+✅ **RESTRUCTURED into 5 testable phases for context window management**
+⚠️ **CRITICAL**: Each phase MUST be completed, tested, and committed separately
+🔧 **MANDATORY**: Use Context7 for LanguageExt patterns (Fin<T>, Option<T>, Seq<T>)
 
 **Architecture Decision**: 
 - Implement extensible Pattern Recognition Framework instead of simple match detection
@@ -125,12 +96,178 @@
 - Enables future tier-ups, transmutations, and chains without refactoring
 - See [ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md) for detailed architectural rationale
 
-**Technical Approach**:
-1. **Pattern Framework** (1.5h): Core abstractions - IPattern, IPatternRecognizer, IPatternResolver, IPatternExecutor
-2. **Match Implementation** (1.5h): MatchPatternRecognizer with flood-fill, MatchPatternExecutor for clearing blocks
-3. **Player State** (1h): Domain model for resources/attributes, PlayerStateService for tracking
-4. **CQRS Integration** (1h): ProcessPatternsCommand triggered after actions, pattern processing pipeline
-5. **Presentation** (0.5h): Simple text UI for attributes display
+---
+
+## 🔄 PHASE-BASED IMPLEMENTATION PLAN
+
+### 📍 Phase 1: Core Pattern Abstractions (1.5h)
+**Goal**: Create pattern framework interfaces and basic implementations
+
+**Pre-Work MANDATORY**:
+```bash
+# Query Context7 for LanguageExt patterns before starting
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Fin Option Seq functional patterns"
+```
+
+**Implementation**:
+1. Create `src/Core/Features/Block/Patterns/` directory structure
+2. Define core interfaces: IPattern, IPatternRecognizer, IPatternExecutor, IPatternResolver
+3. Create PatternType enum and PatternContext record
+4. Implement basic PatternResult with Fin<T> error handling
+
+**Tests Required** (create these FIRST via TDD):
+- Interface compilation tests
+- PatternType enum coverage
+- PatternContext immutability test
+
+**Commit Point**: `feat: implement pattern recognition framework interfaces`
+
+**Memory Bank Update**:
+```markdown
+## Phase 1 Complete: Pattern Framework
+- Created core interfaces for pattern system
+- Used Fin<T> for error handling per Context7 docs
+- Next: Implement MatchPatternRecognizer
+```
+
+---
+
+### 📍 Phase 2: Match Pattern Recognition (1.5h)
+**Goal**: Implement flood-fill match detection algorithm
+
+**Pre-Work MANDATORY**:
+```bash
+# Query Context7 for Seq operations and functional collections
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Seq map filter fold operations"
+```
+
+**Implementation**:
+1. Create MatchPatternRecognizer implementing IPatternRecognizer
+2. Implement flood-fill algorithm (code provided in guide below)
+3. Create MatchPattern data class with Seq<Vector2Int> positions
+4. Handle edge cases: grid boundaries, empty cells, single blocks
+
+**Tests Required** (TDD approach):
+- Horizontal match-3 detection
+- Vertical match-3 detection
+- L-shape and T-shape detection
+- No-match scenarios
+- Edge-of-grid matches
+
+**Commit Point**: `feat: implement match-3 pattern recognition with flood-fill`
+
+**Memory Bank Update**:
+```markdown
+## Phase 2 Complete: Match Recognition
+- Implemented flood-fill for match detection
+- All pattern shapes detected correctly
+- Used Seq<T> for immutable collections
+- Next: Player state domain model
+```
+
+---
+
+### 📍 Phase 3: Player State Domain (1h)
+**Goal**: Create domain model for tracking resources and attributes
+
+**Pre-Work MANDATORY**:
+```bash
+# Query Context7 for Option<T> and domain modeling patterns
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Option Some None domain modeling"
+```
+
+**Implementation**:
+1. Create `src/Core/Domain/Player/` structure
+2. Define PlayerState aggregate with resources/attributes
+3. Implement PlayerStateService with state mutations
+4. Create resource calculation based on block types
+
+**Tests Required**:
+- Initial player state creation
+- Resource addition/subtraction with Fin<T> validation
+- Attribute calculation from block types
+- State immutability verification
+
+**Commit Point**: `feat: implement player state domain with resources`
+
+**Memory Bank Update**:
+```markdown
+## Phase 3 Complete: Player Domain
+- Created immutable PlayerState aggregate
+- Service handles state mutations safely
+- Used Option<T> for nullable player lookups
+- Next: CQRS command integration
+```
+
+---
+
+### 📍 Phase 4: CQRS Integration (1h)
+**Goal**: Wire pattern processing into MediatR pipeline
+
+**Pre-Work MANDATORY**:
+```bash
+# Query Context7 for MediatR async patterns
+mcp__context7__get-library-docs "/jbogard/mediatr" --topic "IRequest INotification async handlers"
+```
+
+**Implementation**:
+1. Create ProcessPatternsCommand implementing IRequest
+2. Implement ProcessPatternsCommandHandler with pattern engine orchestration
+3. Create PatternProcessedNotification for UI updates
+4. Register all handlers in DI container
+
+**Tests Required**:
+- Command handler processes patterns correctly
+- Notification publishes after execution
+- Chain detection triggers recursive processing
+- Error propagation through pipeline
+
+**Commit Point**: `feat: integrate pattern processing with CQRS pipeline`
+
+**Memory Bank Update**:
+```markdown
+## Phase 4 Complete: CQRS Integration
+- ProcessPatternsCommand triggers pattern detection
+- Handler orchestrates recognizer→resolver→executor flow
+- Notifications update UI after processing
+- Next: UI presentation layer
+```
+
+---
+
+### 📍 Phase 5: UI Presentation (0.5h)
+**Goal**: Display attributes in Godot UI
+
+**Implementation**:
+1. Create AttributeDisplay scene in Godot
+2. Implement AttributePresenter following MVP pattern
+3. Wire up PatternProcessedNotification listener
+4. Add simple text display for current attributes
+
+**Tests Required**:
+- Presenter updates on notification
+- UI reflects current player state
+- All 9 block types show correct attributes
+
+**Commit Point**: `feat: add attribute display UI for match rewards`
+
+**Memory Bank Update**:
+```markdown
+## Phase 5 Complete: VS_003A DONE
+- Full match-3 system working end-to-end
+- Pattern framework ready for future extensions
+- All tests passing, architecture clean
+- Ready for VS_003B (tier-ups)
+```
+
+---
+
+**Technical Approach Summary**:
+1. **Phase 1 - Pattern Framework** (1.5h): Core abstractions with Context7 LanguageExt patterns
+2. **Phase 2 - Match Implementation** (1.5h): Flood-fill recognizer with comprehensive tests
+3. **Phase 3 - Player State** (1h): Domain model with immutable state management
+4. **Phase 4 - CQRS Integration** (1h): MediatR pipeline with proper async handling
+5. **Phase 5 - Presentation** (0.5h): Simple text UI for attributes display
 
 **Key Implementation Files**:
 - `src/Core/Features/Block/Patterns/` - Pattern recognition framework
