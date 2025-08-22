@@ -65,7 +65,15 @@
       "Bash(tree:*)",
       "Bash(git mv:*)",
       "Bash(git stash:*)",
-      "Bash(./scripts/persona/embody.ps1 test-specialist)"
+      "Bash(./scripts/persona/embody.ps1 test-specialist)",
+      "Bash(./scripts/persona/embody.ps1 dev-engineer)",
+      "mcp__context7__get-library-docs",
+      "Bash(./scripts/persona/embody.ps1 tech-lead)",
+      "Bash(./scripts/utils/rotate-memory-bank.ps1 -DryRun)",
+      "Bash(./scripts/utils/fix-session-log-order.ps1 -ValidateOnly)",
+      "Bash(./scripts/utils/fix-session-log-order.ps1 -DryRun)",
+      "Bash(./scripts/utils/check-session-log-health.ps1)",
+      "Bash(./scripts/utils/fix-session-log-order.ps1)"
     ],
     "deny": [],
     "ask": [],
