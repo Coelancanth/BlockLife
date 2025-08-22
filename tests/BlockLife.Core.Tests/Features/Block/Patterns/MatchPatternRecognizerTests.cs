@@ -125,17 +125,17 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
         }
 
         [Fact]
-        public void Recognize_WithTShapeMatch_FindsPattern()
+        public void Recognize_WithCrossShapeMatch_FindsPattern()
         {
-            // Arrange
+            // Arrange - Cross/Plus shape pattern
             var gridService = CreateGridService();
             var positions = new[]
             {
-                new Vector2Int(1, 2),
-                new Vector2Int(2, 1),
-                new Vector2Int(2, 2),
-                new Vector2Int(2, 3),
-                new Vector2Int(3, 2)
+                new Vector2Int(1, 2), // Top
+                new Vector2Int(2, 1), // Left  
+                new Vector2Int(2, 2), // Center
+                new Vector2Int(2, 3), // Right
+                new Vector2Int(3, 2)  // Bottom
             };
             PlaceBlocksAtPositions(gridService, BlockType.Creativity, positions);
 
@@ -155,6 +155,12 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
                     matchPattern.Should().NotBeNull();
                     matchPattern!.MatchedBlockType.Should().Be(BlockType.Creativity);
                     matchPattern.Positions.Should().HaveCount(5);
+                    // Verify it found the complete cross/plus pattern
+                    matchPattern.Positions.Should().Contain(new Vector2Int(1, 2)); // Top
+                    matchPattern.Positions.Should().Contain(new Vector2Int(2, 1)); // Left
+                    matchPattern.Positions.Should().Contain(new Vector2Int(2, 2)); // Center
+                    matchPattern.Positions.Should().Contain(new Vector2Int(2, 3)); // Right
+                    matchPattern.Positions.Should().Contain(new Vector2Int(3, 2)); // Bottom
                 },
                 Fail: error => throw new Exception($"Expected success but got: {error}")
             );
