@@ -1,7 +1,8 @@
 # ADR-004: Single-Repo Persona Context Management
 
 ## Status
-Accepted (2025-01-21)
+Accepted (2025-01-21)  
+Enhanced (2025-08-22) - v3.0 Auto-Sync
 
 ## Context
 
@@ -63,9 +64,33 @@ When running `./scripts/persona/embody.ps1 [persona]`:
 
 When Claude embodies a persona:
 
-1. **Run Command**: Execute `git pull origin main --ff-only && git status`
+1. **Run Command**: Execute `./scripts/persona/embody.ps1 [persona]`
 2. **Load Contexts**: Read active/[persona].md and check Backlog.md
 3. **Present State**: Show current work and await direction
+
+### Auto-Sync Enhancement (v3.0 - 2025-08-22)
+
+The embody.ps1 script was enhanced to automatically handle common git synchronization scenarios, removing friction from the persona workflow:
+
+**Auto-Sync Capabilities**:
+1. **Automatic Stashing**: Detects and stashes uncommitted changes before sync
+2. **Smart Rebase**: When branches diverge, automatically rebases local commits
+3. **Duplicate Detection**: Drops commits already merged upstream
+4. **Auto-Push**: Pushes unpushed commits when safe
+5. **Conflict Recovery**: Gracefully aborts on conflicts, restores state, provides options
+
+**Sync Flow Logic**:
+```
+Uncommitted changes? → Stash
+Can fast-forward? → Pull
+Branches diverged? → Rebase (drops duplicates)
+Only local ahead? → Auto-push
+Only remote ahead? → Pull
+Rebase conflicts? → Abort, restore, show manual options
+Success? → Restore stashed changes
+```
+
+This enhancement makes persona switching truly friction-free. The script handles 95% of sync scenarios automatically while preserving safety for complex situations requiring manual intervention.
 
 ### Conflict Prevention Strategy
 

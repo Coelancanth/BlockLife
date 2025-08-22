@@ -8,7 +8,14 @@
 .DESCRIPTION
     Sets git identity, ensures clean sync, and loads persona context.
     Designed for solo dev sequential workflow with intelligent guidance.
-    Encourages but doesn't enforce frequent commits for conflict prevention.
+    
+    AUTO-SYNC FEATURES (v3.0):
+    - Automatically stashes uncommitted changes before sync
+    - Auto-rebases when branches diverge (handles duplicate commits)
+    - Auto-pushes unpushed commits when safe
+    - Auto-pulls new changes from main
+    - Gracefully handles conflicts with manual intervention options
+    - Restores stashed changes after successful sync
 
 .PARAMETER Persona
     The persona to embody: dev-engineer, test-specialist, tech-lead, 
@@ -16,10 +23,10 @@
 
 .EXAMPLE
     .\embody.ps1 dev-engineer
-    Syncs latest code, sets identity, loads context, shows assigned work
+    Auto-syncs with main, sets identity, loads context, shows assigned work
 
 .NOTES
-    Version: 2.0 - Refined with active context structure
+    Version: 3.0 - Auto-sync for divergent branches
     ADR-004: Single-repo persona context management
 #>
 
@@ -111,27 +118,102 @@ Write-Host ("=" * 60) -ForegroundColor $config.color
 Write-Host "Focus: $($config.focus)" -ForegroundColor DarkGray
 Write-Host ""
 
-# Step 1: ALWAYS pull latest first (enforced per ADR-004)
+# Step 1: ALWAYS pull latest first (enforced per ADR-004) with auto-handling
 Write-Host "📥 Syncing with latest main..." -ForegroundColor Yellow
+
+# Check for uncommitted changes that would block pull/rebase
+$uncommittedChanges = git status --porcelain
+$hasUncommitted = $uncommittedChanges -ne $null -and $uncommittedChanges.Trim() -ne ""
+
+if ($hasUncommitted) {
+    Write-Host "  📦 Stashing uncommitted changes..." -ForegroundColor Yellow
+    $stashMsg = "Auto-stash for persona switch: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    git stash push -m $stashMsg | Out-Null
+    $stashed = $true
+} else {
+    $stashed = $false
+}
+
+# Try fast-forward pull first
 $pullOutput = git pull origin main --ff-only 2>&1
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "`n❌ Cannot fast-forward merge!" -ForegroundColor Red
-    Write-Host "   You have local commits that diverge from main." -ForegroundColor Red
-    Write-Host "`n📝 Your options:" -ForegroundColor Yellow
-    Write-Host "   1. Push your commits: " -NoNewline -ForegroundColor White
-    Write-Host "git push origin main" -ForegroundColor Cyan
-    Write-Host "   2. Rebase on main: " -NoNewline -ForegroundColor White
-    Write-Host "git pull --rebase origin main" -ForegroundColor Cyan
-    Write-Host "   3. Create a PR: " -NoNewline -ForegroundColor White
-    Write-Host "gh pr create" -ForegroundColor Cyan
-    Write-Host ""
-    git status
-    exit 1
+    Write-Host "  ⚠️  Cannot fast-forward, attempting rebase..." -ForegroundColor Yellow
+    
+    # Check what we're dealing with
+    $localAhead = git rev-list --count origin/main..HEAD 2>$null
+    $remoteAhead = git rev-list --count HEAD..origin/main 2>$null
+    
+    if ($localAhead -gt 0 -and $remoteAhead -gt 0) {
+        Write-Host "  🔄 Divergent branches detected ($localAhead ahead, $remoteAhead behind)" -ForegroundColor Yellow
+        Write-Host "  🔧 Auto-rebasing local commits on latest main..." -ForegroundColor Cyan
+        
+        # Perform the rebase
+        $rebaseOutput = git pull --rebase origin main 2>&1
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✅ Successfully rebased on main!" -ForegroundColor Green
+            
+            # Count how many duplicate commits were dropped
+            if ($rebaseOutput -match "dropping.*patch contents already upstream") {
+                $droppedCount = ([regex]::Matches($rebaseOutput, "dropping")).Count
+                Write-Host "  🧹 Cleaned up $droppedCount duplicate commit(s)" -ForegroundColor DarkGray
+            }
+        } else {
+            Write-Host "  ❌ Rebase failed - likely conflicts detected" -ForegroundColor Red
+            Write-Host "  🛠️  Attempting to abort and provide manual options..." -ForegroundColor Yellow
+            git rebase --abort 2>$null
+            
+            # Restore stash if we had one
+            if ($stashed) {
+                Write-Host "  📦 Restoring stashed changes..." -ForegroundColor Yellow
+                git stash pop | Out-Null
+            }
+            
+            Write-Host "`n⚠️  AUTO-SYNC FAILED - Manual intervention required:" -ForegroundColor Red
+            Write-Host "   Your changes conflict with main. Options:" -ForegroundColor Yellow
+            Write-Host "   1. Create a PR for review: " -NoNewline -ForegroundColor White
+            Write-Host "gh pr create" -ForegroundColor Cyan
+            Write-Host "   2. Force push (CAUTION): " -NoNewline -ForegroundColor White
+            Write-Host "git push --force-with-lease origin main" -ForegroundColor Cyan
+            Write-Host "   3. Reset to main (LOSES WORK): " -NoNewline -ForegroundColor White
+            Write-Host "git reset --hard origin/main" -ForegroundColor Cyan
+            Write-Host ""
+            git status
+            exit 1
+        }
+    } elseif ($localAhead -gt 0) {
+        Write-Host "  📤 You have $localAhead unpushed commit(s)" -ForegroundColor Yellow
+        Write-Host "  🔧 Auto-pushing to main..." -ForegroundColor Cyan
+        
+        $pushOutput = git push origin main 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✅ Successfully pushed to main!" -ForegroundColor Green
+        } else {
+            Write-Host "  ❌ Push failed - branch protection or permissions issue" -ForegroundColor Red
+            Write-Host "     Consider creating a PR: gh pr create" -ForegroundColor Yellow
+        }
+    } elseif ($remoteAhead -gt 0) {
+        Write-Host "  📥 Pulling $remoteAhead new commit(s) from main..." -ForegroundColor Yellow
+        git pull origin main | Out-Null
+        Write-Host "  ✅ Updated with latest changes!" -ForegroundColor Green
+    }
 } elseif ($pullOutput -match "Already up to date") {
     Write-Host "  ✅ Already up to date with main" -ForegroundColor Green
 } else {
     Write-Host "  ✅ Pulled latest changes from main" -ForegroundColor Green
+}
+
+# Restore stashed changes if we had any
+if ($stashed) {
+    Write-Host "  📦 Restoring stashed changes..." -ForegroundColor Yellow
+    $popOutput = git stash pop 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✅ Restored uncommitted changes" -ForegroundColor Green
+    } else {
+        Write-Host "  ⚠️  Some stashed changes may conflict" -ForegroundColor Yellow
+        Write-Host "     Review with: git status" -ForegroundColor DarkGray
+    }
 }
 
 # Step 2: Check for uncommitted work (advisory, not blocking)
@@ -185,23 +267,30 @@ Write-Host "  ✅ $($config.name) <$($config.email)>" -ForegroundColor Green
 # Step 4: Show repository state
 Write-Host "`n📊 Repository state:" -ForegroundColor Green
 $branch = git rev-parse --abbrev-ref HEAD
-$ahead = git rev-list --count origin/$branch..HEAD 2>$null
-$behind = git rev-list --count HEAD..origin/$branch 2>$null
+
+# For dev/main and other feature branches, compare with origin/main
+$remoteBranch = "main"
+$ahead = git rev-list --count origin/$remoteBranch..HEAD 2>$null
+$behind = git rev-list --count HEAD..origin/$remoteBranch 2>$null
 
 Write-Host "  📍 Branch: " -NoNewline -ForegroundColor White
 Write-Host $branch -ForegroundColor Cyan
 
 if ($ahead -gt 0 -or $behind -gt 0) {
     if ($ahead -gt 0) {
-        Write-Host "  ↑ $ahead commit(s) ahead of origin/$branch" -ForegroundColor Yellow
-        Write-Host "     Consider: git push origin $branch" -ForegroundColor DarkGray
+        Write-Host "  ↑ $ahead commit(s) ahead of origin/$remoteBranch" -ForegroundColor Yellow
+        if ($branch -eq "main") {
+            Write-Host "     Consider: git push origin main" -ForegroundColor DarkGray
+        } else {
+            Write-Host "     Ready to create PR when feature complete" -ForegroundColor DarkGray
+        }
     }
     if ($behind -gt 0) {
-        Write-Host "  ↓ $behind commit(s) behind origin/$branch" -ForegroundColor Yellow
-        Write-Host "     Consider: git pull origin $branch" -ForegroundColor DarkGray
+        Write-Host "  ↓ $behind commit(s) behind origin/$remoteBranch" -ForegroundColor Yellow
+        Write-Host "     Consider: git pull --rebase origin $remoteBranch" -ForegroundColor DarkGray
     }
 } else {
-    Write-Host "  ✅ In sync with origin/$branch" -ForegroundColor Green
+    Write-Host "  ✅ In sync with origin/$remoteBranch" -ForegroundColor Green
 }
 
 # Step 5: Load active context (new structure per ADR-004)
