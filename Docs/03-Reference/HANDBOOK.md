@@ -60,8 +60,8 @@ Y↑
 - **Tech Debt**: `tech/TD_042-description`
 - **Use underscores**: `VS_003` not `vs-003` (matches Backlog.md)
 
-### Memory Bank Protocol (Post TD_054)
-- **Location**: `.claude/memory-bank/activeContext.md` (local-only, in .gitignore)
+### Memory Bank Protocol (ADR-004 v3.0)
+- **Location**: `.claude/memory-bank/active/[persona].md` and `session-log.md` (local-only, in .gitignore)
 - **When to update**: Pre-push hook reminds you
 - **What to record**: High-value context only (decisions, patterns, blockers, all git status)
 - **No buffers**: Valuable patterns → Docs/03-Reference/ immediately or delete
