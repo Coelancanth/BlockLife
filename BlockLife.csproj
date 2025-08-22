@@ -35,8 +35,6 @@
   <ItemGroup>
     <!-- Temporarily exclude integration tests with LanguageExt extensions until FluentAssertions 8.x migration complete (TD_047) -->
     <Compile Remove="test\integration\**" />
-    <!-- Temporarily exclude FsCheck property tests until 3.x migration complete (TD_047) -->
-    <Compile Remove="FsCheck_Migration_TD047\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="addons\**" />

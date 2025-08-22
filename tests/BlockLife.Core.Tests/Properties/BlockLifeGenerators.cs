@@ -1,6 +1,7 @@
 using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
 using FsCheck;
+using FsCheck.Fluent;
 using System;
 using System.Linq;
 
@@ -9,25 +10,25 @@ namespace BlockLife.Core.Tests.Properties
     /// <summary>
     /// Custom generators for BlockLife domain types to support property-based testing.
     /// These generators create valid and invalid instances for testing invariants.
+    /// Migrated to FsCheck 3.x API
     /// </summary>
     public static class BlockLifeGenerators
     {
         /// <summary>
         /// Generates valid grid positions within specified bounds.
         /// </summary>
-        public static Arbitrary<Vector2Int> ValidPosition(int width, int height)
+        public static Gen<Vector2Int> ValidPosition(int width, int height)
         {
-            return Arb.From(
+            return
                 from x in Gen.Choose(0, width - 1)
                 from y in Gen.Choose(0, height - 1)
-                select new Vector2Int(x, y)
-            );
+                select new Vector2Int(x, y);
         }
 
         /// <summary>
         /// Generates positions that are guaranteed to be outside grid bounds.
         /// </summary>
-        public static Arbitrary<Vector2Int> InvalidPosition(int width, int height)
+        public static Gen<Vector2Int> InvalidPosition(int width, int height)
         {
             if (width <= 0 || height <= 0)
                 throw new ArgumentException("Grid dimensions must be positive");
@@ -42,8 +43,7 @@ namespace BlockLife.Core.Tests.Properties
                 Gen.Choose(height, height + 1000)
             );
 
-            return Arb.From(
-                Gen.OneOf(
+            return Gen.OneOf(
                     // Invalid X, any Y
                     from x in invalidX
                     from y in Gen.Choose(-1000, 1000)
@@ -58,14 +58,13 @@ namespace BlockLife.Core.Tests.Properties
                     from x in invalidX
                     from y in invalidY
                     select new Vector2Int(x, y)
-                )
-            );
+                );
         }
 
         /// <summary>
         /// Generates primary block types that can be directly placed.
         /// </summary>
-        public static Arbitrary<BlockType> PrimaryBlockType()
+        public static Gen<BlockType> PrimaryBlockType()
         {
             var primaryTypes = new[]
             {
@@ -77,13 +76,13 @@ namespace BlockLife.Core.Tests.Properties
                 BlockType.Fun
             };
 
-            return Arb.From(Gen.Elements(primaryTypes));
+            return Gen.Elements(primaryTypes);
         }
 
         /// <summary>
         /// Generates special block types that require combinations.
         /// </summary>
-        public static Arbitrary<BlockType> SpecialBlockType()
+        public static Gen<BlockType> SpecialBlockType()
         {
             var specialTypes = new[]
             {
@@ -92,70 +91,66 @@ namespace BlockLife.Core.Tests.Properties
                 BlockType.Passion
             };
 
-            return Arb.From(Gen.Elements(specialTypes));
+            return Gen.Elements(specialTypes);
         }
 
         /// <summary>
         /// Generates any valid block type.
         /// </summary>
-        public static Arbitrary<BlockType> AnyBlockType()
+        public static Gen<BlockType> AnyBlockType()
         {
-            return Arb.From(Gen.Elements(Enum.GetValues<BlockType>()));
+            return Gen.Elements(Enum.GetValues<BlockType>());
         }
 
         /// <summary>
         /// Generates a valid block with specified constraints.
         /// </summary>
-        public static Arbitrary<Block> ValidBlock(int gridWidth = 10, int gridHeight = 10)
+        public static Gen<Block> ValidBlock(int gridWidth = 10, int gridHeight = 10)
         {
-            return Arb.From(
-                from position in ValidPosition(gridWidth, gridHeight).Generator
-                from blockType in PrimaryBlockType().Generator
-                select Block.CreateNew(blockType, position)
-            );
+            return
+                from position in ValidPosition(gridWidth, gridHeight)
+                from blockType in PrimaryBlockType()
+                select Block.CreateNew(blockType, position);
         }
 
         /// <summary>
         /// Generates a sequence of non-overlapping positions within grid bounds.
         /// </summary>
-        public static Arbitrary<Vector2Int[]> NonOverlappingPositions(int gridWidth, int gridHeight, int maxCount = 10)
+        public static Gen<Vector2Int[]> NonOverlappingPositions(int gridWidth, int gridHeight, int maxCount = 10)
         {
-            return Arb.From(
+            return
                 Gen.Sized(size =>
                 {
                     var count = Math.Min(size, Math.Min(maxCount, gridWidth * gridHeight));
                     var allPositions = AllValidPositions(gridWidth, gridHeight);
                     return Gen.Shuffle(allPositions)
                           .Select(positions => positions.Take(count).ToArray());
-                })
-            );
+                });
         }
 
         /// <summary>
         /// Generates pairs of adjacent positions.
         /// </summary>
-        public static Arbitrary<(Vector2Int, Vector2Int)> AdjacentPositions(int gridWidth = 10, int gridHeight = 10)
+        public static Gen<(Vector2Int, Vector2Int)> AdjacentPositions(int gridWidth = 10, int gridHeight = 10)
         {
-            return Arb.From(
-                from pos in ValidPosition(gridWidth, gridHeight).Generator
+            return
+                from pos in ValidPosition(gridWidth, gridHeight)
                 from direction in Gen.Elements(new[] { (0, 1), (0, -1), (1, 0), (-1, 0) })
                 let adjacent = new Vector2Int(pos.X + direction.Item1, pos.Y + direction.Item2)
                 where adjacent.X >= 0 && adjacent.X < gridWidth &&
                       adjacent.Y >= 0 && adjacent.Y < gridHeight
-                select (pos, adjacent)
-            );
+                select (pos, adjacent);
         }
 
         /// <summary>
         /// Generates positive grid dimensions.
         /// </summary>
-        public static Arbitrary<(int width, int height)> GridDimensions()
+        public static Gen<(int width, int height)> GridDimensions()
         {
-            return Arb.From(
+            return
                 from width in Gen.Choose(1, 20)
                 from height in Gen.Choose(1, 20)
-                select (width, height)
-            );
+                select (width, height);
         }
 
         /// <summary>
@@ -163,18 +158,18 @@ namespace BlockLife.Core.Tests.Properties
         /// </summary>
         public static Gen<GridOperation[]> GridOperationSequence(int gridWidth, int gridHeight, int maxOperations = 20)
         {
-            var placeOperation = from pos in ValidPosition(gridWidth, gridHeight).Generator
-                                 from blockType in PrimaryBlockType().Generator
+            var placeOperation = from pos in ValidPosition(gridWidth, gridHeight)
+                                 from blockType in PrimaryBlockType()
                                  select (GridOperation)new GridOperation.Place(pos, blockType);
 
-            var removeOperation = from pos in ValidPosition(gridWidth, gridHeight).Generator
+            var removeOperation = from pos in ValidPosition(gridWidth, gridHeight)
                                   select (GridOperation)new GridOperation.Remove(pos);
 
             return Gen.Sized(size =>
             {
                 var operationCount = Math.Min(size, maxOperations);
-                return Gen.ListOf(operationCount, Gen.OneOf(placeOperation, removeOperation))
-                          .Select(ops => ops.ToArray());
+                return Gen.ArrayOf(Gen.OneOf(placeOperation, removeOperation)).Resize(operationCount)
+                          ;
             });
         }
 

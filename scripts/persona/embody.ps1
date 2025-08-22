@@ -237,7 +237,7 @@ $memoryBankPath = Join-Path (Split-Path (Split-Path $scriptRoot)) ".claude\memor
 $activeContextPath = Join-Path $memoryBankPath "active\$Persona.md"
 
 if (Test-Path $activeContextPath) {
-    Write-Info "Active context for $Persona:"
+    Write-Info "Active context for ${Persona}:"
     Get-Content $activeContextPath | Select-Object -First 20 | ForEach-Object {
         Write-Host "  $_" -ForegroundColor Gray
     }
