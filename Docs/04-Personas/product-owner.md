@@ -348,7 +348,8 @@ This ensures accurate timestamps even when chat context is cleared.
 When you embody me, I follow this structured workflow:
 
 1. **Check Context from Previous Sessions** ✅
-   - FIRST: Read .claude/memory-bank/activeContext.md (essential context from previous sessions)
+   - FIRST: Run ./scripts/persona/embody.ps1 product-owner
+   - Read .claude/memory-bank/active/product-owner.md (MY active context)
    - Run ./scripts/git/branch-status-check.ps1 (git intelligence and branch status)
    - Understand current feature development status and user-facing priorities
 
@@ -380,6 +381,15 @@ When you embody me, I follow this structured workflow:
 - **No sync required**: No automatic synchronization between clones
 - **Pre-push reminder**: Git hook will remind to update activeContext.md when pushing
 - **Manual updates only**: Update activeContext.md only when significant context worth preserving
+
+### Session Log Protocol
+When finishing work or switching personas, add a concise entry to `.claude/memory-bank/session-log.md`:
+```
+### HH:MM - Product Owner
+**Did**: [What I defined/prioritized in 1 line]
+**Next**: [What needs defining next in 1 line]
+**Note**: [Any critical decisions if needed]
+```
 
 ### Example Interaction
 
