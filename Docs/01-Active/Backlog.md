@@ -108,7 +108,8 @@
 **Size**: M (4-8h)
 **Priority**: Important
 **Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
-**Created**: 2025-08-21
+**Created**: 2025-08-22
+**Reset**: 2025-08-22 (Aging protocol started today)
 
 **What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
 **Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
@@ -147,6 +148,8 @@
 **Size**: M (6.5 hours - updated estimate)
 **Priority**: Important
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging clock starts fresh from today)
+**Last Updated**: 2025-08-22
 **Depends On**: None
 
 **What**: Match 3+ adjacent same-type blocks to clear them and earn attributes

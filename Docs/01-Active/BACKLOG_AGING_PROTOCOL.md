@@ -3,6 +3,10 @@
 ## Purpose
 Prevent backlog accumulation of stale items that will never be implemented. Force honest prioritization through time-based aging.
 
+## Protocol Start Date
+**Effective**: 2025-08-22
+**Initial Reset**: All existing items reset to Day 0 on 2025-08-22
+
 ## The 3-10 Rule
 
 ### Stage 1: Active (0-3 days in Backlog.md)
@@ -68,9 +72,15 @@ Example:
 Every item MUST have these dates:
 ```markdown
 **Created**: 2025-08-22        # When first added
-**Last Updated**: 2025-08-22   # When status/content changed
+**Last Updated**: 2025-08-22   # When status/content changed  
+**Reset**: 2025-08-22          # If aging clock was reset (optional)
 **Moved to Backup**: 2025-08-25 # When aged out (if applicable)
 ```
+
+### Aging Calculation
+- Use **Last Updated** date for aging (not Created)
+- If item has **Reset** date, use that instead
+- Status changes reset the aging clock
 
 ## Manual Aging Process
 
