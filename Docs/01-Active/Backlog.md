@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-22 23:42
+**Last Updated**: 2025-08-23 02:40
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -71,8 +71,8 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### TD_069: Critical Namespace Analyzer (Simplified)
-**Status**: Proposed
-**Owner**: Tech Lead
+**Status**: Approved ✅
+**Owner**: Dev Engineer
 **Size**: S (2h)
 **Priority**: Important
 **Created**: 2025-08-22
@@ -90,23 +90,37 @@
 
 **Test Specialist Note**: Simplified after realizing strict folder-namespace matching was causing more problems than it solved. Focus only on what actually breaks (assembly boundaries for MediatR).
 
-### TD_070: DI Registration Compile-Time Validator
-**Status**: Proposed  
-**Owner**: Tech Lead
-**Size**: S (3h)
+**Tech Lead Decision** (2025-08-23):
+- ✅ APPROVED - Complexity 3/10
+- Focuses on real problem (MediatR discovery failures)
+- Simple Roslyn analyzer pattern, 2-hour implementation
+- No pedantic rules, just assembly boundary safety
+
+### TD_070: DI Registration Validator (Test-Based)
+**Status**: Approved with Modification ⚠️
+**Owner**: Test Specialist
+**Size**: S (1h)
 **Priority**: Important
 **Created**: 2025-08-22
 
-**What**: Build-time validation for critical service registrations
+**What**: Test-based validation for critical service registrations
 **Why**: Missing DI registrations cause cascade test failures that mask root cause
 **How**:
-- Source generator or build task to validate GameStrapper registrations
-- Check all interfaces have implementations registered
-- Verify MediatR handler discovery
+- Create GameStrapperValidationTests.cs that runs first
+- Verify all critical interfaces have implementations registered
+- Check MediatR handler discovery works
+- Run as first test in Architecture category (per TD_071)
 **Done When**:
-- Build fails if critical services not registered
+- Test fails fast if critical services not registered
 - Clear error messages identify missing registrations
 - No more "13 tests fail from 1 missing service"
+
+**Tech Lead Decision** (2025-08-23):
+- ⚠️ APPROVED WITH MODIFICATION - Reduced complexity from 5/10 to 2/10
+- Use GameStrapperValidationTests instead of source generator
+- Simpler to implement and debug (just a test)
+- Runs in Architecture test category for fast feedback
+- Can evolve to source generator later if needed
 
 ### TD_071: Test Categories for Faster Feedback
 **Status**: Proposed
@@ -186,6 +200,12 @@
 - **Phase 4**: `tests/BlockLife.Core.Tests/Features/Player/Commands/ApplyMatchRewardsCommandHandlerTests.cs` (3 CQRS command tests)
 - **Phase 4**: `tests/BlockLife.Core.Tests/Features/Player/Commands/CreatePlayerCommandHandlerTests.cs` (3 command validation tests)
 - **Phase 4**: `tests/BlockLife.Core.Tests/Features/Player/Queries/GetCurrentPlayerQueryHandlerTests.cs` (3 query handler tests)
+
+**Tech Lead Review** (2025-08-23):
+- ✅ Phase 5 ready for implementation
+- Simple MVP text display (0.5h estimate valid)
+- Clear path: AttributeDisplay.tscn + AttributePresenter.cs
+- No blockers identified for Dev Engineer
 
 **Failed Tests Analysis (2025-08-22)**:
 - **CQRS Layer**: 4 tests failing due to error message format differences (service returns error codes, tests expect descriptions)
