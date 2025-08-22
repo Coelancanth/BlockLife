@@ -88,15 +88,28 @@ else
   echo "⚠️  Could not fetch origin/main - check network connection"
 fi
 
-# Memory Bank context reminder (TD_053) - integrated into Husky hook
-if [ "$current_branch" != "main" ] && [ -n "$changed_files" ]; then
-  echo ""
-  echo "────────────────────────────────────────────────────────"
-  echo "💡 CONTEXT REMINDER: Consider updating activeContext.md"
-  echo ""
-  echo "  If this work is significant, update:"
-  echo "  .claude/memory-bank/activeContext.md"
-  echo "────────────────────────────────────────────────────────"
-fi
+# Memory Bank context reminder (ADR-004 v3.0) - CRITICAL for persona workflow
+echo ""
+echo "════════════════════════════════════════════════════════════════"
+echo "🚨 MANDATORY PERSONA CONTEXT CHECK - DO NOT IGNORE!"
+echo "════════════════════════════════════════════════════════════════"
+echo ""
+echo "  Before pushing, YOU MUST update:"
+echo ""
+echo "  1. 📝 ACTIVE CONTEXT: .claude/memory-bank/active/[persona].md"
+echo "     → What you accomplished, decisions made, blockers hit"
+echo ""
+echo "  2. 📜 SESSION LOG: .claude/memory-bank/session-log.md"
+echo "     → Add handoff note if switching personas soon"
+echo ""
+echo "  Current persona identity: $(git config user.name)"
+echo ""
+echo "  ⚠️  CONTEXT LOSS WARNING:"
+echo "  Forgetting to update context = lost work history!"
+echo "  This is YOUR responsibility as an embodied persona."
+echo ""
+echo "  Push will continue, but PLEASE update context files NOW."
+echo "════════════════════════════════════════════════════════════════"
+echo ""
 
 echo "✅ All checks passed - ready to push!"

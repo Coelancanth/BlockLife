@@ -100,9 +100,10 @@ jobs:
 
   build-and-test:
     name: Build & Test
-    needs: [quick-check, branch-freshness]
+    needs: quick-check
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    if: always() && (needs.quick-check.result == 'success')
     
     steps:
     - name: Checkout
@@ -283,11 +284,19 @@ jobs:
     steps:
     - name: Check Status
       run: |
+        echo "🔍 Checking CI job results..."
+        echo "Build & Test: ${{ needs.build-and-test.result }}"
+        echo "Code Quality: ${{ needs.code-quality.result }}"
+        echo "Branch Freshness: ${{ needs.branch-freshness.result }}"
+        echo "Event: ${{ github.event_name }}"
+        
+        # Build & Test is always required
         if [ "${{ needs.build-and-test.result }}" != "success" ]; then
-          echo "❌ Build & Test failed"
+          echo "❌ Build & Test failed or was skipped"
           exit 1
         fi
         
+        # Code Quality and Branch Freshness only required for PRs
         if [ "${{ github.event_name }}" == "pull_request" ]; then
           if [ "${{ needs.code-quality.result }}" != "success" ]; then
             echo "❌ Code Quality checks failed"

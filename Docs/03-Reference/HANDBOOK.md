@@ -66,6 +66,13 @@ Y↑
 - **What to record**: High-value context only (decisions, patterns, blockers, all git status)
 - **No buffers**: Valuable patterns → Docs/03-Reference/ immediately or delete
 
+### Persona System (ADR-004: Single-Repo)
+- **Architecture**: Single repository with context management (supersedes multi-clone ADR-002)
+- **Switching**: `/clear` → `embody [persona]` → auto-pulls latest
+- **Script**: `./scripts/persona/embody.ps1 [persona]` - sets git identity and syncs
+- **Context**: Preserved in `.claude/memory-bank/sessions/[persona].md`
+- **Workflow**: Sequential solo dev - commit before switching personas
+
 ### Build & Test Commands
 
 ```bash

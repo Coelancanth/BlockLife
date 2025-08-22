@@ -1,7 +1,10 @@
 # ADR-002: Persona System Architecture - Multiple Clones Over Worktrees
 
 ## Status
-Accepted (2025-08-20)
+~~Accepted (2025-08-20)~~
+**Superseded by [ADR-004](ADR-004-single-repo-persona-context-management.md) (2025-08-21)**
+
+> **Note**: The multi-clone approach proved over-engineered for solo development. ADR-004 implements a simpler single-repo solution with context management.
 
 ## Context
 

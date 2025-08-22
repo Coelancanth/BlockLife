@@ -1,249 +1,18 @@
+# Backlog Backup
 
-### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
-**Status**: Approved
-**Owner**: Tech Lead → Dev Engineer
-**Size**: M (6.5 hours - updated estimate)
-**Priority**: Important
-**Created**: 2025-08-19
-**Depends On**: None
+> Items on probation - will be deleted after 10 days total unless rescued
+> See BACKLOG_AGING_PROTOCOL.md for rules
+> **Last Cleaned**: 2025-08-22
+> **Aging Reset**: 2025-08-22 (all items start fresh from today)
 
-**What**: Match 3+ adjacent same-type blocks to clear them and earn attributes
-**Why**: Proves core resource economy loop before adding complexity
+## 📊 Aging Statistics
+- Items in backup: 10 (VS: 4, TD: 6)
+- Oldest item: All reset to 2025-08-22
+- Next move to deletion: 2025-09-01 (10 days from reset)
 
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED for implementation with Pattern Recognition Architecture**
+## ⏰ Active Backup Items (Reset to Day 0 on 2025-08-22)
 
-**Architecture Decision**: 
-- Implement extensible Pattern Recognition Framework instead of simple match detection
-- Patterns are descriptions (what COULD happen) separate from execution (what SHOULD happen)
-- Enables future tier-ups, transmutations, and chains without refactoring
-- See [ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md) for detailed architectural rationale
-
-**Technical Approach**:
-1. **Pattern Framework** (1.5h): Core abstractions - IPattern, IPatternRecognizer, IPatternResolver, IPatternExecutor
-2. **Match Implementation** (1.5h): MatchPatternRecognizer with flood-fill, MatchPatternExecutor for clearing blocks
-3. **Player State** (1h): Domain model for resources/attributes, PlayerStateService for tracking
-4. **CQRS Integration** (1h): ProcessPatternsCommand triggered after actions, pattern processing pipeline
-5. **Presentation** (0.5h): Simple text UI for attributes display
-
-**Key Implementation Files**:
-- `src/Core/Features/Block/Patterns/` - Pattern recognition framework
-- `src/Core/Domain/Player/` - Player state domain model  
-- `src/Core/Features/Block/Patterns/Recognizers/MatchPatternRecognizer.cs` - Flood-fill implementation
-- `src/Core/Features/Block/Patterns/Commands/ProcessPatternsCommand.cs` - CQRS integration
-
-**Testing Requirements**:
-- 5 tests for MatchPatternRecognizer (horizontal, vertical, L-shape, T-shape, no-match)
-- 3 tests for reward calculations (resource mapping, size bonuses, all block types)
-- 3 tests for pattern resolution (priority handling, conflict resolution)
-- 2 tests for player state updates
-
-**Updated Estimate**: 6.5 hours (added 1h for pattern framework)
-
-**Rationale for Architecture**:
-- Flood-fill is encapsulated in ONE recognizer, not spread through codebase
-- New pattern types (tier-up, transmute) plug in without touching existing code
-- Testable in isolation - mock recognizers for complex scenarios
-- Chains work automatically through recursive pattern detection
-- Follows Open/Closed Principle - extensible but stable
-
-**Developer Implementation Guide**:
-
-**Pattern Framework Contracts**:
-```csharp
-// Core pattern interface - all patterns implement this
-public interface IPattern
-{
-    PatternType Type { get; }              // Match, TierUp, Transmute
-    Seq<Vector2Int> Positions { get; }     // Blocks involved
-    int Priority { get; }                  // Match=10, TierUp=20, Transmute=30
-    IPatternOutcome CalculateOutcome();    // What happens if executed
-}
-
-// Recognizer finds patterns at a position
-public interface IPatternRecognizer
-{
-    PatternType SupportedType { get; }
-    bool IsEnabled { get; }  // Can be toggled by unlocks
-    Seq<IPattern> Recognize(IGridStateService grid, Vector2Int trigger, PatternContext ctx);
-}
-
-// Executor applies pattern to game state
-public interface IPatternExecutor
-{
-    Task<Fin<ExecutionResult>> Execute(IPattern pattern, ExecutionContext context);
-}
-```
-
-**Integration Flow (Step-by-Step)**:
-1. Player completes action (move/place) → `BlockMovedNotification`
-2. `ActionCompletedNotificationHandler` catches notification
-3. Handler sends `ProcessPatternsCommand(triggerPosition)`
-4. `ProcessPatternsCommandHandler` orchestrates:
-   - PatternEngine.FindPatterns() → calls all recognizers
-   - PatternResolver.Resolve() → picks highest priority
-   - PatternExecutor.Execute() → applies changes
-   - Check for chains → recursive call if new patterns
-5. Publish `PatternProcessedNotification` → UI updates
-
-**Flood-Fill Implementation Details**:
-```csharp
-private Seq<Vector2Int> FloodFill(IGridStateService grid, Vector2Int start, BlockType targetType)
-{
-    var visited = new HashSet<Vector2Int>();
-    var connected = new List<Vector2Int>();
-    var stack = new Stack<Vector2Int>();
-    
-    stack.Push(start);
-    
-    while (stack.Count > 0 && connected.Count < 100) // Safety limit
-    {
-        var pos = stack.Pop();
-        if (visited.Contains(pos)) continue;
-        
-        var block = grid.GetBlockAt(pos);
-        if (block.IsNone || block.Value.Type != targetType) continue;
-        
-        visited.Add(pos);
-        connected.Add(pos);
-        
-        // Add orthogonal neighbors (not diagonal)
-        foreach (var neighbor in GetOrthogonalNeighbors(pos))
-        {
-            if (grid.IsValidPosition(neighbor) && !visited.Contains(neighbor))
-                stack.Push(neighbor);
-        }
-    }
-    
-    return connected.Count >= 3 ? Seq(connected) : Seq<Vector2Int>.Empty;
-}
-```
-
-**DI Container Registration** (in `BlockLifeServiceRegistration.cs`):
-```csharp
-// Player state (singleton - one player)
-services.AddSingleton<IPlayerStateService, PlayerStateService>();
-
-// Pattern recognition system (scoped per request)
-services.AddScoped<IPatternEngine, PatternEngine>();
-services.AddScoped<IPatternResolver, PriorityResolver>();
-
-// Register ALL recognizers (they'll be injected as IEnumerable)
-services.AddScoped<IPatternRecognizer, MatchPatternRecognizer>();
-// Future: services.AddScoped<IPatternRecognizer, TierUpRecognizer>();
-
-// Register executors by type
-services.AddScoped<IPatternExecutor, MatchPatternExecutor>();
-```
-
-**First Test to Write** (TDD approach):
-```csharp
-[Fact]
-public void Recognize_ThreeHorizontal_ReturnsMatchPattern()
-{
-    // Arrange
-    var grid = new TestGridBuilder()
-        .WithBlock(0, 0, BlockType.Work)
-        .WithBlock(1, 0, BlockType.Work)
-        .WithBlock(2, 0, BlockType.Work)
-        .Build();
-    
-    var recognizer = new MatchPatternRecognizer();
-    var context = new PatternContext(null, null, null); // Can be null for basic tests
-    
-    // Act
-    var patterns = recognizer.Recognize(grid, new Vector2Int(1, 0), context);
-    
-    // Assert
-    patterns.Should().ContainSingle();
-    var pattern = patterns.First();
-    pattern.Type.Should().Be(PatternType.Match);
-    pattern.Positions.Should().BeEquivalentTo(new[] {
-        new Vector2Int(0, 0),
-        new Vector2Int(1, 0),
-        new Vector2Int(2, 0)
-    });
-}
-```
-
-**Critical Edge Cases to Handle**:
-- **Empty positions**: Skip during flood-fill (GetBlockAt returns None)
-- **Grid boundaries**: Always check `IsValidPosition()` before access
-- **Overlapping patterns**: Resolver picks highest priority (TierUp > Match)
-- **Rapid actions**: Commands queued in MediatR, processed sequentially
-- **Pattern at edge**: Works normally (flood-fill handles boundaries)
-- **No patterns found**: Return empty Seq, no error
-- **Circular dependencies**: Visited set prevents infinite loops
-
-**Common Pitfalls to Avoid**:
-❌ **DON'T** mutate grid during recognition phase
-❌ **DON'T** execute patterns inside recognizers
-❌ **DON'T** couple recognizers to specific executors
-❌ **DON'T** use mutable collections in patterns
-❌ **DON'T** throw exceptions - use Fin<T> for errors
-
-✅ **DO** keep patterns immutable (use records)
-✅ **DO** test recognizers in complete isolation
-✅ **DO** use LanguageExt.Seq for collections
-✅ **DO** validate all grid positions before access
-✅ **DO** log pattern detection for debugging
-
-**Resource/Attribute Mapping** (for reference):
-```csharp
-public static class BlockTypeRewards
-{
-    public static (RewardType type, int amount) GetReward(BlockType blockType) => blockType switch
-    {
-        BlockType.Work => (RewardType.Resource(ResourceType.Money), 10),
-        BlockType.Study => (RewardType.Attribute(AttributeType.Knowledge), 10),
-        BlockType.Health => (RewardType.Attribute(AttributeType.Health), 10),
-        BlockType.Relationship => (RewardType.Resource(ResourceType.SocialCapital), 10),
-        BlockType.Fun => (RewardType.Attribute(AttributeType.Happiness), 10),
-        // ... etc for all 9 types
-    };
-}
-```
-
-**Performance Considerations**:
-- Flood-fill limited to 100 blocks (prevent runaway)
-- Pattern detection runs synchronously (fast enough)
-- Cache patterns for same board state (future optimization)
-- Use ValueTask for hot paths (if profiling shows need)
-
-**Core Mechanic**:
-- Match 3+ adjacent same-type blocks (orthogonal only)
-- Matched blocks disappear (no transformation)
-- Each block type grants specific resources or attributes:
-  - Work → Money +10 per block (resource)
-  - Study → Knowledge +10 per block (attribute)
-  - Health → Health +10 per block (attribute)
-  - Relationship → Social Capital +10 per block (resource)
-  - Fun → Happiness +10 per block (attribute)
-  - Sleep → Energy +10 per block (attribute)
-  - Food → Nutrition +10 per block (attribute)
-  - Exercise → Fitness +10 per block (attribute)
-  - Meditation → Mindfulness +10 per block (attribute)
-- Display current attributes (text UI for now)
-
-**Match Size Bonuses**:
-- Match-3: Base rewards (×1.0)
-- Match-4: ×1.5 bonus multiplier
-- Match-5: ×2.0 bonus multiplier
-- Match-6+: ×3.0 bonus multiplier
-
-**Done When**:
-- Matching 3+ blocks clears them from grid
-- Attributes increase based on block types matched
-- Current attributes display on screen
-- Works for all 9 block types
-- 5+ unit tests for match detection
-- 3+ tests for attribute calculation
-
-**NOT in Scope**:
-- Transformation to higher tiers
-- Spending attributes
-- Unlocks or progression
-- Chain reactions
+*These items have 10 days total lifetime from reset date before automatic deletion*
 
 ### VS_003B: Tier System Introduction [Score: 80/100]
 **Status**: Proposed
@@ -251,6 +20,8 @@ public static class BlockTypeRewards
 **Size**: S (4-6 hours)
 **Priority**: Important
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 **Depends On**: VS_003A
 
 **What**: Add tier indicators and tier-based reward scaling
@@ -278,6 +49,8 @@ public static class BlockTypeRewards
 **Size**: M (8-10 hours)
 **Priority**: Important
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 **Depends On**: VS_003B
 
 **What**: Spend resources to unlock tier-up abilities
@@ -298,12 +71,41 @@ public static class BlockTypeRewards
 - Visual indicator for unlocked abilities
 - 5+ tests for unlock system
 
+### VS_003D: Cross-Type Transmutation System [Score: 60/100]
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead
+**Size**: M (6-8 hours)
+**Priority**: Ideas (future)
+**Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
+**Depends On**: VS_003C
+
+**What**: Unlock special cross-type transmutations
+**Why**: Adds strategic depth through type conversion
+
+**Core Mechanic**:
+- Expensive unlocks for transmutation recipes:
+  - Work + Work + Study → Career (500 Money + 300 Knowledge)
+  - Health + Health + Fun → Wellness (300 Health + 200 Happiness)
+- Different from tier-up: Changes block TYPE not TIER
+- Creates special blocks with unique properties
+
+**Done When**:
+- Unlock shop displays transmutation recipes
+- Can spend resources to unlock transmutation abilities
+- Transmutation works alongside matching and tier-up
+- Visual indication of transmuted block types
+- 5+ tests for transmutation system
+
 ### VS_004: Auto-Spawn System [Score: 75/100]
 **Status**: Proposed
 **Owner**: Product Owner → Tech Lead (for breakdown)
 **Size**: S (4-6 hours - straightforward mechanic)
 **Priority**: Important
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 **Depends On**: VS_003A (need matching to manage spawned blocks)
 
 **What**: Automatically spawn new blocks at TURN START before player acts (Tetris-style)
@@ -358,6 +160,8 @@ public static class BlockTypeRewards
 **Size**: M (6-8 hours - builds on VS_003A foundation)
 **Priority**: Important
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 **Depends On**: VS_003A (need basic matching first)
 
 **What**: Add cascading matches that trigger automatically, with exponential resource/attribute bonuses
@@ -418,197 +222,9 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 - Creates skill gap between new and experienced players
 - Watch for degenerate strategies (infinite chains)
 
-### TD_017: Create Centralized Turn Manager
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer  
-**Size**: S (2-3 hours)
-**Priority**: Important
-**Created**: 2025-08-19
-**Markers**: [ARCHITECTURE] [ROOT-CAUSE]
+---
 
-**What**: Centralize turn/phase management in single service
-**Why**: Scattered turn logic causes race conditions, makes replay/undo impossible
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED** - Implement before VS_004 (Auto-Spawn)
-
-**Technical Approach**:
-```csharp
-public enum TurnPhase 
-{
-    SpawnPhase,      // New blocks appear
-    PlayerPhase,     // Player can act
-    ResolutionPhase, // Patterns process
-    EndPhase         // Cleanup, check game over
-}
-
-public interface ITurnManager 
-{
-    int CurrentTurn { get; }
-    TurnPhase CurrentPhase { get; }
-    bool IsPlayerActionAllowed { get; }
-    
-    Task<Fin<Unit>> StartNewTurn();
-    Task<Fin<Unit>> AdvancePhase();
-    Task<Fin<Unit>> ExecutePlayerAction(IRequest command);
-}
-
-public class TurnManager : ITurnManager 
-{
-    private readonly IMediator _mediator;
-    
-    public async Task<Fin<Unit>> StartNewTurn() 
-    {
-        CurrentTurn++;
-        CurrentPhase = TurnPhase.SpawnPhase;
-        
-        // Publish notification for spawn system
-        await _mediator.Publish(new TurnStartedNotification(CurrentTurn));
-        
-        return await AdvancePhase();
-    }
-    
-    public async Task<Fin<Unit>> ExecutePlayerAction(IRequest command) 
-    {
-        if (CurrentPhase != TurnPhase.PlayerPhase)
-            return Fin<Unit>.Fail(Error.New("Actions only allowed during player phase"));
-            
-        var result = await _mediator.Send(command);
-        if (result.IsSucc)
-            await AdvancePhase();
-            
-        return result;
-    }
-}
-```
-
-**Done When**:
-- ITurnManager interface defined
-- TurnManager implementation with phases
-- All player actions go through TurnManager
-- Turn flow: Spawn → Player → Resolve → End
-- 5+ unit tests for phase transitions
-
-**Depends On**: None - Do before VS_004
-
-### TD_018: Add Block Unique IDs
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer
-**Size**: S (1-2 hours)  
-**Priority**: Important
-**Created**: 2025-08-19
-**Markers**: [ARCHITECTURE]
-
-**What**: Add unique identifier to Block entity
-**Why**: Position-based identity breaks with animations, history tracking, future multiplayer
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED** - Implement before complex features need block tracking
-
-**Technical Approach**:
-```csharp
-public record Block 
-{
-    public Guid Id { get; init; } = Guid.NewGuid();
-    public BlockType Type { get; init; }
-    public int Tier { get; init; } = 1;
-    public Vector2Int Position { get; init; }
-    
-    // Position changes, ID stays same
-    public Block MoveTo(Vector2Int newPos) => this with { Position = newPos };
-}
-
-// Commands reference blocks by ID, not position
-public record MoveBlockCommand(
-    Guid BlockId,  // Not Vector2Int position
-    Vector2Int TargetPosition
-) : IRequest<Fin<Unit>>;
-```
-
-**Done When**:
-- Block has Id field (Guid or int)
-- Commands use BlockId not position
-- Grid service has GetBlockById method
-- Tests verify ID persistence through moves
-
-**Depends On**: None
-
-### VS_003D: Cross-Type Transmutation System [Score: 60/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead
-**Size**: M (6-8 hours)
-**Priority**: Ideas (future)
-**Created**: 2025-08-19
-**Depends On**: VS_003C
-
-**What**: Unlock special cross-type transmutations
-**Why**: Adds strategic depth through type conversion
-
-**Core Mechanic**:
-- Expensive unlocks for transmutation recipes:
-  - Work + Work + Study → Career (500 Money + 300 Knowledge)
-  - Health + Health + Fun → Wellness (300 Health + 200 Happiness)
-- Different from tier-up: Changes block TYPE not TIER
-- Creates special blocks with unique properties
-
-**Done When**:
-- Unlock shop displays transmutation recipes
-- Can spend resources to unlock transmutation abilities
-- Transmutation works alongside matching and tier-up
-- Visual indication of transmuted block types
-- 5+ tests for transmutation system
-
-### TD_019: Create Resource Manager Service
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer
-**Size**: S (2 hours)
-**Priority**: Ideas
-**Created**: 2025-08-19
-
-**What**: Centralize all resource loading through single service
-**Why**: Scattered GD.Load calls make asset reorganization and bundling painful
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED for later** - Not critical path, do after MVP
-
-**Technical Approach**:
-```csharp
-public interface IResourceManager 
-{
-    Texture2D GetBlockTexture(BlockType type, int tier);
-    AudioStream GetSoundEffect(SoundType type);
-    PackedScene GetPrefab(string prefabName);
-    T LoadResource<T>(string path) where T : Resource;
-}
-
-public class ResourceManager : IResourceManager 
-{
-    private readonly Dictionary<string, Resource> _cache = new();
-    
-    public Texture2D GetBlockTexture(BlockType type, int tier) 
-    {
-        var key = $"block_{type}_t{tier}";
-        if (!_cache.ContainsKey(key)) 
-        {
-            var path = $"res://assets/blocks/{type.ToString().ToLower()}_tier{tier}.png";
-            _cache[key] = GD.Load<Texture2D>(path);
-        }
-        return (Texture2D)_cache[key];
-    }
-}
-```
-
-**Done When**:
-- IResourceManager interface exists
-- All GD.Load calls go through manager
-- Resources are cached appropriately
-- Easy to swap resource paths/bundles
-
-**Depends On**: None - Do after MVP
-
-
-
-
+## 🔧 Technical Debt Items
 
 ### TD_014: Add Property-Based Tests for Swap Mechanic [Score: 40/100]
 **Status**: Approved - Immediate Part Ready
@@ -616,6 +232,8 @@ public class ResourceManager : IResourceManager
 **Size**: XS (immediate) + M (future property suite)
 **Priority**: Ideas (not critical path)
 **Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 **Proposed By**: Test Specialist
 **Markers**: [QUALITY] [TESTING]
 
@@ -659,74 +277,156 @@ public class ResourceManager : IResourceManager
 - With only 2 tests, we need basic coverage first
 - When swap mechanics get complex (power-ups, constraints), revisit
 
-**Proposed Properties** (Future Implementation):
+### TD_017: Create Centralized Turn Manager
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer  
+**Size**: S (2-3 hours)
+**Priority**: Important
+**Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
+**Markers**: [ARCHITECTURE] [ROOT-CAUSE]
+
+**What**: Centralize turn/phase management in single service
+**Why**: Scattered turn logic causes race conditions, makes replay/undo impossible
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED** - Implement before VS_004 (Auto-Spawn)
+
+**Technical Approach**:
 ```csharp
-// 1. Swap preserves total block count
-[Property]
-public Property SwapOperation_PreservesBlockCount()
+public enum TurnPhase 
+{
+    SpawnPhase,      // New blocks appear
+    PlayerPhase,     // Player can act
+    ResolutionPhase, // Patterns process
+    EndPhase         // Cleanup, check game over
+}
 
-// 2. Swap validation is symmetric
-[Property]
-public Property SwapDistance_IsSymmetric()
-// If A can swap with B, then B can swap with A
-
-// 3. Double swap returns to original state
-[Property]
-public Property DoubleSwap_ReturnsToOriginal()
-// Swapping twice = identity operation
+public interface ITurnManager 
+{
+    int CurrentTurn { get; }
+    TurnPhase CurrentPhase { get; }
+    bool IsPlayerActionAllowed { get; }
+    
+    Task<Fin<Unit>> StartNewTurn();
+    Task<Fin<Unit>> AdvancePhase();
+    Task<Fin<Unit>> ExecutePlayerAction(IRequest command);
+}
 ```
 
 **Done When**:
-- **Immediate**: 2-3 additional example tests added and passing
-- **Future**: Property tests integrated with 1000+ generated cases
-- Edge cases discovered are documented
-- CI pipeline includes property test execution
+- ITurnManager interface defined
+- TurnManager implementation with phases
+- All player actions go through TurnManager
+- Turn flow: Spawn → Player → Resolve → End
+- 5+ unit tests for phase transitions
 
+**Depends On**: None - Do before VS_004
 
-### TD_048: Migrate FsCheck Property-Based Tests to 3.x API [Score: 30/100]
-**Status**: Approved
-**Owner**: Test Specialist
-**Size**: M (4-8h)
+### TD_018: Add Block Unique IDs
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (1-2 hours)  
 **Priority**: Important
-**Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
-**Created**: 2025-08-21
+**Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
+**Markers**: [ARCHITECTURE]
 
-**What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
-**Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
-**How**:
-- Research FsCheck 3.x API changes (use Context7 if available)
-- Update `Prop.ForAll` usage to new API patterns
-- Fix `Gen<T>`, `Arb`, and `Arbitrary<T>` usage
-- Resolve Property attribute conflicts with xUnit
-- Update custom generators in `BlockLifeGenerators.cs`
-- Update property tests in `SimplePropertyTests.cs`
-- Re-enable FsCheck.Xunit package reference
-- Move tests back from `FsCheck_Migration_TD047/` to proper location
-- Ensure all 7 property-based tests pass
+**What**: Add unique identifier to Block entity
+**Why**: Position-based identity breaks with animations, history tracking, future multiplayer
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED** - Implement before complex features need block tracking
+
+**Technical Approach**:
+```csharp
+public record Block 
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public BlockType Type { get; init; }
+    public int Tier { get; init; } = 1;
+    public Vector2Int Position { get; init; }
+    
+    // Position changes, ID stays same
+    public Block MoveTo(Vector2Int newPos) => this with { Position = newPos };
+}
+
+// Commands reference blocks by ID, not position
+public record MoveBlockCommand(
+    Guid BlockId,  // Not Vector2Int position
+    Vector2Int TargetPosition
+) : IRequest<Fin<Unit>>;
+```
+
 **Done When**:
-- All FsCheck tests compile with 3.x API
-- All property-based tests passing (7 tests)
-- FsCheck.Xunit package re-enabled in project
-- No references to old 2.x API patterns
-- Property tests moved back to proper test directory
+- Block has Id field (Guid or int)
+- Commands use BlockId not position
+- Grid service has GetBlockById method
+- Tests verify ID persistence through moves
+
 **Depends On**: None
 
-**Problem Context**: Package updates completed but FsCheck 3.x has extensive breaking changes requiring dedicated migration effort. Tests temporarily disabled to unblock other infrastructure updates.
+### TD_019: Create Resource Manager Service
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (2 hours)
+**Priority**: Ideas
+**Created**: 2025-08-19
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
 
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 35/100 (slightly underestimated due to API redesign)
-- Decision: APPROVED - Legitimate technical debt from package updates
-- FsCheck 3.x is fundamental API redesign, not just version bump
-- Property testing provides valuable edge case coverage for game logic
-- Migration necessary to re-enable 7 disabled tests
+**What**: Centralize all resource loading through single service
+**Why**: Scattered GD.Load calls make asset reorganization and bundling painful
+
+**Tech Lead Decision** (2025-08-19):
+✅ **APPROVED for later** - Not critical path, do after MVP
+
+**Technical Approach**:
+```csharp
+public interface IResourceManager 
+{
+    Texture2D GetBlockTexture(BlockType type, int tier);
+    AudioStream GetSoundEffect(SoundType type);
+    PackedScene GetPrefab(string prefabName);
+    T LoadResource<T>(string path) where T : Resource;
+}
+
+public class ResourceManager : IResourceManager 
+{
+    private readonly Dictionary<string, Resource> _cache = new();
+    
+    public Texture2D GetBlockTexture(BlockType type, int tier) 
+    {
+        var key = $"block_{type}_t{tier}";
+        if (!_cache.ContainsKey(key)) 
+        {
+            var path = $"res://assets/blocks/{type.ToString().ToLower()}_tier{tier}.png";
+            _cache[key] = GD.Load<Texture2D>(path);
+        }
+        return (Texture2D)_cache[key];
+    }
+}
+```
+
+**Done When**:
+- IResourceManager interface exists
+- All GD.Load calls go through manager
+- Resources are cached appropriately
+- Easy to swap resource paths/bundles
+
+**Depends On**: None - Do after MVP
 
 ### TD_038: Create Architectural Consistency Validation System [Score: 35/100]
 **Status**: Approved
 **Owner**: DevOps Engineer
 **Size**: M (4-8h)
 **Priority**: Important
-**Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
 **Created**: 2025-08-20
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
+**Markers**: [ARCHITECTURE] [QUALITY] [TOOLING]
 
 **What**: Design and implement comprehensive consistency checker for post-migration validation
 **Why**: Major architecture shift from worktrees to multi-clone needs systematic validation to ensure nothing was missed
@@ -762,4 +462,78 @@ public Property DoubleSwap_ReturnsToOriginal()
 - Implementation: Follow memory-bank-synchronizer pattern for validation
 - Key: Not building from scratch - adapting existing successful implementations
 
+### TD_061: Automated Link Integrity Checking [Score: 20/100]
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (<4h)
+**Priority**: Ideas
+**Created**: 2025-08-22
+**Reset**: 2025-08-22 (Aging protocol started)
+**Will Delete**: 2025-09-01 (unless rescued)
+**Markers**: [TOOLING] [DOCUMENTATION] [QUALITY]
 
+**What**: Create intelligent link checking script with context-aware fix/remove suggestions
+**Why**: Frequent doc moves create broken links; deprecated docs need different handling than simple moves
+**How**:
+- Parse all .md files for markdown links using regex
+- Verify each linked file exists at specified path
+- Smart suggestions based on destination:
+  - If moved to 99-Deprecated/ → Suggest removal or replacement
+  - If moved elsewhere → Suggest path update
+  - If deleted → Suggest removal with warning
+- Check for non-deprecated alternatives when suggesting removal
+- Optional auto-fix mode with user confirmation
+- Integrate as pre-push warning (non-blocking)
+
+**Done When**:
+- Script detects all broken markdown links
+- Provides context-aware suggestions (fix/remove/replace)
+- Handles deprecation patterns intelligently
+- Integrated into workflow as pre-push warning
+- Zero false positives on valid links
+- Documentation updated with usage instructions
+
+**Depends On**: None
+
+**Problem Context**: Recent doc reorganizations (moving files to 99-Deprecated/) broke multiple links in CLAUDE.md and other docs. Manual link maintenance is error-prone. Need automated detection and correction suggestions.
+
+**Tech Lead Note** (2025-08-22):
+- Created after rejecting Foam as over-engineered solution
+- Directly addresses the broken links problem without adding complexity
+- Compatible with AI persona workflow (CLI-based)
+- Maintenance discipline tool, not new linking system
+- Enhanced with deprecation intelligence - knows when to remove vs update
+- Context-aware suggestions based on file destination (99-Deprecated/ = remove)
+
+---
+
+## 🚫 Won't Fix / Deprecated
+
+*Items explicitly decided against - kept for reference*
+
+(None currently)
+
+## 📜 Deletion Log
+
+*Items that aged out - kept for 30 days for reference*
+
+### 2025-08-22
+- Removed VS_003A (duplicate - active copy exists in Backlog.md)
+
+---
+
+## Rescue Instructions
+
+To rescue an item back to active Backlog:
+1. Add **Rescued** timestamp with justification
+2. Update priority to Important or Critical
+3. Assign clear owner
+4. Move entire item back to Backlog.md
+5. Delete from this file
+
+Example:
+```markdown
+**Rescued**: 2025-08-23 - Critical for next milestone
+**New Owner**: Dev Engineer
+**Commitment**: Will start tomorrow
+```
