@@ -64,7 +64,8 @@
       "Bash(./scripts/git/branch-status-check.ps1)",
       "Bash(tree:*)",
       "Bash(git mv:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(./scripts/persona/embody.ps1 test-specialist)"
     ],
     "deny": [],
     "ask": [],

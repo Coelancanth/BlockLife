@@ -102,45 +102,6 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 
-### TD_048: Migrate FsCheck Property-Based Tests to 3.x API [Score: 30/100]
-**Status**: Approved
-**Owner**: Test Specialist
-**Size**: M (4-8h)
-**Priority**: Important
-**Markers**: [TESTING] [MIGRATION] [FSCHECK] [PROPERTY-BASED]
-**Created**: 2025-08-22
-**Reset**: 2025-08-22 (Aging protocol started today)
-
-**What**: Update FsCheck property-based tests from 2.16.6 to 3.3.0 API
-**Why**: FsCheck 3.x has breaking API changes; tests currently disabled and moved to `FsCheck_Migration_TD047/`
-**How**:
-- Research FsCheck 3.x API changes (use Context7 if available)
-- Update `Prop.ForAll` usage to new API patterns
-- Fix `Gen<T>`, `Arb`, and `Arbitrary<T>` usage
-- Resolve Property attribute conflicts with xUnit
-- Update custom generators in `BlockLifeGenerators.cs`
-- Update property tests in `SimplePropertyTests.cs`
-- Re-enable FsCheck.Xunit package reference
-- Move tests back from `FsCheck_Migration_TD047/` to proper location
-- Ensure all 7 property-based tests pass
-**Done When**:
-- All FsCheck tests compile with 3.x API
-- All property-based tests passing (7 tests)
-- FsCheck.Xunit package re-enabled in project
-- No references to old 2.x API patterns
-- Property tests moved back to proper test directory
-**Depends On**: None
-
-**Problem Context**: Package updates completed but FsCheck 3.x has extensive breaking changes requiring dedicated migration effort. Tests temporarily disabled to unblock other infrastructure updates.
-
-**Tech Lead Decision** (2025-08-21):
-- Actual Complexity: 35/100 (slightly underestimated due to API redesign)
-- Decision: APPROVED - Legitimate technical debt from package updates
-- FsCheck 3.x is fundamental API redesign, not just version bump
-- Property testing provides valuable edge case coverage for game logic
-- Migration necessary to re-enable 7 disabled tests
-
-
 
 ### VS_003A: Match-3 with Attributes (Phase 1) [Score: 95/100]
 **Status**: Approved
