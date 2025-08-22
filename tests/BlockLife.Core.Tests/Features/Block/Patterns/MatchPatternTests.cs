@@ -123,11 +123,11 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var pattern = MatchPattern.Create(positions, blockType).IfNone(() => throw new InvalidOperationException());
 
             var gridService = new Mock<IGridStateService>();
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Fun, Position = new Vector2Int(0, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Fun, Position = new Vector2Int(1, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Fun, Position = new Vector2Int(2, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
 
             // Act
@@ -150,11 +150,11 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var pattern = MatchPattern.Create(positions, blockType).IfNone(() => throw new InvalidOperationException());
 
             var gridService = new Mock<IGridStateService>();
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Work, Position = new Vector2Int(0, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Study, Position = new Vector2Int(1, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now })); // Wrong type
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Work, Position = new Vector2Int(2, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
 
             // Act
@@ -177,10 +177,10 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var pattern = MatchPattern.Create(positions, blockType).IfNone(() => throw new InvalidOperationException());
 
             var gridService = new Mock<IGridStateService>();
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(0, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Relationship, Position = new Vector2Int(0, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Option<Block>.None); // Missing block
-            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new Block 
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(1, 0))).Returns(Option<BlockLife.Core.Domain.Block.Block>.None); // Missing block
+            gridService.Setup(gs => gs.GetBlockAt(new Vector2Int(2, 0))).Returns(Some(new BlockLife.Core.Domain.Block.Block 
                 { Id = Guid.NewGuid(), Type = BlockType.Relationship, Position = new Vector2Int(2, 0), CreatedAt = DateTime.Now, LastModifiedAt = DateTime.Now }));
 
             // Act

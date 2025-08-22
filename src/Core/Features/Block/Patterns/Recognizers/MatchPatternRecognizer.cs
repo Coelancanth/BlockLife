@@ -91,11 +91,12 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
             if (gridService.IsPositionEmpty(position))
                 return false;
 
-            // Must have at least 2 adjacent blocks of any type for potential matches
+            // Must have at least 1 adjacent block for potential matches
+            // (Pattern validation happens in full recognition algorithm)
             var adjacentOccupiedCount = position.GetOrthogonallyAdjacentPositions()
                 .Count(pos => gridService.IsValidPosition(pos) && gridService.IsPositionOccupied(pos));
 
-            return adjacentOccupiedCount >= 2;
+            return adjacentOccupiedCount >= 1;
         }
 
         /// <summary>
@@ -129,18 +130,34 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
         /// <summary>
         /// Gets all positions to search from, including the trigger and nearby positions
         /// that could be part of matches involving the trigger position.
+        /// Uses expanded search radius to find patterns adjacent to the trigger area.
         /// </summary>
         private Seq<Vector2Int> GetSearchPositions(IGridStateService gridService, Vector2Int triggerPosition)
         {
-            // Start with trigger position
-            var positions = Seq(new Vector2Int[] { triggerPosition });
-
-            // Add all valid adjacent positions that contain blocks
-            var adjacentPositions = triggerPosition.GetOrthogonallyAdjacentPositions()
-                .Where(pos => gridService.IsValidPosition(pos) && gridService.IsPositionOccupied(pos))
+            var searchPositions = new System.Collections.Generic.HashSet<Vector2Int> { triggerPosition };
+            
+            // Add immediate neighbors (distance 1 from trigger)
+            foreach (var adjacent in triggerPosition.GetOrthogonallyAdjacentPositions())
+            {
+                if (gridService.IsValidPosition(adjacent))
+                {
+                    searchPositions.Add(adjacent);
+                    
+                    // Add neighbors of neighbors if they contain blocks (distance 2 from trigger)
+                    foreach (var neighbor in adjacent.GetOrthogonallyAdjacentPositions())
+                    {
+                        if (gridService.IsValidPosition(neighbor) && gridService.IsPositionOccupied(neighbor))
+                        {
+                            searchPositions.Add(neighbor);
+                        }
+                    }
+                }
+            }
+            
+            // Only return positions that contain blocks for actual pattern searching
+            return searchPositions
+                .Where(pos => gridService.IsPositionOccupied(pos))
                 .ToSeq();
-
-            return positions.Concat(adjacentPositions);
         }
 
         /// <summary>

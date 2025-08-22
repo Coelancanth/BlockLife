@@ -44,18 +44,21 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1);
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern.Should().NotBeNull();
-                matchPattern!.MatchedBlockType.Should().Be(BlockType.Work);
-                matchPattern.Positions.Should().HaveCount(3);
-                matchPattern.Positions.Should().Contain(new Vector2Int(1, 1));
-                matchPattern.Positions.Should().Contain(new Vector2Int(2, 1));
-                matchPattern.Positions.Should().Contain(new Vector2Int(3, 1));
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1);
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern.Should().NotBeNull();
+                    matchPattern!.MatchedBlockType.Should().Be(BlockType.Work);
+                    matchPattern.Positions.Should().HaveCount(3);
+                    matchPattern.Positions.Should().Contain(new Vector2Int(1, 1));
+                    matchPattern.Positions.Should().Contain(new Vector2Int(2, 1));
+                    matchPattern.Positions.Should().Contain(new Vector2Int(3, 1));
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -72,15 +75,18 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1);
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern.Should().NotBeNull();
-                matchPattern!.MatchedBlockType.Should().Be(BlockType.Health);
-                matchPattern.Positions.Should().HaveCount(4);
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1);
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern.Should().NotBeNull();
+                    matchPattern!.MatchedBlockType.Should().Be(BlockType.Health);
+                    matchPattern.Positions.Should().HaveCount(4);
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -104,15 +110,18 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1);
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern.Should().NotBeNull();
-                matchPattern!.MatchedBlockType.Should().Be(BlockType.Study);
-                matchPattern.Positions.Should().HaveCount(4);
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1);
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern.Should().NotBeNull();
+                    matchPattern!.MatchedBlockType.Should().Be(BlockType.Study);
+                    matchPattern.Positions.Should().HaveCount(4);
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -137,15 +146,18 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1);
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern.Should().NotBeNull();
-                matchPattern!.MatchedBlockType.Should().Be(BlockType.Creativity);
-                matchPattern.Positions.Should().HaveCount(5);
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1);
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern.Should().NotBeNull();
+                    matchPattern!.MatchedBlockType.Should().Be(BlockType.Creativity);
+                    matchPattern.Positions.Should().HaveCount(5);
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         #endregion
@@ -166,11 +178,14 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().BeEmpty();
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().BeEmpty();
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -187,11 +202,14 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().BeEmpty();
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().BeEmpty();
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -210,14 +228,17 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1); // Only finds the connected group near trigger
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern!.Positions.Should().HaveCount(3);
-                matchPattern.Positions.Should().AllSatisfy(pos => pos.X <= 3); // All positions in first group
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1); // Only finds the connected group near trigger
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern!.Positions.Should().HaveCount(3);
+                    matchPattern.Positions.Should().OnlyContain(pos => pos.X <= 3); // All positions in first group
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -238,11 +259,14 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().BeEmpty(); // No group has 3+ connected blocks of same type
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().BeEmpty(); // No group has 3+ connected blocks of same type
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -260,13 +284,16 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(1);
-                var matchPattern = patterns.Head as MatchPattern;
-                matchPattern!.Positions.Should().HaveCount(3);
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(1);
+                    var matchPattern = patterns.Head as MatchPattern;
+                    matchPattern!.Positions.Should().HaveCount(3);
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         #endregion
@@ -289,13 +316,16 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(2);
-                patterns.Should().Contain(p => ((MatchPattern)p).MatchedBlockType == BlockType.Work);
-                patterns.Should().Contain(p => ((MatchPattern)p).MatchedBlockType == BlockType.Health);
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(2);
+                    patterns.Should().Contain(p => ((MatchPattern)p).MatchedBlockType == BlockType.Work);
+                    patterns.Should().Contain(p => ((MatchPattern)p).MatchedBlockType == BlockType.Health);
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -315,11 +345,14 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns =>
-            {
-                patterns.Should().HaveCount(2); // Limited by maxPatterns
-            });
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns =>
+                {
+                    patterns.Should().HaveCount(2); // Limited by maxPatterns
+                },
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         #endregion
@@ -377,7 +410,7 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.ValidateConfiguration();
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
+            result.IsSucc.Should().BeTrue();
         }
 
         [Fact]
@@ -416,8 +449,11 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns => patterns.Should().BeEmpty());
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns => patterns.Should().BeEmpty(),
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         [Fact]
@@ -434,13 +470,21 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var result = _recognizer.Recognize(gridService, triggerPosition, context);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            result.IfSuccess(patterns => patterns.Should().HaveCount(1));
+            result.IsSucc.Should().BeTrue();
+            result.Match(
+                Succ: patterns => patterns.Should().HaveCount(1),
+                Fail: error => throw new Exception($"Expected success but got: {error}")
+            );
         }
 
         #endregion
 
         #region Helper Methods
+
+        private static IGridStateService CreateGridService()
+        {
+            return new GridStateService(10, 10);
+        }
 
         private static Mock<IGridStateService> CreateGridServiceMock()
         {
@@ -456,9 +500,9 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             return gridService;
         }
 
-        private static void PlaceBlockAt(Mock<IGridStateService> gridServiceMock, BlockType blockType, Vector2Int position)
+        private static void PlaceBlockAt(IGridStateService gridService, BlockType blockType, Vector2Int position)
         {
-            var block = new Block 
+            var block = new BlockLife.Core.Domain.Block.Block 
             { 
                 Id = Guid.NewGuid(), 
                 Type = blockType, 
@@ -466,9 +510,20 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
                 CreatedAt = DateTime.Now, 
                 LastModifiedAt = DateTime.Now 
             };
-            gridServiceMock.Setup(gs => gs.GetBlockAt(position)).Returns(Some(block));
-            gridServiceMock.Setup(gs => gs.IsPositionOccupied(position)).Returns(true);
-            gridServiceMock.Setup(gs => gs.IsPositionEmpty(position)).Returns(false);
+            
+            // For concrete GridStateService, use PlaceBlock method
+            if (gridService is GridStateService concreteService)
+            {
+                concreteService.PlaceBlock(block);
+            }
+            else
+            {
+                // For mocked services, configure the mock
+                var gridServiceMock = (Mock<IGridStateService>)gridService;
+                gridServiceMock.Setup(gs => gs.GetBlockAt(position)).Returns(Some(block));
+                gridServiceMock.Setup(gs => gs.IsPositionOccupied(position)).Returns(true);
+                gridServiceMock.Setup(gs => gs.IsPositionEmpty(position)).Returns(false);
+            }
         }
 
         private static void PlaceBlocksHorizontal(IGridStateService gridService, BlockType blockType, Vector2Int startPosition, int count)
