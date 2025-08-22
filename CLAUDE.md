@@ -107,11 +107,6 @@ Product Owner → Tech Lead → Dev Engineer → Test Specialist → DevOps
 
 **Complete Backlog Protocols**: [Workflow.md](Docs/01-Active/Workflow.md)
 
-### When to Use Personas
-- **Start fresh conversation** for each persona (don't switch mid-conversation)
-- **Be explicit**: "Act as Tech Lead" or "Use Debugger Expert persona"
-- **Let persona guide approach**: Each has specific mindset and responsibilities
-
 ## Project Overview
 
 BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP pattern. Uses CQRS with functional programming (LanguageExt.Core) and pure C# core.

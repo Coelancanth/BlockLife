@@ -36,7 +36,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Configuration
-$repoUrl = "https://github.com/mikeschulze/blocklife.git"  # TODO: Update with actual repo URL
+$repoUrl = "https://github.com/Coelancanth/BlockLife.git"
 $personas = @{
     "dev-engineer"     = @{ email = "dev-eng@blocklife"; name = "Dev Engineer" }
     "test-specialist"  = @{ email = "test-spec@blocklife"; name = "Test Specialist" }
