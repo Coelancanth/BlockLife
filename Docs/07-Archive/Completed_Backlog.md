@@ -673,3 +673,27 @@
 **Decision Rationale**: Avoid creating solutions looking for problems - current branch management workflow works effectively without additional complexity
 [RESURRECT-IF: demonstrated-multi-branch-coordination-pain-points, scaling-to-multiple-concurrent-features]
 [METADATA: tooling, workflow, information-display, no-longer-needed, existing-tools-sufficient, pragmatic-rejection]
+
+### 2025-08-23
+
+#### TD_076: Auto-Fix Session Log on Every Embody ✅ COMPLETED
+**Completed**: 2025-08-23
+**Effort**: S (1h estimated)
+**Outcome**: Integrated automatic session log sorting into persona embodiment workflow with truly silent operation
+**Implementation**: Integrated into embody.ps1 with truly silent operation using *>$null redirection - session log automatically sorted before showing session history to user, reuses existing fix-session-log-order.ps1 script without modification, no manual cleanup ever needed
+**Impact**: Eliminates session log chaos (out of order entries, duplicates, scattered dates), saves manual maintenance time, ensures historical order preserved and readable
+**Lessons**: Classic automation win - 1-hour implementation saves 100+ hours of manual maintenance over time, reusing existing scripts makes integration trivial
+**Unblocked**: Self-maintaining session logs, eliminated manual ordering tasks, improved historical tracking for all personas
+**Technical Achievement**: Truly silent operation achieved with PowerShell redirection, seamless integration into existing workflow without user disruption
+[METADATA: automation, session-logs, devops, embody-integration, maintenance-elimination, silent-operation, workflow-improvement]
+
+#### TD_075: Context-Aware Reference Display with MANDATORY Context7 Prompts ✅ COMPLETED
+**Completed**: 2025-08-23
+**Effort**: M (4h actual)
+**Outcome**: Persona-specific guidance added to embody.ps1. Each persona now sees tailored reminders including LanguageExt Context7 prompts for Dev Engineer
+**Implementation**: Enhanced embody.ps1 to show task-specific references with smart detection based on file patterns and backlog content, critical Context7 integration for LanguageExt work detection, pre-implementation checklist display for complex patterns, persona-specific reference routing
+**Impact**: Eliminated LanguageExt API mistakes through automated Context7 reminders, reduced wasted development hours, improved persona workflow effectiveness
+**Lessons**: Proactive Context7 prompting more effective than reactive documentation - showing right guidance at the right time prevents hours of debugging
+**Unblocked**: Systematic Context7 usage for LanguageExt work, reduced API errors, improved development velocity through contextual guidance
+**Technical Achievement**: Smart detection system identifies work patterns and surfaces appropriate references automatically during persona embodiment
+[METADATA: context7, languageext, persona-workflow, automation, api-guidance, development-efficiency, smart-detection, embody-integration]

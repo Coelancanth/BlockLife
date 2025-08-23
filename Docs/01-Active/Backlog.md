@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 074 (Last: TD_073 - 2025-08-23)  
+- **Next TD**: 077 (Last: TD_076 - 2025-08-23)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -142,35 +142,44 @@
 
 
 
+
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
 
 
-### TD_067: Refine Active Context Protocol - Preserve Multi-Phase Learnings
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Ideas
-**Created**: 2025-08-22
-**Complexity Score**: 3/10
-**Pattern Match**: Follows documentation improvement patterns from existing workflow docs
-**Simpler Alternative**: Manual reminder in persona docs (2-hour version)
 
-**Problem**: Active context gets completely rewritten between phases, losing valuable learnings from previous phases. Phase 1 & 2 learnings from VS_003A were nearly discarded when updating for Phase 3.
-
-**Solution**: 
-- Create "Cumulative Learnings" section that preserves insights across all phases
-- Implement "Phase History" tracking to maintain context of completed work
-- Add protocol for merging new learnings with existing knowledge
-- Update persona docs with guidance on preserving vs refreshing context
-
-**Why Not Simpler**: Multi-phase projects (like VS_003A with 5 phases) accumulate significant technical insights that are lost with current approach. A systematic protocol ensures knowledge retention across phase boundaries.
 
 **Files to Update**:
 - `.claude/memory-bank/active/[persona].md` templates
 - `Docs/04-Personas/` persona documentation
 - Memory bank protocols documentation
+
+### TD_074: Root Cause Memory Bank Protocol
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: S (2h)
+**Priority**: Ideas
+**Created**: 2025-08-23
+**Complexity Score**: 3/10
+**Pattern Match**: Similar to existing memory bank protocols
+**Simpler Alternative**: Just add template to persona docs (1h)
+
+**Problem**: ActiveContext captures surface fixes ("fixed DI registration") instead of root causes ("stateless services must be Singleton in MediatR lifecycle")
+
+**Solution**:
+- Add simple 3-line template to activeContext updates
+- Template: Surface/Root/Pattern structure
+- Update embody.ps1 to remind about root cause analysis
+- NO complex protocols or additional documents
+
+**Why Not Simpler**: The 1-hour template-only version might work, but automated reminders ensure consistency
+
+**Done When**:
+- activeContext entries show WHY bugs happened
+- Pattern solutions documented to prevent recurrence
+- No added complexity to workflow
+
 
 
 
