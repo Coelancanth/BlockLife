@@ -6,7 +6,7 @@ using BlockLife.Core.Infrastructure.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BlockLife.Features.Block.Move.Effects;
+namespace BlockLife.Core.Features.Block.Move.Effects;
 
 /// <summary>
 /// CRITICAL INFRASTRUCTURE: Bridges MediatR notifications to static events for presenter consumption.
