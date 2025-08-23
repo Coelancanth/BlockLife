@@ -621,6 +621,66 @@ public static class BlockTypeRewards
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
+### TD_072: Persona-Specific Documentation Routing Protocol
+**Status**: Proposed  
+**Owner**: Tech Lead  
+**Size**: M (4-8h)  
+**Priority**: Ideas  
+**Created**: 2025-08-23 17:30  
+**Complexity Score**: 4/10  
+**Pattern Match**: Documentation architecture pattern
+
+**Problem**: Each persona wastes time searching for relevant documentation; generic reference doesn't match persona-specific needs
+
+**What**: Design and implement persona-aware documentation routing that provides context-specific quick references
+
+**Why**: 
+- Dev Engineer needs different patterns than Test Specialist
+- Debugger Expert needs troubleshooting guides, not architecture docs
+- Product Owner needs glossary/requirements, not implementation details
+- Current "one-size-fits-all" HANDBOOK causes context switching
+
+**How**:
+1. **Analyze each persona's documentation needs**:
+   - Map common questions to specific doc sections
+   - Identify top 5 reference needs per persona
+   - Track actual usage patterns from memory banks
+
+2. **Create persona-specific quick reference cards**:
+   - Dev Engineer: Implementation patterns, error fixes, test mocking
+   - Test Specialist: Test patterns, regression protocols, coverage
+   - Debugger Expert: Bug patterns, DI troubleshooting, investigation tools
+   - Tech Lead: Architecture decisions, TD evaluation, patterns
+   - Product Owner: Glossary, VS principles, acceptance criteria
+   - DevOps: Build commands, CI/CD, automation scripts
+
+3. **Implement routing mechanism**:
+   - Add `## 🎯 Quick Reference for [Persona]` to each persona doc
+   - Include "When you see X, check Y" mappings
+   - Create decision trees for common scenarios
+   - Link directly to relevant sections (not just files)
+
+4. **Integrate with embody script**:
+   - Display persona-specific quick reference on embodiment
+   - Show "top 3 most likely needs" based on current context
+   - Include recent problem patterns from that persona's memory
+
+**Expected Impact**:
+- Reduce documentation search time by 70%
+- Increase pattern reuse and consistency
+- Prevent repeated mistakes through better routing
+- Improve persona effectiveness
+
+**Success Criteria**:
+- [ ] Each persona has tailored quick reference
+- [ ] Common scenarios map to specific doc sections
+- [ ] Embody script shows relevant guides
+- [ ] Reduced "where do I find X?" questions
+
+**Related**: HANDBOOK.md Quick Reference Protocol (general version exists)
+
+---
+
 ### TD_070: Session Log Should Include Date, Not Just Time
 **Status**: Proposed
 **Owner**: DevOps Engineer
