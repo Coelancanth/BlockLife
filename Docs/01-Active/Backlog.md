@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 077 (Last: TD_076 - 2025-08-23)  
+- **Next TD**: 079 (Last: TD_078 - 2025-08-24)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -70,32 +70,6 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### TD_069: Critical Namespace Analyzer (Simplified)
-**Status**: Approved ✅
-**Owner**: Dev Engineer
-**Size**: S (2h)
-**Priority**: Important
-**Created**: 2025-08-22
-
-**What**: Roslyn analyzer for assembly boundary safety ONLY
-**Why**: Prevent MediatR discovery failures (like TD_068) without pedantic rules
-**How**:
-- Check: src/ files use BlockLife.Core.* namespace (not BlockLife.*)
-- Check: test/ files use BlockLife.Core.Tests.* namespace
-- NOT checking: Folder structure matching or Commands/Queries subfolder requirements
-**Done When**:
-- TD_068 scenario impossible to repeat
-- No false positives on legacy code patterns
-- Zero pedantic folder-matching rules
-
-**Test Specialist Note**: Simplified after realizing strict folder-namespace matching was causing more problems than it solved. Focus only on what actually breaks (assembly boundaries for MediatR).
-
-**Tech Lead Decision** (2025-08-23):
-- ✅ APPROVED - Complexity 3/10
-- Focuses on real problem (MediatR discovery failures)
-- Simple Roslyn analyzer pattern, 2-hour implementation
-- No pedantic rules, just assembly boundary safety
-
 ### TD_070: DI Registration Validator (Test-Based)
 **Status**: Approved with Modification ⚠️
 **Owner**: Test Specialist
@@ -123,11 +97,12 @@
 - Can evolve to source generator later if needed
 
 ### TD_071: Test Categories for Faster Feedback
-**Status**: Proposed
-**Owner**: Test Specialist  
+**Status**: Done ✅
+**Owner**: DevOps Engineer
 **Size**: S (2h)
 **Priority**: Important
 **Created**: 2025-08-22
+**Completed**: 2025-08-24
 
 **What**: Categorize tests for staged execution (Architecture/Integration/Stress)
 **Why**: Get faster feedback on architectural issues before running slow tests
@@ -140,45 +115,75 @@
 - Pre-commit catches namespace/DI issues immediately
 - CI fails fast on architectural violations
 
+### TD_078: Timestamp Accuracy Protocol for Memory Bank & Session Logs
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: S (1-2h)
+**Priority**: Important
+**Created**: 2025-08-24 01:59
 
+**What**: Enforce getting current date/time before updating timestamped documents
+**Why**: Inaccurate timestamps in Memory Bank and session logs cause confusion
+**How**:
+- Update embody.ps1 to capture timestamp at start of execution
+- Add validation to ensure timestamps are current (not stale)
+- Update CLAUDE.md to remind about running `date` command first
+- Consider auto-timestamp injection for session log entries
+**Done When**:
+- Memory Bank updates always have accurate timestamps
+- Session log entries reflect actual work time
+- No more "future dated" or incorrect timestamps
+- Process is automatic/zero-friction
 
+**DevOps Engineer Notes**:
+- Common issue: Updating Memory Bank with old timestamps
+- Solution: Capture `Get-Date` at script start, use throughout
+- Could add timestamp validation (reject if >5 min old)
+- Make it impossible to get wrong, not just documented
+
+### TD_077: Incremental Test Runner for 95% Faster Feedback
+**Status**: Proposed
+**Owner**: DevOps Engineer
+**Size**: M (4-6h)
+**Priority**: Important
+**Created**: 2025-08-24
+
+**What**: Git-based incremental test runner for local AND CI/CD environments
+**Why**: Current tests take 39s locally, CI runs all tests on every PR (wasteful)
+**How**:
+- Detect changed files via git diff (local) or GitHub API (CI)
+- Map source files to test files using conventions
+- Run only affected test classes/categories
+- Cache test results by file hash (with GitHub Actions cache)
+- Progressive execution: unit → integration → architecture
+- CI: Use GitHub's changed-files action for PR-specific testing
+**Done When**:
+- Local: Single-file changes test in <2 seconds
+- CI: PR with focused changes runs in <30s (vs 2-3 min)
+- GitHub Actions workflow uses incremental strategy
+- Full suite still runs on main branch merges
+- Clear reporting in PR comments showing what was tested
+
+**DevOps Engineer Notes**:
+- Convention mapping: MoveBlockCommand.cs → MoveBlockCommandHandlerTests.cs
+- Scope detection: Architecture file → Architecture category only
+- Could integrate with file watcher for real-time testing
+- Massive productivity boost: 39s → 2s = 37 seconds saved per test run
+
+**CI/CD Implementation Details**:
+- Add new `incremental-tests` job that runs before `build-and-test`
+- Use `dorny/paths-filter@v2` to detect changed files in PRs
+- Map file changes to test categories/namespaces
+- Cache test results with `actions/cache@v3` keyed by file hashes
+- PR workflow: incremental (30s) → fail fast or skip full suite
+- Main branch: always run full suite for baseline
+- Expected savings: 90% CI time reduction for typical single-file PRs
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
 
 
-
-
-**Files to Update**:
-- `.claude/memory-bank/active/[persona].md` templates
-- `Docs/04-Personas/` persona documentation
-- Memory bank protocols documentation
-
-### TD_074: Root Cause Memory Bank Protocol
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: S (2h)
-**Priority**: Ideas
-**Created**: 2025-08-23
-**Complexity Score**: 3/10
-**Pattern Match**: Similar to existing memory bank protocols
-**Simpler Alternative**: Just add template to persona docs (1h)
-
-**Problem**: ActiveContext captures surface fixes ("fixed DI registration") instead of root causes ("stateless services must be Singleton in MediatR lifecycle")
-
-**Solution**:
-- Add simple 3-line template to activeContext updates
-- Template: Surface/Root/Pattern structure
-- Update embody.ps1 to remind about root cause analysis
-- NO complex protocols or additional documents
-
-**Why Not Simpler**: The 1-hour template-only version might work, but automated reminders ensure consistency
-
-**Done When**:
-- activeContext entries show WHY bugs happened
-- Pattern solutions documented to prevent recurrence
-- No added complexity to workflow
 
 
 

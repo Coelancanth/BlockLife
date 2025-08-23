@@ -33,6 +33,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void All_Types_In_Core_Assembly_Should_Have_Correct_Root_Namespace()
     {
         // Arrange
@@ -63,6 +64,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Handler_Types_Should_Match_Feature_Folder_Structure()
     {
         // This ensures namespace matches folder structure for handlers
@@ -96,6 +98,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Command_And_Query_Types_Should_Be_In_Correct_Namespace()
     {
         // Commands should be in .Commands namespace, Queries in .Queries namespace
@@ -144,6 +147,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void No_Types_Should_Use_Root_BlockLife_Namespace()
     {
         // Prevent accidental use of BlockLife instead of BlockLife.Core
@@ -162,6 +166,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Infrastructure_Types_Should_Be_In_Infrastructure_Namespace()
     {
         // Clean Architecture: Infrastructure types in Infrastructure namespace
@@ -198,6 +203,7 @@ public class NamespaceConventionTests
     }
 
     [Theory]
+    [Trait("Category", "Architecture")]
     [InlineData("BlockLife.Features.Player.Commands", "BlockLife.Core.Features.Player.Commands")]
     [InlineData("BlockLife.Features.Player.Queries", "BlockLife.Core.Features.Player.Queries")]
     [InlineData("BlockLife.Application", "BlockLife.Core.Application")]
@@ -218,6 +224,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void All_Domain_Types_Should_Be_In_Domain_Namespace()
     {
         // Clean Architecture: Domain types should be in Domain namespace
@@ -257,6 +264,7 @@ public class NamespaceConventionTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Namespace_Depth_Should_Be_Reasonable()
     {
         // Prevent overly deep namespace hierarchies

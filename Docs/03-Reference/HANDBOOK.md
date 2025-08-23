@@ -106,6 +106,7 @@ Y↑
 
 ### Build & Test Commands
 
+#### Core Build Scripts
 ```bash
 # Windows
 ./scripts/core/build.ps1 test    # Build + tests (commit-safe)
@@ -114,6 +115,25 @@ Y↑
 # Linux/Mac
 ./scripts/core/build.sh test     # Build + tests (commit-safe)
 ```
+
+#### Test Execution Scripts (TD_071)
+```bash
+# Quick Tests (Architecture only, ~1.3s)
+./scripts/test/quick.ps1         # Run before committing
+
+# Full Test Suite (Staged execution, ~3-5s)
+./scripts/test/full.ps1          # Complete validation
+./scripts/test/full.ps1 -SkipSlow  # Skip Performance/Stress tests
+
+# Future: Incremental Testing (TD_077)
+./scripts/test/incremental.ps1   # Only test changed code (~2s)
+```
+
+#### When to Use Each
+- **Developing**: `quick.ps1` for rapid feedback
+- **Before commit**: `build.ps1 test` for full validation
+- **Before PR**: `full.ps1` for complete test coverage
+- **CI/CD**: Automatic staged execution
 
 **CRITICAL**: Use `test` before committing (catches Godot compilation issues)
 
