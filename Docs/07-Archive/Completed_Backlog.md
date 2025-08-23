@@ -4,7 +4,7 @@
 
 **Purpose**: Completed and rejected work items for historical reference and lessons learned.
 
-**Last Updated**: 2025-08-22
+**Last Updated**: 2025-08-23
 **Recovery Note**: Archive reconstructed on 2025-08-19 after data loss incident (see BR_011 post-mortem)
 **Consolidation**: 2025-08-21 - Merged from Docs/01-Active/Archive.md to establish single authoritative source
 
@@ -33,6 +33,57 @@
 ## ✅ Completed Items
 
 ### 2025-08-23
+
+#### VS_003A: Match-3 with Attributes (Phase 2 APPROVED) ✅ COMPLETED
+**Completed**: 2025-08-23
+**Effort**: M (6.5h total across 5 phases)
+**Outcome**: Complete match-3 system implemented with all 5 phases working end-to-end - pattern recognition, player state management, CQRS integration, and attribute display system
+**Implementation**: 
+- Phase 1 ✅: Pattern Recognition Framework with LanguageExt Fin<T> error handling
+- Phase 2 ✅: Match Pattern Recognizer with flood-fill algorithm (4.20x performance improvement)
+- Phase 3 ✅: Player State Domain Model with immutable PlayerState aggregate and thread-safe service
+- Phase 4 ✅: CQRS Integration with MediatR pipeline and proper async handling
+- Phase 5 ✅: UI Presentation with simple text display for attributes
+**Critical Fix**: Final bug resolved where match detection wasn't triggering on block placement (only on moves)
+**Test Coverage**: 320 total tests executed, comprehensive property-based testing with FsCheck 3.x, performance validation <1ms recognition time
+**Architecture**: Extensible Pattern Recognition Framework ready for future tier-ups and transmutations, follows Clean Architecture with MVP pattern
+**Lessons**: Multi-phase implementation with systematic testing and Context7 LanguageExt queries enabled successful delivery of complex feature while maintaining code quality
+**Unblocked**: Core match-3 game mechanic complete, foundation for VS_003B tier-up system, resource economy loop fully functional
+**Match Mechanics**: 3+ adjacent blocks clear and grant attributes (Work→Money, Study→Knowledge, Health→Health, etc.), size bonuses (4=×1.5, 5=×2.0, 6+=×3.0)
+**Technical Achievement**: Flood-fill algorithm handles all pattern shapes (horizontal, vertical, L-shape, cross/plus, complex connected), immutable domain model with proper error handling
+[METADATA: match-3, pattern-recognition, cqrs, languageext, flood-fill, game-mechanics, clean-architecture, mvp, testing, performance-optimized, multi-phase-complete]
+
+#### TD_068: Fix DI Registration for VS_003A CQRS Handlers ✅ COMPLETED
+**Completed**: 2025-08-23
+**Effort**: S (15min actual vs 30min estimate)
+**Outcome**: Fixed critical MediatR handler registration blocking VS_003A pipeline - corrected namespace issues and added missing IPlayerStateService registration
+**Implementation**: Fixed namespace issues in 7 source files + 5 supporting files (BlockLife.Features → BlockLife.Core.Features), added IPlayerStateService registration to GameStrapper
+**Impact**: All 13 failing tests now pass, stress tests unblocked, pipeline restored to working state
+**Lessons**: Namespace conventions critical for MediatR handler discovery - small naming inconsistencies cause cascade test failures that mask root cause
+**Unblocked**: VS_003A full functionality, enabled all stress tests to run properly, cleared path for future CQRS implementations
+[METADATA: di-registration, mediatr, namespace-fix, critical-fix, vs_003a-blocker, pipeline-restoration]
+
+#### TD_065: Automate Memory Bank Rotation ✅ COMPLETED
+**Completed**: 2025-08-23
+**Effort**: S (2.5h actual vs 4h estimate)
+**Outcome**: Fully automated Memory Bank rotation system preventing manual maintenance overhead
+**Implementation**: Created rotate-memory-bank.ps1 with complete rotation logic, setup-rotation-schedule.ps1 for automated scheduling, cross-platform support (Windows Task Scheduler + Unix cron)
+**Features**: Monthly/quarterly rotation cycles, intelligent retention policies, size-based triggers, comprehensive logging
+**Impact**: Saves ~15 minutes per month of manual rotation work, prevents Memory Bank from becoming stale or oversized
+**Lessons**: Automated maintenance systems require robust scheduling and error handling to be truly hands-off
+**Unblocked**: Self-maintaining Memory Bank system, eliminated manual rotation tasks, improved long-term reliability
+[METADATA: automation, memory-bank, rotation, scheduling, devops, maintenance, cross-platform]
+
+#### TD_066: Fix Session Log Chronological Order ✅ COMPLETED  
+**Completed**: 2025-08-23
+**Effort**: S (1.5h actual vs 4h estimate)
+**Outcome**: Automated session log ordering system with intelligent parsing and health monitoring
+**Implementation**: Created fix-session-log-order.ps1 with smart multi-date parsing and sorting, check-session-log-health.ps1 for comprehensive health monitoring
+**Features**: Multi-date support, format preservation, duplicate detection, dry-run and validate-only modes for safe operation
+**Impact**: Saves ~10 minutes per week preventing manual reordering, maintains chronological integrity automatically
+**Lessons**: Log maintenance tools need both correction and prevention capabilities - health monitoring prevents issues before they accumulate
+**Unblocked**: Self-maintaining session logs, eliminated manual ordering tasks, improved historical tracking reliability
+[METADATA: automation, session-logs, chronological-order, parsing, devops, maintenance, health-monitoring]
 
 #### TD_072: Persona-Specific Documentation Routing Protocol ✅ COMPLETED
 **Completed**: 2025-08-23 19:00

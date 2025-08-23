@@ -150,6 +150,9 @@ public static class GameStrapper
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
+        
+        // Pattern processing notification handler - triggers on block placement
+        services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterPlacementHandler>();
 
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
@@ -362,6 +365,9 @@ public static class GameStrapper
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
+        
+        // Pattern processing notification handler - triggers on block placement
+        services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterPlacementHandler>();
 
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
