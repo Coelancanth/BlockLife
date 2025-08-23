@@ -259,7 +259,27 @@ if (Test-Path $sessionLogPath) {
     }
 }
 
-# Step 5: Show Backlog Items
+# Step 5: Show Quick Reference Card
+Write-Phase "Quick Reference Card"
+
+$personaDocPath = Join-Path (Split-Path (Split-Path $scriptRoot)) "Docs\04-Personas\$Persona.md"
+if (Test-Path $personaDocPath) {
+    $content = Get-Content $personaDocPath -Raw
+    if ($content -match '### Tier 1: Instant Answers[^\n]*\n((?:^\d+\..+\n)+)' -or 
+        $content -match '### Tier 1: Instant Answers[^\n]*\n((?:[^\n]+\n){1,5})') {
+        $quickRefs = $matches[1] -split '\n' | Where-Object { $_ -match '^\d+\.' } | Select-Object -First 3
+        if ($quickRefs) {
+            Write-Info "Top 3 Quick References for $identity:"
+            $quickRefs | ForEach-Object {
+                Write-Host "  $_" -ForegroundColor Cyan
+            }
+            Write-Host ""
+            Write-Host "  📖 Full reference card in: Docs/04-Personas/$Persona.md" -ForegroundColor DarkGray
+        }
+    }
+}
+
+# Step 6: Show Backlog Items
 Write-Phase "Checking Backlog"
 
 $backlogPath = Join-Path (Split-Path (Split-Path $scriptRoot)) "Docs\01-Active\Backlog.md"
