@@ -59,8 +59,7 @@ namespace BlockLife.Core.Features.Block.Drag.Services
 
             _currentState = _currentState with { PreviewPosition = previewPosition };
 
-            _logger.Verbose("Updated drag preview position to {Position} for block {BlockId}",
-                previewPosition, _currentState.BlockId);
+            // Removed verbose logging for drag preview updates
             return FinSucc(Unit.Default);
         }
 

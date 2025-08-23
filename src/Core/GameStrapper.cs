@@ -144,6 +144,13 @@ public static class GameStrapper
         services.AddSingleton<BlockLife.Core.Infrastructure.Services.IPlayerStateService,
             BlockLife.Core.Infrastructure.Services.PlayerStateService>();
 
+        // --- Pattern Recognition Services (VS_003A) ---
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        
+        // Pattern processing notification handler - triggers on block moves
+        services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
+
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
             BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
@@ -348,6 +355,13 @@ public static class GameStrapper
         // --- Player State Service (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Infrastructure.Services.IPlayerStateService,
             BlockLife.Core.Infrastructure.Services.PlayerStateService>();
+
+        // --- Pattern Recognition Services (VS_003A) ---
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        
+        // Pattern processing notification handler - triggers on block moves
+        services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
 
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
