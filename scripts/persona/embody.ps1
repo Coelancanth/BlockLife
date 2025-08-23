@@ -230,24 +230,7 @@ git config user.email "$Persona@blocklife"
 
 Write-Success "Git identity set to: $identity"
 
-# Step 3: Load Memory Bank Context
-Write-Phase "Loading Memory Bank"
-
-$memoryBankPath = Join-Path (Split-Path (Split-Path $scriptRoot)) ".claude\memory-bank"
-$activeContextPath = Join-Path $memoryBankPath "active\$Persona.md"
-
-if (Test-Path $activeContextPath) {
-    Write-Info "Active context for ${Persona}:"
-    Get-Content $activeContextPath | Select-Object -First 20 | ForEach-Object {
-        Write-Host "  $_" -ForegroundColor Gray
-    }
-} else {
-    Write-Warning "No active context found for $Persona"
-    New-Item -Path $activeContextPath -Force -Value "# $identity Active Context`n`nLast updated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n`n## Current Work`n`n" | Out-Null
-    Write-Info "Created new context file"
-}
-
-# Step 3.5: Auto-fix Session Log Order (Silent)
+# Step 3: Auto-fix Session Log Order (Silent)
 $fixScriptPath = Join-Path $scriptRoot "..\utils\fix-session-log-order.ps1"
 if (Test-Path $fixScriptPath) {
     # Run completely silently - redirect all output to null
@@ -259,17 +242,18 @@ if (Test-Path $fixScriptPath) {
     # Success is completely silent - true zero friction!
 }
 
-# Step 4: Check Session Log
-$sessionLogPath = Join-Path $memoryBankPath "session-log.md"
-if (Test-Path $sessionLogPath) {
-    $recentLogs = Get-Content $sessionLogPath | Select-Object -Last 10
-    if ($recentLogs) {
-        Write-Info "Recent session activity:"
-        $recentLogs | ForEach-Object {
-            Write-Host "  $_" -ForegroundColor Gray
-        }
-    }
-}
+# Step 4: Check Session Log - TEMPORARILY DISABLED
+# $memoryBankPath = Join-Path (Split-Path (Split-Path $scriptRoot)) ".claude\memory-bank"
+# $sessionLogPath = Join-Path $memoryBankPath "session-log.md"
+# if (Test-Path $sessionLogPath) {
+#     $recentLogs = Get-Content $sessionLogPath | Select-Object -Last 10
+#     if ($recentLogs) {
+#         Write-Info "Recent session activity:"
+#         $recentLogs | ForEach-Object {
+#             Write-Host "  $_" -ForegroundColor Gray
+#         }
+#     }
+# }
 
 # Step 5: Show Quick Reference Card
 Write-Phase "Quick Reference Card"
@@ -288,30 +272,6 @@ if (Test-Path $personaDocPath) {
             Write-Host ""
             Write-Host "  📖 Full reference card in: Docs/04-Personas/$Persona.md" -ForegroundColor DarkGray
         }
-    }
-}
-
-# Step 6: Show Backlog Items
-Write-Phase "Checking Backlog"
-
-$backlogPath = Join-Path (Split-Path (Split-Path $scriptRoot)) "Docs\01-Active\Backlog.md"
-if (Test-Path $backlogPath) {
-    $ownedItems = Select-String -Path $backlogPath -Pattern "Owner:\s*$identity" -Context 2,0
-    
-    if ($ownedItems) {
-        Write-Info "Your backlog items:"
-        foreach ($item in $ownedItems) {
-            $lines = $item.Context.PreContext + $item.Line
-            foreach ($line in $lines) {
-                if ($line -match '^#{2,3}\s+(.+)$') {
-                    Write-Host "  📌 $($Matches[1])" -ForegroundColor Yellow
-                } elseif ($line -match 'Status:\s*(.+)$') {
-                    Write-Host "     Status: $($Matches[1])" -ForegroundColor Cyan
-                }
-            }
-        }
-    } else {
-        Write-Info "No items currently assigned to $identity"
     }
 }
 
