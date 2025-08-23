@@ -247,6 +247,18 @@ if (Test-Path $activeContextPath) {
     Write-Info "Created new context file"
 }
 
+# Step 3.5: Auto-fix Session Log Order (Silent)
+$fixScriptPath = Join-Path $scriptRoot "..\utils\fix-session-log-order.ps1"
+if (Test-Path $fixScriptPath) {
+    # Run completely silently - redirect all output to null
+    & $fixScriptPath *>$null
+    # Only report if there's an actual failure (non-zero exit code)
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Session log auto-fix encountered an issue (non-critical)"
+    }
+    # Success is completely silent - true zero friction!
+}
+
 # Step 4: Check Session Log
 $sessionLogPath = Join-Path $memoryBankPath "session-log.md"
 if (Test-Path $sessionLogPath) {
@@ -302,6 +314,146 @@ if (Test-Path $backlogPath) {
         Write-Info "No items currently assigned to $identity"
     }
 }
+
+# Step 5.5: Show Persona-Specific Guidance
+Write-Phase "Critical Reminders for $identity"
+
+switch ($Persona) {
+    'dev-engineer' {
+        Write-Host "🔧 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Implementation Excellence Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  ⚠️  " -NoNewline -ForegroundColor Red
+        Write-Host "LanguageExt MANDATORY:" -ForegroundColor Yellow
+        Write-Host "    • Use " -NoNewline -ForegroundColor Gray
+        Write-Host "Fin<T>" -NoNewline -ForegroundColor White
+        Write-Host " not exceptions - chain with " -NoNewline -ForegroundColor Gray
+        Write-Host "Bind() Match()" -ForegroundColor White
+        Write-Host "    • Query Context7 BEFORE using unfamiliar patterns:" -ForegroundColor Gray
+        Write-Host '      mcp__context7__get-library-docs "/louthy/language-ext" --topic "Fin Error bind"' -ForegroundColor DarkGray
+        Write-Host ""
+        Write-Host "  📋 Before Coding:" -ForegroundColor Cyan
+        Write-Host "    • Copy pattern from " -NoNewline -ForegroundColor Gray
+        Write-Host "src/Features/Block/Move/" -ForegroundColor White
+        Write-Host "    • Write failing test first (TDD)" -ForegroundColor Gray
+        Write-Host "    • Check DI registration in " -NoNewline -ForegroundColor Gray
+        Write-Host "GameStrapper.cs" -ForegroundColor White
+        Write-Host "    • Run " -NoNewline -ForegroundColor Gray
+        Write-Host "./scripts/core/build.ps1 test" -NoNewline -ForegroundColor Green
+        Write-Host " before ANY commit" -ForegroundColor Gray
+    }
+    
+    'tech-lead' {
+        Write-Host "🎯 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Architecture & Decision Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  📊 TD Complexity Scoring:" -ForegroundColor Cyan
+        Write-Host "    • 1-3: Auto-approve (simple, clear benefit)" -ForegroundColor Gray
+        Write-Host "    • 4-6: Review necessity (question if needed)" -ForegroundColor Gray
+        Write-Host "    • 7-10: Challenge HARD (usually over-engineered)" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  🔪 VS Breakdown Rules:" -ForegroundColor Cyan
+        Write-Host "    • >3 days = Split into thinner slices" -ForegroundColor Gray
+        Write-Host "    • Each phase independently shippable" -ForegroundColor Gray
+        Write-Host "    • Pattern reference: " -NoNewline -ForegroundColor Gray
+        Write-Host "src/Features/Block/Move/" -ForegroundColor White
+        Write-Host ""
+        Write-Host "  💭 Always Challenge:" -ForegroundColor Yellow
+        Write-Host '    • "Is this the simplest solution?"' -ForegroundColor Gray
+        Write-Host '    • "Does this solve a REAL problem?"' -ForegroundColor Gray
+    }
+    
+    'test-specialist' {
+        Write-Host "🧪 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Quality & Testing Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  📈 Coverage Targets:" -ForegroundColor Cyan
+        Write-Host "    • Core logic: 80% minimum" -ForegroundColor Gray
+        Write-Host "    • UI components: 60% minimum" -ForegroundColor Gray
+        Write-Host "    • Critical paths: 100% required" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  🎲 FsCheck 3.x Patterns:" -ForegroundColor Cyan
+        Write-Host "    • Use " -NoNewline -ForegroundColor Gray
+        Write-Host "Gen<T>" -NoNewline -ForegroundColor White
+        Write-Host " with " -NoNewline -ForegroundColor Gray
+        Write-Host ".ToArbitrary()" -ForegroundColor White
+        Write-Host "    • Property tests for edge cases" -ForegroundColor Gray
+        Write-Host "    • Reference: " -NoNewline -ForegroundColor Gray
+        Write-Host "FsCheck3xMigrationGuide.md" -ForegroundColor White
+        Write-Host ""
+        Write-Host "  🐛 Bug Handling:" -ForegroundColor Cyan
+        Write-Host "    • <30min fix = Do it directly" -ForegroundColor Gray
+        Write-Host "    • >30min = Create BR_XXX for Debugger Expert" -ForegroundColor Gray
+    }
+    
+    'debugger-expert' {
+        Write-Host "🔍 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Investigation & Root Cause Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  🎯 Common Patterns:" -ForegroundColor Cyan
+        Write-Host "    • DI failures → Check " -NoNewline -ForegroundColor Gray
+        Write-Host "GameStrapper.cs" -ForegroundColor White
+        Write-Host "    • MediatR issues → Verify " -NoNewline -ForegroundColor Gray
+        Write-Host "BlockLife.Core.*" -NoNewline -ForegroundColor White
+        Write-Host " namespace" -ForegroundColor Gray
+        Write-Host "    • Threading → Use " -NoNewline -ForegroundColor Gray
+        Write-Host "CallDeferred()" -NoNewline -ForegroundColor White
+        Write-Host " for UI updates" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  📝 Post-Mortem Protocol:" -ForegroundColor Cyan
+        Write-Host "    • Document ROOT CAUSE not surface fix" -ForegroundColor Gray
+        Write-Host "    • Extract patterns to HANDBOOK.md" -ForegroundColor Gray
+        Write-Host "    • Archive completed post-mortems" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  ⏱️  Time Limits:" -ForegroundColor Yellow
+        Write-Host "    • 2-hour investigation timebox" -ForegroundColor Gray
+        Write-Host "    • Create TD if refactor needed" -ForegroundColor Gray
+    }
+    
+    'product-owner' {
+        Write-Host "📦 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Feature Definition Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  ✂️  VS Size Rules:" -ForegroundColor Cyan
+        Write-Host "    • Maximum 3 days work per VS" -ForegroundColor Gray
+        Write-Host "    • Must be: Independent, Shippable, Valuable" -ForegroundColor Gray
+        Write-Host "    • Split large features: VS_003A, VS_003B pattern" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  📖 Terminology (from Glossary):" -ForegroundColor Cyan
+        Write-Host '    • Use "Match" not "Clear"' -ForegroundColor Gray
+        Write-Host '    • Use "Tier" not "Level"' -ForegroundColor Gray
+        Write-Host '    • Use "Turn" not "Round"' -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  🔥 Priority Framework:" -ForegroundColor Cyan
+        Write-Host "    • Critical: Blocks other work" -ForegroundColor Gray
+        Write-Host "    • Important: Current milestone" -ForegroundColor Gray
+        Write-Host "    • Ideas: Everything else" -ForegroundColor Gray
+    }
+    
+    'devops-engineer' {
+        Write-Host "🤖 " -NoNewline -ForegroundColor Yellow
+        Write-Host "Zero-Friction Automation Standards:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  🎯 Automation Criteria:" -ForegroundColor Cyan
+        Write-Host "    • Happens twice = Automate it" -ForegroundColor Gray
+        Write-Host "    • Causes friction = Eliminate it" -ForegroundColor Gray
+        Write-Host "    • Takes >15min/week = Script it" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  ✨ Script Excellence:" -ForegroundColor Cyan
+        Write-Host "    • Silent operation is best (use " -NoNewline -ForegroundColor Gray
+        Write-Host "*>$null" -NoNewline -ForegroundColor White
+        Write-Host ")" -ForegroundColor Gray
+        Write-Host "    • Idempotent (safe to run multiple times)" -ForegroundColor Gray
+        Write-Host "    • Self-documenting progress messages" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  📊 Current Metrics:" -ForegroundColor Cyan
+        Write-Host "    • Build time: 2-3 min (target <5 min)" -ForegroundColor Gray
+        Write-Host "    • Pre-commit: <0.5s" -ForegroundColor Gray
+        Write-Host "    • Automation saves: ~60 min/month" -ForegroundColor Gray
+    }
+}
+
+Write-Host ""
 
 # Step 6: Final Status
 Write-Phase "Ready to Work!"

@@ -140,36 +140,6 @@
 - Pre-commit catches namespace/DI issues immediately
 - CI fails fast on architectural violations
 
-### TD_076: Auto-Fix Session Log on Every Embody  
-**Status**: Approved ✅
-**Owner**: DevOps Engineer
-**Size**: S (1h)
-**Priority**: Important
-**Created**: 2025-08-23
-**Complexity Score**: 2/10
-**Pattern Match**: Scripts already exist (fix-session-log-order.ps1)
-**Simpler Alternative**: Manual cleanup monthly (0h but never happens)
-
-**Problem**: Session log becomes unreadable chaos - entries out of order, duplicates, scattered dates
-
-**Solution**:
-- Add to embody.ps1: Auto-run fix-session-log-order.ps1
-- Silent operation unless errors found
-- Fix before showing session history to user
-- NO new scripts needed - reuse existing
-
-**Why Not Simpler**: Manual cleanup never happens. This is a 1-line addition to embody.ps1
-
-**Done When**:
-- Session log automatically sorted on every embody
-- No manual cleanup ever needed
-- Historical order preserved and readable
-
-**Tech Lead Decision** (2025-08-23):
-- ✅ APPROVED - Complexity 2/10
-- Classic automation win - 1 hour saves 100 hours
-- Reuses existing scripts, trivial integration
-- Should have been automated from day 1
 
 
 
@@ -178,25 +148,7 @@
 
 
 
-### TD_067: Refine Active Context Protocol - Preserve Multi-Phase Learnings
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Ideas
-**Created**: 2025-08-22
-**Complexity Score**: 3/10
-**Pattern Match**: Follows documentation improvement patterns from existing workflow docs
-**Simpler Alternative**: Manual reminder in persona docs (2-hour version)
 
-**Problem**: Active context gets completely rewritten between phases, losing valuable learnings from previous phases. Phase 1 & 2 learnings from VS_003A were nearly discarded when updating for Phase 3.
-
-**Solution**: 
-- Create "Cumulative Learnings" section that preserves insights across all phases
-- Implement "Phase History" tracking to maintain context of completed work
-- Add protocol for merging new learnings with existing knowledge
-- Update persona docs with guidance on preserving vs refreshing context
-
-**Why Not Simpler**: Multi-phase projects (like VS_003A with 5 phases) accumulate significant technical insights that are lost with current approach. A systematic protocol ensures knowledge retention across phase boundaries.
 
 **Files to Update**:
 - `.claude/memory-bank/active/[persona].md` templates
@@ -228,35 +180,6 @@
 - Pattern solutions documented to prevent recurrence
 - No added complexity to workflow
 
-### TD_075: Context-Aware Reference Display with MANDATORY Context7 Prompts
-**Status**: Proposed (ELEVATED PRIORITY)
-**Owner**: DevOps Engineer
-**Size**: M (4h)
-**Priority**: Ideas → Important (considering elevation)
-**Created**: 2025-08-23
-**Complexity Score**: 4/10
-**Pattern Match**: Embody script already shows quick refs
-**Simpler Alternative**: Do nothing, rely on personas to remember (0h)
-
-**Problem**: Personas don't use Context7 for LanguageExt, causing API mistakes and wasted hours
-
-**Solution**: 
-- Enhance embody.ps1 to show task-specific references
-- **CRITICAL**: Detect LanguageExt work → MANDATE Context7 query
-- When VS work detected → Display Move Block pattern location
-- When error handling detected → Show "Query Context7: Fin Error bind patterns"
-- Add pre-implementation checklist that includes Context7 queries
-- Smart detection based on file patterns and backlog content
-
-**Why Not Simpler**: LanguageExt API mistakes are our #1 time waster
-
-**Done When**:
-- Embody script FORCES Context7 consideration for LanguageExt work
-- Pre-implementation checklist shown for complex patterns
-- Measurable reduction in LanguageExt API errors
-- No new documentation created
-
-**Tech Lead Note**: This should probably be Important priority - LanguageExt mistakes waste HOURS
 
 
 
