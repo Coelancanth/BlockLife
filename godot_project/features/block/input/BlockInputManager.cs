@@ -27,20 +27,46 @@ public partial class BlockInputManager : Node
     private IDisposable? _cellClickedSubscription;
     private IDisposable? _cellHoveredSubscription;
 
-    public override async void _Ready()
+    public override void _Ready()
     {
         // Use default mappings if not configured in editor
         _inputMappings ??= InputMappings.CreateDefault();
 
-        // Pre-warm input system components to prevent first-operation delays
+        // Defer initialization to avoid race condition with SceneRoot async setup
+        CallDeferred(nameof(InitializeWhenSceneRootReady));
+    }
+
+    /// <summary>
+    /// Deferred initialization to avoid race condition with SceneRoot async setup
+    /// </summary>
+    private async void InitializeWhenSceneRootReady()
+    {
         var sceneRoot = GetNode<SceneRoot>("/root/SceneRoot");
-        await InputSystemInitializer.Initialize(this, sceneRoot?.Logger);
+        
+        if (sceneRoot?.ServiceProvider != null)
+        {
+            // Pre-warm input system components to prevent first-operation delays
+            await InputSystemInitializer.Initialize(this, sceneRoot.Logger);
 
-        InitializeServices();
-        SubscribeToEvents();
+            InitializeServices();
+            SubscribeToEvents();
 
-        _logger?.Debug("BlockInputManager initialized with mappings: {Mappings}",
-            _inputMappings.GetMappingDescription());
+            _logger?.Debug("BlockInputManager initialized with mappings: {Mappings}",
+                _inputMappings?.GetMappingDescription());
+        }
+        else
+        {
+            // SceneRoot might still be initializing - try again in the next frame
+            if (sceneRoot != null)
+            {
+                _logger?.Debug("SceneRoot ServiceProvider not ready yet, retrying...");
+                CallDeferred(nameof(InitializeWhenSceneRootReady));
+            }
+            else
+            {
+                _logger?.Warning("SceneRoot not found. Input system initialization skipped.");
+            }
+        }
     }
 
     private void InitializeServices()

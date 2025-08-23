@@ -16,9 +16,11 @@ anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -280.0
 offset_bottom = 400.0
+mouse_filter = 2
 
 [node name="PlayerName" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 text = "Player: Loading..."
 horizontal_alignment = 1
 
@@ -27,6 +29,7 @@ layout_mode = 2
 
 [node name="Resources" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 text = "Resources:
 Loading..."
 vertical_alignment = 1
@@ -36,6 +39,7 @@ layout_mode = 2
 
 [node name="Attributes" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 text = "Attributes:
 Loading..."
 vertical_alignment = 1
@@ -45,5 +49,6 @@ layout_mode = 2
 
 [node name="Feedback" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 text = ""
 horizontal_alignment = 1

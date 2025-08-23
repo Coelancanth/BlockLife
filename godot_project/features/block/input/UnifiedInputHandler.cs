@@ -205,20 +205,21 @@ public sealed class UnifiedInputHandler : IDisposable
                 _logger?.Information("   Type: {BlockType}", block.Type);
                 _logger?.Information("   CreatedAt: {CreatedAt}", block.CreatedAt);
 
-                // Also print to Godot console for visibility
-                GD.Print($"=== BLOCK INSPECTION ===");
-                GD.Print($"Position: ({position.X}, {position.Y})");
-                GD.Print($"BlockId: {block.Id}");
-                GD.Print($"Type: {block.Type}");
-                GD.Print($"========================");
+                // Commented out verbose debug output
+                // GD.Print($"=== BLOCK INSPECTION ===");
+                // GD.Print($"Position: ({position.X}, {position.Y})");
+                // GD.Print($"BlockId: {block.Id}");
+                // GD.Print($"Type: {block.Type}");
+                // GD.Print($"========================");
             },
             None: () =>
             {
                 _logger?.Information("EMPTY POSITION at {Position}", position);
-                GD.Print($"=== POSITION INSPECTION ===");
-                GD.Print($"Position: ({position.X}, {position.Y})");
-                GD.Print($"Status: Empty");
-                GD.Print($"===========================");
+                // Commented out verbose debug output
+                // GD.Print($"=== POSITION INSPECTION ===");
+                // GD.Print($"Position: ({position.X}, {position.Y})");
+                // GD.Print($"Status: Empty");
+                // GD.Print($"===========================");
             }
         );
     }

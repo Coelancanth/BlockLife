@@ -21,6 +21,7 @@ InteractionController = NodePath("InteractionController")
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 
 [node name="VisualizationController" type="Node2D" parent="." node_paths=PackedStringArray("BlockContainer", "FeedbackContainer")]
 script = ExtResource("2_3okcj")
@@ -31,6 +32,7 @@ FeedbackContainer = NodePath("../FeedbackContainer")
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 1
 script = ExtResource("3_7qbr8")
 
 [node name="BlockInputManager" type="Node" parent="."]
@@ -40,4 +42,5 @@ script = ExtResource("4_input")
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("5_drag")
