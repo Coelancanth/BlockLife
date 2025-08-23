@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 072 (Last: TD_071 - 2025-08-22)  
+- **Next TD**: 074 (Last: TD_073 - 2025-08-23)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -621,93 +621,6 @@ public static class BlockTypeRewards
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_072: Persona-Specific Documentation Routing Protocol
-**Status**: Proposed  
-**Owner**: Tech Lead  
-**Size**: M (4-8h)  
-**Priority**: Ideas  
-**Created**: 2025-08-23 17:30  
-**Complexity Score**: 4/10  
-**Pattern Match**: Documentation architecture pattern
-
-**Problem**: Each persona wastes time searching for relevant documentation; generic reference doesn't match persona-specific needs
-
-**What**: Design and implement persona-aware documentation routing that provides context-specific quick references
-
-**Why**: 
-- Dev Engineer needs different patterns than Test Specialist
-- Debugger Expert needs troubleshooting guides, not architecture docs
-- Product Owner needs glossary/requirements, not implementation details
-- Current "one-size-fits-all" HANDBOOK causes context switching
-
-**How**:
-1. **Analyze each persona's documentation needs**:
-   - Map common questions to specific doc sections
-   - Identify top 5 reference needs per persona
-   - Track actual usage patterns from memory banks
-
-2. **Create persona-specific quick reference cards**:
-   - Dev Engineer: Implementation patterns, error fixes, test mocking
-   - Test Specialist: Test patterns, regression protocols, coverage
-   - Debugger Expert: Bug patterns, DI troubleshooting, investigation tools
-   - Tech Lead: Architecture decisions, TD evaluation, patterns
-   - Product Owner: Glossary, VS principles, acceptance criteria
-   - DevOps: Build commands, CI/CD, automation scripts
-
-3. **Implement routing mechanism**:
-   - Add `## 🎯 Quick Reference for [Persona]` to each persona doc
-   - Include "When you see X, check Y" mappings
-   - Create decision trees for common scenarios
-   - Link directly to relevant sections (not just files)
-
-4. **Integrate with embody script**:
-   - Display persona-specific quick reference on embodiment
-   - Show "top 3 most likely needs" based on current context
-   - Include recent problem patterns from that persona's memory
-
-**Expected Impact**:
-- Reduce documentation search time by 70%
-- Increase pattern reuse and consistency
-- Prevent repeated mistakes through better routing
-- Improve persona effectiveness
-
-**Success Criteria**:
-- [ ] Each persona has tailored quick reference
-- [ ] Common scenarios map to specific doc sections
-- [ ] Embody script shows relevant guides
-- [ ] Reduced "where do I find X?" questions
-
-**Related**: HANDBOOK.md Quick Reference Protocol (general version exists)
-
----
-
-### TD_070: Session Log Should Include Date, Not Just Time
-**Status**: Proposed
-**Owner**: DevOps Engineer
-**Size**: S (<4h)
-**Priority**: Ideas
-**Created**: 2025-08-23 01:48
-**Complexity Score**: 1/10
-**Pattern Match**: Simple format update to existing scripts
-**Test Specialist Note**: Discovered during session handoff - time-only entries become ambiguous
-
-**Problem**: Session log entries only show HH:MM without date, making historical tracking difficult
-**What**: Update session log format to include date (YYYY-MM-DD HH:MM or similar)
-**Why**: After midnight or days later, time-only entries are ambiguous and hard to correlate
-
-**How**: 
-- Update embody scripts to include date in session log entries
-- Consider ISO 8601 format (2025-08-23 01:48) for clarity
-- Update existing Memory Bank protocol documentation
-- Ensure all personas use consistent format
-
-**Done When**:
-- Session log entries include full date and time
-- Format is consistent across all personas
-- MEMORY_BANK_PROTOCOL.md updated with new format
-- Existing entries optionally backfilled with dates from context
-
-**Value**: Better historical tracking, clearer handoffs, easier debugging of multi-day work
 
 
 ### TD_067: Refine Active Context Protocol - Preserve Multi-Phase Learnings
@@ -790,6 +703,7 @@ public static class BlockTypeRewards
 - Features: Multi-date support, format preservation, duplicate detection
 - Dry-run and validate-only modes for safe operation
 - **Impact**: Saves ~10 min/week preventing manual reordering
+
 
 ## 🚧 Currently Blocked
 *None*
