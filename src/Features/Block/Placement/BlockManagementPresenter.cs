@@ -7,7 +7,7 @@ using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Presentation;
-using BlockLife.Features.Block.Move.Effects;
+using BlockLife.Core.Features.Block.Move.Effects;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;

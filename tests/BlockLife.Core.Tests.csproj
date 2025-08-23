@@ -14,8 +14,7 @@
   <ItemGroup>
     <PackageReference Include="fluentassertions" Version="8.6.0" />
     <PackageReference Include="FluentAssertions.LanguageExt" Version="0.5.0" />
-    <!-- Temporarily disabled until FsCheck 3.x migration complete (TD_047) -->
-    <!-- <PackageReference Include="FsCheck.Xunit" Version="3.3.0" /> -->
+    <PackageReference Include="FsCheck.Xunit" Version="3.3.0" />
     <PackageReference Include="LanguageExt.Core" Version="*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />

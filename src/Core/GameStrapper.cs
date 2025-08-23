@@ -140,6 +140,10 @@ public static class GameStrapper
         services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
 
+        // --- Player State Service (VS_003A) ---
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IPlayerStateService,
+            BlockLife.Core.Infrastructure.Services.PlayerStateService>();
+
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,
             BlockLife.Core.Features.Block.Drag.Services.DragStateService>();
@@ -340,6 +344,10 @@ public static class GameStrapper
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
         services.AddSingleton<BlockLife.Core.Domain.Block.IBlockRepository>(
             provider => provider.GetRequiredService<BlockLife.Core.Infrastructure.Services.GridStateService>());
+
+        // --- Player State Service (VS_003A) ---
+        services.AddSingleton<BlockLife.Core.Infrastructure.Services.IPlayerStateService,
+            BlockLife.Core.Infrastructure.Services.PlayerStateService>();
 
         // --- Drag Services (VS_001) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Drag.Services.IDragStateService,

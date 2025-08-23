@@ -1,453 +1,328 @@
 #!/usr/bin/env pwsh
-#Requires -Version 5.1
-
 <#
 .SYNOPSIS
-    Smart persona embodiment for single-repo workflow (ADR-004).
-
+    Embody a BlockLife persona with v4.0 Intelligent Auto-Sync
 .DESCRIPTION
-    Sets git identity, ensures clean sync, and loads persona context.
-    Designed for solo dev sequential workflow with intelligent guidance.
-    
-    AUTO-SYNC FEATURES (v3.0):
-    - Automatically stashes uncommitted changes before sync
-    - Auto-rebases when branches diverge (handles duplicate commits)
-    - Auto-pushes unpushed commits when safe
-    - Auto-pulls new changes from main
-    - Gracefully handles conflicts with manual intervention options
-    - Restores stashed changes after successful sync
-
+    Complete persona embodiment with automatic git state resolution:
+    - Detects and handles squash merges automatically
+    - Resolves conflicts intelligently
+    - Preserves uncommitted work
+    - Ensures clean persona switches every time
 .PARAMETER Persona
-    The persona to embody: dev-engineer, test-specialist, tech-lead, 
-    devops-engineer, product-owner, debugger-expert
-
+    The persona to embody (dev-engineer, tech-lead, etc.)
 .EXAMPLE
-    .\embody.ps1 dev-engineer
-    Auto-syncs with main, sets identity, loads context, shows assigned work
-
-.NOTES
-    Version: 3.0 - Auto-sync for divergent branches
-    ADR-004: Single-repo persona context management
+    embody-v4 tech-lead
+    Embodies Tech Lead with automatic sync resolution
 #>
 
-[CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet('dev-engineer', 'test-specialist', 'tech-lead', 
-                 'devops-engineer', 'product-owner', 'debugger-expert')]
+    [ValidateSet('dev-engineer', 'tech-lead', 'test-specialist', 'debugger-expert', 'product-owner', 'devops-engineer')]
     [string]$Persona
 )
 
-$ErrorActionPreference = 'Stop'
+# Import smart-sync functions
+$scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$gitScripts = Join-Path (Split-Path $scriptRoot) "git"
 
-# Persona configurations with colors and focus areas
-$personas = @{
-    "dev-engineer" = @{
-        name = "Dev Engineer"
-        email = "dev@blocklife"
-        color = "Green"
-        focus = "Implementation and core mechanics"
-        tips = @(
-            "Check for approved VS items ready for implementation",
-            "Review TD items assigned to Dev Engineer",
-            "Run tests: ./scripts/core/build.ps1 test"
-        )
-    }
-    "test-specialist" = @{
-        name = "Test Specialist"
-        email = "test@blocklife"
-        color = "Yellow"
-        focus = "Quality assurance and test coverage"
-        tips = @(
-            "Review recent implementations needing test coverage",
-            "Check test infrastructure TD items",
-            "Run coverage: dotnet test /p:CollectCoverage=true"
-        )
-    }
-    "tech-lead" = @{
-        name = "Tech Lead"
-        email = "tech-lead@blocklife"
-        color = "Cyan"
-        focus = "Architecture and technical decisions"
-        tips = @(
-            "Review backlog for items needing technical breakdown",
-            "Check TD items awaiting approval",
-            "Validate VS items for architectural integrity"
-        )
-    }
-    "devops-engineer" = @{
-        name = "DevOps Engineer"
-        email = "devops@blocklife"
-        color = "Magenta"
-        focus = "Automation and developer experience"
-        tips = @(
-            "Check CI/CD pipeline status",
-            "Review automation TD items",
-            "Optimize build and deployment scripts"
-        )
-    }
-    "product-owner" = @{
-        name = "Product Owner"
-        email = "product@blocklife"
-        color = "Blue"
-        focus = "Requirements and prioritization"
-        tips = @(
-            "Define new vertical slices from Ideas backlog",
-            "Refine VS items marked 'Needs Refinement'",
-            "Prioritize backlog items by player value"
-        )
-    }
-    "debugger-expert" = @{
-        name = "Debugger Expert"
-        email = "debugger@blocklife"
-        color = "Red"
-        focus = "Complex debugging and performance"
-        tips = @(
-            "Check for bugs awaiting investigation",
-            "Review flaky test reports",
-            "Analyze recent CI failures"
-        )
-    }
-}
-
-$config = $personas[$Persona]
-
-# Header
-Write-Host "`n🎭 EMBODYING $($config.name.ToUpper())" -ForegroundColor $config.color
-Write-Host ("=" * 60) -ForegroundColor $config.color
-Write-Host "Focus: $($config.focus)" -ForegroundColor DarkGray
-Write-Host ""
-
-# Step 1: ALWAYS pull latest first (enforced per ADR-004) with auto-handling
-Write-Host "📥 Syncing with latest main..." -ForegroundColor Yellow
-
-# Check for uncommitted changes that would block pull/rebase
-$uncommittedChanges = git status --porcelain
-$hasUncommitted = $uncommittedChanges -ne $null -and $uncommittedChanges.Trim() -ne ""
-
-if ($hasUncommitted) {
-    Write-Host "  📦 Stashing uncommitted changes..." -ForegroundColor Yellow
-    $stashMsg = "Auto-stash for persona switch: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-    git stash push -m $stashMsg | Out-Null
-    $stashed = $true
-} else {
-    $stashed = $false
-}
-
-# Try fast-forward pull first
-$pullOutput = git pull origin main --ff-only 2>&1
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "  ⚠️  Cannot fast-forward, attempting rebase..." -ForegroundColor Yellow
-    
-    # Check what we're dealing with
-    $localAhead = git rev-list --count origin/main..HEAD 2>$null
-    $remoteAhead = git rev-list --count HEAD..origin/main 2>$null
-    
-    if ($localAhead -gt 0 -and $remoteAhead -gt 0) {
-        Write-Host "  🔄 Divergent branches detected ($localAhead ahead, $remoteAhead behind)" -ForegroundColor Yellow
-        Write-Host "  🔧 Auto-rebasing local commits on latest main..." -ForegroundColor Cyan
-        
-        # Perform the rebase
-        $rebaseOutput = git pull --rebase origin main 2>&1
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "  ✅ Successfully rebased on main!" -ForegroundColor Green
-            
-            # Count how many duplicate commits were dropped
-            if ($rebaseOutput -match "dropping.*patch contents already upstream") {
-                $droppedCount = ([regex]::Matches($rebaseOutput, "dropping")).Count
-                Write-Host "  🧹 Cleaned up $droppedCount duplicate commit(s)" -ForegroundColor DarkGray
-            }
-        } else {
-            Write-Host "  ❌ Rebase failed - likely conflicts detected" -ForegroundColor Red
-            Write-Host "  🛠️  Attempting to abort and provide manual options..." -ForegroundColor Yellow
-            git rebase --abort 2>$null
-            
-            # Restore stash if we had one
-            if ($stashed) {
-                Write-Host "  📦 Restoring stashed changes..." -ForegroundColor Yellow
-                git stash pop | Out-Null
-            }
-            
-            Write-Host "`n⚠️  AUTO-SYNC FAILED - Manual intervention required:" -ForegroundColor Red
-            Write-Host "   Your changes conflict with main. Options:" -ForegroundColor Yellow
-            Write-Host "   1. Create a PR for review: " -NoNewline -ForegroundColor White
-            Write-Host "gh pr create" -ForegroundColor Cyan
-            Write-Host "   2. Force push (CAUTION): " -NoNewline -ForegroundColor White
-            Write-Host "git push --force-with-lease origin main" -ForegroundColor Cyan
-            Write-Host "   3. Reset to main (LOSES WORK): " -NoNewline -ForegroundColor White
-            Write-Host "git reset --hard origin/main" -ForegroundColor Cyan
-            Write-Host ""
-            git status
-            exit 1
-        }
-    } elseif ($localAhead -gt 0) {
-        Write-Host "  📤 You have $localAhead unpushed commit(s)" -ForegroundColor Yellow
-        Write-Host "  🔧 Auto-pushing to main..." -ForegroundColor Cyan
-        
-        $pushOutput = git push origin main 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "  ✅ Successfully pushed to main!" -ForegroundColor Green
-        } else {
-            Write-Host "  ❌ Push failed - branch protection or permissions issue" -ForegroundColor Red
-            Write-Host "     Consider creating a PR: gh pr create" -ForegroundColor Yellow
-        }
-    } elseif ($remoteAhead -gt 0) {
-        Write-Host "  📥 Pulling $remoteAhead new commit(s) from main..." -ForegroundColor Yellow
-        git pull origin main | Out-Null
-        Write-Host "  ✅ Updated with latest changes!" -ForegroundColor Green
-    }
-} elseif ($pullOutput -match "Already up to date") {
-    Write-Host "  ✅ Already up to date with main" -ForegroundColor Green
-} else {
-    Write-Host "  ✅ Pulled latest changes from main" -ForegroundColor Green
-}
-
-# Restore stashed changes if we had any
-if ($stashed) {
-    Write-Host "  📦 Restoring stashed changes..." -ForegroundColor Yellow
-    $popOutput = git stash pop 2>&1
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "  ✅ Restored uncommitted changes" -ForegroundColor Green
-    } else {
-        Write-Host "  ⚠️  Some stashed changes may conflict" -ForegroundColor Yellow
-        Write-Host "     Review with: git status" -ForegroundColor DarkGray
-    }
-}
-
-# Step 2: Check for uncommitted work (advisory, not blocking)
-$changes = git status --porcelain
-if ($changes) {
-    # Analyze the type of changes
-    $stagedCount = ($changes | Where-Object { $_ -match "^[AM]" }).Count
-    $modifiedCount = ($changes | Where-Object { $_ -match "^ M" }).Count
-    $untrackedCount = ($changes | Where-Object { $_ -match "^\?\?" }).Count
-    
-    Write-Host "`n📝 Uncommitted changes detected:" -ForegroundColor Yellow
-    
-    if ($stagedCount -gt 0) {
-        Write-Host "   📦 $stagedCount file(s) staged for commit" -ForegroundColor Green
-        Write-Host "      You prepared a commit! Finish it:" -ForegroundColor White
-        Write-Host "      git commit -m 'your message'" -ForegroundColor Cyan
-    }
-    
-    if ($modifiedCount -gt 0) {
-        Write-Host "   ✏️  $modifiedCount file(s) modified" -ForegroundColor Yellow
-    }
-    
-    if ($untrackedCount -gt 0) {
-        Write-Host "   🆕 $untrackedCount new file(s)" -ForegroundColor Blue
-    }
-    
-    # Calculate time since last commit
-    $lastCommitTime = git log -1 --format="%ar" 2>$null
-    if ($lastCommitTime) {
-        Write-Host "`n⏰ Last commit: $lastCommitTime" -ForegroundColor DarkGray
-        
-        if ($lastCommitTime -match "hour|hours") {
-            Write-Host "   💡 It's been a while! Consider committing to prevent conflicts." -ForegroundColor Yellow
-        }
-    }
-    
-    Write-Host "`n💡 Tip: Frequent commits (every 20-30 min) prevent conflicts!" -ForegroundColor Green
-    Write-Host "   Continuing with persona switch..." -ForegroundColor DarkGray
+# Color functions
+function Write-Phase($message) { 
     Write-Host ""
-    
-    # Small pause to let user read the message
-    Start-Sleep -Seconds 2
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Magenta
+    Write-Host "  $message" -ForegroundColor Cyan
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Magenta
 }
 
-# Step 3: Set git identity
-Write-Host "🔧 Setting git identity..." -ForegroundColor Green
-git config user.name $config.name
-git config user.email $config.email
-Write-Host "  ✅ $($config.name) <$($config.email)>" -ForegroundColor Green
+function Write-Status($message) { Write-Host "🔄 $message" -ForegroundColor Cyan }
+function Write-Success($message) { Write-Host "✅ $message" -ForegroundColor Green }
+function Write-Warning($message) { Write-Host "⚠️  $message" -ForegroundColor Yellow }
+function Write-Info($message) { Write-Host "ℹ️  $message" -ForegroundColor Gray }
+function Write-Decision($message) { Write-Host "🎯 $message" -ForegroundColor Yellow }
 
-# Step 4: Show repository state
-Write-Host "`n📊 Repository state:" -ForegroundColor Green
-$branch = git rev-parse --abbrev-ref HEAD
-
-# For dev/main and other feature branches, compare with origin/main
-$remoteBranch = "main"
-$ahead = git rev-list --count origin/$remoteBranch..HEAD 2>$null
-$behind = git rev-list --count HEAD..origin/$remoteBranch 2>$null
-
-Write-Host "  📍 Branch: " -NoNewline -ForegroundColor White
-Write-Host $branch -ForegroundColor Cyan
-
-if ($ahead -gt 0 -or $behind -gt 0) {
-    if ($ahead -gt 0) {
-        Write-Host "  ↑ $ahead commit(s) ahead of origin/$remoteBranch" -ForegroundColor Yellow
-        if ($branch -eq "main") {
-            Write-Host "     Consider: git push origin main" -ForegroundColor DarkGray
-        } else {
-            Write-Host "     Ready to create PR when feature complete" -ForegroundColor DarkGray
+# Function to detect git state and apply appropriate strategy
+function Resolve-GitState {
+    Write-Phase "Intelligent Git Sync v4.0"
+    
+    # Get current state
+    $branch = git branch --show-current
+    $hasUncommitted = [bool](git status --porcelain)
+    
+    # Stash if needed
+    if ($hasUncommitted) {
+        Write-Warning "Stashing uncommitted changes..."
+        $stashMessage = "embody-auto-stash-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        git stash push -m $stashMessage --include-untracked
+    }
+    
+    # Fetch latest
+    Write-Status "Fetching latest from origin..."
+    git fetch origin main --quiet
+    git fetch origin $branch --quiet 2>$null
+    
+    # Detection cascade
+    $syncStrategy = Get-SyncStrategy -Branch $branch
+    
+    switch ($syncStrategy) {
+        "squash-reset" {
+            Write-Decision "Detected squash merge - resetting to main"
+            git reset --hard origin/main
+            git push origin $branch --force-with-lease 2>$null
+            Write-Success "Branch reset to match main after squash merge"
         }
-    }
-    if ($behind -gt 0) {
-        Write-Host "  ↓ $behind commit(s) behind origin/$remoteBranch" -ForegroundColor Yellow
-        Write-Host "     Consider: git pull --rebase origin $remoteBranch" -ForegroundColor DarkGray
-    }
-} else {
-    Write-Host "  ✅ In sync with origin/$remoteBranch" -ForegroundColor Green
-}
-
-# Step 5: Load active context (new structure per ADR-004)
-$activeContextPath = ".claude/memory-bank/active/$Persona.md"
-if (Test-Path $activeContextPath) {
-    Write-Host "`n📚 Active context for $($config.name):" -ForegroundColor $config.color
-    
-    # Extract key information from context
-    $contextContent = Get-Content $activeContextPath -Raw
-    
-    # Look for current work section
-    if ($contextContent -match "## Current Work\s*\n([\s\S]*?)(?=##|$)") {
-        $currentWork = $matches[1].Trim()
-        if ($currentWork -and $currentWork -ne "- No active implementation tasks") {
-            Write-Host "  Current Work:" -ForegroundColor White
-            $currentWork -split "`n" | Select-Object -First 3 | ForEach-Object {
-                if ($_.Trim()) {
-                    Write-Host "    $_" -ForegroundColor DarkGray
-                }
+        
+        "fast-forward" {
+            Write-Decision "Fast-forward available"
+            git merge origin/$branch --ff-only 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                git pull origin main --ff-only
             }
+            Write-Success "Fast-forwarded to latest"
         }
-    }
-    
-    # Look for next actions
-    if ($contextContent -match "## Next Actions\s*\n([\s\S]*?)(?=##|$)") {
-        $nextActions = $matches[1].Trim()
-        if ($nextActions) {
-            Write-Host "  Next Actions:" -ForegroundColor White
-            $nextActions -split "`n" | Select-Object -First 3 | ForEach-Object {
-                if ($_.Trim()) {
-                    Write-Host "    $_" -ForegroundColor DarkGray
-                }
-            }
-        }
-    }
-} else {
-    Write-Host "`n📚 Creating active context file..." -ForegroundColor Yellow
-    New-Item -Path $activeContextPath -ItemType File -Force | Out-Null
-    @"
-# $($config.name) Active Context
-
-**Last Updated**: $(Get-Date -Format 'yyyy-MM-dd')
-**Current Focus**: [Starting fresh session]
-
-## Current Work
-- No active tasks yet
-
-## Next Actions
-- [ ] Check backlog for assigned items
-- [ ] Review recent session log entries
-
-## Notes
-[Session notes will go here]
-"@ | Set-Content $activeContextPath
-    Write-Host "  ✅ Created: $activeContextPath" -ForegroundColor Green
-}
-
-# Step 6: Check recent session log entries
-$sessionLogPath = ".claude/memory-bank/session-log.md"
-if (Test-Path $sessionLogPath) {
-    Write-Host "`n📜 Recent session activity:" -ForegroundColor Yellow
-    
-    # Get last 3 entries from any persona
-    $logContent = Get-Content $sessionLogPath
-    $entries = @()
-    $currentEntry = @()
-    
-    foreach ($line in $logContent) {
-        if ($line -match "^### \d+:\d+ - ") {
-            if ($currentEntry.Count -gt 0) {
-                $entries += ,($currentEntry -join "`n")
-            }
-            $currentEntry = @($line)
-        } elseif ($currentEntry.Count -gt 0) {
-            $currentEntry += $line
-        }
-    }
-    if ($currentEntry.Count -gt 0) {
-        $entries += ,($currentEntry -join "`n")
-    }
-    
-    $recentEntries = $entries | Select-Object -Last 2
-    foreach ($entry in $recentEntries) {
-        if ($entry -match "### (\d+:\d+) - (.+)") {
-            Write-Host "  $($matches[1]) $($matches[2]):" -ForegroundColor White
+        
+        "smart-rebase" {
+            Write-Decision "Rebasing local commits"
+            $rebaseResult = git rebase origin/main 2>&1
             
-            # Extract key info from entry
-            if ($entry -match "Handoff Notes?: ([^\n]+)") {
-                Write-Host "    → $($matches[1])" -ForegroundColor Yellow
+            if ($LASTEXITCODE -ne 0) {
+                # Conflict during rebase - try alternative strategies
+                git rebase --abort 2>$null
+                
+                # Check if it's actually a squash merge situation we missed
+                if (Test-HiddenSquashMerge) {
+                    Write-Warning "Hidden squash merge detected - switching to reset"
+                    git reset --hard origin/main
+                    git push origin $branch --force-with-lease 2>$null
+                    Write-Success "Resolved via reset"
+                } else {
+                    # Real conflicts - try merge instead
+                    Write-Warning "Rebase has conflicts - using merge strategy"
+                    git merge origin/main --no-edit
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Warning "Auto-merge failed - manual intervention needed"
+                        return $false
+                    }
+                    Write-Success "Resolved via merge"
+                }
+            } else {
+                Write-Success "Rebase successful"
+                # Push if needed
+                if ($branch -ne "main" -and (git status | Select-String "ahead")) {
+                    git push origin $branch --force-with-lease 2>$null
+                }
             }
-            if ($entry -match "Status: ([^\n]+)") {
-                Write-Host "    Status: $($matches[1])" -ForegroundColor DarkGray
+        }
+        
+        "up-to-date" {
+            Write-Success "Already up to date"
+        }
+        
+        default {
+            Write-Warning "Complex state detected - using safe merge"
+            git pull origin main --no-rebase
+        }
+    }
+    
+    # Restore stash if needed
+    if ($hasUncommitted) {
+        Write-Status "Restoring stashed changes..."
+        git stash pop --quiet
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Stash restoration had conflicts - review with 'git stash list'"
+        } else {
+            Write-Success "Restored uncommitted changes"
+        }
+    }
+    
+    return $true
+}
+
+function Get-SyncStrategy {
+    param([string]$Branch)
+    
+    $ahead = git rev-list --count origin/main..HEAD
+    $behind = git rev-list --count HEAD..origin/main
+    
+    # Check for squash merge indicators
+    if ($Branch -eq "dev/main") {
+        # Check GitHub for merged PRs
+        if (Get-Command gh -ErrorAction SilentlyContinue) {
+            $mergedPR = gh pr list --state merged --head $Branch --limit 1 --json mergedAt --jq '.[0].mergedAt' 2>$null
+            if ($mergedPR) {
+                $mergeTime = [DateTime]::Parse($mergedPR)
+                if ($mergeTime -gt (Get-Date).AddHours(-2)) {
+                    return "squash-reset"
+                }
             }
+        }
+        
+        # Check commit patterns
+        if ($ahead -gt 5 -and $behind -eq 1) {
+            $lastMainCommit = git log origin/main -1 --pretty=format:"%s"
+            if ($lastMainCommit -match '\(#\d+\)') {
+                return "squash-reset"
+            }
+        }
+    }
+    
+    # Determine strategy based on state
+    if ($ahead -eq 0 -and $behind -eq 0) {
+        return "up-to-date"
+    } elseif ($ahead -eq 0 -and $behind -gt 0) {
+        return "fast-forward"
+    } elseif ($ahead -gt 0) {
+        return "smart-rebase"
+    } else {
+        return "merge"
+    }
+}
+
+function Test-HiddenSquashMerge {
+    # Secondary detection for squash merges that weren't caught initially
+    $branch = git branch --show-current
+    if ($branch -ne "dev/main") { return $false }
+    
+    # Get the first different commit between branches
+    $divergePoint = git merge-base HEAD origin/main
+    $localCommits = git log --oneline "$divergePoint..HEAD" | Measure-Object -Line
+    $mainCommits = git log --oneline "$divergePoint..origin/main" | Measure-Object -Line
+    
+    # Many local commits but only 1 on main suggests squash
+    if ($localCommits.Lines -gt 5 -and $mainCommits.Lines -eq 1) {
+        # Check if main commit message references a PR
+        $mainCommit = git log origin/main -1 --pretty=format:"%s"
+        if ($mainCommit -match '#\d+') {
+            return $true
+        }
+    }
+    
+    return $false
+}
+
+# Main embodiment flow
+Write-Host ""
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "  🎭 EMBODYING: $($Persona.ToUpper())" -ForegroundColor Yellow
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+
+# Step 1: Intelligent Sync
+$syncSuccess = Resolve-GitState
+
+if (-not $syncSuccess) {
+    Write-Error "Sync failed - please resolve manually and try again"
+    exit 1
+}
+
+# Step 2: Set Git Identity
+Write-Phase "Setting Persona Identity"
+
+$identities = @{
+    'dev-engineer' = 'Dev Engineer'
+    'tech-lead' = 'Tech Lead'
+    'test-specialist' = 'Test Specialist'
+    'debugger-expert' = 'Debugger Expert'
+    'product-owner' = 'Product Owner'
+    'devops-engineer' = 'DevOps Engineer'
+}
+
+$identity = $identities[$Persona]
+git config user.name $identity
+git config user.email "$Persona@blocklife"
+
+Write-Success "Git identity set to: $identity"
+
+# Step 3: Load Memory Bank Context
+Write-Phase "Loading Memory Bank"
+
+$memoryBankPath = Join-Path (Split-Path (Split-Path $scriptRoot)) ".claude\memory-bank"
+$activeContextPath = Join-Path $memoryBankPath "active\$Persona.md"
+
+if (Test-Path $activeContextPath) {
+    Write-Info "Active context for ${Persona}:"
+    Get-Content $activeContextPath | Select-Object -First 20 | ForEach-Object {
+        Write-Host "  $_" -ForegroundColor Gray
+    }
+} else {
+    Write-Warning "No active context found for $Persona"
+    New-Item -Path $activeContextPath -Force -Value "# $identity Active Context`n`nLast updated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n`n## Current Work`n`n" | Out-Null
+    Write-Info "Created new context file"
+}
+
+# Step 4: Check Session Log
+$sessionLogPath = Join-Path $memoryBankPath "session-log.md"
+if (Test-Path $sessionLogPath) {
+    $recentLogs = Get-Content $sessionLogPath | Select-Object -Last 10
+    if ($recentLogs) {
+        Write-Info "Recent session activity:"
+        $recentLogs | ForEach-Object {
+            Write-Host "  $_" -ForegroundColor Gray
         }
     }
 }
 
-# Step 7: Check backlog ownership
-Write-Host "`n📋 Backlog items assigned to you:" -ForegroundColor $config.color
-$backlogPath = "Docs/01-Active/Backlog.md"
+# Step 5: Show Backlog Items
+Write-Phase "Checking Backlog"
+
+$backlogPath = Join-Path (Split-Path (Split-Path $scriptRoot)) "Docs\01-Active\Backlog.md"
 if (Test-Path $backlogPath) {
-    $ownerPattern = "Owner:\s*$($config.name)"
-    $ownedItems = Select-String -Path $backlogPath -Pattern $ownerPattern -Context 2,0
+    $ownedItems = Select-String -Path $backlogPath -Pattern "Owner:\s*$identity" -Context 2,0
     
     if ($ownedItems) {
-        $itemCount = 0
+        Write-Info "Your backlog items:"
         foreach ($item in $ownedItems) {
-            $itemCount++
-            $title = $item.Context.PreContext[0] -replace '^###\s*', ''
-            
-            # Try to extract status if present
-            $statusLine = $item.Context.PreContext[1]
-            if ($statusLine -match "Status:\s*(.+)") {
-                $status = $matches[1].Trim()
-                Write-Host "  • $title " -NoNewline -ForegroundColor White
-                Write-Host "[$status]" -ForegroundColor DarkGray
-            } else {
-                Write-Host "  • $title" -ForegroundColor White
-            }
-            
-            # Limit to first 5 items
-            if ($itemCount -ge 5) {
-                $remaining = $ownedItems.Count - 5
-                if ($remaining -gt 0) {
-                    Write-Host "  ... and $remaining more" -ForegroundColor DarkGray
+            $lines = $item.Context.PreContext + $item.Line
+            foreach ($line in $lines) {
+                if ($line -match '^#{2,3}\s+(.+)$') {
+                    Write-Host "  📌 $($Matches[1])" -ForegroundColor Yellow
+                } elseif ($line -match 'Status:\s*(.+)$') {
+                    Write-Host "     Status: $($Matches[1])" -ForegroundColor Cyan
                 }
-                break
             }
         }
     } else {
-        Write-Host "  ℹ️  No items currently assigned to $($config.name)" -ForegroundColor Gray
-        Write-Host "     Check the backlog for available work" -ForegroundColor DarkGray
+        Write-Info "No items currently assigned to $identity"
     }
 }
 
-# Step 8: Persona-specific tips
-Write-Host "`n💡 Suggested actions for $($config.name):" -ForegroundColor $config.color
-foreach ($tip in $config.tips) {
-    Write-Host "  • $tip" -ForegroundColor DarkGray
+# Step 6: Final Status
+Write-Phase "Ready to Work!"
+
+$branch = git branch --show-current
+$status = git status --short
+
+Write-Host ""
+Write-Host "📍 Current branch: " -NoNewline -ForegroundColor Cyan
+Write-Host $branch -ForegroundColor Yellow
+
+if ($status) {
+    Write-Host "📝 Uncommitted changes:" -ForegroundColor Cyan
+    Write-Host $status -ForegroundColor Gray
+} else {
+    Write-Host "✨ Working directory clean" -ForegroundColor Green
 }
 
-# Step 9: Final summary and instructions
-Write-Host "`n" + ("=" * 60) -ForegroundColor $config.color
-Write-Host "✅ READY TO WORK AS $($config.name.ToUpper())!" -ForegroundColor $config.color
 Write-Host ""
-Write-Host "📝 Next steps:" -ForegroundColor White
-Write-Host "  1. In Claude, use: " -NoNewline -ForegroundColor DarkGray
-Write-Host "/clear" -ForegroundColor Cyan
-Write-Host "  2. Then tell Claude: " -NoNewline -ForegroundColor DarkGray
-Write-Host "embody $Persona" -ForegroundColor Cyan
-Write-Host "  3. Claude loads context from:" -ForegroundColor DarkGray
-Write-Host "     • .claude/memory-bank/active/$Persona.md" -ForegroundColor DarkGray
-Write-Host "     • Docs/01-Active/Backlog.md (shared truth)" -ForegroundColor DarkGray
+Write-Host "🎭 You are now: " -NoNewline -ForegroundColor Cyan
+Write-Host $identity -ForegroundColor Yellow
 Write-Host ""
-Write-Host "⚡ Remember:" -ForegroundColor Yellow
-Write-Host "  • Commit every 20-30 minutes" -ForegroundColor DarkGray
-Write-Host "  • Push after 2-3 commits" -ForegroundColor DarkGray
-Write-Host "  • PR when feature complete" -ForegroundColor DarkGray
-Write-Host "  • Update session-log.md for handoffs" -ForegroundColor DarkGray
+
+# Step 7: Show smart hints based on context
+if ($branch -eq "main") {
+    Write-Host "💡 Tip: Create a feature branch for new work" -ForegroundColor Blue
+    Write-Host "   git checkout -b feat/VS_XXX-description" -ForegroundColor Gray
+} elseif ($branch -eq "dev/main") {
+    Write-Host "💡 Tip: Your working branch is ready" -ForegroundColor Blue
+    Write-Host "   Commit frequently to prevent conflicts" -ForegroundColor Gray
+}
+
+# Check if we should suggest creating a PR
+$unpushedCommits = git log origin/$branch..$branch --oneline 2>$null | Measure-Object -Line
+if ($unpushedCommits.Lines -gt 3) {
+    Write-Host "💡 Tip: You have $($unpushedCommits.Lines) unpushed commits" -ForegroundColor Blue
+    Write-Host "   Consider creating a PR: pr create" -ForegroundColor Gray
+}
+
+Write-Host ""
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "  ✅ $identity embodiment complete!" -ForegroundColor Green  
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Green
 Write-Host ""

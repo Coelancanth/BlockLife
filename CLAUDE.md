@@ -90,7 +90,27 @@ Do what has been asked; nothing more, nothing less.
 
 **Priority Framework**: [Workflow.md](Docs/01-Active/Workflow.md#priority-tiers) - 🔥 Critical / 📈 Important / 💡 Ideas
 
-## 🤖 Streamlined Persona System
+## 🤖 Streamlined Persona System with v4.0 Auto-Sync
+
+### 🎯 AUTOMATIC EMBODIMENT - ZERO FRICTION
+**When user says "embody [persona]", ALWAYS run:**
+```bash
+./scripts/persona/embody-v4.ps1 [persona]
+```
+
+**This v4.0 script handles EVERYTHING automatically:**
+- ✅ Detects and resolves squash merges (no conflicts!)
+- ✅ Handles interrupted rebases/merges
+- ✅ Preserves uncommitted work
+- ✅ Fixes detached HEAD states
+- ✅ Cleans up stale branches
+- ✅ Updates Memory Bank automatically
+
+**You NEVER need to:**
+- Check if there was a squash merge
+- Manually resolve conflicts from PRs
+- Run separate sync commands
+- Worry about git state
 
 ### Persona Flow
 ```
@@ -153,12 +173,26 @@ mcp__context7__get-library-docs "/louthy/language-ext" --topic "Error Fin bind c
 
 **Complete Context7 Guidance**: [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md)
 
-## 📖 Git Workflow
+## 📖 Git Workflow with Smart Sync
+
+### 🎯 NEW: Automatic Sync Resolution
+**ALWAYS use `git sync` instead of manual pull/rebase:**
+```bash
+git sync  # Automatically detects and handles squash merges, conflicts, etc.
+```
+
+**Or use the PR workflow:**
+```bash
+pr create   # Create PR from current branch
+pr merge    # Merge PR and auto-sync dev/main
+pr sync     # Same as git sync
+pr status   # Check PR and sync status
+```
 
 **Essential**: Check branch status before starting work: `./scripts/git/branch-status-check.ps1`
 
 **Complete Protocols**: [BranchAndCommitDecisionProtocols.md](Docs/02-Design/Protocols/GitWorkflow/BranchAndCommitDecisionProtocols.md)
-**Architecture Details**: [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md) - Multi-clone setup, troubleshooting
+**Architecture Details**: [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md) - Single-repo setup, troubleshooting
 
 
 ## 📦 PR Merge Strategy

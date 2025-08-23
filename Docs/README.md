@@ -44,13 +44,13 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 ## 🚀 Quick Start
 
 ### For New Contributors
-1. Check `.claude/memory-bank/activeContext.md` - Current session state
+1. Check `.claude/memory-bank/active/[persona].md` - Current persona context
 2. Read [HANDBOOK.md](03-Reference/HANDBOOK.md) - Essential daily companion
 3. Check [Backlog.md](01-Active/Backlog.md) - Current TD items and priorities
 4. Review [Workflow.md](01-Active/Workflow.md) - Development processes
 
 ### For AI Personas  
-1. Check `.claude/memory-bank/` for context first
+1. Check `.claude/memory-bank/active/[persona].md` and `session-log.md` first
 2. Your definition is in [04-Personas/](04-Personas/)
 3. Check [Backlog.md](01-Active/Backlog.md) for TD items you own
 4. Reference [Glossary.md](03-Reference/Glossary.md) before naming anything

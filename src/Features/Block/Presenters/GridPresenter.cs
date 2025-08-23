@@ -4,7 +4,7 @@ using BlockLife.Core.Features.Block.Placement.Effects;
 using BlockLife.Core.Features.Block.Placement.Notifications;
 using BlockLife.Core.Infrastructure.Services;
 using BlockLife.Core.Presentation;
-using BlockLife.Features.Block.Move.Effects;
+using BlockLife.Core.Features.Block.Move.Effects;
 using MediatR;
 using Serilog;
 using System;

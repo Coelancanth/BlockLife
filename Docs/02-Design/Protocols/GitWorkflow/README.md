@@ -81,9 +81,9 @@ These documents define **how we work** rather than **what we build**. They estab
 - **Commit-msg**: Conventional commit format enforcement
 
 ### Memory Bank Integration
-- Branch status reflected in activeContext.md
+- Branch status reflected in active persona context files
 - Work item alignment validation
-- Session continuity protocols
+- Session continuity protocols via session-log.md
 
 ## 📋 Protocol Development Philosophy
 
