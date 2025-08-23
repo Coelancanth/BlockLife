@@ -269,7 +269,7 @@ if (Test-Path $personaDocPath) {
         $content -match '### Tier 1: Instant Answers[^\n]*\n((?:[^\n]+\n){1,5})') {
         $quickRefs = $matches[1] -split '\n' | Where-Object { $_ -match '^\d+\.' } | Select-Object -First 3
         if ($quickRefs) {
-            Write-Info "Top 3 Quick References for $identity:"
+            Write-Info "Top 3 Quick References for ${identity}:"
             $quickRefs | ForEach-Object {
                 Write-Host "  $_" -ForegroundColor Cyan
             }

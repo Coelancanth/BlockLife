@@ -73,13 +73,14 @@ public sealed class BlockInspectionHandler
 
     private void PrintToConsole(Core.Domain.Block.Block block, Vector2Int position)
     {
-        GD.Print($"=== BLOCK INSPECTION ===");
-        GD.Print($"Position: ({position.X}, {position.Y})");
-        GD.Print($"BlockId: {block.Id}");
-        GD.Print($"Type: {block.Type}");
-        GD.Print($"CreatedAt: {block.CreatedAt:yyyy-MM-dd HH:mm:ss}");
-        GD.Print($"LastModifiedAt: {block.LastModifiedAt:yyyy-MM-dd HH:mm:ss}");
-        GD.Print($"========================");
+        // Commented out verbose debug output
+        // GD.Print($"=== BLOCK INSPECTION ===");
+        // GD.Print($"Position: ({position.X}, {position.Y})");
+        // GD.Print($"BlockId: {block.Id}");
+        // GD.Print($"Type: {block.Type}");
+        // GD.Print($"CreatedAt: {block.CreatedAt:yyyy-MM-dd HH:mm:ss}");
+        // GD.Print($"LastModifiedAt: {block.LastModifiedAt:yyyy-MM-dd HH:mm:ss}");
+        // GD.Print($"========================");
     }
 
     private void LogEmptyPosition(Vector2Int position)
@@ -91,10 +92,11 @@ public sealed class BlockInspectionHandler
 
     private void PrintEmptyToConsole(Vector2Int position)
     {
-        GD.Print($"=== POSITION INSPECTION ===");
-        GD.Print($"Position: ({position.X}, {position.Y})");
-        GD.Print($"Status: Empty");
-        GD.Print($"Valid: {_gridStateService.IsValidPosition(position)}");
-        GD.Print($"===========================");
+        // Commented out verbose debug output
+        // GD.Print($"=== POSITION INSPECTION ===");
+        // GD.Print($"Position: ({position.X}, {position.Y})");
+        // GD.Print($"Status: Empty");
+        // GD.Print($"Valid: {_gridStateService.IsValidPosition(position)}");
+        // GD.Print($"===========================");
     }
 }

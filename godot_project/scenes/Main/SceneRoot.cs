@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using BlockLife.Core;
+using BlockLife.Core.Domain.Player;
+using BlockLife.Core.Features.Player.Commands;
 using BlockLife.Core.Infrastructure.Logging;
 using BlockLife.Core.Presentation;
 using BlockLife.godot_project.infrastructure.logging;
 using BlockLife.godot_project.resources.settings;
 using Godot;
+using LanguageExt;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using static LanguageExt.Prelude;
 
 namespace BlockLife.godot_project.scenes.Main;
 
@@ -59,9 +64,15 @@ public partial class SceneRoot : Node
 
     public override void _Ready()
     {
+        // Use CallDeferred to handle async initialization properly in Godot
+        CallDeferred(nameof(InitializeApplicationSafelyAsync));
+    }
+
+    private async void InitializeApplicationSafelyAsync()
+    {
         try
         {
-            InitializeApplicationSafely();
+            await InitializeApplicationSafely();
         }
         catch (Exception ex)
         {
@@ -74,7 +85,7 @@ public partial class SceneRoot : Node
         }
     }
 
-    private void InitializeApplicationSafely()
+    private async System.Threading.Tasks.Task InitializeApplicationSafely()
     {
         // --- 2. Validate LogSettings Configuration ---
         if (_logSettings == null)
@@ -145,6 +156,9 @@ public partial class SceneRoot : Node
             Logger.ForContext("SourceContext", LogCategory.DI)
                   .Debug("DI Container validated and ready with {ServiceCount} registered services",
                          _serviceProvider.GetType().GetProperty("Services")?.GetValue(_serviceProvider) ?? "unknown");
+
+            // --- 6. Initialize Default Player for Match-3 Game ---
+            await InitializeDefaultPlayerAsync();
         }
         catch (Exception ex)
         {
@@ -212,6 +226,96 @@ public partial class SceneRoot : Node
                 // Always clear the instance to allow new SceneRoot creation
                 Instance = null;
             }
+        }
+    }
+
+    /// <summary>
+    /// Creates a default player for the match-3 game if no player exists.
+    /// This ensures the attribute system has a player to display.
+    /// </summary>
+    private async System.Threading.Tasks.Task InitializeDefaultPlayerAsync()
+    {
+        try
+        {
+            var mediator = _serviceProvider?.GetRequiredService<IMediator>();
+            if (mediator == null)
+            {
+                Logger?.Warning("MediatR not available - skipping player initialization");
+                return;
+            }
+
+            Logger?.Information("Initializing default player for match-3 game");
+
+            // Create default player with starting resources
+            var command = CreatePlayerCommand.Create("Player");
+            var result = await mediator.Send(command);
+
+            // Give the new player starting resources and attributes for gameplay, then report success
+            await result.Match(
+                Succ: async player => 
+                {
+                    await GivePlayerStartingResourcesAsync(mediator, player);
+                    Logger?.Information("Default player '{PlayerName}' created successfully with ID {PlayerId}", 
+                        player.Name, player.Id);
+                },
+                Fail: error =>
+                {
+                    Logger?.Warning("Failed to create default player: {Error}", error.Message);
+                    return System.Threading.Tasks.Task.CompletedTask;
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error(ex, "Error during player initialization");
+            // Don't throw - game can continue without player, it just won't show attributes
+        }
+    }
+
+    /// <summary>
+    /// Gives a newly created player starting resources and attributes for gameplay.
+    /// Uses ApplyMatchRewardsCommand to add resources without breaking domain integrity.
+    /// </summary>
+    private async System.Threading.Tasks.Task GivePlayerStartingResourcesAsync(IMediator mediator, PlayerState player)
+    {
+        try
+        {
+            // Give starting resources
+            var resourceCommand = ApplyMatchRewardsCommand.Create(
+                Map(
+                    (ResourceType.Money, 100),
+                    (ResourceType.SocialCapital, 50)
+                ),
+                Map(
+                    (AttributeType.Knowledge, 10),
+                    (AttributeType.Health, 15),
+                    (AttributeType.Happiness, 12),
+                    (AttributeType.Energy, 20),
+                    (AttributeType.Nutrition, 8),
+                    (AttributeType.Fitness, 10),
+                    (AttributeType.Mindfulness, 5),
+                    (AttributeType.Creativity, 7)
+                ),
+                "Welcome bonus - starting resources for new player"
+            );
+
+            var result = await mediator.Send(resourceCommand);
+            await result.Match(
+                Succ: _ => 
+                {
+                    Logger?.Information("Starting resources and attributes granted to new player");
+                    return System.Threading.Tasks.Task.CompletedTask;
+                },
+                Fail: error =>
+                {
+                    Logger?.Warning("Failed to grant starting resources: {Error}", error.Message);
+                    return System.Threading.Tasks.Task.CompletedTask;
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error(ex, "Error granting starting resources to player");
         }
     }
 }

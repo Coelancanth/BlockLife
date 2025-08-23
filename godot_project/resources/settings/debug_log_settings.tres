@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_maho2")
-DefaultLogLevel = 2
+DefaultLogLevel = 1
 EnableRichTextInGodot = true
 VerboseCommands = false
 VerboseQueries = false

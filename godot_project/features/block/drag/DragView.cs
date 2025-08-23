@@ -63,12 +63,40 @@ public partial class DragView : Control, IDragView
         _logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext<DragView>();
         _logger?.Debug("DragView _Ready called");
 
-        InitializeServices();
+        // Setup visual elements immediately (they don't need ServiceProvider)
         SetupVisualElements();
-        SubscribeToEvents();
-        InitializePresenter();
 
-        _logger?.Debug("DragView initialized successfully");
+        // Defer service initialization to avoid race condition with SceneRoot async setup
+        CallDeferred(nameof(InitializeWhenSceneRootReady));
+    }
+
+    /// <summary>
+    /// Deferred initialization to avoid race condition with SceneRoot async setup
+    /// </summary>
+    private void InitializeWhenSceneRootReady()
+    {
+        var sceneRoot = GetNodeOrNull<SceneRoot>("/root/SceneRoot");
+        
+        if (sceneRoot?.ServiceProvider != null)
+        {
+            InitializeServices();
+            SubscribeToEvents();
+            InitializePresenter();
+            _logger?.Debug("DragView initialized successfully");
+        }
+        else
+        {
+            // SceneRoot might still be initializing - try again in the next frame
+            if (sceneRoot != null)
+            {
+                _logger?.Debug("SceneRoot ServiceProvider not ready yet, retrying...");
+                CallDeferred(nameof(InitializeWhenSceneRootReady));
+            }
+            else
+            {
+                _logger?.Warning("SceneRoot not found. DragView initialization skipped.");
+            }
+        }
     }
 
     private void InitializeServices()
@@ -150,8 +178,18 @@ public partial class DragView : Control, IDragView
 
     private void InitializePresenter()
     {
+        // Use deferred initialization to avoid race condition with SceneRoot async setup
+        CallDeferred(nameof(InitializePresenterWhenSceneRootReady));
+    }
+
+    /// <summary>
+    /// Deferred presenter initialization to avoid race condition with SceneRoot async setup
+    /// </summary>
+    private void InitializePresenterWhenSceneRootReady()
+    {
         var sceneRoot = GetNodeOrNull<SceneRoot>("/root/SceneRoot");
-        if (sceneRoot != null)
+        
+        if (sceneRoot?.PresenterFactory != null)
         {
             _presenter = sceneRoot.CreatePresenterFor<DragPresenter, IDragView>(this);
             _presenter?.Initialize();
@@ -159,7 +197,16 @@ public partial class DragView : Control, IDragView
         }
         else
         {
-            _logger?.Warning("SceneRoot not found. Presenter creation skipped.");
+            // SceneRoot might still be initializing - try again in the next frame
+            if (sceneRoot != null)
+            {
+                _logger?.Debug("SceneRoot PresenterFactory not ready yet, retrying...");
+                CallDeferred(nameof(InitializePresenterWhenSceneRootReady));
+            }
+            else
+            {
+                _logger?.Warning("SceneRoot not found. Presenter creation skipped.");
+            }
         }
     }
 

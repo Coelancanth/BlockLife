@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://o8gakj4jxun8"]
+[gd_scene load_steps=3 format=3 uid="uid://o8gakj4jxun8"]
 
+[ext_resource type="PackedScene" uid="uid://bx5dw2v3qkh8p" path="res://godot_project/scenes/AttributeDisplay.tscn" id="2_attribute"]
 [ext_resource type="PackedScene" uid="uid://ko2eo5hcjxkl" path="res://godot_project/scenes/grid.tscn" id="3_iyj48"]
 
 [node name="main" type="Node"]
 
 [node name="Grid" parent="." instance=ExtResource("3_iyj48")]
+
+[node name="AttributeDisplay" parent="." instance=ExtResource("2_attribute")]
+layout_mode = 3
