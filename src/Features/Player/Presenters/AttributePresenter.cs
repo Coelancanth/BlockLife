@@ -78,8 +78,17 @@ namespace BlockLife.Core.Features.Player.Presenters
                     },
                     Fail: async error =>
                     {
-                        _logger.Warning("Failed to retrieve player state: {Error}", error.Message);
-                        await View.ShowErrorAsync(error.Message);
+                        // Handle "NO_CURRENT_PLAYER" as a normal state, not an error
+                        if (error.Message.Contains("NO_CURRENT_PLAYER"))
+                        {
+                            _logger.Debug("No current player - showing empty state");
+                            await View.ClearDisplayAsync();
+                        }
+                        else
+                        {
+                            _logger.Warning("Failed to retrieve player state: {Error}", error.Message);
+                            await View.ShowErrorAsync(error.Message);
+                        }
                     }
                 );
             }

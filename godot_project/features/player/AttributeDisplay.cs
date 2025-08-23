@@ -40,9 +40,19 @@ public partial class AttributeDisplay : Control, IAttributeView
             return;
         }
 
-        // Initialize presenter using the factory pattern
+        // Initialize presenter using the factory pattern - defer to avoid race condition
+        CallDeferred(nameof(InitializePresenterWhenSceneRootReady));
+    }
+
+    /// <summary>
+    /// Deferred presenter initialization to avoid race condition with SceneRoot async setup
+    /// </summary>
+    private void InitializePresenterWhenSceneRootReady()
+    {
+        var logger = GetNodeOrNull<SceneRoot>("/root/SceneRoot")?.Logger?.ForContext("SourceContext", "UI");
         var sceneRoot = GetNodeOrNull<SceneRoot>("/root/SceneRoot");
-        if (sceneRoot != null && sceneRoot.PresenterFactory != null)
+        
+        if (sceneRoot?.PresenterFactory != null)
         {
             _presenter = sceneRoot.PresenterFactory.Create<AttributePresenter, IAttributeView>(this);
             _presenter?.Initialize();
@@ -50,7 +60,16 @@ public partial class AttributeDisplay : Control, IAttributeView
         }
         else
         {
-            logger?.Warning("SceneRoot not found at /root/SceneRoot. Presenter creation skipped. This is expected in test scenarios.");
+            // SceneRoot might still be initializing - try again in the next frame
+            if (sceneRoot != null)
+            {
+                logger?.Debug("SceneRoot PresenterFactory not ready yet, retrying...");
+                CallDeferred(nameof(InitializePresenterWhenSceneRootReady));
+            }
+            else
+            {
+                logger?.Warning("SceneRoot not found at /root/SceneRoot. Presenter creation skipped. This is expected in test scenarios.");
+            }
         }
     }
 
