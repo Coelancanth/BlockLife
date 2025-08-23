@@ -1,4 +1,5 @@
 using BlockLife.Core.Domain.Player;
+using BlockLife.Core.Features.Player.Notifications;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
 using LanguageExt.Common;
@@ -18,17 +19,20 @@ namespace BlockLife.Core.Features.Player.Commands
     public class ApplyMatchRewardsCommandHandler : IRequestHandler<ApplyMatchRewardsCommand, Fin<PlayerState>>
     {
         private readonly IPlayerStateService _playerStateService;
+        private readonly IMediator _mediator;
         private readonly ILogger _logger;
 
         public ApplyMatchRewardsCommandHandler(
             IPlayerStateService playerStateService,
+            IMediator mediator,
             ILogger logger)
         {
             _playerStateService = playerStateService;
+            _mediator = mediator;
             _logger = logger;
         }
 
-        public Task<Fin<PlayerState>> Handle(ApplyMatchRewardsCommand request, CancellationToken cancellationToken)
+        public async Task<Fin<PlayerState>> Handle(ApplyMatchRewardsCommand request, CancellationToken cancellationToken)
         {
             _logger.Debug("Processing ApplyMatchRewardsCommand with {ResourceCount} resources and {AttributeCount} attributes. Description: {Description}",
                 request.ResourceChanges.Count, request.AttributeChanges.Count, request.MatchDescription ?? "None");
@@ -39,7 +43,7 @@ namespace BlockLife.Core.Features.Player.Commands
             {
                 var error = currentPlayerResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
                 _logger.Warning("No current player found for ApplyMatchRewardsCommand: {Error}", error.Message);
-                return Task.FromResult(FinFail<PlayerState>(error));
+                return FinFail<PlayerState>(error);
             }
 
             var currentPlayer = currentPlayerResult.Match(Succ: p => p, Fail: _ => throw new InvalidOperationException());
@@ -50,7 +54,7 @@ namespace BlockLife.Core.Features.Player.Commands
             {
                 var error = rewardResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
                 _logger.Warning("Failed to apply rewards: {Error}", error.Message);
-                return Task.FromResult(FinFail<PlayerState>(error));
+                return FinFail<PlayerState>(error);
             }
 
             var updatedPlayer = rewardResult.Match(Succ: p => p, Fail: _ => throw new InvalidOperationException());
@@ -58,8 +62,17 @@ namespace BlockLife.Core.Features.Player.Commands
             _logger.Debug("Successfully applied match rewards. Player {PlayerName} total score: {TotalScore} (was {PreviousScore})",
                 updatedPlayer.Name, updatedPlayer.GetTotalScore(), currentPlayer.GetTotalScore());
 
+            // Step 3: Publish notification for UI updates
+            var notification = PlayerStateChangedNotification.Create(
+                updatedPlayer,
+                request.ResourceChanges,
+                request.AttributeChanges,
+                request.MatchDescription);
+
+            await _mediator.Publish(notification, cancellationToken);
+
             // Return the updated player state (the ICommand<PlayerState> pattern)
-            return Task.FromResult(FinSucc(updatedPlayer));
+            return FinSucc(updatedPlayer);
         }
 
         private Fin<PlayerState> GetCurrentPlayer()

@@ -3,6 +3,7 @@ using BlockLife.Core.Infrastructure.Services;
 using BlockLife.Core.Features.Player.Commands;
 using FluentAssertions;
 using LanguageExt;
+using MediatR;
 using Moq;
 using Serilog;
 using System.Threading;
@@ -19,16 +20,19 @@ namespace BlockLife.Core.Tests.Features.Player.Commands
     public class ApplyMatchRewardsCommandHandlerTests
     {
         private readonly Mock<ILogger> _mockLogger;
+        private readonly Mock<IMediator> _mockMediator;
         private readonly PlayerStateService _playerStateService;
         private readonly ApplyMatchRewardsCommandHandler _handler;
 
         public ApplyMatchRewardsCommandHandlerTests()
         {
             _mockLogger = new Mock<ILogger>();
+            _mockMediator = new Mock<IMediator>();
             _playerStateService = new PlayerStateService();
 
             _handler = new ApplyMatchRewardsCommandHandler(
                 _playerStateService,
+                _mockMediator.Object,
                 _mockLogger.Object
             );
         }
