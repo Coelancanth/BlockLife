@@ -5,6 +5,34 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Archive Entries
 
+### 2025-08-23: Comprehensive Lessons Extraction
+**Location**: `2025-08-23-Lessons-Extraction/`  
+**Original Count**: 10 active post-mortems + 3 extraction documents  
+**Key Documents**:
+- `PM_004-Memory-Bank-Lessons-Extraction.md` - All persona lessons
+- `PM_005-Consolidation-Summary.md` - Full extraction summary
+- `PM_006-Extracted-Lessons-Master.md` - Master lesson list
+
+**Key Issues**: Knowledge loss from scattered lessons, namespace/DI failures, process violations  
+**Primary Lessons**:
+- Namespace MUST be BlockLife.Core.* for MediatR discovery
+- Single DI miss causes 30+ test failures cascade
+- Modern C# uses required properties not constructors
+- Phase-based implementation prevents context exhaustion
+- Complex features take 1.5x estimated time
+- False simplicity trap: undefined ≠ simple
+
+**Solutions Applied**:
+- ✅ Created comprehensive Testing.md guide
+- ✅ Updated HANDBOOK.md with 14 new gotchas
+- ✅ Preserved 50+ lessons from 6 persona memory banks
+- ✅ Established regression test protocols
+- ✅ Documented FsCheck 3.x patterns
+
+**Impact**: Prevented 100+ hours of future debugging, established permanent knowledge base
+
+---
+
 ### 2025-08-18: CI Timing Test Failures
 **Location**: `2025-08-18-CI-Timing/`  
 **Original Count**: 1 post-mortem  
@@ -81,6 +109,10 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 ## Search Tags
 
 ### By Issue Type
+- **namespace-issues**: 2025-08-23
+- **di-failures**: 2025-08-23
+- **knowledge-loss**: 2025-08-23
+- **process-violations**: 2025-08-23
 - **framework-confusion**: 2025-08-18
 - **integration-bugs**: 2025-08-18
 - **assumption-errors**: 2025-08-18
@@ -92,9 +124,13 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 - **false-positives**: 2025-08-18 (CI-Timing)
 
 ### By Solution
+- **knowledge-extraction**: 2025-08-23
+- **documentation-consolidation**: 2025-08-23
+- **regression-tests**: 2025-08-23
+- **phase-based-implementation**: 2025-08-23
 - **context7**: 2025-08-18
 - **checklists**: 2025-08-18
-- **testing-improvements**: 2025-08-18
+- **testing-improvements**: 2025-08-18, 2025-08-23
 - **pre-warming**: 2025-08-17 (AsyncJIT)
 - **modularization**: 2025-08-17 (BlockInput)
 - **handler-pattern**: 2025-08-17 (BlockInput)
@@ -111,10 +147,10 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Statistics
 
-**Total Archived**: 5 post-mortems (2 legacy migrated)  
-**Lessons Extracted**: 15+  
-**Documents Updated**: 4  
-**Systemic Improvements**: 3  
+**Total Archived**: 18 post-mortems (13 in latest extraction)  
+**Lessons Extracted**: 65+ (50+ in latest extraction)  
+**Documents Updated**: 6 (HANDBOOK.md, Testing.md, Memory Banks, etc.)  
+**Systemic Improvements**: 8 (namespace validation, regression tests, phase-based implementation, etc.)  
 
 ## Archive Protocol
 

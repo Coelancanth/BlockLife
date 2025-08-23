@@ -1,12 +1,43 @@
 # BlockLife Developer Handbook
 
-**Last Updated**: 2025-08-21  
+**Last Updated**: 2025-08-23  
 **Purpose**: Single source of truth for daily development - everything you need in one place
+
+## 🔍 Quick Reference Protocol - Find What You Need FAST
+
+### When You Need Help With...
+
+**🐛 Debugging an Issue:**
+1. **Namespace/DI errors** → Jump to [Common Bug Patterns](#-common-bug-patterns)
+2. **Test failures** → Check [Testing.md](Testing.md) troubleshooting
+3. **Build errors** → See [Critical Gotchas](#critical-gotchas) (20 common issues)
+
+**💻 Writing Code:**
+1. **New feature** → Copy from `src/Features/Block/Move/` reference
+2. **Test patterns** → [Testing.md](Testing.md) has all patterns
+3. **Architecture questions** → [Core Architecture](#-core-architecture)
+
+**🔧 Common Tasks:**
+1. **Run tests** → [Quick Commands](#-quick-commands)
+2. **Switch personas** → [Persona System](#persona-system-adr-004-single-repo)
+3. **Create PR** → [Branch Naming](#branch-naming-convention-critical)
+
+**❓ "How Do I...?" Questions:**
+- **Use LanguageExt?** → [Testing Patterns](#languageext-testing-patterns)
+- **Mock with Moq?** → [Testing.md](Testing.md#-mocking-with-moq)
+- **Handle errors?** → Everything returns `Fin<T>` (no exceptions)
+- **Route work?** → [Persona Routing](#-persona-routing)
+
+**🚨 Emergency Fixes:**
+- **30+ test failures** → Check DI registration in GameStrapper.cs
+- **Handler not found** → Verify namespace is `BlockLife.Core.*`
+- **First-time setup** → Run `dotnet tool restore` then `./scripts/core/build.ps1 test`
 
 ## 📍 Navigation
 
 - **Need a term definition?** → [GLOSSARY.md](Glossary.md)
 - **Major architecture decision?** → [ADR Directory](ADR/)
+- **Testing guide?** → [Testing.md](Testing.md)
 - **Everything else?** → It's in this handbook
 
 ---
@@ -216,6 +247,29 @@ option.IfSome(entity => {
 });
 ```
 
+#### Testing with LanguageExt Collections
+```csharp
+// ✅ Correct Seq initialization
+new[] { item }.ToSeq()
+new IPattern[] { item }.ToSeq()
+
+// ✅ Correct Map construction
+Map((key, value))  // NOT Map<K,V>((key, value))
+```
+
+#### Property-Based Testing with FsCheck 3.x
+```csharp
+// Generators return Gen<T> directly
+private static Gen<BlockType> GenBlockType() =>
+    Gen.Elements(BlockType.Work, BlockType.Study, ...);
+
+// Use .ToArbitrary() for Prop.ForAll
+Prop.ForAll(
+    GenConnectedPattern().ToArbitrary(),
+    (positions) => { /* test invariant */ }
+).QuickCheckThrowOnFailure();
+```
+
 **Key Rule**: Everything returns `Fin<T>` - no exceptions thrown
 
 ---
@@ -235,7 +289,43 @@ option.IfSome(entity => {
 ### CI Branch Freshness Check
 **Pattern**: Fail PRs that are >20 commits behind main  
 **Example**: `.github/workflows/ci.yml:49-99`  
-**Rationale**: Prevents surprise conflicts during merge  
+**Rationale**: Prevents surprise conflicts during merge
+
+### Phase-Based Implementation for Large Features
+**Pattern**: Break features into discrete phases to prevent context exhaustion  
+**Example**: VS_003A implemented in 5 phases across separate sessions  
+**Benefits**:  
+- Prevents 10+ hour continuous sessions
+- Each phase independently testable
+- Clear progress tracking
+- Reduced cognitive load
+
+### MVP Pattern for UI Integration
+**Pattern**: Humble views with business logic in presenters  
+```csharp
+// View: Only display logic
+public partial class MatchRewardsView : Control, IMatchRewardsView {
+    public void DisplayRewards(RewardData data) => _label.Text = data.Text;
+}
+
+// Presenter: Business logic and coordination
+public class MatchRewardsPresenter {
+    public void ProcessMatch(MatchPattern pattern) {
+        var rewards = CalculateRewards(pattern);
+        _view.DisplayRewards(rewards);
+    }
+}
+```
+
+### Performance Optimization Pattern
+**Pattern**: Measure first, optimize specific bottlenecks  
+**Example**: CanRecognizeAt() pre-validation achieved 4.20x speedup  
+```csharp
+// Pre-check before expensive operation
+if (!CanRecognizeAt(position)) return None;
+// Now do expensive flood-fill
+return PerformFloodFill(position);
+```  
 
 ---
 
@@ -278,6 +368,32 @@ public void MoveBlock() { }
 public void MoveBlock() { }
 ```
 
+### ❌ Assuming Constructor Parameters (Modern C# Pattern)
+```csharp
+// ❌ WRONG - Old pattern assumption
+public class PlayerState {
+    public PlayerState(string name, int level) { }
+}
+
+// ✅ CORRECT - Modern required properties
+public class PlayerState {
+    public required string Name { get; init; }
+    public required int Level { get; init; }
+    public required DateTime CreatedAt { get; init; }
+}
+```
+
+### ❌ Wrong Test Framework
+```csharp
+// ❌ WRONG - Assuming NSubstitute
+var mock = Substitute.For<IService>();
+
+// ✅ CORRECT - Check project first
+// Run: grep -r "using Moq" tests/
+var mock = new Mock<IService>();
+mock.Setup(x => x.Method()).Returns(value);
+```
+
 ---
 
 ## 🐛 Common Bug Patterns
@@ -311,6 +427,32 @@ var validation = await _validator.ValidateRemoval(id);
 if (validation.IsFail) return validation.Error;
 await _gridService.RemoveBlock(id);
 ```
+
+### Namespace Mismatch Breaking MediatR Discovery (Critical)
+```csharp
+// ❌ WRONG - Silent failure, handler won't be discovered
+namespace BlockLife.Features.Player
+public class MyCommandHandler : IRequestHandler<MyCommand, Fin<Result>>
+
+// ✅ CORRECT - Will be auto-discovered by MediatR
+namespace BlockLife.Core.Features.Player
+public class MyCommandHandler : IRequestHandler<MyCommand, Fin<Result>>
+```
+**Impact**: Handlers outside `BlockLife.Core.*` namespace are invisible to MediatR
+**Prevention**: Always verify namespace matches assembly scanning configuration
+
+### DI Cascade Failures
+**Pattern**: Single missing registration causes multiple test failures
+```csharp
+// Missing this one line...
+services.AddScoped<IPlayerStateService, PlayerStateService>();
+
+// ...causes 30+ test failures across:
+// - DI validation tests
+// - Integration tests
+// - Stress tests (constructor failures)
+```
+**Debugging**: When multiple tests fail, check DI registrations first
 
 ---
 
@@ -395,6 +537,46 @@ grep "Status: Completed"
 6. **dotnet format Needs .sln**
    - **Issue**: "找到 MSBuild 项目文件"
    - **Fix**: Specify `BlockLife.sln` explicitly
+
+7. **Namespace Must Match for MediatR Discovery**
+   - **Issue**: Handlers in `BlockLife.Features.*` silently ignored
+   - **Fix**: MUST use `BlockLife.Core.Features.*` namespace
+   - **Impact**: Single namespace error = 30+ test failures
+
+8. **DI Registration Cascade Failures**
+   - **Issue**: Missing IPlayerStateService causes widespread failures
+   - **Fix**: Always register services in GameStrapper.cs
+   - **Debug**: When multiple tests fail, check DI first
+
+9. **Modern C# Required Properties**
+   - **Issue**: Assuming constructor parameters
+   - **Fix**: Use `required` with `init` properties
+   - **Example**: `public required string Name { get; init; }`
+
+10. **Test Framework Detection**
+    - **Issue**: Using wrong mocking library
+    - **Fix**: Run `grep -r "using Moq" tests/` first
+    - **Note**: Project uses Moq, NOT NSubstitute
+
+11. **LanguageExt Collection Initialization**
+    - **Issue**: Wrong Seq/Map syntax
+    - **Fix**: `new[] { item }.ToSeq()` and `Map((key, value))`
+    - **Never**: `Seq<T>(item)` or `Map<K,V>((key, value))`
+
+12. **Phase-Based Implementation**
+    - **Issue**: Context exhaustion on large features
+    - **Fix**: Break into discrete phases (VS_003A = 5 phases)
+    - **Benefit**: Each phase independently testable
+
+13. **Time Estimation Reality**
+    - **Issue**: Features taking longer than expected
+    - **Fix**: Multiply estimates by 1.5x
+    - **Example**: VS_003A estimated 6.5h, actual 10h
+
+14. **False Simplicity Trap**
+    - **Issue**: Removing docs doesn't remove complexity
+    - **Fix**: Define behaviors explicitly
+    - **Remember**: Undefined ≠ Simple
 
 ---
 
