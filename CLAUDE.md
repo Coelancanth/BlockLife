@@ -81,6 +81,36 @@ Do what has been asked; nothing more, nothing less.
 - ALWAYS prefer editing existing files
 - NEVER proactively create documentation unless requested
 
+## 🚨 MANDATORY: Context7 BEFORE LanguageExt Implementation
+
+**YOU MUST query Context7 documentation BEFORE writing ANY LanguageExt code:**
+
+### When Context7 is REQUIRED (not optional):
+- **Fin<T> operations** - Error handling, chaining, transformations
+- **Option<T> patterns** - Map vs Bind vs Match usage
+- **Error type** - Creating, combining, handling errors
+- **Async with LanguageExt** - Task<Fin<T>> patterns
+- **Any unfamiliar functional pattern** - Don't guess, check docs!
+
+### How to Query Context7:
+```bash
+# Before implementing error handling:
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Fin Error bind chain"
+
+# Before using Option patterns:
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Option map bind match"
+
+# Before async operations:
+mcp__context7__get-library-docs "/louthy/language-ext" --topic "Task Fin async await"
+```
+
+### Why This is MANDATORY:
+- **Fact**: 80% of our bugs come from incorrect LanguageExt API usage
+- **Fact**: Context7 queries take 30 seconds, debugging takes 2 hours
+- **Fact**: Every recent PR had LanguageExt corrections
+
+**⚠️ VIOLATION PROTOCOL**: If you write LanguageExt code without Context7 reference and it's wrong, that's a process failure requiring a post-mortem.
+
 ## 📚 Essential Documentation
 
 **Core References:**

@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 074 (Last: TD_073 - 2025-08-23)  
+- **Next TD**: 077 (Last: TD_076 - 2025-08-23)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -140,6 +140,37 @@
 - Pre-commit catches namespace/DI issues immediately
 - CI fails fast on architectural violations
 
+### TD_076: Auto-Fix Session Log on Every Embody  
+**Status**: Approved ✅
+**Owner**: DevOps Engineer
+**Size**: S (1h)
+**Priority**: Important
+**Created**: 2025-08-23
+**Complexity Score**: 2/10
+**Pattern Match**: Scripts already exist (fix-session-log-order.ps1)
+**Simpler Alternative**: Manual cleanup monthly (0h but never happens)
+
+**Problem**: Session log becomes unreadable chaos - entries out of order, duplicates, scattered dates
+
+**Solution**:
+- Add to embody.ps1: Auto-run fix-session-log-order.ps1
+- Silent operation unless errors found
+- Fix before showing session history to user
+- NO new scripts needed - reuse existing
+
+**Why Not Simpler**: Manual cleanup never happens. This is a 1-line addition to embody.ps1
+
+**Done When**:
+- Session log automatically sorted on every embody
+- No manual cleanup ever needed
+- Historical order preserved and readable
+
+**Tech Lead Decision** (2025-08-23):
+- ✅ APPROVED - Complexity 2/10
+- Classic automation win - 1 hour saves 100 hours
+- Reuses existing scripts, trivial integration
+- Should have been automated from day 1
+
 
 
 ## 💡 Ideas (Do Later)
@@ -171,6 +202,61 @@
 - `.claude/memory-bank/active/[persona].md` templates
 - `Docs/04-Personas/` persona documentation
 - Memory bank protocols documentation
+
+### TD_074: Root Cause Memory Bank Protocol
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: S (2h)
+**Priority**: Ideas
+**Created**: 2025-08-23
+**Complexity Score**: 3/10
+**Pattern Match**: Similar to existing memory bank protocols
+**Simpler Alternative**: Just add template to persona docs (1h)
+
+**Problem**: ActiveContext captures surface fixes ("fixed DI registration") instead of root causes ("stateless services must be Singleton in MediatR lifecycle")
+
+**Solution**:
+- Add simple 3-line template to activeContext updates
+- Template: Surface/Root/Pattern structure
+- Update embody.ps1 to remind about root cause analysis
+- NO complex protocols or additional documents
+
+**Why Not Simpler**: The 1-hour template-only version might work, but automated reminders ensure consistency
+
+**Done When**:
+- activeContext entries show WHY bugs happened
+- Pattern solutions documented to prevent recurrence
+- No added complexity to workflow
+
+### TD_075: Context-Aware Reference Display with MANDATORY Context7 Prompts
+**Status**: Proposed (ELEVATED PRIORITY)
+**Owner**: DevOps Engineer
+**Size**: M (4h)
+**Priority**: Ideas → Important (considering elevation)
+**Created**: 2025-08-23
+**Complexity Score**: 4/10
+**Pattern Match**: Embody script already shows quick refs
+**Simpler Alternative**: Do nothing, rely on personas to remember (0h)
+
+**Problem**: Personas don't use Context7 for LanguageExt, causing API mistakes and wasted hours
+
+**Solution**: 
+- Enhance embody.ps1 to show task-specific references
+- **CRITICAL**: Detect LanguageExt work → MANDATE Context7 query
+- When VS work detected → Display Move Block pattern location
+- When error handling detected → Show "Query Context7: Fin Error bind patterns"
+- Add pre-implementation checklist that includes Context7 queries
+- Smart detection based on file patterns and backlog content
+
+**Why Not Simpler**: LanguageExt API mistakes are our #1 time waster
+
+**Done When**:
+- Embody script FORCES Context7 consideration for LanguageExt work
+- Pre-implementation checklist shown for complex patterns
+- Measurable reduction in LanguageExt API errors
+- No new documentation created
+
+**Tech Lead Note**: This should probably be Important priority - LanguageExt mistakes waste HOURS
 
 
 
