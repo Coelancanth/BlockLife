@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 079 (Last: TD_078 - 2025-08-24)  
+- **Next TD**: 080 (Last: TD_079 - 2025-08-24 02:21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -116,11 +116,13 @@
 - CI fails fast on architectural violations
 
 ### TD_078: Timestamp Accuracy Protocol for Memory Bank & Session Logs
-**Status**: Proposed
+**Status**: Approved ✅
 **Owner**: DevOps Engineer
-**Size**: S (1-2h)
+**Size**: S (1h)
 **Priority**: Important
+**Complexity**: 1/10
 **Created**: 2025-08-24 01:59
+**Approved**: 2025-08-24 02:21
 
 **What**: Enforce getting current date/time before updating timestamped documents
 **Why**: Inaccurate timestamps in Memory Bank and session logs cause confusion
@@ -128,12 +130,19 @@
 - Update embody.ps1 to capture timestamp at start of execution
 - Add validation to ensure timestamps are current (not stale)
 - Update CLAUDE.md to remind about running `date` command first
-- Consider auto-timestamp injection for session log entries
+- Auto-timestamp injection for session log entries (specific implementation)
 **Done When**:
 - Memory Bank updates always have accurate timestamps
 - Session log entries reflect actual work time
 - No more "future dated" or incorrect timestamps
 - Process is automatic/zero-friction
+
+**Tech Lead Decision** (2025-08-24 02:21):
+- ✅ APPROVED - Complexity 1/10, trivial fix for real problem
+- Solves actual confusion about when work was done
+- Simple PowerShell timestamp capture, no new dependencies
+- "Consider auto-timestamp" changed to specific requirement
+- Classic "obvious fix" that should just be done
 
 **DevOps Engineer Notes**:
 - Common issue: Updating Memory Bank with old timestamps
@@ -142,42 +151,78 @@
 - Make it impossible to get wrong, not just documented
 
 ### TD_077: Incremental Test Runner for 95% Faster Feedback
-**Status**: Proposed
+**Status**: Rejected ❌
 **Owner**: DevOps Engineer
 **Size**: M (4-6h)
 **Priority**: Important
+**Complexity**: 7/10 (too high)
 **Created**: 2025-08-24
+**Rejected**: 2025-08-24 02:21
 
 **What**: Git-based incremental test runner for local AND CI/CD environments
 **Why**: Current tests take 39s locally, CI runs all tests on every PR (wasteful)
-**How**:
+
+**Tech Lead Decision** (2025-08-24 02:21):
+- ❌ REJECTED - Complexity 7/10, over-engineered solution
+- We already solved local feedback with TD_071 (1.3s quick tests)
+- File mapping is fragile (breaks with refactoring)
+- Cache invalidation adds debugging complexity
+- Risk of missing affected tests outweighs 30s CI savings
+- **SEE TD_079 for simpler alternative (2/10 complexity)**
+
+**Why Rejected in Detail**:
+1. Local feedback already fast: quick.ps1 runs in 1.3s
+2. File → test mapping breaks easily with renames
+3. Cache bugs are notoriously hard to debug
+4. False negatives (missing tests) are worse than 30s wait
+5. Maintenance burden not worth the complexity
+
+**Original Proposal** (preserved for reference):
 - Detect changed files via git diff (local) or GitHub API (CI)
 - Map source files to test files using conventions
 - Run only affected test classes/categories
 - Cache test results by file hash (with GitHub Actions cache)
 - Progressive execution: unit → integration → architecture
 - CI: Use GitHub's changed-files action for PR-specific testing
+
+### TD_079: Simple CI Staged Test Execution
+**Status**: Approved ✅
+**Owner**: DevOps Engineer  
+**Size**: S (30min)
+**Priority**: Important
+**Complexity**: 2/10
+**Created**: 2025-08-24 02:21
+**Approved**: 2025-08-24 02:21 (Tech Lead auto-approved)
+
+**What**: Add fail-fast architecture tests to CI before full suite
+**Why**: Get 1.3s feedback in CI for architecture violations before running 39s full suite
+**How**:
+- Add "Quick Tests" step that runs `./scripts/test/quick.ps1`
+- Only run full suite if quick tests pass
+- No complex mapping, caching, or file detection needed
+- Reuse existing test categorization from TD_071
 **Done When**:
-- Local: Single-file changes test in <2 seconds
-- CI: PR with focused changes runs in <30s (vs 2-3 min)
-- GitHub Actions workflow uses incremental strategy
-- Full suite still runs on main branch merges
-- Clear reporting in PR comments showing what was tested
+- CI fails in 1.3s for architecture violations
+- Full test suite only runs after quick tests pass
+- Zero maintenance burden (uses existing scripts)
+- PR workflow shows clear "Quick Tests" and "Full Tests" steps
 
-**DevOps Engineer Notes**:
-- Convention mapping: MoveBlockCommand.cs → MoveBlockCommandHandlerTests.cs
-- Scope detection: Architecture file → Architecture category only
-- Could integrate with file watcher for real-time testing
-- Massive productivity boost: 39s → 2s = 37 seconds saved per test run
+**Tech Lead Decision** (2025-08-24 02:21):
+- ✅ AUTO-APPROVED - Complexity 2/10, obvious improvement
+- Simpler alternative to rejected TD_077
+- Reuses TD_071 work (test categories)
+- No fragile file mapping or caching
+- Gives fast CI feedback without complexity
 
-**CI/CD Implementation Details**:
-- Add new `incremental-tests` job that runs before `build-and-test`
-- Use `dorny/paths-filter@v2` to detect changed files in PRs
-- Map file changes to test categories/namespaces
-- Cache test results with `actions/cache@v3` keyed by file hashes
-- PR workflow: incremental (30s) → fail fast or skip full suite
-- Main branch: always run full suite for baseline
-- Expected savings: 90% CI time reduction for typical single-file PRs
+**Implementation** (for .github/workflows/ci.yml):
+```yaml
+- name: Quick Architecture Tests (fail fast)
+  run: ./scripts/test/quick.ps1  # 1.3s
+  
+- name: Full Test Suite
+  if: success()
+  run: ./scripts/test/full.ps1    # 39s
+```
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
