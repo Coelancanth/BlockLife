@@ -68,10 +68,42 @@ function Resolve-GitState {
     
     switch ($syncStrategy) {
         "squash-reset" {
-            Write-Decision "Detected squash merge - resetting to main"
-            git reset --hard origin/main
-            git push origin $branch --force-with-lease 2>$null
-            Write-Success "Branch reset to match main after squash merge"
+            Write-Decision "Detected squash merge - checking for local commits"
+            
+            # CRITICAL: Check for unpushed local commits AFTER the squash merge
+            $localOnly = git log origin/$branch..HEAD --oneline 2>$null
+            if ($localOnly) {
+                Write-Warning "Found unpushed local commits after squash merge:"
+                $localOnly | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+                Write-Warning "Preserving local commits - will rebase onto main"
+                
+                # Save the local commits
+                $tempBranch = "temp-save-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+                git branch $tempBranch
+                
+                # Reset to main
+                git reset --hard origin/main
+                
+                # Cherry-pick the local commits back
+                $commits = git rev-list --reverse origin/$branch...$tempBranch
+                foreach ($commit in $commits) {
+                    git cherry-pick $commit
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Failed to preserve commit $commit - manual intervention required"
+                        Write-Host "Your commits are saved in branch: $tempBranch" -ForegroundColor Yellow
+                        return $false
+                    }
+                }
+                
+                # Clean up temp branch
+                git branch -D $tempBranch
+                Write-Success "Preserved local commits after squash merge reset"
+            } else {
+                # No local commits, safe to reset
+                git reset --hard origin/main
+                git push origin $branch --force-with-lease 2>$null
+                Write-Success "Branch reset to match main after squash merge"
+            }
         }
         
         "fast-forward" {
@@ -93,10 +125,42 @@ function Resolve-GitState {
                 
                 # Check if it's actually a squash merge situation we missed
                 if (Test-HiddenSquashMerge) {
-                    Write-Warning "Hidden squash merge detected - switching to reset"
-                    git reset --hard origin/main
-                    git push origin $branch --force-with-lease 2>$null
-                    Write-Success "Resolved via reset"
+                    Write-Warning "Hidden squash merge detected - checking for local commits"
+                    
+                    # CRITICAL: Check for unpushed local commits AFTER the squash merge
+                    $localOnly = git log origin/$branch..HEAD --oneline 2>$null
+                    if ($localOnly) {
+                        Write-Warning "Found unpushed local commits:"
+                        $localOnly | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+                        Write-Warning "Preserving local commits - will rebase onto main"
+                        
+                        # Save the local commits
+                        $tempBranch = "temp-save-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+                        git branch $tempBranch
+                        
+                        # Reset to main
+                        git reset --hard origin/main
+                        
+                        # Cherry-pick the local commits back
+                        $commits = git rev-list --reverse origin/$branch...$tempBranch
+                        foreach ($commit in $commits) {
+                            git cherry-pick $commit
+                            if ($LASTEXITCODE -ne 0) {
+                                Write-Error "Failed to preserve commit $commit - manual intervention required"
+                                Write-Host "Your commits are saved in branch: $tempBranch" -ForegroundColor Yellow
+                                return $false
+                            }
+                        }
+                        
+                        # Clean up temp branch
+                        git branch -D $tempBranch
+                        Write-Success "Preserved local commits after hidden squash merge"
+                    } else {
+                        # No local commits, safe to reset
+                        git reset --hard origin/main
+                        git push origin $branch --force-with-lease 2>$null
+                        Write-Success "Resolved via reset"
+                    }
                 } else {
                     # Real conflicts - try merge instead
                     Write-Warning "Rebase has conflicts - using merge strategy"

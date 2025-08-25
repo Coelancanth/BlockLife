@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 080 (Last: TD_079 - 2025-08-24 02:21)  
+- **Next TD**: 081 (Last: TD_080 - 2025-08-25 19:31)  
 - **Next VS**: 004 (Last: VS_003B - 2025-08-25 17:51)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -65,7 +65,36 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-*None*
+### TD_080: CRITICAL - Fix Data Loss Bug in embody.ps1 Squash Merge Handler
+**Status**: In Progress
+**Owner**: DevOps Engineer
+**Size**: S (1-2h)
+**Priority**: 🔥 Critical
+**Created**: 2025-08-25 19:31
+
+**What**: Fix critical bug where embody.ps1 deletes unpushed local commits after squash merges
+**Why**: Current implementation causes DATA LOSS - lost 4 commits today including VS_003B work
+
+**Root Cause**:
+- embody.ps1 detects squash merges and runs `git reset --hard origin/main`
+- This DELETES all local commits without checking if they were pushed
+- User continues working after PR merge, makes new commits
+- Next embody run detects the squash, resets, and loses all new work
+
+**How** (Technical Fix - ALREADY IMPLEMENTED):
+- ✅ Check for unpushed commits BEFORE resetting: `git log origin/$branch..HEAD`
+- ✅ If local commits exist, preserve them via temp branch and cherry-pick
+- ✅ Only reset if no local commits exist
+- ✅ Applied fix to both squash-reset paths (lines 70-107 and 127-163)
+
+**Done When**:
+- [x] Bug fixed in embody.ps1 (both occurrences)
+- [ ] Test with simulated squash merge scenario
+- [ ] Commit and push the fix
+- [ ] Update Memory Bank with post-mortem
+- [ ] Consider additional safeguards (backup branch, confirmation prompt)
+
+**Impact**: Prevents catastrophic data loss for all personas using embody.ps1
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
