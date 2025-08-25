@@ -9,7 +9,7 @@
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
 - **Next TD**: 081 (Last: TD_080 - 2025-08-25 19:31)  
-- **Next VS**: 004 (Last: VS_003B - 2025-08-25 17:51)
+- **Next VS**: 005 (Last: VS_003B-4 - 2025-08-25 18:50)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,90 +65,139 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_080: CRITICAL - Fix Data Loss Bug in embody.ps1 Squash Merge Handler
-**Status**: In Progress
-**Owner**: DevOps Engineer
-**Size**: S (1-2h)
-**Priority**: 🔥 Critical
-**Created**: 2025-08-25 19:31
-
-**What**: Fix critical bug where embody.ps1 deletes unpushed local commits after squash merges
-**Why**: Current implementation causes DATA LOSS - lost 4 commits today including VS_003B work
-
-**Root Cause**:
-- embody.ps1 detects squash merges and runs `git reset --hard origin/main`
-- This DELETES all local commits without checking if they were pushed
-- User continues working after PR merge, makes new commits
-- Next embody run detects the squash, resets, and loses all new work
-
-**How** (Technical Fix - ALREADY IMPLEMENTED):
-- ✅ Check for unpushed commits BEFORE resetting: `git log origin/$branch..HEAD`
-- ✅ If local commits exist, preserve them via temp branch and cherry-pick
-- ✅ Only reset if no local commits exist
-- ✅ Applied fix to both squash-reset paths (lines 70-107 and 127-163)
-
-**Done When**:
-- [x] Bug fixed in embody.ps1 (both occurrences)
-- [x] Test with simulated squash merge scenario
-- [x] Commit and push the fix
-- [x] Create post-mortem at Docs/06-PostMortems/Inbox/
-- [x] Update Memory Bank with incident details
-- [ ] Consider additional safeguards (backup branch, confirmation prompt)
-
-**Impact**: Prevents catastrophic data loss for all personas using embody.ps1
+*None currently*
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_003B: Merge System - Progressive Tier Progression
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead
-**Size**: M (4-8h)
+**Status**: ~~Proposed~~ **Rejected - Too Large**
+**Owner**: ~~Product Owner → Tech Lead~~
+**Size**: ~~M (4-8h)~~ **XL (16h+ as specified)**
 **Priority**: Important
 **Created**: 2025-08-25 17:51
 
-**What**: Implement merge system where 3+ adjacent same-type blocks combine into higher tier when unlocked
-**Why**: Core progression mechanic that replaces matching for specific tiers, creating strategic depth
+**Tech Lead Decision** (2025-08-25 18:50):
+- **REJECTED**: This slice is 3-4x larger than our thin slice limit (3 days max)
+- **Actual scope**: Resource system + pattern changes + services + UI + 50+ tests = 16+ hours
+- **Action**: Split into 4 thinner, independently shippable slices (see VS_003B-1 through VS_003B-4 below)
+- **Key insight**: PatternType.TierUp already exists! Just needs enabling and implementation
+- **Approach**: Leverage existing pattern framework, no new architectural layers needed
+
+---
+
+### VS_003B-1: Enable TierUp Pattern Recognition
+**Status**: Approved
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (4h)
+**Priority**: Important
+**Created**: 2025-08-25 18:50
+
+**What**: Enable TierUp pattern type and create recognizer that detects 3+ adjacent same-type blocks
+**Why**: Foundation for merge system, reuses existing pattern framework
 
 **How** (Technical Approach):
-- **Create BlockLibrary Resource** as single source of truth for block configurations
-  - BlockTypeResource: type_name, base_value, color, icon, abbreviation (W/S/H)
-  - Merge unlock costs per type and tier (Work-T2: 100 Money, etc.)
-  - All block data configurable in Inspector via block_library.tres
-- Extend pattern recognition to detect merge opportunities
-- Create MergeUnlockService that reads costs from BlockLibrary
-- Implement MergeCommand that replaces MatchCommand when merge is unlocked
-- Update PlayerState to track merge unlocks (e.g., Work-merge-to-T2: true)
-- Modify pattern handler to check merge unlock status before match/merge decision
-- **Update BlockView to display tier/type labels** using BlockLibrary abbreviations
-- Add debug HUD showing merge unlock states (F9 toggle)
+- Enable PatternType.TierUp in PatternTypeExtensions.IsEnabled()
+- Create TierUpPatternRecognizer implementing IPatternRecognizer
+- Copy pattern from MatchPatternRecognizer, modify for tier-up detection
+- Create TierUpPattern implementing IPattern (similar to MatchPattern)
+- Register in DI container alongside MatchPatternRecognizer
+- NO executor yet - just detection
 
 **Done When**:
-- [ ] **BlockLibrary Resource created** with all 9 block types configured
-- [ ] Block types load from BlockLibrary (not hardcoded)
-- [ ] 3 adjacent Work-T1 blocks merge to 1 Work-T2 when merge-to-T2 unlocked
-- [ ] Same Work-T1 blocks match and clear when merge-to-T2 NOT unlocked
-- [ ] Merge unlocks purchasable with attributes (costs from BlockLibrary)
-- [ ] Each block type has independent merge unlock progression
-- [ ] Visual feedback shows merge animation vs match animation
-- [ ] **Block visuals display tier and type** from BlockLibrary abbreviations
-- [ ] Debug overlay shows current merge unlock status for quick testing
-- [ ] Designer can modify block values in Inspector without code changes
-- [ ] 50+ tests validating merge vs match decision logic
+- [ ] TierUp pattern type enabled in PatternTypeExtensions
+- [ ] TierUpPatternRecognizer detects 3+ adjacent same-type blocks
+- [ ] Pattern shows in debug logs when detected
+- [ ] Doesn't break existing match detection (both run)
+- [ ] 15+ tests validating detection logic
 
-**Depends On**: VS_003A (Complete ✅)
+**Depends On**: None (can start immediately)
 
-**BlockLibrary Structure**:
-```
-res://game/block_library.tres (main library)
-  ├─ block_types[] array containing:
-  │   ├─ work_type.tres (BlockTypeResource)
-  │   ├─ study_type.tres (BlockTypeResource)
-  │   └─ health_type.tres (etc...)
-  └─ merge_unlock_costs{} dictionary:
-      ├─ "Work": {"T2": 100, "T3": 300, "T4": 900}
-      └─ "Study": {"T2": 200, "T3": 600, "T4": 1800}
-```
+---
+
+### VS_003B-2: TierUp Execution with Basic Unlocks
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer  
+**Size**: S (4h)
+**Priority**: Important
+**Created**: 2025-08-25 18:50
+
+**What**: Execute TierUp patterns when unlocked, converting 3 blocks to 1 higher-tier block
+**Why**: Core merge mechanic, builds on detection from VS_003B-1
+
+**How** (Technical Approach):
+- Create TierUpPatternExecutor implementing IPatternExecutor
+- Add tier field to Block domain entity (default Tier = 1)
+- Create TierUpCommand/Handler (like MoveBlockCommand pattern)
+- Add simple unlock check to PlayerState (hardcoded for now)
+- Pattern resolver picks TierUp over Match when unlocked
+- Higher tier blocks get multiplied values (T2 = base * 3, T3 = base * 9)
+
+**Done When**:
+- [ ] 3 Work-T1 blocks convert to 1 Work-T2 when unlocked
+- [ ] Same blocks still match when NOT unlocked
+- [ ] Block tier persists in domain model
+- [ ] Rewards scale with tier (T2 = 3x base value)
+- [ ] 20+ tests for execution logic
+
+**Depends On**: VS_003B-1
+
+---
+
+### VS_003B-3: Unlock Purchase System
+**Status**: Proposed  
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (3h)
+**Priority**: Important
+**Created**: 2025-08-25 18:50
+
+**What**: Allow players to purchase merge unlocks using attributes (Money, etc.)
+**Why**: Progression system, gives purpose to resource accumulation
+
+**How** (Technical Approach):
+- Create PurchaseMergeUnlockCommand/Handler
+- Store unlock costs in constants (for now, resources later)
+- Update PlayerState to track unlocks persistently
+- Add validation for sufficient resources
+- Deduct cost on successful purchase
+- Simple API endpoint for UI to query unlock status/costs
+
+**Done When**:
+- [ ] Can purchase "Work-merge-to-T2" for 100 Money
+- [ ] Purchase fails if insufficient resources
+- [ ] Unlock state persists across sessions
+- [ ] Can query which unlocks are available/purchased
+- [ ] 10+ tests for purchase logic
+
+**Depends On**: VS_003B-2
+
+---
+
+### VS_003B-4: Visual Feedback & Debug Tools  
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer
+**Size**: S (3h)
+**Priority**: Important
+**Created**: 2025-08-25 18:50
+
+**What**: Add visual tier indicators and debug overlay for merge system
+**Why**: Players need to see tiers, developers need to debug unlock states
+
+**How** (Technical Approach):
+- Update BlockView to show tier number (T1, T2, T3)
+- Different visual scale/glow for higher tiers
+- Merge animation (blocks combining) vs match animation (blocks disappearing)
+- F9 debug overlay showing all unlock states
+- Use existing BlockType.GetColorRGB() for base colors
+
+**Done When**:
+- [ ] Blocks visually show their tier (T1, T2, etc.)
+- [ ] Higher tiers look visually distinct (size/glow)
+- [ ] Merge animation differs from match animation
+- [ ] F9 shows unlock states for debugging
+- [ ] Visual feedback tested on all 9 block types
+
+**Depends On**: VS_003B-2 (needs tiers to display)
 
 
 ## 💡 Ideas (Do Later)
@@ -167,7 +216,25 @@ res://game/block_library.tres (main library)
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
 
-*All items moved to Completed_Backlog.md for permanent archival*
+### TD_080: CRITICAL - Fix Data Loss Bug in embody.ps1 Squash Merge Handler
+**Status**: ~~In Progress~~ **Completed**
+**Owner**: DevOps Engineer
+**Size**: S (1-2h)
+**Priority**: 🔥 Critical
+**Created**: 2025-08-25 19:31
+**Completed**: 2025-08-25 18:50
+
+**What**: Fixed critical bug where embody.ps1 deleted unpushed local commits after squash merges
+**Why**: Prevented DATA LOSS - was losing commits after PR merges
+
+**Resolution**:
+- ✅ Fixed both squash-reset code paths to check for unpushed commits first
+- ✅ Preserves local work via temp branch if needed
+- ✅ Tested and deployed fix
+- ✅ Post-mortem created
+- ✅ Memory Bank updated
+
+**Impact**: All personas now safe from data loss when using embody.ps1
 
 
 ## 🚧 Currently Blocked
