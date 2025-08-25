@@ -70,6 +70,55 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
+### VS_003B: Merge System - Progressive Tier Progression
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead
+**Size**: M (4-8h)
+**Priority**: Important
+**Created**: 2025-08-25 17:51
+
+**What**: Implement merge system where 3+ adjacent same-type blocks combine into higher tier when unlocked
+**Why**: Core progression mechanic that replaces matching for specific tiers, creating strategic depth
+
+**How** (Technical Approach):
+- **Create BlockLibrary Resource** as single source of truth for block configurations
+  - BlockTypeResource: type_name, base_value, color, icon, abbreviation (W/S/H)
+  - Merge unlock costs per type and tier (Work-T2: 100 Money, etc.)
+  - All block data configurable in Inspector via block_library.tres
+- Extend pattern recognition to detect merge opportunities
+- Create MergeUnlockService that reads costs from BlockLibrary
+- Implement MergeCommand that replaces MatchCommand when merge is unlocked
+- Update PlayerState to track merge unlocks (e.g., Work-merge-to-T2: true)
+- Modify pattern handler to check merge unlock status before match/merge decision
+- **Update BlockView to display tier/type labels** using BlockLibrary abbreviations
+- Add debug HUD showing merge unlock states (F9 toggle)
+
+**Done When**:
+- [ ] **BlockLibrary Resource created** with all 9 block types configured
+- [ ] Block types load from BlockLibrary (not hardcoded)
+- [ ] 3 adjacent Work-T1 blocks merge to 1 Work-T2 when merge-to-T2 unlocked
+- [ ] Same Work-T1 blocks match and clear when merge-to-T2 NOT unlocked
+- [ ] Merge unlocks purchasable with attributes (costs from BlockLibrary)
+- [ ] Each block type has independent merge unlock progression
+- [ ] Visual feedback shows merge animation vs match animation
+- [ ] **Block visuals display tier and type** from BlockLibrary abbreviations
+- [ ] Debug overlay shows current merge unlock status for quick testing
+- [ ] Designer can modify block values in Inspector without code changes
+- [ ] 50+ tests validating merge vs match decision logic
+
+**Depends On**: VS_003A (Complete ✅)
+
+**BlockLibrary Structure**:
+```
+res://game/block_library.tres (main library)
+  ├─ block_types[] array containing:
+  │   ├─ work_type.tres (BlockTypeResource)
+  │   ├─ study_type.tres (BlockTypeResource)
+  │   └─ health_type.tres (etc...)
+  └─ merge_unlock_costs{} dictionary:
+      ├─ "Work": {"T2": 100, "T3": 300, "T4": 900}
+      └─ "Study": {"T2": 200, "T3": 600, "T4": 1800}
+```
 
 
 ## 💡 Ideas (Do Later)
