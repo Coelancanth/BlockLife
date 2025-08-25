@@ -61,7 +61,7 @@ namespace BlockLife.Core.Features.Block.Patterns
         public static bool IsEnabled(this PatternType patternType) => patternType switch
         {
             PatternType.Match => true,      // Always available
-            PatternType.TierUp => false,    // Future implementation
+            PatternType.TierUp => true,     // Enabled for VS_003B-1 implementation
             PatternType.Transmute => false, // Future implementation
             _ => false
         };

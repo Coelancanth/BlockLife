@@ -146,6 +146,7 @@ public static class GameStrapper
 
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.TierUpPatternRecognizer>();  // VS_003B-1
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
         
         // Pattern processing notification handler - triggers on block moves
@@ -361,6 +362,7 @@ public static class GameStrapper
 
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.TierUpPatternRecognizer>();  // VS_003B-1
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
         
         // Pattern processing notification handler - triggers on block moves

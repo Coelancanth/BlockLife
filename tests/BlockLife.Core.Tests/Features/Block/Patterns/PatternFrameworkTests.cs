@@ -156,9 +156,9 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             var tierUpEnabled = PatternType.TierUp.IsEnabled();
             var transmuteEnabled = PatternType.Transmute.IsEnabled();
 
-            // Assert - Match should be enabled for Phase 1, others disabled for future phases
+            // Assert - Match and TierUp should be enabled (VS_003B-1), Transmute disabled for now
             matchEnabled.Should().BeTrue("Match patterns should be enabled in Phase 1");
-            tierUpEnabled.Should().BeFalse("TierUp patterns should be disabled until future phases");
+            tierUpEnabled.Should().BeTrue("TierUp patterns should be enabled for VS_003B-1 implementation");
             transmuteEnabled.Should().BeFalse("Transmute patterns should be disabled until future phases");
         }
 
