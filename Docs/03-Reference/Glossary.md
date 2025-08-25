@@ -72,7 +72,8 @@ The category of a block (Work, Study, Exercise, etc).
 ## Match & Transform Mechanics
 
 **Match**  
-The clearing of 3+ adjacent same-type blocks to earn resources or attributes (always available).
+The clearing of 3+ adjacent same-type blocks to earn resources or attributes (default behavior).
+- **Default Behavior**: Applies to any tier that doesn't have merge-to-next-tier unlocked
 - **Trigger**: Completion of player action when 3+ adjacent
 - **Result**: Blocks disappear, rewards granted based on match size and block type
 - **Reward Types**:
@@ -84,16 +85,20 @@ The clearing of 3+ adjacent same-type blocks to earn resources or attributes (al
   - **Match-5**: Great bonus (×2.0)
   - **Match-6+**: Excellent bonus (×3.0)
 - **Formula**: `BaseValue × BlockCount × TierMultiplier × MatchSizeBonus`
-- **Strategic Choice**: Clear small matches safely or risk building larger matches
+- **Replaced By**: Merge behavior when merge-to-next-tier is unlocked for that specific tier
 - **Code**: `MatchCommand`, `IMatchDetector`, `MatchResult`, `MatchSizeBonus`
 
-**Tier-Up** (formerly "Merge" or "Transform")  
-The combination of 3+ adjacent same-type blocks into ONE block of higher tier (unlockable).
-- **Availability**: Must be unlocked with attributes first
-- **Input**: 3× Work-T1 blocks
-- **Output**: 1× Work-T2 block (same type, higher tier)
+**Merge**  
+The combination of 3+ adjacent same-type blocks into ONE block of higher tier (replaces match when unlocked).
+- **Unlock System**: Each merge tier must be unlocked separately (merge-to-T2, merge-to-T3, etc.)
+- **Behavior Change**: When merge-to-tier-(N+1) is unlocked, tier-N blocks merge instead of matching
+- **Example**: 
+  - Merge-to-T2 unlocked: 3× Work-T1 → 1× Work-T2 (no longer clears)
+  - Merge-to-T3 NOT unlocked: 3× Work-T2 → clears and gives rewards (still matches)
+  - Merge-to-T3 unlocked: 3× Work-T2 → 1× Work-T3 (no longer clears)
+- **Progressive Unlocking**: Must unlock each merge tier sequentially (can't skip tiers)
 - **Purpose**: Tier progression and grid compression
-- **Code**: `TierUpCommand`, `ITierUpDetector`, `TierUpResult`
+- **Code**: `MergeCommand`, `IMergeDetector`, `MergeResult`, `MergeUnlockService`
 
 **Transmute** (Cross-Type Transform)
 The combination of specific blocks into a DIFFERENT type block (advanced unlock).
@@ -104,17 +109,18 @@ The combination of specific blocks into a DIFFERENT type block (advanced unlock)
 - **Code**: `TransmuteCommand`, `ITransmuteDetector`, `TransmuteResult`
 
 **Transform** (umbrella term)
-General term covering both tier-up and transmute operations.
-- **Tier-Up Transform**: Same type, higher tier (Work-T1 → Work-T2)
+General term covering both merge and transmute operations.
+- **Merge Transform**: Same type, higher tier (Work-T1 → Work-T2)
 - **Transmute Transform**: Different type (Work + Study → Career)
-- **Usage**: Use specific terms (tier-up/transmute) when precision matters
+- **Usage**: Use specific terms (merge/transmute) when precision matters
 
-**Merge** (deprecated term)  
-Old term that conflated matching, tier-up, and transmutation. Avoid in new code.
-- Use "match" for clearing blocks to gain attributes
-- Use "tier-up" for same-type tier progression
-- Use "transmute" for cross-type combinations
-- Legacy code may still use "merge" - refactor when touched
+**Terminology Evolution Note**  
+The term "merge" has evolved through our design process:
+- **V1 (Deprecated)**: "Merge" conflated matching, tier-progression, and transmutation
+- **V2 (Brief)**: Replaced with "tier-up" to distinguish from matching
+- **V3 (Current)**: "Merge" reinstated for tier-progression since it REPLACES match behavior
+- **Clear distinction**: Match = clear for resources, Merge = combine to higher tier
+- **Why the change**: With replacement mechanics, merge and match are mutually exclusive
 
 **Adjacent**  
 Blocks that share an edge (not diagonal).
@@ -283,19 +289,30 @@ A permanent ability purchased with attributes.
 
 ### The Three Core Operations
 
-**MATCH** (Always Available - Scales with Size!)
+**MATCH** (Default Behavior - Replaced by Merge When Next Tier Unlocked)
 ```
-Match-3: [Work] [Work] [Work] → *poof* → +30 Money (×1.0)
-Match-4: [Work] [Work] [Work] [Work] → *poof* → +60 Money (×1.5)
-Match-5: [Work] [Work] [Work] [Work] [Work] → *poof* → +100 Money (×2.0)
+Before merge-to-T2 unlock:
+[Work-T1] [Work-T1] [Work-T1] → *poof* → +30 Money (matches/clears)
 
-Strategy: Risk vs Reward - Bigger matches = Bigger rewards!
+After merge-to-T2 unlock:
+[Work-T1] [Work-T1] [Work-T1] → [Work-T2] (merges, doesn't clear)
+
+But T2 still matches (until merge-to-T3 unlocked):
+[Work-T2] [Work-T2] [Work-T2] → *poof* → +90 Money (matches/clears)
+
+Match Size Still Matters (for tiers that match):
+Match-3: Base rewards (×1.0)
+Match-4: Good bonus (×1.5)
+Match-5: Great bonus (×2.0)
 ```
 
-**TIER-UP** (Unlockable - Always 3 Blocks)
+**MERGE** (Progressive Unlock System - Replaces Match for Each Tier)
 ```
-[Work-T1] [Work-T1] [Work-T1] → [Work-T2]
-Same type, higher tier (no size scaling, always 3→1)
+Merge-to-T2 Unlock: [Work-T1] [Work-T1] [Work-T1] → [Work-T2]
+Merge-to-T3 Unlock: [Work-T2] [Work-T2] [Work-T2] → [Work-T3]
+Merge-to-T4 Unlock: [Work-T3] [Work-T3] [Work-T3] → [Work-T4]
+
+Each merge tier must be unlocked separately!
 ```
 
 **TRANSMUTE** (Advanced Unlock - Specific Recipes)
@@ -341,20 +358,23 @@ Final Result:
 
 ## Usage Examples
 
-✅ **Correct**: "Match three Work blocks to earn 30 Money"
-❌ **Wrong**: "Merge three Work blocks for points"
+✅ **Correct**: "Match three Work-T1 blocks to earn 30 Money (before merge unlock)"
+❌ **Wrong**: "Merge three Work blocks for points" (when you mean match/clear)
 
-✅ **Correct**: "Tier-up three Work-T1 blocks into one Work-T2"
-❌ **Wrong**: "Transform blocks to level them up"
+✅ **Correct**: "After unlocking merge-to-T2, Work-T1 blocks merge instead of matching"
+❌ **Wrong**: "Choose between match or merge for Work blocks"
+
+✅ **Correct**: "Work-T2 blocks still match until merge-to-T3 is unlocked"
+❌ **Wrong**: "All Work blocks merge once any upgrade is unlocked"
+
+✅ **Correct**: "Unlock merge-to-T2 for Work blocks with 100 Money"
+❌ **Wrong**: "Buy the universal merge ability"
+
+✅ **Correct**: "Each merge tier must be unlocked separately"
+❌ **Wrong**: "One unlock enables all merges"
 
 ✅ **Correct**: "Transmute Work + Study blocks into Career block"
-❌ **Wrong**: "Merge different blocks together"
-
-✅ **Correct**: "Unlock Work tier-up ability for 100 Money"
-❌ **Wrong**: "Buy the Work merge upgrade"
-
-✅ **Correct**: "Unlock Career transmutation for 500 Money + 300 Knowledge"
-❌ **Wrong**: "Purchase the Career transformation"
+❌ **Wrong**: "Merge different block types together" (merge is same-type only)
 
 ✅ **Correct**: "When a turn starts, spawn one block"
 ❌ **Wrong**: "At the beginning of a round, place a tile"

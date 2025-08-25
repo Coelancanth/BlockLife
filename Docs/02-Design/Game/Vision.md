@@ -12,16 +12,17 @@ BlockLife simulates the journey of human life through strategic block management
 
 ## 🎲 Core Gameplay Mechanics (Designer Confirmed)
 
-### Dual Match/Transform System with Progression Economy
-**Core Philosophy**: Start with matching for resources, unlock transformation through progression
-- **Phase 1 (Default)**: Match blocks to clear them and earn attributes
-- **Phase 2 (Unlockable)**: Transform matched blocks into higher tiers
-- **Player Agency**: Choose between matching for resources OR transforming for progression
+### Progressive Merge System with Replacement Mechanics
+**Core Philosophy**: Matching is the default behavior, progressively replaced by merging as you unlock each tier
+- **Base Behavior**: All blocks match and clear for resources by default
+- **Progressive Unlocking**: Each merge tier must be unlocked separately
+- **Replacement Mechanic**: When merge-to-tier-(N+1) is unlocked, tier-N blocks merge instead of matching
 
-### Match-3 System (Always Available)
-**Fundamental Rule**: 3+ adjacent same-type blocks can be matched to clear
+### Match-3 System (Default Behavior)
+**Fundamental Rule**: 3+ adjacent same-type blocks match to clear (unless merge unlocked for that tier)
 - **Match Trigger**: When 3+ same-type blocks are adjacent (orthogonal, not diagonal)
-- **Result**: Blocks disappear, granting attributes based on type and tier
+- **Default Result**: Blocks disappear, granting attributes based on type and tier
+- **Replaced When**: Merge-to-next-tier for those specific blocks is unlocked
 - **Attribute Rewards**: Each block type grants specific resources:
   - Work blocks → Money
   - Study blocks → Knowledge  
@@ -29,26 +30,33 @@ BlockLife simulates the journey of human life through strategic block management
   - Relationship blocks → Social Capital
 - **Tier Scaling**: Higher tier blocks grant exponentially more attributes when matched
 
-### Transform System (Unlockable)
-**Progression Mechanic**: Spend earned attributes to unlock transformation abilities
-- **Unlock Cost**: Each block type requires attributes to unlock its transform ability
-- **Transform Rule**: 3 same-type blocks → 1 block of next tier (at result position)
-- **Strategic Choice**: Once unlocked, player chooses match OR transform
-- **Tier Progression Example**:
-  - 3× Work Tier-1 → 1× Work Tier-2 (if Work transform unlocked)
-  - 3× Work Tier-2 → 1× Work Tier-3 (requires higher unlock)
+### Merge System (Progressive Unlocks)
+**Progression Mechanic**: Spend earned attributes to unlock merge tiers that replace matching
+- **Unlock System**: Each merge tier is a separate unlock (merge-to-T2, merge-to-T3, merge-to-T4, etc.)
+- **Replacement Rule**: When merge-to-tier-(N+1) is unlocked, tier-N blocks no longer match
+- **Merge Rule**: 3 same-type tier-N blocks → 1 block of tier-(N+1)
+- **Progressive Example**:
+  - Start: All Work blocks match and clear
+  - Unlock merge-to-T2: Work-T1 blocks now merge to T2 (don't clear)
+  - Work-T2 still matches (merge-to-T3 not unlocked yet)
+  - Unlock merge-to-T3: Work-T2 blocks now merge to T3 (don't clear)
+  - Work-T3 still matches (merge-to-T4 not unlocked yet)
 - **Cross-Type Transforms** (Advanced): Unlock special combinations like Work + Study → Career
 
 ### Attribute Economy
 **Resource Management**: Attributes are the core currency driving progression
-- **Earning**: Match blocks to gain attributes
-- **Spending**: Use attributes to unlock abilities, transformations, and features
+- **Earning**: Match blocks to gain attributes (blocks that haven't unlocked their merge tier)
+- **Spending**: Use attributes to unlock merge abilities and advanced features
 - **Types**: Money, Knowledge, Health, Social Capital, Creativity
 - **Persistence**: Attributes carry across turns, building strategic reserves
-- **Unlock Examples**:
-  - 100 Money → Unlock Work block transformation
-  - 200 Knowledge → Unlock Study block transformation
-  - 500 Money + 300 Knowledge → Unlock Career combination
+- **Progressive Unlock Examples** (per block type):
+  - 100 Money → Unlock Work merge-to-T2 (T1 blocks now merge)
+  - 300 Money → Unlock Work merge-to-T3 (T2 blocks now merge)
+  - 900 Money → Unlock Work merge-to-T4 (T3 blocks now merge)
+  - 200 Knowledge → Unlock Study merge-to-T2
+  - 600 Knowledge → Unlock Study merge-to-T3
+- **Advanced Unlocks**:
+  - 500 Money + 300 Knowledge → Unlock Career transmutation
 
 ### Auto-Spawn System
 **Turn-Based Pressure**: Each turn spawns new blocks automatically
@@ -65,11 +73,14 @@ BlockLife simulates the journey of human life through strategic block management
 - **Visual Celebration**: Each chain step gets bigger effects/sounds
 - **Strategic Depth**: Players set up elaborate chain reactions for massive attribute gains
 
-**Example Chain with Attributes**:
-1. Match three Tier-1 Work blocks → +30 Money (10 per block)
-2. This creates space for three Study blocks to connect → Auto-match → +60 Knowledge (×2 chain)
-3. The cleared space connects Health blocks → Auto-match → +120 Health (×4 chain)
-4. Total earned: 30 Money + 60 Knowledge + 120 Health!
+**Example Chain with Progressive Merging**:
+1. Three Work-T1 blocks connect (merge-to-T2 unlocked) → Merge to Work-T2 (no resources)
+2. This creates space, three Study-T1 blocks connect (no merge unlock) → Match → +30 Knowledge
+3. The cleared space connects Health-T1 blocks → Auto-match → +60 Health (×2 chain)
+4. Three Work-T2 blocks now connect (no merge-to-T3 unlock) → Match → +270 Money (×4 chain)
+5. Total earned: 30 Knowledge + 60 Health + 270 Money!
+
+**Strategic Depth**: Balance between unlocking merges (lose immediate resources) vs matching (immediate gains)
 
 ### Placement Strategy
 - **Grid Management**: Balance between keeping space for moves and setting up matches
@@ -80,7 +91,7 @@ BlockLife simulates the journey of human life through strategic block management
 ### Future Complexity Layers (Post-MVP)
 - **Cross-Type Transmutation**: 2 Work + 1 Study → Career Opportunity
 - **Match Effects**: Special blocks spawn additional blocks  
-- **Life Stage Modifiers**: Different match/tier-up rules per life stage
+- **Life Stage Modifiers**: Different match/merge rules per life stage
 - **Chain Reward Blocks**: Special blocks created only through long chains
 
 ---
