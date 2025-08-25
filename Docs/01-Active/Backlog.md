@@ -89,9 +89,10 @@
 
 **Done When**:
 - [x] Bug fixed in embody.ps1 (both occurrences)
-- [ ] Test with simulated squash merge scenario
-- [ ] Commit and push the fix
-- [ ] Update Memory Bank with post-mortem
+- [x] Test with simulated squash merge scenario
+- [x] Commit and push the fix
+- [x] Create post-mortem at Docs/06-PostMortems/Inbox/
+- [x] Update Memory Bank with incident details
 - [ ] Consider additional safeguards (backup branch, confirmation prompt)
 
 **Impact**: Prevents catastrophic data loss for all personas using embody.ps1
