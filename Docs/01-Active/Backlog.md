@@ -80,57 +80,63 @@
 **Tech Lead Decision** (2025-08-25 18:50):
 - **REJECTED**: This slice is 3-4x larger than our thin slice limit (3 days max)
 - **Actual scope**: Resource system + pattern changes + services + UI + 50+ tests = 16+ hours
-- **Action**: Split into 4 thinner, independently shippable slices (see VS_003B-1 through VS_003B-4 below)
-- **Key insight**: PatternType.TierUp already exists! Just needs enabling and implementation
-- **Approach**: Leverage existing pattern framework, no new architectural layers needed
+- **Action**: Split into 4 thinner slices (VS_003B-1 through VS_003B-4)
+- **Key insight**: Should reuse existing MatchPattern, not create new pattern type
+- **Approach**: Merge is just Match with different executor when unlocked
 
 ---
 
-### VS_003B-1: Enable TierUp Pattern Recognition
-**Status**: Approved
-**Owner**: Tech Lead → Dev Engineer
+---
+
+### VS_003B-1: Merge Pattern Recognition with 3+ Blocks
+**Status**: In Progress  
+**Owner**: Dev Engineer
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-25 18:50
+**Updated**: 2025-08-25 20:30
 
-**What**: Enable TierUp pattern type and create recognizer that detects 3+ adjacent same-type blocks
-**Why**: Foundation for merge system, reuses existing pattern framework
+**What**: Recognize match patterns that should merge when merge-to-next-tier is unlocked
+**Why**: Foundation for merge system - merge replaces match behavior when unlocked
 
-**How** (Technical Approach):
-- Enable PatternType.TierUp in PatternTypeExtensions.IsEnabled()
-- Create TierUpPatternRecognizer implementing IPatternRecognizer
-- Copy pattern from MatchPatternRecognizer, modify for tier-up detection
-- Create TierUpPattern implementing IPattern (similar to MatchPattern)
-- Register in DI container alongside MatchPatternRecognizer
-- NO executor yet - just detection
+**Current State**:
+- ❌ **WRONG**: Created TierUpPatternRecognizer for exactly 3 blocks (over-engineered)
+- ❌ **WRONG**: Using "TierUp" terminology instead of "Merge" from Glossary
+- ✅ Tests written for correct behavior (merge with 3+ blocks)
+- ⚠️ **MISSING**: Result position tracking for where merged block appears
+
+**Correct Approach** (per post-mortem):
+- Use existing MatchPattern (already finds 3+ blocks)
+- Add IMergeUnlockService to check if merge-to-tier-N is unlocked
+- PatternExecutionResolver chooses MergeExecutor vs MatchExecutor
+- **CRITICAL**: Track result position (last-acted position) for merge placement
 
 **Done When**:
-- [ ] TierUp pattern type enabled in PatternTypeExtensions
-- [ ] TierUpPatternRecognizer detects 3+ adjacent same-type blocks
-- [ ] Pattern shows in debug logs when detected
-- [ ] Doesn't break existing match detection (both run)
-- [ ] 15+ tests validating detection logic
-
-**Depends On**: None (can start immediately)
+- [ ] Match patterns of 3+ blocks can be recognized for merge
+- [ ] Resolver correctly picks executor based on unlock status
+- [ ] Result position tracked for merge placement
+- [ ] All "TierUp" references renamed to "Merge"
+- [ ] Unnecessary TierUpPatternRecognizer deleted
 
 ---
 
-### VS_003B-2: TierUp Execution with Basic Unlocks
+### VS_003B-2: Merge Execution with Result Position
 **Status**: Proposed
 **Owner**: Tech Lead → Dev Engineer  
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-25 18:50
 
-**What**: Execute TierUp patterns when unlocked, converting 3 blocks to 1 higher-tier block
+**What**: Execute merge patterns when unlocked, converting 3+ blocks to 1 higher-tier block at result position
 **Why**: Core merge mechanic, builds on detection from VS_003B-1
 
 **How** (Technical Approach):
-- Create TierUpPatternExecutor implementing IPatternExecutor
+- Create MergePatternExecutor implementing IPatternExecutor
 - Add tier field to Block domain entity (default Tier = 1)
-- Create TierUpCommand/Handler (like MoveBlockCommand pattern)
+- Track and use result position (last-acted position) for merged block placement
+- Create MergeCommand/Handler (like MoveBlockCommand pattern)
 - Add simple unlock check to PlayerState (hardcoded for now)
-- Pattern resolver picks TierUp over Match when unlocked
+- Pattern resolver picks Merge over Match when unlocked
 - Higher tier blocks get multiplied values (T2 = base * 3, T3 = base * 9)
 
 **Done When**:
@@ -215,6 +221,7 @@
 
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
+
 
 ### TD_080: CRITICAL - Fix Data Loss Bug in embody.ps1 Squash Merge Handler
 **Status**: ~~In Progress~~ **Completed**
