@@ -21,6 +21,10 @@ param(
     [string]$Persona
 )
 
+# Capture timestamp at script start for consistent timestamps throughout (TD_078)
+$scriptStartTime = Get-Date
+$timestampFormatted = $scriptStartTime.ToString("yyyy-MM-dd HH:mm")
+
 # Import smart-sync functions
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $gitScripts = Join-Path (Split-Path $scriptRoot) "git"
@@ -50,7 +54,7 @@ function Resolve-GitState {
     # Stash if needed
     if ($hasUncommitted) {
         Write-Warning "Stashing uncommitted changes..."
-        $stashMessage = "embody-auto-stash-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        $stashMessage = "embody-auto-stash-$($scriptStartTime.ToString('yyyyMMdd-HHmmss'))"
         git stash push -m $stashMessage --include-untracked
     }
     

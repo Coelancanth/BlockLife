@@ -165,7 +165,7 @@ BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP patter
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
-## 📅 IMPORTANT: Date-Sensitive Documents
+## 📅 IMPORTANT: Date-Sensitive Documents (TD_078 Enhanced)
 
 **ALWAYS run `date` command first when creating or updating:**
 - Memory Bank files (`.claude/memory-bank/active/*.md`)
@@ -182,6 +182,11 @@ date  # Get current date/time before creating/updating dated documents
 # Then use that timestamp in your updates
 # Example: "**Last Updated**: 2025-08-24 01:59"
 ```
+
+**Automated in embody.ps1 (TD_078):**
+- Script captures timestamp at start: `$scriptStartTime = Get-Date`
+- Uses consistent timestamp throughout execution
+- Prevents stale timestamps when script runs for extended time
 
 **Why**: Prevents incorrect timestamps that cause confusion about when work was actually done.
 
