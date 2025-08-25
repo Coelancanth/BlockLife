@@ -297,6 +297,35 @@ git status  # Confirm expected changes
 grep "status" Backlog.md  # Verify updates
 ```
 
+## 🚨 When I Cause an Incident
+
+### Post-Mortem Protocol (MANDATORY for data loss, breaking main, or critical bugs)
+If I introduce a bug that causes significant impact:
+
+1. **Fix First**: Resolve the immediate issue
+2. **Create Post-Mortem**: Document for learning
+   ```bash
+   date  # Get accurate timestamp FIRST
+   # Create at: Docs/06-PostMortems/Inbox/YYYY-MM-DD-description.md
+   ```
+3. **Include**:
+   - Timeline of events
+   - What I did wrong
+   - Root cause (not just symptoms)
+   - How it was fixed
+   - Prevention measures
+4. **Focus**: Learning, not blame
+
+### Correct Post-Mortem Location
+```bash
+# ✅ CORRECT - New post-mortems go here:
+Docs/06-PostMortems/Inbox/2025-08-25-null-reference-bug.md
+
+# ❌ WRONG locations:
+Docs/06-PostMortems/Archive/  # Debugger Expert moves here later
+Docs/07-Archive/PostMortems/  # Doesn't exist
+```
+
 ## Session Management
 
 ### Memory Bank Updates

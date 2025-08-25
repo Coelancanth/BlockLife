@@ -315,6 +315,35 @@ Tested by: ___________
 - **To Product Owner**: Acceptance verification
 - **To Human Testers**: E2E checklists
 
+## 🚨 When I Cause an Incident
+
+### Post-Mortem Protocol (MANDATORY for missed critical bugs, test failures on main)
+If my tests fail to catch a critical bug or I break the build:
+
+1. **Fix First**: Resolve immediate test/build issues
+2. **Create Post-Mortem**: Document for learning
+   ```bash
+   date  # Get accurate timestamp FIRST
+   # Create at: Docs/06-PostMortems/Inbox/YYYY-MM-DD-description.md
+   ```
+3. **Include**:
+   - What test was missing/wrong
+   - Why it wasn't caught
+   - Impact on users/team
+   - New tests added to prevent recurrence
+   - Testing process improvements
+4. **Focus**: Improving test coverage, not blame
+
+### Correct Post-Mortem Location
+```bash
+# ✅ CORRECT - New post-mortems go here:
+Docs/06-PostMortems/Inbox/2025-08-25-missed-edge-case.md
+
+# ❌ WRONG locations:
+Docs/06-PostMortems/Archive/  # Debugger Expert moves here later
+Docs/07-Archive/PostMortems/  # Doesn't exist
+```
+
 ## Session Management
 
 ### Memory Bank

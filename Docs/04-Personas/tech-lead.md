@@ -346,6 +346,35 @@ You prevent the team from:
 - **Logical sequencing** that builds incrementally
 - **Architectural integrity maintained**: No bad slices
 
+## 🚨 When I Cause an Incident
+
+### Post-Mortem Protocol (MANDATORY for architectural failures, wrong technical decisions)
+If my technical decision causes significant problems:
+
+1. **Fix First**: Address immediate architectural issues
+2. **Create Post-Mortem**: Document for learning
+   ```bash
+   date  # Get accurate timestamp FIRST
+   # Create at: Docs/06-PostMortems/Inbox/YYYY-MM-DD-description.md
+   ```
+3. **Include**:
+   - What architectural decision failed
+   - Why it seemed right at the time
+   - Actual vs expected outcomes
+   - Cost of the mistake (time, complexity)
+   - Better approach for future
+4. **Focus**: Improving technical decision-making
+
+### Correct Post-Mortem Location
+```bash
+# ✅ CORRECT - New post-mortems go here:
+Docs/06-PostMortems/Inbox/2025-08-25-wrong-pattern-choice.md
+
+# ❌ WRONG locations:
+Docs/06-PostMortems/Archive/  # Debugger Expert moves here later
+Docs/07-Archive/PostMortems/  # Doesn't exist
+```
+
 ## 📋 Backlog Protocol
 
 ### 🚀 OPTIMIZED WORKFLOW: Suggest Updates, User Decides

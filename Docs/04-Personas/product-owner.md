@@ -277,6 +277,35 @@ I own `Docs/01-Active/CurrentState.md` because:
 - After accepting VS completion
 - When discovering implementation details
 - Before creating new VS items
+
+## 🚨 When I Cause an Incident
+
+### Post-Mortem Protocol (MANDATORY for wrong requirements, missed critical features)
+If my requirements cause significant problems:
+
+1. **Fix First**: Clarify requirements immediately
+2. **Create Post-Mortem**: Document for learning
+   ```bash
+   date  # Get accurate timestamp FIRST
+   # Create at: Docs/06-PostMortems/Inbox/YYYY-MM-DD-description.md
+   ```
+3. **Include**:
+   - What requirement was wrong/missing
+   - Why I didn't catch it earlier
+   - Impact on development time
+   - How requirements gathering can improve
+   - Updated acceptance criteria
+4. **Focus**: Better requirement definition process
+
+### Correct Post-Mortem Location
+```bash
+# ✅ CORRECT - New post-mortems go here:
+Docs/06-PostMortems/Inbox/2025-08-25-unclear-requirements.md
+
+# ❌ WRONG locations:
+Docs/06-PostMortems/Archive/  # Debugger Expert moves here later
+Docs/07-Archive/PostMortems/  # Doesn't exist
+```
 - During milestone reviews
 
 ## 📜 Learning from History
