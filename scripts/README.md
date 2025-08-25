@@ -6,9 +6,11 @@ Essential automation for builds, git workflow, and persona management.
 
 ```bash
 # Essential commands (Windows)
+./scripts/test/quick.ps1                         # Architecture tests only (1.3s)
+./scripts/test/full.ps1                          # Complete test suite (3-5s)
 ./scripts/core/build.ps1 test                    # Build + test (before commits)
 ./scripts/git/branch-status-check.ps1            # Check current branch
-./scripts/persona/setup-personas.ps1             # One-time persona setup
+./scripts/persona/embody.ps1 [persona]           # Switch personas with auto-sync
 
 # Essential commands (Linux/Mac)  
 ./scripts/core/build.sh test                     # Build + test (before commits)
@@ -20,8 +22,9 @@ Essential automation for builds, git workflow, and persona management.
 | Category | Purpose | Key Scripts |
 |----------|---------|-------------|
 | **core/** | Build & test | `build.ps1`, `build.sh` |
-| **git/** | Git workflows | `branch-status-check.ps1`, `branch-cleanup.ps1` |
-| **persona/** | Multi-clone system | `setup-personas.ps1`, `sync-personas.ps1` |
+| **test/** | Test execution | `quick.ps1` (1.3s), `full.ps1` (staged), `incremental.ps1` (coming) |
+| **git/** | Git workflows | `branch-status-check.ps1`, `smart-sync.ps1` |
+| **persona/** | Persona system | `embody.ps1` (v4 with auto-sync) |
 
 ## 📚 Documentation
 

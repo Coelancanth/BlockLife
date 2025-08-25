@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-23 21:26
+**Last Updated**: 2025-08-25 16:26
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 014 (Last: BR_013 - 2025-08-22)
-- **Next TD**: 077 (Last: TD_076 - 2025-08-23)  
+- **Next TD**: 080 (Last: TD_079 - 2025-08-24 02:21)  
 - **Next VS**: 004 (Last: VS_003D - 2025-08-19)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -70,77 +70,6 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### TD_069: Critical Namespace Analyzer (Simplified)
-**Status**: Approved ✅
-**Owner**: Dev Engineer
-**Size**: S (2h)
-**Priority**: Important
-**Created**: 2025-08-22
-
-**What**: Roslyn analyzer for assembly boundary safety ONLY
-**Why**: Prevent MediatR discovery failures (like TD_068) without pedantic rules
-**How**:
-- Check: src/ files use BlockLife.Core.* namespace (not BlockLife.*)
-- Check: test/ files use BlockLife.Core.Tests.* namespace
-- NOT checking: Folder structure matching or Commands/Queries subfolder requirements
-**Done When**:
-- TD_068 scenario impossible to repeat
-- No false positives on legacy code patterns
-- Zero pedantic folder-matching rules
-
-**Test Specialist Note**: Simplified after realizing strict folder-namespace matching was causing more problems than it solved. Focus only on what actually breaks (assembly boundaries for MediatR).
-
-**Tech Lead Decision** (2025-08-23):
-- ✅ APPROVED - Complexity 3/10
-- Focuses on real problem (MediatR discovery failures)
-- Simple Roslyn analyzer pattern, 2-hour implementation
-- No pedantic rules, just assembly boundary safety
-
-### TD_070: DI Registration Validator (Test-Based)
-**Status**: Approved with Modification ⚠️
-**Owner**: Test Specialist
-**Size**: S (1h)
-**Priority**: Important
-**Created**: 2025-08-22
-
-**What**: Test-based validation for critical service registrations
-**Why**: Missing DI registrations cause cascade test failures that mask root cause
-**How**:
-- Create GameStrapperValidationTests.cs that runs first
-- Verify all critical interfaces have implementations registered
-- Check MediatR handler discovery works
-- Run as first test in Architecture category (per TD_071)
-**Done When**:
-- Test fails fast if critical services not registered
-- Clear error messages identify missing registrations
-- No more "13 tests fail from 1 missing service"
-
-**Tech Lead Decision** (2025-08-23):
-- ⚠️ APPROVED WITH MODIFICATION - Reduced complexity from 5/10 to 2/10
-- Use GameStrapperValidationTests instead of source generator
-- Simpler to implement and debug (just a test)
-- Runs in Architecture test category for fast feedback
-- Can evolve to source generator later if needed
-
-### TD_071: Test Categories for Faster Feedback
-**Status**: Proposed
-**Owner**: Test Specialist  
-**Size**: S (2h)
-**Priority**: Important
-**Created**: 2025-08-22
-
-**What**: Categorize tests for staged execution (Architecture/Integration/Stress)
-**Why**: Get faster feedback on architectural issues before running slow tests
-**How**:
-- Add [Trait("Category", "Architecture")] to fast validation tests
-- Configure pre-commit hook to run only Architecture category
-- CI pipeline runs categories in stages
-**Done When**:
-- Architecture tests complete in <5 seconds
-- Pre-commit catches namespace/DI issues immediately
-- CI fails fast on architectural violations
-
-
 
 
 ## 💡 Ideas (Do Later)
@@ -148,37 +77,6 @@
 
 
 
-
-
-**Files to Update**:
-- `.claude/memory-bank/active/[persona].md` templates
-- `Docs/04-Personas/` persona documentation
-- Memory bank protocols documentation
-
-### TD_074: Root Cause Memory Bank Protocol
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: S (2h)
-**Priority**: Ideas
-**Created**: 2025-08-23
-**Complexity Score**: 3/10
-**Pattern Match**: Similar to existing memory bank protocols
-**Simpler Alternative**: Just add template to persona docs (1h)
-
-**Problem**: ActiveContext captures surface fixes ("fixed DI registration") instead of root causes ("stateless services must be Singleton in MediatR lifecycle")
-
-**Solution**:
-- Add simple 3-line template to activeContext updates
-- Template: Surface/Root/Pattern structure
-- Update embody.ps1 to remind about root cause analysis
-- NO complex protocols or additional documents
-
-**Why Not Simpler**: The 1-hour template-only version might work, but automated reminders ensure consistency
-
-**Done When**:
-- activeContext entries show WHY bugs happened
-- Pattern solutions documented to prevent recurrence
-- No added complexity to workflow
 
 
 

@@ -150,5 +150,34 @@ fi
 # Architecture: Formatting enforced by build system (TreatWarningsAsErrors=true)
 # Architecture: Static analysis runs in pre-push for comprehensive validation
 
+# TD_071: Run quick architecture tests (optional, non-blocking)
+# Only runs if explicitly enabled via environment variable
+if [ "$BLOCKLIFE_PRECOMMIT_TESTS" = "true" ]; then
+    echo "⚡ Running Architecture Tests (TD_071)..."
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Check if PowerShell is available
+    if command -v pwsh >/dev/null 2>&1; then
+        pwsh -File ./scripts/test/quick.ps1 -Silent
+        test_result=$?
+    elif command -v powershell >/dev/null 2>&1; then
+        powershell -File ./scripts/test/quick.ps1 -Silent
+        test_result=$?
+    else
+        echo "⚠️ PowerShell not found, skipping architecture tests"
+        test_result=0
+    fi
+    
+    if [ $test_result -ne 0 ]; then
+        echo "❌ Architecture tests failed!"
+        echo "💡 Run './scripts/test/quick.ps1' for details"
+        echo ""
+        # Non-blocking: Just warn, don't prevent commit
+    else
+        echo "✅ Architecture tests passed!"
+        echo ""
+    fi
+fi
+
 # Always allow commit to proceed (educational only, never blocking)
 exit 0

@@ -19,6 +19,7 @@ namespace BlockLife.Core.Tests.Architecture
         // Note: Presentation assembly reference removed as it's not available in Core tests
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Core_Should_Not_Reference_Godot()
         {
             // Arrange
@@ -42,6 +43,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Commands_Should_Be_Immutable_DTOs()
         {
             // Arrange
@@ -81,6 +83,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Handlers_Should_Have_Single_Responsibility()
         {
             // Arrange
@@ -105,6 +108,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void All_Commands_Should_Return_Fin_Types()
         {
             // Arrange
@@ -132,6 +136,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Validation_Rules_Should_Return_Fin_Unit()
         {
             // Arrange
@@ -162,6 +167,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Presenters_Should_Not_Be_In_DI_Container()
         {
             // This test verifies the presenter registration pattern
@@ -186,6 +192,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Domain_Entities_Should_Be_Immutable()
         {
             // Arrange
@@ -219,6 +226,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Services_Should_Use_Interfaces()
         {
             // Arrange
@@ -239,6 +247,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Notifications_Should_Be_Immutable()
         {
             // Arrange
@@ -266,6 +275,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void No_Static_Service_Locators_In_Application_Code()
         {
             // Arrange
@@ -295,6 +305,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void Error_Messages_Should_Not_Include_Error_Codes()
         {
             // This is more of a convention test
@@ -306,6 +317,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void CommandHandlers_ShouldNotContain_TryCatchBlocks()
         {
             // ADR-006: Fin<T> vs Task<T> Consistency - Phase 1 Implementation
@@ -343,6 +355,7 @@ namespace BlockLife.Core.Tests.Architecture
         }
 
         [Fact]
+        [Trait("Category", "Architecture")]
         public void TaskFinExtensions_ShouldBe_Available()
         {
             // ADR-006: Verify that TaskFinExtensions are properly implemented

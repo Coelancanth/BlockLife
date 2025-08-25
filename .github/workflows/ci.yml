@@ -138,24 +138,42 @@ jobs:
     - name: Build
       run: dotnet build BlockLife.sln --no-restore --configuration Debug
       
-    - name: Test (Unit & Integration)
+    - name: Quick Architecture Tests (Fail Fast)
       run: |
-        # First, discover what tests are available (for debugging)
-        echo "🔍 Discovering tests..."
+        echo "⚡ Running Architecture Tests First (fail fast)..."
+        echo "These tests validate namespace boundaries, DI rules, and core architecture."
+        echo ""
+        
+        # Run only Architecture category tests for fast feedback
         dotnet test BlockLife.sln \
           --no-build \
           --configuration Debug \
-          --list-tests \
-          --filter "Category!=Performance" | head -20
+          --filter "Category=Architecture" \
+          --logger "console;verbosity=minimal" \
+          --logger "trx;LogFileName=architecture-test-results.trx"
         
-        # Now run the actual tests - MUST FAIL if tests fail
-        echo "🧪 Running tests..."
+        # If architecture tests fail, we stop here (1.3s feedback)
+        if [ $? -ne 0 ]; then
+          echo "❌ Architecture violations detected - stopping pipeline early"
+          echo "## ❌ Architecture Tests Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Architecture violations must be fixed before running full test suite." >> $GITHUB_STEP_SUMMARY
+          echo "This fail-fast approach saves ~38 seconds of CI time." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        
+        echo "✅ Architecture tests passed - proceeding to full test suite"
+      
+    - name: Full Test Suite
+      run: |
+        # Now run the full test suite (excluding already-run Architecture tests for efficiency)
+        echo "🧪 Running full test suite..."
         dotnet test BlockLife.sln \
           --no-build \
           --configuration Debug \
           --logger "console;verbosity=minimal" \
           --logger "trx;LogFileName=test-results.trx" \
-          --filter "Category!=Performance"
+          --filter "Category!=Performance&Category!=Architecture"
         
         # Note: Removed || true - tests MUST pass for CI to succeed
         # If tests fail on Linux but pass on Windows, we need to fix the tests, not hide failures
@@ -201,6 +219,7 @@ jobs:
         name: test-results
         path: |
           **/test-results.trx
+          **/architecture-test-results.trx
         retention-days: 7
         
   code-quality:
@@ -315,7 +334,10 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "All required checks have passed:" >> $GITHUB_STEP_SUMMARY
         echo "- ✅ Build successful" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Tests passing" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Architecture tests passed (fail-fast)" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Full test suite passed" >> $GITHUB_STEP_SUMMARY
         if [ "${{ github.event_name }}" == "pull_request" ]; then
           echo "- ✅ Code quality validated" >> $GITHUB_STEP_SUMMARY
         fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⚡ TD_079: Staged test execution provides 1.3s fail-fast feedback on architecture violations" >> $GITHUB_STEP_SUMMARY

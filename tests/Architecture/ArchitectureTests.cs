@@ -11,6 +11,7 @@ public class ArchitectureTests
     private readonly Assembly _coreAssembly = typeof(GameStrapper).Assembly;
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Core_Should_Not_Reference_Godot()
     {
         // Ensures Core layer remains pure C#
@@ -21,6 +22,7 @@ public class ArchitectureTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Commands_Should_Not_Contain_Logic()
     {
         // Commands should be pure DTOs
@@ -43,6 +45,7 @@ public class ArchitectureTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Handlers_Should_Return_Fin_Types()
     {
         // All handlers should use Fin<T> for error handling
@@ -66,6 +69,7 @@ public class ArchitectureTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Presenters_Should_Not_Have_State_Fields()
     {
         // Presenters should only have injected dependencies  
@@ -82,6 +86,7 @@ public class ArchitectureTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void ViewInterfaces_Should_Not_Expose_Godot_Types()
     {
         // IView interfaces should use primitive/DTO types only
@@ -104,6 +109,7 @@ public class ArchitectureTests
     }
 
     [Fact]
+    [Trait("Category", "Architecture")]
     public void Core_Assembly_Should_Use_Thread_Safe_Collections()
     {
         // Regression test for HF_002 - Prevent use of non-thread-safe collections

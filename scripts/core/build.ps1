@@ -49,6 +49,7 @@ switch ($Command) {
         Write-Step "Running tests"
         Execute-Command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
         Write-Host "✓ Build and test complete - safe to commit" -ForegroundColor Green
+        Write-Host "  💡 Tip: For faster testing, use ../test/quick.ps1 (1.3s) or ../test/full.ps1 (staged)" -ForegroundColor DarkGray
     }
     
     'test-only' {
@@ -57,6 +58,7 @@ switch ($Command) {
         Execute-Command "dotnet test BlockLife.sln --configuration Debug --verbosity normal"
         Write-Host "✓ All tests passed" -ForegroundColor Green
         Write-Host "  Remember to run 'test' (not 'test-only') before committing!" -ForegroundColor Yellow
+        Write-Host "  💡 Tip: Use ../test/quick.ps1 for architecture tests only (1.3s)" -ForegroundColor DarkGray
     }
     
     'run' {

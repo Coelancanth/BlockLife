@@ -165,25 +165,49 @@ BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP patter
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
-## 📅 IMPORTANT: Date-Sensitive Documents
+## 📅 IMPORTANT: Date-Sensitive Documents (TD_078 Enhanced)
 
-**ALWAYS run `date` command first when creating:**
+**ALWAYS run `date` command first when creating or updating:**
+- Memory Bank files (`.claude/memory-bank/active/*.md`)
+- Session logs (`.claude/memory-bank/session-log.md`)
 - Post-mortems
 - Backlog updates with completion dates
 - Release notes
 - Any document with timestamps
 
 ```bash
-# Run this first:
-date  # Get current date/time before creating dated documents
+# Run this FIRST, ALWAYS:
+date  # Get current date/time before creating/updating dated documents
+
+# Then use that timestamp in your updates
+# Example: "**Last Updated**: 2025-08-24 01:59"
 ```
+
+**Automated in embody.ps1 (TD_078):**
+- Script captures timestamp at start: `$scriptStartTime = Get-Date`
+- Uses consistent timestamp throughout execution
+- Prevents stale timestamps when script runs for extended time
+
+**Why**: Prevents incorrect timestamps that cause confusion about when work was actually done.
 
 
 ## 🚦 Quality Gates & CI/CD
 
-**MANDATORY before committing:** `./scripts/core/build.ps1 test` (Windows) or `./scripts/core/build.sh test` (Linux/Mac)
+### Test Execution Scripts (TD_071)
+```bash
+# Quick feedback during development (~1.3s)
+./scripts/test/quick.ps1         # Architecture tests only
 
-**Complete Build Documentation**: [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md) - All commands, CI/CD pipeline, hooks
+# Complete validation before PR (~3-5s)
+./scripts/test/full.ps1          # Staged execution
+./scripts/test/full.ps1 -SkipSlow  # Skip performance tests
+
+# MANDATORY before committing (full validation)
+./scripts/core/build.ps1 test    # Build + all tests
+```
+
+**Test Categories**: Architecture (30 tests, 1.3s), Unit (300+ tests, 20s), Performance (7 tests), ThreadSafety (1 test)  
+**Complete Documentation**: [TEST_CATEGORIES_GUIDE.md](Docs/03-Reference/TEST_CATEGORIES_GUIDE.md) & [HANDBOOK.md](Docs/03-Reference/HANDBOOK.md)
 
 ## 📚 Context7 Integration - PREVENT ASSUMPTION BUGS
 

@@ -29,12 +29,21 @@ Essential build, clean, and run operations for BlockLife.
 ## Usage Guidelines
 
 ### For Development
-- Use `test-only` for rapid iteration (tests only)
-- Use `test` before committing (builds + tests)
+- Use `../test/quick.ps1` for rapid feedback (architecture tests, 1.3s)
+- Use `test-only` for tests without rebuild
+- Use `test` before committing (full validation)
+- Use `../test/full.ps1` for complete test coverage
+
+### Test Script Integration (TD_071)
+The core build scripts focus on **build + all tests**. For **selective testing**, use:
+- `../test/quick.ps1` - Architecture only (1.3s)
+- `../test/full.ps1` - Staged execution (3-5s)
+- `../test/incremental.ps1` - Changed code only (coming, TD_077)
 
 ### For CI/CD
 - GitHub Actions uses these scripts for consistent builds
-- Pre-commit hooks use `test` to validate changes
+- Pre-commit hooks can optionally use `../test/quick.ps1`
+- Full test suite still runs via `build.ps1 test`
 
 ## Design Principles
 
