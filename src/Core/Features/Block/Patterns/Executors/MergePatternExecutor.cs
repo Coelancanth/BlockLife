@@ -100,6 +100,7 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                         block.Id,
                         position,
                         block.Type,
+                        block.Tier,
                         DateTime.UtcNow
                     );
                     
@@ -123,6 +124,7 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                     mergedBlock.Id,
                     triggerPosition,
                     blockType,
+                    newTier,
                     DateTime.UtcNow
                 );
                 _ = _mediator.Publish(placeNotification);

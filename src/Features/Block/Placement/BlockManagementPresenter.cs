@@ -153,7 +153,8 @@ public class BlockManagementPresenter : PresenterBase<IBlockManagementView>
             await View.Visualization.ShowBlockAsync(
                 notification.BlockId,
                 notification.Position,
-                notification.Type
+                notification.Type,
+                notification.Tier
             );
             // Trace: ShowBlockAsync completed for block {BlockId}
         }
