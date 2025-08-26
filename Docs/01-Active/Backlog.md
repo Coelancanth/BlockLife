@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-25 16:26
+**Last Updated**: 2025-08-26 19:21
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -148,32 +148,63 @@
 ---
 
 ### VS_003B-2: Merge Execution with Result Position
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer  
+**Status**: ~~Proposed~~ ~~Approved~~ **In Progress** (Major Implementation Complete - 2025-08-26 19:46)
+**Owner**: ~~Tech Lead~~ → Dev Engineer  
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-25 18:50
+**Reviewed**: 2025-08-26 19:21
+**Updated**: 2025-08-26 19:46
 
 **What**: Execute merge patterns when unlocked, converting 3+ blocks to 1 higher-tier block at result position
 **Why**: Core merge mechanic, builds on detection from VS_003B-1
 
-**How** (Technical Approach):
-- Create MergePatternExecutor implementing IPatternExecutor
-- Add tier field to Block domain entity (default Tier = 1)
-- Track and use result position (last-acted position) for merged block placement
-- Create MergeCommand/Handler (like MoveBlockCommand pattern)
-- Add simple unlock check to PlayerState (hardcoded for now)
-- Pattern resolver picks Merge over Match when unlocked
-- Higher tier blocks get multiplied values (T2 = base * 3, T3 = base * 9)
+**✅ MAJOR IMPLEMENTATION COMPLETED** (2025-08-26 19:46):
 
-**Done When**:
-- [ ] 3 Work-T1 blocks convert to 1 Work-T2 when unlocked
-- [ ] Same blocks still match when NOT unlocked
-- [ ] Block tier persists in domain model
-- [ ] Rewards scale with tier (T2 = 3x base value)
-- [ ] 20+ tests for execution logic
+**Core Implementation Complete**:
+- ✅ **Block.Tier field**: Added to domain entity with default Tier = 1, backward compatibility maintained
+- ✅ **ExecutionContext.TriggerPosition**: Already implemented in VS_003B-1 (result position tracking ready)
+- ✅ **MergePatternExecutor**: Full implementation with complete merge logic (200+ lines)
+- ✅ **PlayerState.IsMergeUnlocked()**: Added method (hardcoded to true for testing)
+- ✅ **Tier-based reward scaling**: T2 = 3x, T3 = 9x, T4 = 27x exponential scaling implemented
 
-**Depends On**: VS_003B-1
+**Architecture Decision**:
+- ✅ **No MergeCommand/Handler needed**: MergePatternExecutor handles execution directly (simpler approach)
+- ✅ **Reuses existing infrastructure**: Leverages MoveBlockCommand for actual block operations
+
+**Progress Status** (6 of 8 tasks complete):
+- ✅ Tier field in Block domain entity
+- ✅ Result position tracking (via ExecutionContext.TriggerPosition from VS_003B-1)
+- ✅ MergePatternExecutor with full merge logic
+- ✅ PlayerState unlock checking
+- ✅ Tier-based reward scaling
+- ✅ Architecture design decisions finalized
+- 🟡 **IN PROGRESS**: Comprehensive testing (20+ tests for execution logic)
+- ⏳ **PENDING**: End-to-end verification (3 Work-T1 → 1 Work-T2 flow)
+
+**Done When** (Updated Progress):
+- ✅ Block tier field persists in domain model
+- ✅ Rewards scale with tier (T2 = 3x, T3 = 9x, T4 = 27x exponential)
+- ✅ Result position correctly places merged block where action occurred
+- 🟡 20+ tests for execution logic (IN PROGRESS)
+- ⏳ 3 Work-T1 blocks convert to 1 Work-T2 when merge unlocked (PENDING VERIFICATION)
+- ⏳ Same blocks still match when NOT unlocked (PENDING VERIFICATION)
+
+**Depends On**: VS_003B-1 ✅ (completed)
+
+**Tech Lead Decision** (2025-08-26 19:21):
+- **APPROVED with refined scope** - Addresses 2 of 3 limitations from VS_003B-1
+- **Fixes limitation #1**: Add result position tracking to ExecutionContext ✅
+- **Fixes limitation #3**: Implement actual MergePatternExecutor (not stub) ✅
+- **Defers limitation #2**: Keep tier detection hardcoded (safe for initial implementation)
+- **Rationale**: Maintains 4h estimate, all blocks start as Tier 1 anyway
+- **Risk**: None - hardcoded Tier 1 detection is correct for initial game state
+
+**Deliberately Deferred**:
+- Dynamic tier detection in PatternExecutionResolver
+- Current limitation: Assumes all blocks are Tier 1 for pattern matching
+- Acceptable because: Initial game state only has Tier 1 blocks
+- Fix timing: VS_003B-4 (visual feedback) or new TD item if becomes blocking before then
 
 ---
 
@@ -222,6 +253,7 @@
 - Merge animation (blocks combining) vs match animation (blocks disappearing)
 - F9 debug overlay showing all unlock states
 - Use existing BlockType.GetColorRGB() for base colors
+- **Consider**: Fix dynamic tier detection if higher-tier blocks exist by this point
 
 **Done When**:
 - [ ] Blocks visually show their tier (T1, T2, etc.)

@@ -230,6 +230,7 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
                         Id = Guid.Empty, 
                         Type = BlockType.Basic, 
                         Position = Vector2Int.Zero, 
+                        Tier = 1, 
                         CreatedAt = DateTime.MinValue, 
                         LastModifiedAt = DateTime.MinValue 
                     }).Type != targetType)
@@ -255,6 +256,7 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
                             Id = Guid.Empty, 
                             Type = BlockType.Basic, 
                             Position = Vector2Int.Zero, 
+                            Tier = 1, 
                             CreatedAt = DateTime.MinValue, 
                             LastModifiedAt = DateTime.MinValue 
                         }).Type == targetType)

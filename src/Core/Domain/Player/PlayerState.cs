@@ -258,6 +258,19 @@ namespace BlockLife.Core.Domain.Player
             Resources.Values.Sum() + Attributes.Values.Sum();
 
         /// <summary>
+        /// Checks if the merge-to-next-tier unlock is available for the player.
+        /// Part of VS_003B-2: Merge Execution system.
+        /// HARDCODED for initial implementation - will be replaced with actual unlock logic in future.
+        /// </summary>
+        /// <returns>True if player has unlocked merge patterns, false for match-only mode</returns>
+        public bool IsMergeUnlocked()
+        {
+            // TODO: Replace with actual unlock logic (e.g., total score >= 100, specific achievements, purchases)
+            // For VS_003B-2 implementation: hardcoded to true to enable testing
+            return true;
+        }
+
+        /// <summary>
         /// Creates a copy with updated last modified timestamp (touch operation).
         /// </summary>
         public PlayerState Touch() => this with

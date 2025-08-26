@@ -76,6 +76,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             Id = request.BlockId,
             Position = request.Position,
             Type = request.Type,
+            Tier = 1,
             CreatedAt = DateTime.UtcNow,
             LastModifiedAt = DateTime.UtcNow
         });

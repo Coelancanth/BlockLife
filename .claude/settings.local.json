@@ -76,7 +76,9 @@
       "Bash(./scripts/utils/fix-session-log-order.ps1)",
       "Bash(git log:*)",
       "Bash(./scripts/persona/embody.ps1 debugger-expert)",
-      "Bash(gh pr list:*)"
+      "Bash(gh pr list:*)",
+      "WebFetch(domain:languageext.readthedocs.io)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": [],
