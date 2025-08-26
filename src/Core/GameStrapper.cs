@@ -417,6 +417,9 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.PlaceBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
+        
+        // --- Player Command Services (VS_003B-3) ---
+        services.AddTransient<BlockLife.Core.Features.Player.Commands.PurchaseMergeUnlockCommandHandler>();
 
         // --- Notification Handlers ---
         // NOTE: MediatR automatically discovers and registers INotificationHandler implementations

@@ -1,22 +1,39 @@
 using BlockLife.Core.Domain.Block;
+using BlockLife.Core.Infrastructure.Services;
 
 namespace BlockLife.Core.Features.Block.Patterns.Services
 {
     /// <summary>
-    /// Simple implementation of merge unlock service.
-    /// For VS_003B-1, temporarily returns true for tier 2 merges to enable testing.
+    /// Implementation of merge unlock service using actual player progression data.
+    /// Part of VS_003B-3: Uses PlayerState.MaxUnlockedTier to determine unlocks.
     /// </summary>
     public class MergeUnlockService : IMergeUnlockService
     {
+        private readonly IPlayerStateService _playerStateService;
+
+        public MergeUnlockService(IPlayerStateService playerStateService)
+        {
+            _playerStateService = playerStateService;
+        }
+
         /// <summary>
         /// Checks if merging to a specific tier is unlocked for a block type.
-        /// Temporarily hardcoded to allow merge-to-tier-2 and merge-to-tier-3 for testing.
+        /// Uses actual player progression data from PlayerState.MaxUnlockedTier.
         /// </summary>
         public bool IsMergeToTierUnlocked(BlockType blockType, int targetTier)
         {
-            // For VS_003B-1 testing: Allow merging to tier 2 and tier 3
-            // TODO: Replace with proper unlock tracking from player progression
-            return targetTier == 2 || targetTier == 3;
+            // Get current player state
+            var currentPlayer = _playerStateService.GetCurrentPlayer();
+            if (currentPlayer.IsNone)
+            {
+                // No player available - default to match-only mode (no merges)
+                return false;
+            }
+
+            var player = currentPlayer.Match(Some: p => p, None: () => throw new InvalidOperationException());
+            
+            // Player can merge TO target tier if they have unlocked it
+            return targetTier <= player.MaxUnlockedTier;
         }
     }
 }
