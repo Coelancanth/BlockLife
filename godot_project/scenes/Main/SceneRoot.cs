@@ -5,6 +5,7 @@ using BlockLife.Core.Domain.Player;
 using BlockLife.Core.Features.Player.Commands;
 using BlockLife.Core.Infrastructure.Logging;
 using BlockLife.Core.Presentation;
+using BlockLife.godot_project.infrastructure.debug;
 using BlockLife.godot_project.infrastructure.logging;
 using BlockLife.godot_project.resources.settings;
 using Godot;
@@ -159,6 +160,9 @@ public partial class SceneRoot : Node
 
             // --- 6. Initialize Default Player for Match-3 Game ---
             await InitializeDefaultPlayerAsync();
+
+            // --- 7. Initialize Debug UI (VS_003B-4 Phase 4) ---
+            InitializeDebugUI();
         }
         catch (Exception ex)
         {
@@ -316,6 +320,28 @@ public partial class SceneRoot : Node
         catch (Exception ex)
         {
             Logger?.Error(ex, "Error granting starting resources to player");
+        }
+    }
+
+    /// <summary>
+    /// Initializes debug UI components for VS_003B-4.
+    /// Adds F8 purchase panel for merge system testing.
+    /// </summary>
+    private void InitializeDebugUI()
+    {
+        try
+        {
+            // Add F8 Purchase Debug Panel for VS_003B-4 Phase 4
+            var purchaseDebugPanel = new PurchaseDebugPanel();
+            AddChild(purchaseDebugPanel);
+
+            Logger?.ForContext("SourceContext", LogCategory.Core)
+                  .Information("🔧 Debug UI initialized: F8 Purchase Panel available for merge system testing");
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error(ex, "Failed to initialize debug UI components");
+            // Non-critical - game can continue without debug UI
         }
     }
 }

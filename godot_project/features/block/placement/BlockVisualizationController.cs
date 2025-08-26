@@ -129,12 +129,70 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         return Task.CompletedTask;
     }
 
-    public Task ShowMergeAnimationAsync(Guid[] sourceBlockIds, Vector2Int targetPosition, BlockType type, int targetTier)
+    public async Task ShowMergeAnimationAsync(Guid[] sourceBlockIds, Vector2Int targetPosition, BlockType type, int targetTier)
     {
-        // Phase 3: This will be implemented with merge-specific animation
-        // For now, just show the result block normally
+        if (!EnableAnimations)
+        {
+            // Instant merge - just remove sources and show result
+            foreach (var sourceId in sourceBlockIds)
+            {
+                await HideBlockAsync(sourceId);
+            }
+            var instantResultId = Guid.NewGuid();
+            await ShowBlockAsync(instantResultId, targetPosition, type, targetTier);
+            return;
+        }
+
+        // Phase 1: Converge animation - source blocks move to target position
+        var convergeTasks = new List<Task>();
+        var targetWorldPos = GridToWorldPosition(targetPosition);
+
+        foreach (var sourceId in sourceBlockIds)
+        {
+            if (_blockNodes.TryGetValue(sourceId, out var sourceNode))
+            {
+                var convergeTask = Task.Run(async () =>
+                {
+                    var tween = CreateTween();
+                    tween.TweenProperty(sourceNode, "position", targetWorldPos, AnimationSpeed * 0.8f)
+                         .SetEase(Tween.EaseType.In)
+                         .SetTrans(Tween.TransitionType.Cubic);
+                    
+                    // Scale down during convergence
+                    tween.Parallel().TweenProperty(sourceNode, "scale", Vector2.One * 0.3f, AnimationSpeed * 0.8f)
+                         .SetEase(Tween.EaseType.In);
+                    
+                    await Task.Delay((int)(AnimationSpeed * 800));
+                });
+                convergeTasks.Add(convergeTask);
+            }
+        }
+
+        // Wait for all blocks to converge
+        await Task.WhenAll(convergeTasks);
+
+        // Phase 2: Flash effect at target position
+        await CreateMergeFlashEffect(targetWorldPos);
+
+        // Phase 3: Remove source blocks and show result with special entrance
+        foreach (var sourceId in sourceBlockIds)
+        {
+            if (_blockNodes.TryGetValue(sourceId, out var sourceNode))
+            {
+                sourceNode.QueueFree();
+                _blockNodes.Remove(sourceId);
+            }
+        }
+
+        // Phase 4: Show result block with enhanced appearance animation
         var resultBlockId = Guid.NewGuid();
-        return ShowBlockAsync(resultBlockId, targetPosition, type, targetTier);
+        await ShowBlockAsync(resultBlockId, targetPosition, type, targetTier);
+        
+        // Add special "burst" effect for merge result
+        if (_blockNodes.TryGetValue(resultBlockId, out var resultNode))
+        {
+            await CreateMergeBurstEffect(resultNode);
+        }
     }
 
     public Task HideBlockAsync(Guid blockId)
@@ -586,5 +644,65 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         // For now, just enhanced glow - proper particles need PackedScene
         blockNode.Modulate = Colors.White with { A = 1.5f };
         // TODO: Add actual GPUParticles2D when particle scenes are available
+    }
+
+    /// <summary>
+    /// Creates a flash effect at the merge target position.
+    /// Visual feedback that merge is occurring.
+    /// </summary>
+    private async Task CreateMergeFlashEffect(Vector2 worldPosition)
+    {
+        // Create temporary flash node
+        var flashNode = new ColorRect
+        {
+            Size = new Vector2(CellSize, CellSize),
+            Position = worldPosition,
+            Color = Colors.White with { A = 0.8f },
+            Modulate = Colors.Yellow
+        };
+
+        BlockContainer?.AddChild(flashNode);
+
+        // Quick flash animation
+        var tween = CreateTween();
+        tween.TweenProperty(flashNode, "modulate:a", 0.0f, AnimationSpeed * 0.3f)
+             .SetEase(Tween.EaseType.Out);
+
+        // Wait for flash to complete
+        await Task.Delay((int)(AnimationSpeed * 300));
+        
+        // Clean up flash node
+        if (IsInstanceValid(flashNode))
+        {
+            flashNode.QueueFree();
+        }
+    }
+
+    /// <summary>
+    /// Creates a burst effect for the merged result block.
+    /// Shows that a higher-tier block has appeared.
+    /// </summary>
+    private async Task CreateMergeBurstEffect(Node2D resultBlock)
+    {
+        // Store original scale
+        var originalScale = resultBlock.Scale;
+        
+        // Start with larger scale and "pop" down to normal
+        resultBlock.Scale = originalScale * 1.4f;
+        resultBlock.Modulate = Colors.White with { A = 1.3f };
+
+        var tween = CreateTween();
+        
+        // Scale burst effect
+        tween.TweenProperty(resultBlock, "scale", originalScale, AnimationSpeed * 0.4f)
+             .SetEase(Tween.EaseType.Out)
+             .SetTrans(Tween.TransitionType.Back);
+             
+        // Brightness fade
+        tween.Parallel().TweenProperty(resultBlock, "modulate", Colors.White, AnimationSpeed * 0.6f)
+             .SetEase(Tween.EaseType.Out);
+
+        // Wait for burst to complete
+        await Task.Delay((int)(AnimationSpeed * 600));
     }
 }
