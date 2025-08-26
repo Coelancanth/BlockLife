@@ -87,7 +87,11 @@
       "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\src\\Features\\Block\\Placement/**)",
       "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife/**)",
       "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project/**)",
-      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project\\scenes/**)"
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project\\scenes/**)",
+      "Bash(git branch:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(Remove-Item scripts/persona/embody-v3-backup.ps1 -Force)",
+      "Bash(./scripts/test/test-embody.ps1)"
     ],
     "deny": [],
     "ask": [],

@@ -13,11 +13,11 @@
 
 ### Persona System  
 ```bash
-# One-time setup
-./scripts/persona/setup-personas.ps1
+# One-time setup (deprecated - single-repo now)
+# Old multi-clone: ./scripts/persona/setup-personas.ps1
 
-# Daily sync
-./scripts/persona/sync-personas.ps1
+# Daily sync (deprecated - single-repo now uses embody.ps1)
+# Old: ./scripts/persona/sync-personas.ps1
 
 # Navigate to persona
 cd ../blocklife-dev-engineer      # Dev work
@@ -69,7 +69,7 @@ git push --no-verify
 
 - Use `test` (not `test-only`) before commits
 - Let hooks do the formatting automatically
-- Sync personas weekly: `./scripts/persona/sync-personas.ps1`
+- Sync handled automatically by: `./scripts/persona/embody.ps1`
 - Update Memory Bank when hooks remind you
 
 ---

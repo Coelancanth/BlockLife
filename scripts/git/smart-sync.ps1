@@ -115,20 +115,79 @@ function Sync-Branch {
     
     # Decision logic
     if ($currentBranch -eq $workBranch -and $isSquashMerge) {
-        Write-Decision "Detected squash merge - using reset strategy"
-        Write-Info "Your PR was merged to main. Resetting to match main branch."
+        Write-Decision "Detected squash merge - checking for new commits..."
         
-        if (-not $Check) {
-            # Reset local to match main
-            git reset --hard "origin/$mainBranch"
-            
-            # Force push to update remote dev/main
-            Write-Status "Updating remote $workBranch..."
-            git push origin "$workBranch" --force-with-lease
-            
-            Write-Success "Branch reset complete! $workBranch now matches $mainBranch"
+        # CRITICAL FIX: Check for new commits made AFTER the squash merge
+        $currentHead = git rev-parse HEAD
+        $mainHead = git rev-parse "origin/$mainBranch"
+        
+        if ($currentHead -eq $mainHead) {
+            Write-Success "Already aligned with main after squash merge"
         } else {
-            Write-Info "[Preview] Would reset $workBranch to match $mainBranch"
+            # Check for NEW commits not part of the squash
+            $localOnly = git log "origin/$workBranch..HEAD" --oneline 2>$null
+            $newCommits = @()
+            
+            if ($localOnly) {
+                foreach ($line in $localOnly) {
+                    if ($line -notmatch '\(#\d+\)$') {
+                        # This is a new commit made after the squash
+                        $newCommits += $line
+                    }
+                }
+            }
+            
+            if ($newCommits.Count -gt 0) {
+                Write-Warning "Found $($newCommits.Count) NEW commits made after squash merge:"
+                $newCommits | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+                Write-Warning "Preserving these new commits..."
+                
+                if (-not $Check) {
+                    # Save commits before reset
+                    $tempBranch = "temp-save-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+                    git branch $tempBranch
+                    
+                    # Reset to main
+                    git reset --hard "origin/$mainBranch"
+                    
+                    # Cherry-pick NEW commits only
+                    foreach ($commitLine in $newCommits) {
+                        $hash = $commitLine.Split(' ')[0]
+                        git cherry-pick $hash 2>$null
+                        if ($LASTEXITCODE -eq 0) {
+                            Write-Success "Preserved: $commitLine"
+                        } else {
+                            Write-Warning "Failed to preserve: $commitLine"
+                            git cherry-pick --skip 2>$null
+                        }
+                    }
+                    
+                    # Clean up temp branch
+                    git branch -D $tempBranch 2>$null
+                    
+                    # Force push to update remote
+                    Write-Status "Updating remote $workBranch..."
+                    git push origin "$workBranch" --force-with-lease
+                    Write-Success "Branch updated with preserved commits!"
+                } else {
+                    Write-Info "[Preview] Would preserve new commits and reset to main"
+                }
+            } else {
+                Write-Info "No new commits to preserve. Resetting to match main branch."
+                
+                if (-not $Check) {
+                    # Reset local to match main
+                    git reset --hard "origin/$mainBranch"
+                    
+                    # Force push to update remote dev/main
+                    Write-Status "Updating remote $workBranch..."
+                    git push origin "$workBranch" --force-with-lease
+                    
+                    Write-Success "Branch reset complete! $workBranch now matches $mainBranch"
+                } else {
+                    Write-Info "[Preview] Would reset $workBranch to match $mainBranch"
+                }
+            }
         }
         
     } elseif ($currentBranch -eq $mainBranch) {

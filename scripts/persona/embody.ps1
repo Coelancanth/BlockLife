@@ -11,7 +11,7 @@
 .PARAMETER Persona
     The persona to embody (dev-engineer, tech-lead, etc.)
 .EXAMPLE
-    embody-v4 tech-lead
+    embody tech-lead
     Embodies Tech Lead with automatic sync resolution
 #>
 

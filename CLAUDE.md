@@ -125,10 +125,10 @@ mcp__context7__get-library-docs "/louthy/language-ext" --topic "Task Fin async a
 ### 🎯 AUTOMATIC EMBODIMENT - ZERO FRICTION
 **When user says "embody [persona]", ALWAYS run:**
 ```bash
-./scripts/persona/embody-v4.ps1 [persona]
+./scripts/persona/embody.ps1 [persona]
 ```
 
-**This v4.0 script handles EVERYTHING automatically:**
+**This script handles EVERYTHING automatically:**
 - ✅ Detects and resolves squash merges (no conflicts!)
 - ✅ Handles interrupted rebases/merges
 - ✅ Preserves uncommitted work
