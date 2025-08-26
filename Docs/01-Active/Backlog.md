@@ -8,7 +8,7 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 015 (Last: BR_014 - 2025-08-26 21:40)
-- **Next TD**: 082 (Last: TD_081 - 2025-08-26 20:20)  
+- **Next TD**: 084 (Last: TD_083 - 2025-08-26 23:00)  
 - **Next VS**: 005 (Last: VS_003B-4 - 2025-08-25 18:50)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -132,6 +132,63 @@
 - Would cover basic functionality but miss edge cases
 
 **Pattern Match**: Follow existing test patterns in MatchPatternExecutorTests
+
+### TD_082: Fix Pre-Existing Test Compilation Errors (BlockPlacedEffect Constructor)
+**Status**: Proposed
+**Owner**: Test Specialist
+**Size**: M (4-6h)
+**Priority**: Critical
+**Created**: 2025-08-26 23:00
+**Complexity Score**: 4/10 (systematic test fixing)
+
+**What**: Fix compilation errors preventing test suite execution
+**Why**: PR can't merge with failing tests - CI/CD requires clean build
+
+**Current Issue**:
+- 14 test files failing with `CS7036: There is no argument given that corresponds to the required parameter 'PlacedAt'`
+- BlockPlacedEffect constructor signature changed but tests not updated
+- Affects SimulationManagerThreadSafetyTests, SimulationManagerRegressionTests, etc.
+
+**Proposed Solution**:
+- Add missing `PlacedAt` parameter to all BlockPlacedEffect constructor calls
+- Verify parameter order matches current constructor signature  
+- Run test suite to ensure no remaining compilation errors
+- Add proper DateTime values for PlacedAt parameter
+
+**Pattern Match**: Follow existing test patterns for effect creation
+
+**Simpler Alternative**: Fix just the failing tests (Score: 2/10)
+- Would get tests compiling but might miss parameter usage patterns
+
+### TD_083: Polish Merge System for Production Readiness  
+**Status**: Proposed
+**Owner**: Dev Engineer
+**Size**: S (3-4h)
+**Priority**: Important
+**Created**: 2025-08-26 23:00
+**Complexity Score**: 3/10 (refinement work)
+
+**What**: Polish and refine merge system implementation for production quality
+**Why**: Current implementation works but needs final polish before release
+
+**Polish Areas**:
+- Performance optimization for pattern recognition with tier checking
+- Error message improvements for invalid merge scenarios
+- Edge case handling (empty patterns, invalid positions)
+- Code documentation for maintenance
+- Consider adding merge animation timing controls
+
+**Proposed Solution**:
+- Review pattern recognition performance impact of tier checking
+- Enhance error messages with more context
+- Add comprehensive parameter validation
+- Clean up any remaining TODO/FIXME comments
+- Performance testing with large grids
+
+**Pattern Match**: Follow existing performance optimization patterns
+
+**Simpler Alternative**: Just add documentation (Score: 1/10)
+- Would improve maintainability but miss performance opportunities
 
 
 
