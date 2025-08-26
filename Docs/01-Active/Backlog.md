@@ -269,18 +269,21 @@
 
 ---
 
-### VS_003B-4: Visual Feedback & Debug Tools  
-**Status**: ~~Proposed~~ **Ready for Dev**
+### VS_003B-4: Visual Feedback & Debug Tools + Purchase UI
+**Status**: ~~Proposed~~ **Ready for Dev**  
 **Owner**: Dev Engineer
-**Size**: S (3h) ✅ Validated
+**Size**: M (5h) ⚠️ **Size Updated** - Purchase UI added
 **Priority**: Important
 **Created**: 2025-08-25 18:50
 **Reviewed**: 2025-08-26 20:16
+**Updated**: 2025-08-26 21:13 - Added purchase UI (critical missing piece)
 
-**What**: Add visual tier indicators and debug overlay for merge system
-**Why**: Players need to see tiers, developers need to debug unlock states
+**What**: Add visual tier indicators, debug overlay, AND purchase UI for merge system
+**Why**: Players need to see tiers, trigger purchases, and developers need debug tools
 
-**How** (Detailed Implementation Plan):
+**⚠️ CRITICAL INSIGHT**: VS_003B-3 implemented purchase backend but NO UI to trigger it! Players cannot actually buy unlocks without buttons.
+
+**How** (Updated Implementation Plan):
 **Phase 1: Interface Extensions (30 min)**
 - Extend IBlockVisualizationView: Add tier parameter to ShowBlockAsync
 - Add ShowMergeAnimationAsync for merge-specific animation
@@ -295,27 +298,42 @@
 - Merge: Blocks converge to trigger position → flash → new tier block appears
 - Sound: "pop" for match, "power up" for merge
 
-**Phase 4: Debug Overlay - F9 (45 min)**
+**Phase 4: Purchase UI - F8 Debug Menu (1.5 hours) 🆕**
+- **F8 Debug Purchase Panel**: Quick developer access to test purchases
+- Show current Money, MaxUnlockedTier status
+- Buttons: "Buy T2 (100💰)", "Buy T3 (500💰)", "Buy T4 (2500💰)"
+- Integration: Call `PurchaseMergeUnlockCommand.Create(tier)` through MediatR
+- Feedback: Success messages, error handling for insufficient funds
+- **Note**: This is a DEBUG solution - proper purchase UI needs Product Owner design
+
+**Phase 5: Debug Overlay - F9 (45 min)**
 - Current unlocks: { T2: ✓, T3: ✗, T4: ✗ }
 - Grid statistics: Blocks by tier count
 - Last pattern executed with details
-- Unlock costs display
+- Unlock costs display and purchase history
 
 **Done When**:
 - [ ] Blocks display tier badges (T1, T2, T3, T4)
 - [ ] Higher tiers have distinct visual scale and effects
 - [ ] Merge animation visually different from match animation
+- [ ] F8 debug menu allows purchase testing (Money → unlock → merge works E2E)
 - [ ] F9 debug overlay shows merge system state
 - [ ] Visual feedback tested on all 9 block types
 - [ ] Performance impact <5ms per frame with effects
 
-**Depends On**: VS_003B-2 ✅ (completed - tiers implemented)
+**Depends On**: VS_003B-3 ✅ (completed - purchase backend exists, needs UI)
+
+**Dev Engineer Update** (2025-08-26 21:13):
+- **SCOPE EXPANSION**: Added F8 purchase debug panel (Phase 4) 
+- **SIZE IMPACT**: 3h → 5h (purchase UI implementation)
+- **JUSTIFICATION**: Without purchase UI, merge system is backend-only and untestable by users
+- **APPROACH**: Debug menu first, then suggest proper UI as separate VS item for Product Owner
 
 **Tech Lead Decision** (2025-08-26 20:16):
 - **APPROVED**: Phased approach ensures clean implementation
 - **Defer**: Dynamic tier detection fix unless T2+ blocks cause issues
 - **Resource strategy**: Reuse existing shaders and particle systems
-- **Files to modify**: IBlockVisualizationView, GridView, BlockPresenter, DebugOverlay
+- **Files to modify**: IBlockVisualizationView, GridView, BlockPresenter, DebugOverlay, new PurchaseDebugPanel
 
 
 ## 💡 Ideas (Do Later)
