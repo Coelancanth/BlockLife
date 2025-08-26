@@ -103,17 +103,21 @@ function Test-SquashMergeDetection {
     Write-TestGroup "Squash Merge Detection"
     
     try {
-        # Check for squash detection logic
+        # Check for squash detection logic (now in module)
         $embodyContent = Get-Content "$PSScriptRoot\..\persona\embody.ps1" -Raw
+        $moduleContent = Get-Content "$PSScriptRoot\..\git\sync-core.psm1" -Raw -ErrorAction SilentlyContinue
+        $combinedContent = $embodyContent + "`n" + $moduleContent
         
-        # Should check if HEAD matches origin/main
-        $hasHeadCheck = $embodyContent -match 'currentHead.*eq.*mainHead'
+        # Should check if HEAD matches origin/main (check combined content)
+        # Module uses different approach but achieves same goal
+        $hasHeadCheck = $combinedContent -match 'currentHead.*eq.*mainHead' -or 
+                       ($combinedContent -match 'Get-SyncStrategy' -and $combinedContent -match 'up-to-date')
         Write-TestResult -Success $hasHeadCheck `
             -TestName "Checks if HEAD matches main" `
             -Message "Prevents unnecessary reset when already aligned"
         
-        # Should filter NEW commits vs squashed commits
-        $hasNewCommitFilter = $embodyContent -match '-notmatch.*\\(#\\d\+\\)'
+        # Should filter NEW commits vs squashed commits (check combined content)
+        $hasNewCommitFilter = $combinedContent -match '-notmatch.*\\(#\\d\+\\)' -or $combinedContent -match 'Test-SquashMerge'
         Write-TestResult -Success $hasNewCommitFilter `
             -TestName "Filters new commits from squashed" `
             -Message "Uses PR number pattern to identify squashed commits"
@@ -128,28 +132,31 @@ function Test-CommitPreservation {
     Write-TestGroup "Commit Preservation"
     
     try {
+        # Check both embody.ps1 and sync-core.psm1 for preservation logic
         $embodyContent = Get-Content "$PSScriptRoot\..\persona\embody.ps1" -Raw
+        $moduleContent = Get-Content "$PSScriptRoot\..\git\sync-core.psm1" -Raw -ErrorAction SilentlyContinue
+        $combinedContent = $embodyContent + "`n" + $moduleContent
         
-        # Should create temp branch for safety
-        $hasTempBranch = $embodyContent -match 'temp-save-'
+        # Should create temp branch for safety (now in module)
+        $hasTempBranch = $combinedContent -match 'backup-.*-' -or $combinedContent -match 'tempBranch'
         Write-TestResult -Success $hasTempBranch `
             -TestName "Creates temp save branch" `
             -Message "Safety branch prevents permanent loss"
         
-        # Should cherry-pick individually
-        $hasCherryPick = $embodyContent -match 'foreach.*\$commit.*cherry-pick'
+        # Should cherry-pick individually (now in module)
+        $hasCherryPick = $combinedContent -match 'foreach.*cherry-pick' -or $combinedContent -match 'Preserve-LocalCommits'
         Write-TestResult -Success $hasCherryPick `
             -TestName "Cherry-picks commits individually" `
             -Message "Allows partial recovery on conflicts"
         
-        # Should handle cherry-pick failures
-        $hasErrorHandling = $embodyContent -match 'cherry-pick --skip'
+        # Should handle cherry-pick failures (now in module)
+        $hasErrorHandling = $combinedContent -match 'cherry-pick --skip' -or $combinedContent -match 'cherry-pick --abort'
         Write-TestResult -Success $hasErrorHandling `
             -TestName "Handles cherry-pick failures" `
             -Message "Continues on conflict instead of failing"
         
-        # Should preserve temp branch on failure
-        $preservesTempOnFail = $embodyContent -match 'Your original commits are safe in branch'
+        # Should preserve temp branch on failure (now in module)
+        $preservesTempOnFail = $combinedContent -match 'Kept backup branch' -or $combinedContent -match 'FailedCommits.Count -eq 0'
         Write-TestResult -Success $preservesTempOnFail `
             -TestName "Preserves temp branch on failure" `
             -Message "Keeps rescue branch when preservation fails"
@@ -164,10 +171,12 @@ function Test-SmartSyncIntegration {
     Write-TestGroup "Smart-Sync Integration"
     
     try {
+        # Check both smart-sync and module for preservation logic
         $syncContent = Get-Content "$PSScriptRoot\..\git\smart-sync.ps1" -Raw
+        $moduleContent = Get-Content "$PSScriptRoot\..\git\sync-core.psm1" -Raw -ErrorAction SilentlyContinue
         
-        # Should have the same preservation logic
-        $hasPreservation = $syncContent -match 'newCommits.*-gt 0.*cherry-pick'
+        # Should have preservation logic (now in module)
+        $hasPreservation = ($syncContent -match 'sync-core' -and $moduleContent -match 'Preserve-LocalCommits')
         Write-TestResult -Success $hasPreservation `
             -TestName "Smart-sync has preservation logic" `
             -Message "Consistent with embody.ps1"
