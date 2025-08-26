@@ -44,9 +44,20 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
         {
             try
             {
+                // Validate context and services
+                if (context == null)
+                    return Error.New("ExecutionContext cannot be null");
+                    
+                if (context.GridService == null)
+                    return Error.New("GridService is required for merge pattern execution");
+                    
                 // Validate pattern type
                 if (pattern is not MatchPattern matchPattern)
                     return Error.New($"Pattern is not a MatchPattern: {pattern.GetType().Name}");
+
+                // Validate pattern has positions (Seq is a value type, check Count)
+                if (matchPattern.Positions.Count == 0)
+                    return Error.New("Pattern has no positions to merge");
 
                 // Validate trigger position is available (required for merge)
                 if (!context.TriggerPosition.HasValue)
@@ -69,7 +80,13 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                 }
 
                 // Step 2: Validate all blocks are same tier and type, then determine merge result
-                var firstBlock = blocksToRemove.First();
+                var firstBlock = blocksToRemove.FirstOrDefault();
+                if (firstBlock == null)
+                {
+                    _logger?.LogWarning("No valid blocks found to merge");
+                    return Error.New("No valid blocks found at merge positions");
+                }
+                
                 var expectedTier = firstBlock.Tier;
                 var expectedType = firstBlock.Type;
                 
@@ -85,6 +102,15 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                 }
                 
                 var newTier = expectedTier + 1;
+                
+                // Validate tier bounds (max tier is T4)
+                const int MAX_TIER = 4;
+                if (newTier > MAX_TIER)
+                {
+                    _logger?.LogWarning("Cannot merge beyond T{MaxTier}. Current tier: {CurrentTier}", MAX_TIER, expectedTier);
+                    return Error.New($"Cannot merge blocks beyond T{MAX_TIER}. Current blocks are T{expectedTier}");
+                }
+                
                 var blockType = expectedType;
 
                 _logger?.LogDebug("Merging {Count} {BlockType}-T{Tier} blocks into 1 {BlockType}-T{NewTier} at {TriggerPosition}", 
@@ -92,9 +118,13 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
 
                 // Step 3: Remove matched blocks from the grid and notify view
                 var removedBlocks = new List<(BlockLife.Core.Domain.Block.Block block, Vector2Int position)>();
-                foreach (var position in matchPattern.Positions)
+                
+                // Create a copy of positions to avoid concurrent modification issues
+                var positionsToProcess = matchPattern.Positions.ToList();
+                
+                foreach (var position in positionsToProcess)
                 {
-                    var blockToRemove = blocksToRemove.FirstOrDefault(b => b.Position == position);
+                    var blockToRemove = blocksToRemove.FirstOrDefault(b => b != null && b.Position == position);
                     
                     var removeResult = context.GridService.RemoveBlock(position);
                     if (removeResult.IsFail)
@@ -218,6 +248,13 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
 
         public async Task<Fin<bool>> CanExecute(IPattern pattern, ExecutionContext context)
         {
+            // Validate prerequisites
+            if (pattern == null)
+                return Error.New("Pattern cannot be null");
+                
+            if (context?.GridService == null)
+                return Error.New("Valid context with GridService is required");
+            
             // Can execute any Match pattern when merge is unlocked
             await Task.CompletedTask;
             return Fin<bool>.Succ(pattern.Type == PatternType.Match && pattern.IsValidFor(context.GridService));
@@ -225,6 +262,10 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
 
         public double EstimateExecutionTime(IPattern pattern)
         {
+            // Defensive check for null pattern
+            if (pattern == null)
+                return 0.0;
+                
             // Merge is relatively fast - estimate based on block count
             return pattern.Positions.Count * 10.0; // 10ms per block
         }

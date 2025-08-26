@@ -54,7 +54,7 @@ namespace BlockLife.Core.Tests.Features.Player.Commands
             updatedPlayer.MaxUnlockedTier.Should().Be(2);
         }
 
-        [Fact(Skip = "TODO: Need to implement test helper for setting MaxUnlockedTier - requires business logic")]
+        [Fact]
         public async Task Handle_WhenPlayerCanAffordT3AndHasT2_UnlocksTier3Successfully()
         {
             // Arrange - Player with T2 already unlocked and 500+ Money (T3 costs 500)
@@ -103,7 +103,7 @@ namespace BlockLife.Core.Tests.Features.Player.Commands
             error.Should().Contain("SEQUENTIAL");
         }
 
-        [Fact(Skip = "TODO: Need to implement test helper for setting MaxUnlockedTier - requires business logic")]
+        [Fact]
         public async Task Handle_WhenTryingToUnlockAlreadyUnlockedTier_ReturnsFailure()
         {
             // Arrange - Player trying to unlock T2 when they already have T2
@@ -174,23 +174,23 @@ namespace BlockLife.Core.Tests.Features.Player.Commands
             
             var player = currentPlayer.Match(Some: p => p, None: () => throw new InvalidOperationException("No current player"));
             
-            // Add money and set unlocked tier using 'with' syntax
+            // Add money first
             var resourceChanges = Map((ResourceType.Money, money));
             var playerWithMoney = player.ApplyChanges(resourceChanges, Map<AttributeType, int>());
             playerWithMoney.IsSome.Should().BeTrue("Test setup should add money successfully");
             
             var playerWithMoneyValue = playerWithMoney.Match(Some: p => p, None: () => throw new InvalidOperationException("Failed to add money"));
-            var playerWithTier = playerWithMoneyValue with { MaxUnlockedTier = unlockedTier };
             
-            // Update the player state service (this requires updating the service directly)
-            // Since PlayerStateService doesn't have a direct "set" method, we need to work around this
-            // For testing purposes, we'll create a new player with the desired state
-            _playerStateService.CreatePlayer(playerName); // Reset
+            // Update MaxUnlockedTier and increment version for optimistic concurrency
+            var playerWithTier = playerWithMoneyValue with 
+            { 
+                MaxUnlockedTier = unlockedTier,
+                Version = playerWithMoneyValue.Version + 1 
+            };
             
-            // Apply the changes through the service
-            var finalResourceChanges = Map((ResourceType.Money, money));
-            var finalResult = _playerStateService.ApplyRewards(finalResourceChanges, Map<AttributeType, int>());
-            finalResult.IsSucc.Should().BeTrue("Test setup should apply final rewards");
+            // Update the player state service with the modified player
+            var updateResult = _playerStateService.UpdatePlayer(playerWithTier);
+            updateResult.IsSucc.Should().BeTrue($"Test setup should update player tier to {unlockedTier}");
         }
     }
 }

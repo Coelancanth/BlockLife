@@ -193,5 +193,180 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
                 Fail: error => true.Should().BeFalse($"CanExecute should succeed but return false, got error: {error.Message}")
             );
         }
+
+        // BR_016 Defensive Programming Tests
+
+        [Fact]
+        public async Task MergePatternExecutor_Execute_WithNullContext_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            var positions = Seq(new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0));
+            var pattern = MatchPattern.Create(positions, BlockType.Work)
+                .IfNone(() => throw new InvalidOperationException("Failed to create pattern"));
+
+            // Act
+            var result = await executor.Execute(pattern, null!);
+
+            // Assert
+            result.Match(
+                Succ: _ => true.Should().BeFalse("Should not succeed with null context"),
+                Fail: error => error.Message.Should().Contain("ExecutionContext cannot be null")
+            );
+        }
+
+        [Fact]
+        public async Task MergePatternExecutor_Execute_WithNullGridService_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            var positions = Seq(new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0));
+            var pattern = MatchPattern.Create(positions, BlockType.Work)
+                .IfNone(() => throw new InvalidOperationException("Failed to create pattern"));
+
+            var context = new ExecutionContext
+            {
+                GridService = null!,
+                TriggerPosition = new Vector2Int(1, 0)
+            };
+
+            // Act
+            var result = await executor.Execute(pattern, context);
+
+            // Assert
+            result.Match(
+                Succ: _ => true.Should().BeFalse("Should not succeed with null GridService"),
+                Fail: error => error.Message.Should().Contain("GridService is required")
+            );
+        }
+
+        [Fact]
+        public async Task MergePatternExecutor_Execute_WithEmptyPatternPositions_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var gridService = new Mock<IGridStateService>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            // Create pattern with empty positions
+            var emptyPositions = Seq<Vector2Int>();
+            var patternOption = MatchPattern.Create(emptyPositions, BlockType.Work);
+
+            // MatchPattern.Create should fail with empty positions, but if it doesn't:
+            if (patternOption.IsSome)
+            {
+                var context = new ExecutionContext
+                {
+                    GridService = gridService.Object,
+                    TriggerPosition = new Vector2Int(1, 0)
+                };
+
+                // Act
+                var pattern = patternOption.IfNone(() => throw new InvalidOperationException("Expected pattern"));
+                var result = await executor.Execute(pattern, context);
+
+                // Assert
+                result.Match(
+                    Succ: _ => true.Should().BeFalse("Should not succeed with empty pattern positions"),
+                    Fail: error => error.Message.Should().Contain("Pattern has no positions")
+                );
+            }
+        }
+
+        [Fact]
+        public async Task MergePatternExecutor_Execute_WithMaxTierBlocks_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var gridService = new Mock<IGridStateService>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            var positions = Seq(new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0));
+            var pattern = MatchPattern.Create(positions, BlockType.Work)
+                .IfNone(() => throw new InvalidOperationException("Failed to create pattern"));
+
+            var context = new ExecutionContext
+            {
+                GridService = gridService.Object,
+                TriggerPosition = new Vector2Int(1, 0)
+            };
+
+            // Mock blocks at MAX_TIER (T4)
+            var maxTierBlock = DomainBlock.CreateNew(BlockType.Work, new Vector2Int(0, 0), 4);
+            gridService.Setup(g => g.GetBlockAt(It.IsAny<Vector2Int>()))
+                      .Returns(Option<DomainBlock>.Some(maxTierBlock));
+
+            // Act
+            var result = await executor.Execute(pattern, context);
+
+            // Assert
+            result.Match(
+                Succ: _ => true.Should().BeFalse("Should not succeed when merging T4 blocks"),
+                Fail: error => error.Message.Should().Contain("Cannot merge blocks beyond T4")
+            );
+        }
+
+        [Fact]
+        public async Task MergePatternExecutor_CanExecute_WithNullPattern_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var gridService = new Mock<IGridStateService>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            var context = new ExecutionContext
+            {
+                GridService = gridService.Object,
+                TriggerPosition = new Vector2Int(0, 0)
+            };
+
+            // Act
+            var result = await executor.CanExecute(null!, context);
+
+            // Assert
+            result.Match(
+                Succ: _ => true.Should().BeFalse("Should not succeed with null pattern"),
+                Fail: error => error.Message.Should().Contain("Pattern cannot be null")
+            );
+        }
+
+        [Fact]
+        public async Task MergePatternExecutor_CanExecute_WithNullContext_ReturnsError()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            var positions = Seq(new Vector2Int(0, 0), new Vector2Int(1, 0), new Vector2Int(2, 0));
+            var pattern = MatchPattern.Create(positions, BlockType.Work)
+                .IfNone(() => throw new InvalidOperationException("Failed to create pattern"));
+
+            // Act
+            var result = await executor.CanExecute(pattern, null!);
+
+            // Assert
+            result.Match(
+                Succ: _ => true.Should().BeFalse("Should not succeed with null context"),
+                Fail: error => error.Message.Should().Contain("Valid context with GridService is required")
+            );
+        }
+
+        [Fact]
+        public void MergePatternExecutor_EstimateExecutionTime_WithNullPattern_ReturnsZero()
+        {
+            // Arrange
+            var mediator = new Mock<IMediator>();
+            var executor = new MergePatternExecutor(mediator.Object);
+
+            // Act
+            var time = executor.EstimateExecutionTime(null!);
+
+            // Assert
+            time.Should().Be(0.0);
+        }
     }
 }

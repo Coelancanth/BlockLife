@@ -78,13 +78,23 @@
       "Bash(./scripts/persona/embody.ps1 debugger-expert)",
       "Bash(gh pr list:*)",
       "WebFetch(domain:languageext.readthedocs.io)",
-      "WebSearch"
+      "WebSearch",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\src\\Features\\Block\\Placement/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project\\features\\block\\placement/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project\\features\\block\\placement/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\src/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\src\\Features\\Block\\Placement/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project/**)",
+      "Read(/C:\\Users\\Coel\\Documents\\Godot\\blocklife\\godot_project\\scenes/**)"
     ],
     "deny": [],
     "ask": [],
     "additionalDirectories": [
       "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\Docs",
-      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\.claude"
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife\\.claude",
+      "C:\\Users\\Coel\\Documents\\Godot\\blocklife"
     ]
   },
   "outputStyle": "Explanatory"

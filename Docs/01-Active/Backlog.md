@@ -9,7 +9,7 @@
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
 - **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 005 (Last: VS_003B-4 - 2025-08-25 18:50)
+- **Next VS**: 006 (Last: VS_005 - 2025-08-26 23:43)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -66,9 +66,9 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### BR_015: Fix Failing PurchaseMergeUnlockCommandHandler Tests
-**Status**: Proposed
+**Status**: ~~Proposed~~ **Resolved** 2025-08-26 23:41
 **Owner**: Debugger Expert
-**Size**: S (2-3h)
+**Size**: S (2-3h actual: 40 min)
 **Priority**: Critical
 **Created**: 2025-08-26 23:25
 **Markers**: [TEST-FAILURE] [BLOCKING-PR]
@@ -76,25 +76,52 @@
 **What**: 3 tests failing in PurchaseMergeUnlockCommandHandler due to incorrect test setup
 **Why**: Tests block PR merge and may indicate logic issues in merge unlock implementation
 
-**Failing Tests**:
-- Handle_WhenPlayerCanAffordT2_UnlocksTier2Successfully
-- Handle_WhenPlayerCannotAffordCost_ReturnsFailure  
-- Handle_WhenTryingToSkipTiers_ReturnsFailure
+**Root Cause Found**:
+1. PlayerState.CreateNew() defaulted MaxUnlockedTier = 2 (for testing)
+2. This broke purchase validation - player already had T2 unlocked
+3. Test helper also needed proper UpdatePlayer() call with version tracking
 
-**Root Cause Analysis**:
-- SetupTestPlayerWithMoneyAndUnlockedTier helper doesn't properly set MaxUnlockedTier
-- Tests expect validation errors that aren't being triggered
-- Comment "TODO: Need to implement test helper" confirms known issue
+**Fix Applied**:
+- Changed default MaxUnlockedTier from 2 to 1 in PlayerState
+- Fixed SetupTestPlayerWithMoneyAndUnlockedTier helper to use UpdatePlayer()
+- Enabled 2 previously skipped tests that now work
 
-**Done When**:
-- All 3 tests pass consistently
-- Test helpers properly set player state including MaxUnlockedTier
-- No skipped tests remain in the suite
+**Result**: All 9 PurchaseMergeUnlockCommandHandler tests now pass
 
 ---
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
+### VS_005: User-Facing Merge Unlock UI
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: M (4-6h)
+**Priority**: Important
+**Created**: 2025-08-26 23:43
+
+**What**: Create accessible UI for players to purchase merge pattern unlocks without debug keys
+**Why**: Players currently can only unlock merge abilities via F8 debug panel - needs proper in-game UI
+
+**Current State**:
+- Backend purchase system fully working (VS_003B-3)
+- F8 debug panel has functional unlock UI but is developer-only
+- Players start with T1 (match-only), need to buy T2+ for merge patterns
+
+**Proposed Solution**:
+- Add unlock button/shop to main game UI (not debug panel)
+- Show current tier and available upgrades
+- Display costs clearly (T2: 100, T3: 500, T4: 2500)
+- Visual feedback when unlock succeeds
+- Integrate with existing PurchaseMergeUnlockCommand
+
+**Done When**:
+- Players can see and purchase merge unlocks in normal gameplay
+- No debug keys required for unlock progression
+- Clear cost/benefit shown before purchase
+- Visual confirmation of successful unlock
+
+---
 
 ### TD_084: Refactor to Use LanguageExt Collections Instead of System.Collections.Generic
 **Status**: Proposed
@@ -126,26 +153,24 @@
 - Tests still pass
 
 ### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
-**Status**: Proposed
+**Status**: ~~Proposed~~ **Resolved** 2025-08-26 23:50
 **Owner**: Debugger Expert  
-**Size**: S (2-3h)
+**Size**: S (2-3h actual: 25 min)
 **Priority**: Important
 **Created**: 2025-08-26 23:25
 
 **What**: MergePatternExecutor lacks defensive programming for several edge cases
 **Why**: Could cause runtime exceptions in production
 
-**Missing Validations**:
-1. No null check on context.GridService
-2. No validation that positions list isn't empty before First()
-3. No handling for concurrent modifications during execution
-4. Missing bounds checking for result tier (could exceed T4)
+**Defensive Programming Added**:
+1. ✅ Null checks for context and context.GridService
+2. ✅ Empty collection validation before First()
+3. ✅ Created defensive copy of positions to avoid concurrent modification
+4. ✅ Tier bounds validation (max T4) with proper error messages
+5. ✅ Null pattern checks in CanExecute and EstimateExecutionTime
 
-**Proposed Fix**:
-- Add defensive null checks with proper Fin<T> error returns
-- Validate collections before operations
-- Add tier bounds validation (max T4)
-- Consider thread safety for grid operations
+**Tests Added**: 8 new defensive programming tests covering all edge cases
+**Result**: MergePatternExecutor now gracefully handles all edge cases with Fin<T> errors
 
 **Done When**:
 - All edge cases return proper Error results

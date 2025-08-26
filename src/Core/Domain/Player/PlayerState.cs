@@ -57,7 +57,7 @@ namespace BlockLife.Core.Domain.Player
         /// Tier 1 = basic match-3 only, Tier 2+ = merge patterns enabled.
         /// Part of VS_003B-3: Unlock Purchase System.
         /// </summary>
-        public required int MaxUnlockedTier { get; init; } = 2;  // Enable merge by default for testing
+        public required int MaxUnlockedTier { get; init; } = 1;  // Start with T1 only, merge patterns require purchase
 
         /// <summary>
         /// Default constructor required for record initialization with required properties.
@@ -112,7 +112,7 @@ namespace BlockLife.Core.Domain.Player
                 CreatedAt = now,
                 LastModifiedAt = now,
                 Version = 1,
-                MaxUnlockedTier = 2  // Enable merge by default for testing
+                MaxUnlockedTier = 1  // Start with T1 only, merge patterns require purchase
             };
         }
 
