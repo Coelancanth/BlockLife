@@ -68,13 +68,27 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                     return Error.New("No blocks found to merge");
                 }
 
-                // Step 2: Determine merge result tier and type
+                // Step 2: Validate all blocks are same tier and type, then determine merge result
                 var firstBlock = blocksToRemove.First();
-                var newTier = firstBlock.Tier + 1;
-                var blockType = firstBlock.Type;
+                var expectedTier = firstBlock.Tier;
+                var expectedType = firstBlock.Type;
+                
+                // CRITICAL: Verify all blocks are exactly the same tier and type
+                foreach (var block in blocksToRemove)
+                {
+                    if (block.Tier != expectedTier || block.Type != expectedType)
+                    {
+                        _logger?.LogError("Mixed tier/type merge attempt: Expected {ExpectedType}-T{ExpectedTier}, found {ActualType}-T{ActualTier}", 
+                            expectedType, expectedTier, block.Type, block.Tier);
+                        return Error.New($"Cannot merge blocks with different tiers or types. Expected: {expectedType}-T{expectedTier}, Found: {block.Type}-T{block.Tier}");
+                    }
+                }
+                
+                var newTier = expectedTier + 1;
+                var blockType = expectedType;
 
                 _logger?.LogDebug("Merging {Count} {BlockType}-T{Tier} blocks into 1 {BlockType}-T{NewTier} at {TriggerPosition}", 
-                    blocksToRemove.Count, blockType, firstBlock.Tier, blockType, newTier, triggerPosition);
+                    blocksToRemove.Count, blockType, expectedTier, blockType, newTier, triggerPosition);
 
                 // Step 3: Remove matched blocks from the grid and notify view
                 var removedBlocks = new List<(BlockLife.Core.Domain.Block.Block block, Vector2Int position)>();

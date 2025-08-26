@@ -181,8 +181,8 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
 
                 var block = blockOption.IfNone(() => throw new InvalidOperationException("Block should exist"));
 
-                // Run flood-fill to find connected component
-                var connectedPositions = FloodFillFindMatches(gridService, startPosition, block.Type);
+                // Run flood-fill to find connected component (same type AND tier)
+                var connectedPositions = FloodFillFindMatches(gridService, startPosition, block.Type, block.Tier);
 
                 // Mark all positions in this component as processed
                 foreach (var pos in connectedPositions)
@@ -206,11 +206,12 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
         }
 
         /// <summary>
-        /// Flood-fill algorithm to find all connected blocks of the same type.
+        /// Flood-fill algorithm to find all connected blocks of the same type AND tier.
         /// Uses breadth-first search to identify connected components.
+        /// CRITICAL: Only blocks with matching type AND tier can form patterns.
         /// Leverages LanguageExt Seq for efficient immutable collections.
         /// </summary>
-        private Seq<Vector2Int> FloodFillFindMatches(IGridStateService gridService, Vector2Int startPosition, BlockType targetType)
+        private Seq<Vector2Int> FloodFillFindMatches(IGridStateService gridService, Vector2Int startPosition, BlockType targetType, int targetTier)
         {
             var visited = new System.Collections.Generic.HashSet<Vector2Int>();
             var queue = new Queue<Vector2Int>();
@@ -223,9 +224,12 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
             {
                 var currentPosition = queue.Dequeue();
 
-                // Verify current position has the correct block type
+                // Verify current position has the correct block type AND tier
                 var blockAtPosition = gridService.GetBlockAt(currentPosition);
-                if (blockAtPosition.IsNone || blockAtPosition.IfNone(() => new BlockLife.Core.Domain.Block.Block 
+                if (blockAtPosition.IsNone)
+                    continue;
+                
+                var currentBlock = blockAtPosition.IfNone(() => new BlockLife.Core.Domain.Block.Block 
                     { 
                         Id = Guid.Empty, 
                         Type = BlockType.Basic, 
@@ -233,7 +237,10 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
                         Tier = 1, 
                         CreatedAt = DateTime.MinValue, 
                         LastModifiedAt = DateTime.MinValue 
-                    }).Type != targetType)
+                    });
+                
+                // CRITICAL: Must match both type AND tier
+                if (currentBlock.Type != targetType || currentBlock.Tier != targetTier)
                     continue;
 
                 matchedPositions.Add(currentPosition);
@@ -249,20 +256,26 @@ namespace BlockLife.Core.Features.Block.Patterns.Recognizers
                     if (gridService.IsPositionEmpty(adjacentPosition))
                         continue;
 
-                    // Check if adjacent block matches our target type
+                    // Check if adjacent block matches our target type AND tier
                     var adjacentBlock = gridService.GetBlockAt(adjacentPosition);
-                    if (adjacentBlock.IsSome && adjacentBlock.IfNone(() => new BlockLife.Core.Domain.Block.Block 
-                        { 
-                            Id = Guid.Empty, 
-                            Type = BlockType.Basic, 
-                            Position = Vector2Int.Zero, 
-                            Tier = 1, 
-                            CreatedAt = DateTime.MinValue, 
-                            LastModifiedAt = DateTime.MinValue 
-                        }).Type == targetType)
+                    if (adjacentBlock.IsSome)
                     {
-                        visited.Add(adjacentPosition);
-                        queue.Enqueue(adjacentPosition);
+                        var adjBlock = adjacentBlock.IfNone(() => new BlockLife.Core.Domain.Block.Block 
+                            { 
+                                Id = Guid.Empty, 
+                                Type = BlockType.Basic, 
+                                Position = Vector2Int.Zero, 
+                                Tier = 1, 
+                                CreatedAt = DateTime.MinValue, 
+                                LastModifiedAt = DateTime.MinValue 
+                            });
+                        
+                        // CRITICAL: Must match both type AND tier for pattern formation
+                        if (adjBlock.Type == targetType && adjBlock.Tier == targetTier)
+                        {
+                            visited.Add(adjacentPosition);
+                            queue.Enqueue(adjacentPosition);
+                        }
                     }
                 }
             }
