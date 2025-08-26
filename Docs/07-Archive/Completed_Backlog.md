@@ -4,7 +4,7 @@
 
 **Purpose**: Completed and rejected work items for historical reference and lessons learned.
 
-**Last Updated**: 2025-08-23
+**Last Updated**: 2025-08-27
 **Recovery Note**: Archive reconstructed on 2025-08-19 after data loss incident (see BR_011 post-mortem)
 **Consolidation**: 2025-08-21 - Merged from Docs/01-Active/Archive.md to establish single authoritative source
 
@@ -839,3 +839,43 @@
 **Unblocked**: Safe persona switching, eliminated data loss risk in development workflow
 **Post-Mortem**: Created and Memory Bank updated with lessons learned
 [METADATA: data-loss-prevention, persona-system, embody-script, critical-fix, devops, workflow-safety]
+
+### 2025-08-27
+
+#### BR_015: Fix Failing PurchaseMergeUnlockCommandHandler Tests ✅ COMPLETED
+**Completed**: 2025-08-27 (Resolved: 2025-08-26 23:41)
+**Effort**: S (40 min actual vs 2-3h estimated)
+**Outcome**: Resolved critical test failure blocking PR merge - fixed incorrect test setup in PurchaseMergeUnlockCommandHandler
+**Root Cause Analysis**: PlayerState.CreateNew() defaulted MaxUnlockedTier = 2 (for testing convenience) but this broke purchase validation logic - player already had T2 unlocked so purchase validation failed appropriately but tests expected success
+**Fix Applied**: Changed default MaxUnlockedTier from 2 to 1 in PlayerState, fixed SetupTestPlayerWithMoneyAndUnlockedTier helper to use proper UpdatePlayer() call with version tracking, enabled 2 previously skipped tests
+**Result**: All 9 PurchaseMergeUnlockCommandHandler tests now pass, PR unblocked for merge
+**Lessons**: Test data setup must reflect realistic game state - convenience defaults that violate business rules lead to confusing test failures that mask real issues
+**Unblocked**: VS_003B merge system PR ready for deployment, test suite integrity restored
+[METADATA: test-failure, purchase-validation, merge-unlock-system, business-rules, test-setup, pr-blocker, debugger-expert]
+
+---
+
+## ❌ Rejected Items
+
+### 2025-08-27
+
+#### TD_085: Add Comprehensive Logging and Telemetry to Pattern System ❌ REJECTED
+**Rejected**: 2025-08-27 by Tech Lead
+**Proposed Size**: M (4-6h)
+**Reason**: Pattern executors already have comprehensive logging (verified with code inspection). Visual debugging covered by TD_088. Mixing unrelated concerns (logging vs telemetry).
+**Alternative**: Existing logging is sufficient. If metrics needed later, create focused 1-2h TD for counters only.
+[RESURRECT-IF: Production shows specific observability gaps that current logging doesn't cover]
+
+#### TD_086: Implement Property-Based Testing for Pattern Recognition ❌ REJECTED  
+**Rejected**: 2025-08-27 by Tech Lead
+**Proposed Size**: L (8-12h)
+**Reason**: MatchPatternPropertyTests.cs already exists with comprehensive FsCheck tests. This is duplicate/redundant work proposing what we already have.
+**Alternative**: Continue using existing property-based tests which already validate pattern recognition invariants.
+[RESURRECT-IF: Never - we already have this]
+
+#### TD_087: Performance Optimization for Large Grid Pattern Recognition ❌ REJECTED
+**Rejected**: 2025-08-27 by Tech Lead  
+**Proposed Size**: L (8-12h)
+**Reason**: Classic premature optimization. Current grid is 10x10, not 100x100. No evidence of performance problems. "May lag" = theoretical problem, not real.
+**Alternative**: Keep current O(n²) algorithm which works fine for actual grid sizes. Profile first if issues arise.
+[RESURRECT-IF: Grid size increases beyond 20x20 AND profiling shows pattern recognition as bottleneck]

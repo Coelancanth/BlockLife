@@ -134,47 +134,8 @@
 - Worth doing for consistency
 
 
-### TD_085: ~~Add Comprehensive Logging and Telemetry to Pattern System~~
-**Status**: Rejected
-**Owner**: ~~Dev Engineer~~
-**Size**: ~~M (4-6h)~~
-**Priority**: ~~Important~~
-**Created**: 2025-08-26 23:25
-
-**Tech Lead Decision** (2025-08-27): REJECTED
-- Pattern executors already have comprehensive logging (verified)
-- Visual debugging covered by TD_088
-- If metrics needed, that's a separate simpler TD (1-2h for counters)
-- Don't mix logging (already done) with telemetry (not needed yet)
-
-
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
-
-### TD_086: ~~Implement Property-Based Testing for Pattern Recognition~~
-**Status**: Rejected
-**Owner**: ~~Test Specialist~~
-**Size**: ~~L (8-12h)~~
-**Priority**: ~~Ideas~~
-**Created**: 2025-08-26 23:25
-
-**Tech Lead Decision** (2025-08-27): REJECTED
-- MatchPatternPropertyTests.cs already exists with FsCheck tests
-- We already have property-based testing for patterns
-- This is duplicate/redundant work
-
-### TD_087: ~~Performance Optimization for Large Grid Pattern Recognition~~
-**Status**: Rejected
-**Owner**: ~~Dev Engineer~~
-**Size**: ~~L (8-12h)~~
-**Priority**: ~~Ideas~~
-**Created**: 2025-08-26 23:25
-
-**Tech Lead Decision** (2025-08-27): REJECTED
-- Current grid is 10x10, not 100x100
-- No evidence of performance problems
-- Classic premature optimization
-- "May lag" = theoretical problem, not real
 
 ### TD_088: Add Visual Pattern Recognition Debugging Tools
 **Status**: Approved
