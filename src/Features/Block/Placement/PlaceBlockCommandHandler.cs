@@ -76,8 +76,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             Id = request.BlockId,
             Position = request.Position,
             Type = request.Type,
-            // TEMPORARY: Force tier 2 for testing tier visual indicators
-            Tier = 2,
+            Tier = 1,  // All placed blocks start at tier 1
             CreatedAt = DateTime.UtcNow,
             LastModifiedAt = DateTime.UtcNow
         });
