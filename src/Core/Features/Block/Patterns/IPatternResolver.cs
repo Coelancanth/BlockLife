@@ -132,7 +132,7 @@ namespace BlockLife.Core.Features.Block.Patterns
     {
         /// <summary>
         /// Select patterns with highest priority value first.
-        /// Most common strategy - TierUp beats Match, etc.
+        /// Most common strategy - Merge beats Match, etc.
         /// </summary>
         public const string Priority = "Priority";
 

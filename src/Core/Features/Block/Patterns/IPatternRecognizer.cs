@@ -6,7 +6,7 @@ namespace BlockLife.Core.Features.Block.Patterns
 {
     /// <summary>
     /// Interface for recognizing specific types of patterns in the grid.
-    /// Each implementation handles one pattern type (Match, TierUp, Transmute, etc.).
+    /// Each implementation handles one pattern type (Match, Merge, Transmute, etc.).
     /// Pattern recognizers are pure functions that find patterns without side effects.
     /// Following ADR-001: Pattern Recognition Framework.
     /// </summary>

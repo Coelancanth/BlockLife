@@ -85,6 +85,13 @@ namespace BlockLife.Core.Features.Block.Patterns
         public required BlockLife.Core.Infrastructure.Services.IGridStateService GridService { get; init; }
 
         /// <summary>
+        /// The position where the pattern was triggered (e.g., where the player acted).
+        /// Used for merge patterns to determine where the merged block should appear.
+        /// Per Glossary: "Result Position" - the last-acted position.
+        /// </summary>
+        public BlockLife.Core.Domain.Common.Vector2Int? TriggerPosition { get; init; }
+
+        /// <summary>
         /// Timestamp when execution began.
         /// Used for performance monitoring and logging.
         /// </summary>
@@ -105,9 +112,12 @@ namespace BlockLife.Core.Features.Block.Patterns
         /// <summary>
         /// Creates a default execution context with grid service.
         /// </summary>
-        public static ExecutionContext Create(BlockLife.Core.Infrastructure.Services.IGridStateService gridService) => new()
+        public static ExecutionContext Create(
+            BlockLife.Core.Infrastructure.Services.IGridStateService gridService,
+            BlockLife.Core.Domain.Common.Vector2Int? triggerPosition = null) => new()
         {
             GridService = gridService,
+            TriggerPosition = triggerPosition,
             ExecutionStartedAt = System.DateTime.UtcNow,
             TimeoutMs = 5000.0,
             AdditionalData = new System.Collections.Generic.Dictionary<string, object>()
@@ -118,9 +128,11 @@ namespace BlockLife.Core.Features.Block.Patterns
         /// </summary>
         public static ExecutionContext CreateWithTimeout(
             BlockLife.Core.Infrastructure.Services.IGridStateService gridService, 
-            double timeoutMs) => new()
+            double timeoutMs,
+            BlockLife.Core.Domain.Common.Vector2Int? triggerPosition = null) => new()
         {
             GridService = gridService,
+            TriggerPosition = triggerPosition,
             ExecutionStartedAt = System.DateTime.UtcNow,
             TimeoutMs = timeoutMs,
             AdditionalData = new System.Collections.Generic.Dictionary<string, object>()

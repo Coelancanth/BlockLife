@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
+using BlockLife.Core.Features.Block.Patterns;
 using BlockLife.Core.Features.Block.Patterns.Recognizers;
 using BlockLife.Core.Features.Block.Patterns.Executors;
 using BlockLife.Core.Features.Block.Patterns.Services;
@@ -35,7 +36,9 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             _playerStateService = new Mock<IPlayerStateService>();
             
             // Create resolver that will decide between match and merge
-            _resolver = new PatternExecutionResolver(_mergeUnlockService.Object);
+            var matchExecutor = new MatchPatternExecutor(_mediator.Object);
+            var mergeExecutor = new MergePatternExecutor(_mediator.Object);
+            _resolver = new PatternExecutionResolver(_mergeUnlockService.Object, matchExecutor, mergeExecutor);
         }
 
         [Fact]

@@ -146,8 +146,11 @@ public static class GameStrapper
 
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
-        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.TierUpPatternRecognizer>();  // VS_003B-1
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MergePatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Services.IMergeUnlockService, 
+            BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
@@ -362,8 +365,11 @@ public static class GameStrapper
 
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
-        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.TierUpPatternRecognizer>();  // VS_003B-1
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MergePatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Services.IMergeUnlockService, 
+            BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();

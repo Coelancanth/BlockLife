@@ -67,22 +67,12 @@ namespace BlockLife.Core.Features.Block.Notifications
                     matchRecognizer = new MatchPatternRecognizer();
                 }
                 
-                // Get tier-up pattern recognizer from DI (VS_003B-1)
-                var tierUpRecognizer = _serviceProvider.GetService<TierUpPatternRecognizer>();
-                if (tierUpRecognizer == null)
+                // Get pattern execution resolver from DI
+                var resolver = _serviceProvider.GetService<PatternExecutionResolver>();
+                if (resolver == null)
                 {
-                    _logger?.LogDebug("TierUpPatternRecognizer not found in DI, creating new instance");
-                    tierUpRecognizer = new TierUpPatternRecognizer();
-                }
-                
-                // Get pattern executor from DI
-                var executor = _serviceProvider.GetService<MatchPatternExecutor>();
-                if (executor == null)
-                {
-                    _logger?.LogWarning("MatchPatternExecutor not found in DI, creating new instance");
-                    executor = new MatchPatternExecutor(
-                        _serviceProvider.GetRequiredService<IMediator>(),
-                        _serviceProvider.GetService<ILogger<MatchPatternExecutor>>());
+                    _logger?.LogWarning("PatternExecutionResolver not found in DI");
+                    return;
                 }
 
                 // Create pattern context with no specific target types (find all patterns)
@@ -94,33 +84,9 @@ namespace BlockLife.Core.Features.Block.Notifications
                     RecognitionStartedAt = DateTime.UtcNow
                 };
 
-                // Find tier-up patterns first (higher priority)
-                _logger?.LogDebug("Checking for tier-up patterns at position {Position}", position);
-                var tierUpPatternsResult = tierUpRecognizer.Recognize(_gridService, position, context);
-                
                 // Find match patterns at this position
                 _logger?.LogDebug("Recognizing match patterns at position {Position}", position);
                 var matchPatternsResult = matchRecognizer.Recognize(_gridService, position, context);
-                
-                // Add tier-up patterns if found (VS_003B-1: just log them for now)
-                if (tierUpPatternsResult.IsSucc)
-                {
-                    var tierUpPatterns = tierUpPatternsResult.Match(
-                        Succ: p => p,
-                        Fail: _ => Empty
-                    );
-                    
-                    if (tierUpPatterns.Any())
-                    {
-                        _logger?.LogInformation("🔺 Found {Count} tier-up patterns at {Position}", 
-                            tierUpPatterns.Count, position);
-                        foreach (var pattern in tierUpPatterns)
-                        {
-                            _logger?.LogInformation("  TierUp: {Description}", pattern.GetDescription());
-                        }
-                        // For VS_003B-1, we don't execute tier-up patterns yet, just detect and log
-                    }
-                }
                 
                 // Process match patterns as before
                 var patternsResult = matchPatternsResult;
@@ -153,7 +119,9 @@ namespace BlockLife.Core.Features.Block.Notifications
                         _logger?.LogInformation("Executing match pattern with {Count} blocks after placement", 
                             matchPattern.Positions.Count);
 
-                        var executionContext = BlockLife.Core.Features.Block.Patterns.ExecutionContext.Create(_gridService);
+                        var executionContext = BlockLife.Core.Features.Block.Patterns.ExecutionContext.Create(_gridService, position);
+                        // Use resolver to determine which executor to use
+                        var executor = resolver.ResolveExecutor(pattern);
                         var executeResult = await executor.Execute(pattern, executionContext);
 
                         if (executeResult.IsFail)
