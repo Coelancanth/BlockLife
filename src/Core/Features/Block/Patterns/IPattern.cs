@@ -13,7 +13,7 @@ namespace BlockLife.Core.Features.Block.Patterns
     public interface IPattern
     {
         /// <summary>
-        /// The type of this pattern (Match, TierUp, Transmute, etc.).
+        /// The type of this pattern (Match, Merge, Transmute, etc.).
         /// Determines which executor will handle this pattern.
         /// </summary>
         PatternType Type { get; }

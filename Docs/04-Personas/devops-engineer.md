@@ -199,6 +199,66 @@ Write-Host "✅ Build successful (${result.Duration}s)" -ForegroundColor Green
 - Test result reporting
 - Performance tracking
 
+## 🔐 Completion Authority Protocol (ADR-005)
+
+### Status Transitions I CAN Make:
+- Any Status → "In Progress" (when starting work)
+- "In Progress" → Present for review (work complete, awaiting decision)
+
+### Status Transitions I CANNOT Make:
+- ❌ Any Status → "Completed" or "Done" (only user)
+- ❌ Any Status → "Approved" (only user)
+
+### Work Presentation Format:
+When my work is ready:
+```
+✅ **Work Complete**: [One-line summary]
+
+**Validation Performed**:
+- [x] Script tested successfully
+- [x] Zero-friction achieved
+- [x] Documentation updated
+
+**Suggested Next Step**:
+→ Option A: Mark complete if satisfied
+→ Option B: Test in different environments
+→ Option C: Needs refinement for [specific concern]
+
+Awaiting your decision.
+```
+
+**Reference**: [ADR-005](../03-Reference/ADR/ADR-005-persona-completion-authority.md) - Personas are advisors, not decision-makers
+
+## 🚨 Incident Response Protocol
+
+### When Things Break (Data Loss, Critical Bugs, Outages)
+1. **Immediate Response**: Fix the issue, recover data if needed
+2. **Document Everything**: Commands used, timeline, impact
+3. **Create Post-Mortem**: For any incident with data loss or major impact
+
+### Post-Mortem Creation
+**Location**: `Docs/06-PostMortems/Inbox/YYYY-MM-DD-incident-name.md`
+- Use date command first: `date` to get accurate timestamp
+- Create in Inbox folder for Debugger Expert review
+- Include: Timeline, Root Cause, Impact, Resolution, Prevention
+- Focus on learning, not blame
+
+### Example Post-Mortem Path
+```bash
+# CORRECT location for new post-mortems:
+Docs/06-PostMortems/Inbox/2025-08-25-data-loss-incident.md
+
+# NOT here (this is for archived/processed post-mortems):
+Docs/06-PostMortems/Archive/  # ❌ Wrong - Debugger Expert moves here later
+Docs/07-Archive/PostMortems/   # ❌ Wrong - doesn't exist
+```
+
+### After Creating Post-Mortem
+- Update Memory Bank with incident details
+- Add to session log for handoff
+- Create TD item if prevention work needed
+- Notify team via PR description or commit message
+
 ## 📝 Backlog Protocol
 
 ### Creating Automation Opportunities

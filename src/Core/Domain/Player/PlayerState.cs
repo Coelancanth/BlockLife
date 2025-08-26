@@ -53,6 +53,13 @@ namespace BlockLife.Core.Domain.Player
         public required int Version { get; init; }
 
         /// <summary>
+        /// Maximum tier the player has unlocked for merge patterns.
+        /// Tier 1 = basic match-3 only, Tier 2+ = merge patterns enabled.
+        /// Part of VS_003B-3: Unlock Purchase System.
+        /// </summary>
+        public required int MaxUnlockedTier { get; init; } = 1;  // Start with T1 only, merge patterns require purchase
+
+        /// <summary>
         /// Default constructor required for record initialization with required properties.
         /// </summary>
         public PlayerState()
@@ -71,7 +78,8 @@ namespace BlockLife.Core.Domain.Player
             Map<AttributeType, int> attributes,
             DateTime createdAt,
             DateTime lastModifiedAt,
-            int version)
+            int version,
+            int maxUnlockedTier = 2)  // Enable merge by default for testing
         {
             Id = id;
             Name = name;
@@ -80,6 +88,7 @@ namespace BlockLife.Core.Domain.Player
             CreatedAt = createdAt;
             LastModifiedAt = lastModifiedAt;
             Version = version;
+            MaxUnlockedTier = maxUnlockedTier;
         }
 
         /// <summary>
@@ -102,7 +111,8 @@ namespace BlockLife.Core.Domain.Player
                 Attributes = InitializeAttributes(),
                 CreatedAt = now,
                 LastModifiedAt = now,
-                Version = 1
+                Version = 1,
+                MaxUnlockedTier = 1  // Start with T1 only, merge patterns require purchase
             };
         }
 
@@ -256,6 +266,17 @@ namespace BlockLife.Core.Domain.Player
         /// </summary>
         public int GetTotalScore() =>
             Resources.Values.Sum() + Attributes.Values.Sum();
+
+        /// <summary>
+        /// Checks if the merge-to-next-tier unlock is available for the player.
+        /// Part of VS_003B-3: Uses actual unlock data from purchases.
+        /// </summary>
+        /// <returns>True if player has unlocked merge patterns (MaxUnlockedTier >= 2), false for match-only mode</returns>
+        public bool IsMergeUnlocked()
+        {
+            // Player has merge unlocked if they've purchased tier 2 or higher
+            return MaxUnlockedTier >= 2;
+        }
 
         /// <summary>
         /// Creates a copy with updated last modified timestamp (touch operation).

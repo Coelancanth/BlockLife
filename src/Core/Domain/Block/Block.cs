@@ -36,6 +36,13 @@ namespace BlockLife.Core.Domain.Block
         public required DateTime LastModifiedAt { get; init; }
 
         /// <summary>
+        /// The tier level of this block (1 = basic, 2+ = merged).
+        /// Higher tier blocks are created by merging 3+ blocks of the same type.
+        /// Part of VS_003B-2: Merge Execution system.
+        /// </summary>
+        public int Tier { get; init; } = 1;
+
+        /// <summary>
         /// Default constructor required for record initialization with required properties.
         /// </summary>
         public Block()
@@ -47,26 +54,44 @@ namespace BlockLife.Core.Domain.Block
         /// Ensures cross-platform compatibility with required properties.
         /// </summary>
         [JsonConstructor]
-        public Block(Guid id, BlockType type, Vector2Int position, DateTime createdAt, DateTime lastModifiedAt)
+        public Block(Guid id, BlockType type, Vector2Int position, DateTime createdAt, DateTime lastModifiedAt, int tier = 1)
         {
             Id = id;
             Type = type;
             Position = position;
             CreatedAt = createdAt;
             LastModifiedAt = lastModifiedAt;
+            Tier = tier;
         }
 
         /// <summary>
-        /// Creates a new block at the specified position.
+        /// Creates a new block at the specified position with default tier (1).
         /// </summary>
         public static Block CreateNew(BlockType type, Vector2Int position)
         {
+            return CreateNew(type, position, tier: 1);
+        }
+
+        /// <summary>
+        /// Creates a new block at the specified position with specific tier.
+        /// Used for merge system - higher tier blocks created by combining multiple blocks.
+        /// </summary>
+        /// <param name="type">The type of block to create</param>
+        /// <param name="position">Position on the grid</param>
+        /// <param name="tier">Tier level (must be positive)</param>
+        /// <returns>New block with specified tier</returns>
+        public static Block CreateNew(BlockType type, Vector2Int position, int tier)
+        {
+            if (tier <= 0)
+                throw new ArgumentException("Block tier must be positive (1 or higher)", nameof(tier));
+
             var now = DateTime.UtcNow;
             return new Block
             {
                 Id = Guid.NewGuid(),
                 Type = type,
                 Position = position,
+                Tier = tier,
                 CreatedAt = now,
                 LastModifiedAt = now
             };
@@ -74,7 +99,7 @@ namespace BlockLife.Core.Domain.Block
 
         /// <summary>
         /// Creates a copy of this block with a new position.
-        /// Updates the LastModifiedAt timestamp.
+        /// Updates the LastModifiedAt timestamp while preserving tier.
         /// </summary>
         public Block MoveTo(Vector2Int newPosition) => this with
         {
@@ -132,6 +157,6 @@ namespace BlockLife.Core.Domain.Block
             _ => null
         };
 
-        public override string ToString() => $"{Type.GetDisplayName()} at {Position}";
+        public override string ToString() => $"{Type.GetDisplayName()}-T{Tier} at {Position}";
     }
 }

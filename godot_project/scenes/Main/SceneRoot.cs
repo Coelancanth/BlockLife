@@ -5,6 +5,7 @@ using BlockLife.Core.Domain.Player;
 using BlockLife.Core.Features.Player.Commands;
 using BlockLife.Core.Infrastructure.Logging;
 using BlockLife.Core.Presentation;
+// using BlockLife.godot_project.infrastructure.debug; // Removed - merge enabled by default
 using BlockLife.godot_project.infrastructure.logging;
 using BlockLife.godot_project.resources.settings;
 using Godot;
@@ -159,6 +160,8 @@ public partial class SceneRoot : Node
 
             // --- 6. Initialize Default Player for Match-3 Game ---
             await InitializeDefaultPlayerAsync();
+
+            // Debug UI removed - merge now enabled by default
         }
         catch (Exception ex)
         {
@@ -318,4 +321,6 @@ public partial class SceneRoot : Node
             Logger?.Error(ex, "Error granting starting resources to player");
         }
     }
+
+    // InitializeDebugUI method removed - merge now enabled by default, no F8 purchase panel needed
 }

@@ -62,6 +62,7 @@ public class RemoveBlockCommandHandler : IRequestHandler<RemoveBlockCommand, Fin
                             block.Id,
                             block.Position,
                             block.Type,
+                            block.Tier,
                             DateTime.UtcNow
                         );
 
@@ -164,6 +165,7 @@ public class RemoveBlockByIdCommandHandler : IRequestHandler<RemoveBlockByIdComm
                             block.Id,
                             block.Position,
                             block.Type,
+                            block.Tier,
                             DateTime.UtcNow
                         );
 

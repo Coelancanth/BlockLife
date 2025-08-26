@@ -59,22 +59,20 @@ namespace BlockLife.Core.Features.Block.Notifications
             {
                 _logger?.LogDebug("Getting pattern services from DI for position {Position}", position);
                 
-                // Get pattern recognizer from DI
-                var recognizer = _serviceProvider.GetService<MatchPatternRecognizer>();
-                if (recognizer == null)
+                // Get match pattern recognizer from DI
+                var matchRecognizer = _serviceProvider.GetService<MatchPatternRecognizer>();
+                if (matchRecognizer == null)
                 {
                     _logger?.LogWarning("MatchPatternRecognizer not found in DI, creating new instance");
-                    recognizer = new MatchPatternRecognizer();
+                    matchRecognizer = new MatchPatternRecognizer();
                 }
                 
-                // Get pattern executor from DI
-                var executor = _serviceProvider.GetService<MatchPatternExecutor>();
-                if (executor == null)
+                // Get pattern execution resolver from DI
+                var resolver = _serviceProvider.GetService<PatternExecutionResolver>();
+                if (resolver == null)
                 {
-                    _logger?.LogWarning("MatchPatternExecutor not found in DI, creating new instance");
-                    executor = new MatchPatternExecutor(
-                        _serviceProvider.GetRequiredService<IMediator>(),
-                        _serviceProvider.GetService<ILogger<MatchPatternExecutor>>());
+                    _logger?.LogWarning("PatternExecutionResolver not found in DI");
+                    return;
                 }
 
                 // Create pattern context with no specific target types (find all patterns)
@@ -87,8 +85,11 @@ namespace BlockLife.Core.Features.Block.Notifications
                 };
 
                 // Find match patterns at this position
-                _logger?.LogDebug("Recognizing patterns at position {Position}", position);
-                var patternsResult = recognizer.Recognize(_gridService, position, context);
+                _logger?.LogDebug("Recognizing match patterns at position {Position}", position);
+                var matchPatternsResult = matchRecognizer.Recognize(_gridService, position, context);
+                
+                // Process match patterns as before
+                var patternsResult = matchPatternsResult;
                 
                 if (patternsResult.IsFail)
                 {
@@ -118,7 +119,9 @@ namespace BlockLife.Core.Features.Block.Notifications
                         _logger?.LogInformation("Executing match pattern with {Count} blocks after placement", 
                             matchPattern.Positions.Count);
 
-                        var executionContext = BlockLife.Core.Features.Block.Patterns.ExecutionContext.Create(_gridService);
+                        var executionContext = BlockLife.Core.Features.Block.Patterns.ExecutionContext.Create(_gridService, position);
+                        // Use resolver to determine which executor to use
+                        var executor = resolver.ResolveExecutor(pattern);
                         var executeResult = await executor.Execute(pattern, executionContext);
 
                         if (executeResult.IsFail)

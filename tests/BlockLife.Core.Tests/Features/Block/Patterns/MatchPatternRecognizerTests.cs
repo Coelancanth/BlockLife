@@ -449,7 +449,7 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             PlaceBlocksHorizontal(gridService, BlockType.Work, new Vector2Int(1, 1), 3);
 
             var triggerPosition = new Vector2Int(1, 1);
-            var context = PatternContext.CreateForTypes(triggerPosition, PatternType.TierUp); // Wrong type
+            var context = PatternContext.CreateForTypes(triggerPosition, PatternType.Merge); // Wrong type
 
             // Act
             var result = _recognizer.Recognize(gridService, triggerPosition, context);

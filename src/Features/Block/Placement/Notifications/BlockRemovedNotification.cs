@@ -9,5 +9,6 @@ public sealed record BlockRemovedNotification(
     Guid BlockId,
     Vector2Int Position,
     BlockType Type,
+    int Tier,
     DateTime RemovedAt
 ) : INotification;

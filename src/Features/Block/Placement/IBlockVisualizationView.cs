@@ -10,6 +10,8 @@ public interface IBlockVisualizationView
 {
     // Block Rendering
     Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type);
+    Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type, int tier);
+    Task ShowMergeAnimationAsync(Guid[] sourceBlockIds, Vector2Int targetPosition, BlockType type, int targetTier);
     Task HideBlockAsync(Guid blockId);
     Task UpdateBlockPositionAsync(Guid blockId, Vector2Int newPosition);
 

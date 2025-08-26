@@ -147,6 +147,10 @@ public static class GameStrapper
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MergePatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Services.IMergeUnlockService, 
+            BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
@@ -362,6 +366,10 @@ public static class GameStrapper
         // --- Pattern Recognition Services (VS_003A) ---
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Recognizers.MatchPatternRecognizer>();
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MatchPatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Executors.MergePatternExecutor>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Services.IMergeUnlockService, 
+            BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
@@ -409,6 +417,9 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.PlaceBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
+        
+        // --- Player Command Services (VS_003B-3) ---
+        services.AddTransient<BlockLife.Core.Features.Player.Commands.PurchaseMergeUnlockCommandHandler>();
 
         // --- Notification Handlers ---
         // NOTE: MediatR automatically discovers and registers INotificationHandler implementations

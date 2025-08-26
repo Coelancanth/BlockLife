@@ -72,6 +72,12 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
 
     public Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type)
     {
+        // Delegate to tier-aware method with default tier 1
+        return ShowBlockAsync(blockId, position, type, tier: 1);
+    }
+
+    public Task ShowBlockAsync(Guid blockId, Vector2Int position, BlockType type, int tier)
+    {
         PerformanceProfiler.StartTimer($"ShowBlock_Total_{blockId}");
 
         // FIXED: Handle duplicate notifications gracefully
@@ -96,9 +102,9 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             return Task.CompletedTask;
         }
 
-        // For now, create a simple colored rectangle as a block
+        // Create tier-aware block node
         PerformanceProfiler.StartTimer("CreateBlockNode");
-        var blockNode = CreateBlockNode(position, type);
+        var blockNode = CreateBlockNode(position, type, tier);
         PerformanceProfiler.StopTimer("CreateBlockNode", true);
 
         if (BlockContainer == null)
@@ -114,13 +120,79 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
 
         _blockNodes[blockId] = blockNode;
 
-        // Animate appearance
+        // Animate appearance with tier-aware scaling
         PerformanceProfiler.StartTimer("AnimateBlockAppearance");
-        AnimateBlockAppearance(blockNode);
+        AnimateBlockAppearance(blockNode, tier);
         PerformanceProfiler.StopTimer("AnimateBlockAppearance", true);
 
         PerformanceProfiler.StopTimer($"ShowBlock_Total_{blockId}", true);
         return Task.CompletedTask;
+    }
+
+    public async Task ShowMergeAnimationAsync(Guid[] sourceBlockIds, Vector2Int targetPosition, BlockType type, int targetTier)
+    {
+        if (!EnableAnimations)
+        {
+            // Instant merge - just remove sources and show result
+            foreach (var sourceId in sourceBlockIds)
+            {
+                await HideBlockAsync(sourceId);
+            }
+            var instantResultId = Guid.NewGuid();
+            await ShowBlockAsync(instantResultId, targetPosition, type, targetTier);
+            return;
+        }
+
+        // Phase 1: Converge animation - source blocks move to target position
+        var convergeTasks = new List<Task>();
+        var targetWorldPos = GridToWorldPosition(targetPosition);
+
+        foreach (var sourceId in sourceBlockIds)
+        {
+            if (_blockNodes.TryGetValue(sourceId, out var sourceNode))
+            {
+                var convergeTask = Task.Run(async () =>
+                {
+                    var tween = CreateTween();
+                    tween.TweenProperty(sourceNode, "position", targetWorldPos, AnimationSpeed * 0.8f)
+                         .SetEase(Tween.EaseType.In)
+                         .SetTrans(Tween.TransitionType.Cubic);
+                    
+                    // Scale down during convergence
+                    tween.Parallel().TweenProperty(sourceNode, "scale", Vector2.One * 0.3f, AnimationSpeed * 0.8f)
+                         .SetEase(Tween.EaseType.In);
+                    
+                    await Task.Delay((int)(AnimationSpeed * 800));
+                });
+                convergeTasks.Add(convergeTask);
+            }
+        }
+
+        // Wait for all blocks to converge
+        await Task.WhenAll(convergeTasks);
+
+        // Phase 2: Flash effect at target position
+        await CreateMergeFlashEffect(targetWorldPos);
+
+        // Phase 3: Remove source blocks and show result with special entrance
+        foreach (var sourceId in sourceBlockIds)
+        {
+            if (_blockNodes.TryGetValue(sourceId, out var sourceNode))
+            {
+                sourceNode.QueueFree();
+                _blockNodes.Remove(sourceId);
+            }
+        }
+
+        // Phase 4: Show result block with enhanced appearance animation
+        var resultBlockId = Guid.NewGuid();
+        await ShowBlockAsync(resultBlockId, targetPosition, type, targetTier);
+        
+        // Add special "burst" effect for merge result
+        if (_blockNodes.TryGetValue(resultBlockId, out var resultNode))
+        {
+            await CreateMergeBurstEffect(resultNode);
+        }
     }
 
     public Task HideBlockAsync(Guid blockId)
@@ -226,24 +298,48 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     // Helper Methods
     private Node2D CreateBlockNode(Vector2Int gridPos, BlockType type)
     {
+        return CreateBlockNode(gridPos, type, tier: 1);
+    }
+
+    private Node2D CreateBlockNode(Vector2Int gridPos, BlockType type, int tier)
+    {
         Node2D blockNode;
 
         if (BlockScene != null)
         {
             blockNode = BlockScene.Instantiate<Node2D>();
+            
+            // FIXED: Apply tier-based scaling to PackedScene instances
+            var tierScale = GetTierScale(tier);
+            blockNode.Scale = Vector2.One * tierScale;
         }
         else
         {
-            // Create a simple colored square as fallback
+            // Create a tier-aware colored square as fallback
             blockNode = new Node2D();
+            
+            // Calculate tier-based size scaling
+            var tierScale = GetTierScale(tier);
+            var baseSize = CellSize - 4;
+            
             var colorRect = new ColorRect
             {
-                Size = new Vector2(CellSize - 4, CellSize - 4),
-                Position = new Vector2(2, 2),
+                Size = new Vector2(baseSize, baseSize),
+                Position = new Vector2(2, 2), // Small margin
                 Color = GetBlockColor(type)
             };
+            
+            // Apply tier scaling to the entire node instead of individual rect
+            blockNode.Scale = Vector2.One * tierScale;
             blockNode.AddChild(colorRect);
+            
         }
+        
+        // ENHANCED: Display both type and tier information for ALL blocks
+        AddBlockInfoDisplay(blockNode, type, tier);
+        
+        // Add tier-specific effects
+        AddTierEffects(blockNode, tier);
 
         blockNode.Position = GridToWorldPosition(gridPos);
         return blockNode;
@@ -313,6 +409,11 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
 
     private void AnimateBlockAppearance(Node2D blockNode)
     {
+        AnimateBlockAppearance(blockNode, tier: 1);
+    }
+
+    private void AnimateBlockAppearance(Node2D blockNode, int tier)
+    {
         if (!EnableAnimations)
         {
             // Instant appearance
@@ -323,9 +424,10 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         blockNode.Scale = Vector2.Zero;
 
         var tween = CreateTween();
-        // OPTIMIZATION: Using configurable AnimationSpeed
+        // OPTIMIZATION: Using configurable AnimationSpeed with tier-aware bounce
+        var easeType = tier > 1 ? Tween.EaseType.OutIn : Tween.EaseType.Out;
         tween.TweenProperty(blockNode, "scale", Vector2.One, AnimationSpeed)
-             .SetEase(Tween.EaseType.Out)
+             .SetEase(easeType)
              .SetTrans(Tween.TransitionType.Back);
     }
 
@@ -447,5 +549,231 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         // Hide any preview or feedback
         HidePlacementPreviewInternal();
         HideFeedback();
+    }
+
+    /// <summary>
+    /// Gets the visual scale multiplier for a given tier.
+    /// T1=1.0x, T2=1.15x, T3=1.3x, T4=1.5x
+    /// </summary>
+    private float GetTierScale(int tier) => tier switch
+    {
+        1 => 1.0f,
+        2 => 1.15f,
+        3 => 1.3f,
+        4 => 1.5f,
+        _ => 1.0f + (tier - 1) * 0.15f // Progressive scaling for T5+
+    };
+
+    /// <summary>
+    /// Adds comprehensive block information display showing both type and tier.
+    /// ALL blocks (including T1) now display their information clearly.
+    /// </summary>
+    private void AddBlockInfoDisplay(Node2D blockNode, BlockType type, int tier)
+    {
+        
+        // Create info container for layering
+        var infoContainer = new Node2D
+        {
+            Name = $"BlockInfo_{type}_T{tier}",
+            ZIndex = 10 // Render on top of block
+        };
+        
+        // Background panel for readability
+        var backgroundPanel = new ColorRect
+        {
+            Size = new Vector2(CellSize - 4, 24),
+            Position = new Vector2(2, CellSize - 26),
+            Color = Colors.Black with { A = 0.85f },
+            ShowBehindParent = false
+        };
+        
+        // Block type label (shortened names for space)
+        var typeText = GetShortTypeName(type);
+        var typeLabel = new Label
+        {
+            Text = typeText,
+            Position = new Vector2(6, CellSize - 24),
+            Modulate = Colors.White,
+            ZIndex = 11
+        };
+        typeLabel.AddThemeFontSizeOverride("font_size", 10);
+        
+        // Tier indicator (all tiers including T1)
+        var tierLabel = new Label
+        {
+            Text = $"T{tier}",
+            Position = new Vector2(CellSize - 20, CellSize - 24),
+            Modulate = GetTierColor(tier),
+            ZIndex = 11
+        };
+        tierLabel.AddThemeFontSizeOverride("font_size", 10);
+        
+        // Assembly: Add all elements to container
+        infoContainer.AddChild(backgroundPanel);
+        infoContainer.AddChild(typeLabel);
+        infoContainer.AddChild(tierLabel);
+        blockNode.AddChild(infoContainer);
+        
+    }
+    
+    /// <summary>
+    /// Gets shortened block type names that fit in the display space.
+    /// </summary>
+    private string GetShortTypeName(BlockType type) => type switch
+    {
+        BlockType.Work => "Work",
+        BlockType.Study => "Study", 
+        BlockType.Health => "Health",
+        BlockType.Fun => "Fun",
+        BlockType.Creativity => "Create",
+        BlockType.Relationship => "Relate",
+        BlockType.CareerOpportunity => "Career",
+        BlockType.Partnership => "Partner",
+        BlockType.Passion => "Passion",
+        BlockType.Basic => "Basic",
+        _ => type.ToString().Substring(0, Math.Min(6, type.ToString().Length))
+    };
+    
+    /// <summary>
+    /// Gets tier-specific colors for visual hierarchy.
+    /// T1=White, T2=Yellow, T3=Orange, T4=Red
+    /// </summary>
+    private Color GetTierColor(int tier) => tier switch
+    {
+        1 => Colors.White,      // T1: Standard/baseline
+        2 => Colors.Yellow,     // T2: Enhanced  
+        3 => Colors.Orange,     // T3: Advanced
+        4 => Colors.Red,        // T4: Elite
+        _ => Colors.Magenta     // T5+: Special
+    };
+
+    /// <summary>
+    /// Legacy tier badge method - kept for backward compatibility.
+    /// New code should use AddBlockInfoDisplay instead.
+    /// </summary>
+    private void AddTierBadge(Node2D blockNode, int tier)
+    {
+        // Redirect to comprehensive info display
+        // This method is deprecated but kept for any existing callers
+        GD.PrintErr($"[DEPRECATED] AddTierBadge called - use AddBlockInfoDisplay instead");
+    }
+
+    /// <summary>
+    /// Adds tier-specific visual effects (T2=pulse, T3=glow, T4=particles).
+    /// </summary>
+    private void AddTierEffects(Node2D blockNode, int tier)
+    {
+        switch (tier)
+        {
+            case 1:
+                // No effects for T1 (baseline)
+                break;
+                
+            case 2:
+                // T2: Pulse effect
+                AddPulseEffect(blockNode);
+                break;
+                
+            case 3:
+                // T3: Glow effect
+                AddGlowEffect(blockNode);
+                break;
+                
+            case 4:
+                // T4: Particle system
+                AddParticleEffect(blockNode);
+                break;
+                
+            default:
+                // T5+: Combine all effects
+                AddPulseEffect(blockNode);
+                AddGlowEffect(blockNode);
+                AddParticleEffect(blockNode);
+                break;
+        }
+    }
+
+    private void AddPulseEffect(Node2D blockNode)
+    {
+        // Simple scale pulsing animation
+        var tween = CreateTween();
+        tween.SetLoops();
+        tween.TweenProperty(blockNode, "modulate:a", 0.8f, 1.0f)
+             .SetEase(Tween.EaseType.InOut);
+        tween.TweenProperty(blockNode, "modulate:a", 1.0f, 1.0f)
+             .SetEase(Tween.EaseType.InOut);
+    }
+
+    private void AddGlowEffect(Node2D blockNode)
+    {
+        // Add subtle glow outline
+        blockNode.Modulate = Colors.White with { A = 1.2f };
+    }
+
+    private void AddParticleEffect(Node2D blockNode)
+    {
+        // For now, just enhanced glow - proper particles need PackedScene
+        blockNode.Modulate = Colors.White with { A = 1.5f };
+        // TODO: Add actual GPUParticles2D when particle scenes are available
+    }
+
+    /// <summary>
+    /// Creates a flash effect at the merge target position.
+    /// Visual feedback that merge is occurring.
+    /// </summary>
+    private async Task CreateMergeFlashEffect(Vector2 worldPosition)
+    {
+        // Create temporary flash node
+        var flashNode = new ColorRect
+        {
+            Size = new Vector2(CellSize, CellSize),
+            Position = worldPosition,
+            Color = Colors.White with { A = 0.8f },
+            Modulate = Colors.Yellow
+        };
+
+        BlockContainer?.AddChild(flashNode);
+
+        // Quick flash animation
+        var tween = CreateTween();
+        tween.TweenProperty(flashNode, "modulate:a", 0.0f, AnimationSpeed * 0.3f)
+             .SetEase(Tween.EaseType.Out);
+
+        // Wait for flash to complete
+        await Task.Delay((int)(AnimationSpeed * 300));
+        
+        // Clean up flash node
+        if (IsInstanceValid(flashNode))
+        {
+            flashNode.QueueFree();
+        }
+    }
+
+    /// <summary>
+    /// Creates a burst effect for the merged result block.
+    /// Shows that a higher-tier block has appeared.
+    /// </summary>
+    private async Task CreateMergeBurstEffect(Node2D resultBlock)
+    {
+        // Store original scale
+        var originalScale = resultBlock.Scale;
+        
+        // Start with larger scale and "pop" down to normal
+        resultBlock.Scale = originalScale * 1.4f;
+        resultBlock.Modulate = Colors.White with { A = 1.3f };
+
+        var tween = CreateTween();
+        
+        // Scale burst effect
+        tween.TweenProperty(resultBlock, "scale", originalScale, AnimationSpeed * 0.4f)
+             .SetEase(Tween.EaseType.Out)
+             .SetTrans(Tween.TransitionType.Back);
+             
+        // Brightness fade
+        tween.Parallel().TweenProperty(resultBlock, "modulate", Colors.White, AnimationSpeed * 0.6f)
+             .SetEase(Tween.EaseType.Out);
+
+        // Wait for burst to complete
+        await Task.Delay((int)(AnimationSpeed * 600));
     }
 }

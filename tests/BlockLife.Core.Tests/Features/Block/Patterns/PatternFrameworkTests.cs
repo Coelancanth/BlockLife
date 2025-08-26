@@ -142,10 +142,10 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             distinctPriorities.Should().HaveCount(priorities.Count, "All pattern types should have unique priorities");
 
             // Assert - Priority order should match expected execution order (higher = executed first)
-            PatternType.Transmute.GetPriority().Should().BeGreaterThan(PatternType.TierUp.GetPriority(), 
-                "Transmute should have higher priority than TierUp");
-            PatternType.TierUp.GetPriority().Should().BeGreaterThan(PatternType.Match.GetPriority(),
-                "TierUp should have higher priority than Match");
+            PatternType.Transmute.GetPriority().Should().BeGreaterThan(PatternType.Merge.GetPriority(), 
+                "Transmute should have higher priority than Merge");
+            PatternType.Merge.GetPriority().Should().BeGreaterThan(PatternType.Match.GetPriority(),
+                "Merge should have higher priority than Match");
         }
 
         [Fact]
@@ -153,12 +153,12 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
         {
             // Arrange & Act - Check enabled states
             var matchEnabled = PatternType.Match.IsEnabled();
-            var tierUpEnabled = PatternType.TierUp.IsEnabled();
+            var tierUpEnabled = PatternType.Merge.IsEnabled();
             var transmuteEnabled = PatternType.Transmute.IsEnabled();
 
-            // Assert - Match should be enabled for Phase 1, others disabled for future phases
+            // Assert - Match and Merge should be enabled (VS_003B-1), Transmute disabled for now
             matchEnabled.Should().BeTrue("Match patterns should be enabled in Phase 1");
-            tierUpEnabled.Should().BeFalse("TierUp patterns should be disabled until future phases");
+            tierUpEnabled.Should().BeTrue("Merge patterns should be enabled for VS_003B-1 implementation");
             transmuteEnabled.Should().BeFalse("Transmute patterns should be disabled until future phases");
         }
 
@@ -191,7 +191,7 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
         public void PatternContext_TargetPatternTypes_AreImmutable()
         {
             // Arrange - Create context with pattern types
-            var context = PatternContext.CreateForTypes(new Vector2Int(0, 0), PatternType.Match, PatternType.TierUp);
+            var context = PatternContext.CreateForTypes(new Vector2Int(0, 0), PatternType.Match, PatternType.Merge);
             var originalTypes = context.TargetPatternTypes;
 
             // Act - Try to modify the sequence (this should not affect the original)
@@ -200,7 +200,7 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             // Assert - Original sequence should be unchanged
             originalTypes.Should().HaveCount(2, "Original context should have 2 types");
             originalTypes.Should().Contain(PatternType.Match);
-            originalTypes.Should().Contain(PatternType.TierUp);
+            originalTypes.Should().Contain(PatternType.Merge);
             originalTypes.Should().NotContain(PatternType.Transmute);
 
             // Assert - New context should have additional type
@@ -238,7 +238,7 @@ namespace BlockLife.Core.Tests.Features.Block.Patterns
             // Arrange - Create contexts with different states
             var simpleContext = PatternContext.CreateDefault(new Vector2Int(2, 3));
             var complexContext = PatternContext.CreateWithAction(new Vector2Int(4, 5), "TestAction")
-                .WithAdditionalTypes(PatternType.Match, PatternType.TierUp);
+                .WithAdditionalTypes(PatternType.Match, PatternType.Merge);
 
             // Act & Assert - ToString should provide meaningful information
             var simpleString = simpleContext.ToString();

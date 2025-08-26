@@ -84,6 +84,7 @@ public class SimulationManager : ISimulationManager
             effect.BlockId,
             effect.Position,
             effect.Type,
+            effect.Tier,
             effect.PlacedAt
         );
 
@@ -97,6 +98,7 @@ public class SimulationManager : ISimulationManager
             effect.BlockId,
             effect.Position,
             effect.Type,
+            1, // Assume tier 1 for basic removal effects
             effect.RemovedAt
         );
 

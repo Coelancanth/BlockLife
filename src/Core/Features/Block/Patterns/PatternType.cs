@@ -14,10 +14,10 @@ namespace BlockLife.Core.Features.Block.Patterns
         Match = 1,
 
         /// <summary>
-        /// Tier-up pattern: Combines adjacent blocks to create higher-tier blocks.
+        /// Merge pattern: Combines 3+ adjacent blocks to create higher-tier blocks.
         /// Priority: 20 (medium priority - executed before matches).
         /// </summary>
-        TierUp = 2,
+        Merge = 2,
 
         /// <summary>
         /// Transmute pattern: Transforms blocks based on special conditions.
@@ -38,7 +38,7 @@ namespace BlockLife.Core.Features.Block.Patterns
         public static int GetPriority(this PatternType patternType) => patternType switch
         {
             PatternType.Match => 10,
-            PatternType.TierUp => 20,
+            PatternType.Merge => 20,
             PatternType.Transmute => 30,
             _ => 0
         };
@@ -49,7 +49,7 @@ namespace BlockLife.Core.Features.Block.Patterns
         public static string GetDisplayName(this PatternType patternType) => patternType switch
         {
             PatternType.Match => "Match Blocks",
-            PatternType.TierUp => "Tier Up Blocks", 
+            PatternType.Merge => "Merge Blocks", 
             PatternType.Transmute => "Transmute Blocks",
             _ => patternType.ToString()
         };
@@ -61,7 +61,7 @@ namespace BlockLife.Core.Features.Block.Patterns
         public static bool IsEnabled(this PatternType patternType) => patternType switch
         {
             PatternType.Match => true,      // Always available
-            PatternType.TierUp => false,    // Future implementation
+            PatternType.Merge => true,     // Enabled for VS_003B-1 implementation
             PatternType.Transmute => false, // Future implementation
             _ => false
         };

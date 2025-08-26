@@ -94,6 +94,7 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                         block.Id,
                         position,
                         block.Type,
+                        block.Tier,
                         DateTime.UtcNow
                     );
                     

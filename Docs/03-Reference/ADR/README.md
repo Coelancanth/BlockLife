@@ -19,6 +19,8 @@ ADRs are **immutable** - once accepted, they don't change. If a decision needs t
 | [ADR-001](ADR-001-pattern-recognition-framework.md) | Pattern Recognition Framework | Accepted | 2025-08-19 | Extensible framework for recognizing and executing game patterns (match-3, tier-ups, chains) |
 | [ADR-002](ADR-002-persona-system-architecture.md) | Persona System Architecture | Accepted | 2025-08-20 | Migration from Git worktrees to multiple clones for true persona isolation |
 | [ADR-003](ADR-003-ai-persona-git-workflow.md) | AI Persona Git Workflow | Accepted | 2025-08-22 | Educational three-layer decision system for git operations, trust over control |
+| [ADR-004](ADR-004-single-repo-persona-context-management.md) | Single-Repo Persona Context Management | Accepted | 2025-08-23 | Memory Bank system for maintaining persona context in single repository |
+| [ADR-005](ADR-005-persona-completion-authority.md) | Persona Completion Authority | Accepted | 2025-08-25 | Personas cannot mark items complete; user retains acceptance authority |
 
 ## When to Create an ADR
 

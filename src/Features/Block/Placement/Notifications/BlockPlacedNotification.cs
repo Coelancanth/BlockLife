@@ -9,5 +9,6 @@ public sealed record BlockPlacedNotification(
     Guid BlockId,
     Vector2Int Position,
     BlockType Type,
+    int Tier,
     DateTime PlacedAt
 ) : INotification;

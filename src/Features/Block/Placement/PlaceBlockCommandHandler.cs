@@ -76,6 +76,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             Id = request.BlockId,
             Position = request.Position,
             Type = request.Type,
+            Tier = 1,  // All placed blocks start at tier 1
             CreatedAt = DateTime.UtcNow,
             LastModifiedAt = DateTime.UtcNow
         });
@@ -88,6 +89,7 @@ public class PlaceBlockCommandHandler : IRequestHandler<PlaceBlockCommand, Fin<U
             block.Id,
             block.Position,
             block.Type,
+            block.Tier,
             block.CreatedAt
         ));
 
