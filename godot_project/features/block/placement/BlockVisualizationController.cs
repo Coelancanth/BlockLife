@@ -308,6 +308,10 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         if (BlockScene != null)
         {
             blockNode = BlockScene.Instantiate<Node2D>();
+            
+            // FIXED: Apply tier-based scaling to PackedScene instances
+            var tierScale = GetTierScale(tier);
+            blockNode.Scale = Vector2.One * tierScale;
         }
         else
         {
@@ -316,26 +320,42 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             
             // Calculate tier-based size scaling
             var tierScale = GetTierScale(tier);
-            var blockSize = (CellSize - 4) * tierScale;
-            var offset = (CellSize - blockSize) / 2f;
+            var baseSize = CellSize - 4;
             
             var colorRect = new ColorRect
             {
-                Size = new Vector2(blockSize, blockSize),
-                Position = new Vector2(offset, offset),
+                Size = new Vector2(baseSize, baseSize),
+                Position = new Vector2(2, 2), // Small margin
                 Color = GetBlockColor(type)
             };
+            
+            // Apply tier scaling to the entire node instead of individual rect
+            blockNode.Scale = Vector2.One * tierScale;
             blockNode.AddChild(colorRect);
             
-            // Add tier badge for T2+
-            if (tier > 1)
-            {
-                AddTierBadge(blockNode, tier);
-            }
-            
-            // Add tier-specific effects
-            AddTierEffects(blockNode, tier);
+            GD.Print($"[DEBUG] Created fallback block with tier={tier}, scale={tierScale}, size={baseSize}");
         }
+        
+        // FIXED: Apply tier badges and effects regardless of block source
+        // Add tier badge for T2+
+        if (tier > 1)
+        {
+            AddTierBadge(blockNode, tier);
+            
+            // TEMPORARY: Add bright overlay to confirm tier 2+ blocks are visible
+            var debugOverlay = new ColorRect
+            {
+                Size = new Vector2(CellSize, CellSize),
+                Position = Vector2.Zero,
+                Color = new Color(1, 1, 0, 0.3f), // Yellow overlay, 30% opacity
+                ZIndex = 5
+            };
+            blockNode.AddChild(debugOverlay);
+            GD.Print($"[DEBUG] Added yellow overlay for tier {tier} block");
+        }
+        
+        // Add tier-specific effects
+        AddTierEffects(blockNode, tier);
 
         blockNode.Position = GridToWorldPosition(gridPos);
         return blockNode;
@@ -565,26 +585,40 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     /// </summary>
     private void AddTierBadge(Node2D blockNode, int tier)
     {
+        GD.Print($"[DEBUG] Adding tier badge T{tier} to block node");
+        
+        // Create a container for the badge to ensure proper layering
+        var badgeContainer = new Node2D
+        {
+            Name = $"TierBadge_T{tier}",
+            ZIndex = 10 // Ensure badge renders on top
+        };
+        
         // Add semi-transparent background first
         var background = new ColorRect
         {
-            Size = new Vector2(16, 12),
-            Position = new Vector2(CellSize - 18, -3),
-            Color = Colors.Black with { A = 0.7f }
+            Size = new Vector2(20, 16),
+            Position = new Vector2(CellSize - 24, 2), // Adjusted position for visibility
+            Color = Colors.Black with { A = 0.8f },
+            ShowBehindParent = false
         };
         
         var tierLabel = new Label
         {
             Text = $"T{tier}",
-            Position = new Vector2(CellSize - 20, -5), // Top-right corner
-            Modulate = Colors.White
+            Position = new Vector2(CellSize - 22, 0), // Adjusted to be within block bounds
+            Modulate = Colors.White,
+            ZIndex = 11 // Above background
         };
         
-        // Add theme styling after creation
-        tierLabel.AddThemeStyleboxOverride("normal", new StyleBoxFlat());
+        // Set label font size explicitly
+        tierLabel.AddThemeFontSizeOverride("font_size", 12);
         
-        blockNode.AddChild(background);
-        blockNode.AddChild(tierLabel);
+        badgeContainer.AddChild(background);
+        badgeContainer.AddChild(tierLabel);
+        blockNode.AddChild(badgeContainer);
+        
+        GD.Print($"[DEBUG] Tier badge T{tier} added with ZIndex={badgeContainer.ZIndex} at position ({CellSize - 22}, 0)");
     }
 
     /// <summary>

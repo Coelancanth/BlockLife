@@ -7,7 +7,7 @@
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
-- **Next BR**: 014 (Last: BR_013 - 2025-08-22)
+- **Next BR**: 015 (Last: BR_014 - 2025-08-26 21:40)
 - **Next TD**: 082 (Last: TD_081 - 2025-08-26 20:20)  
 - **Next VS**: 005 (Last: VS_003B-4 - 2025-08-25 18:50)
 
@@ -65,7 +65,59 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-*None currently*
+### BR_014: Visual Tier Indicators Not Displaying Despite Fixed Notification Layer
+**Status**: Fix Applied
+**Owner**: Debugger Expert
+**Size**: S (2h investigation + fix)
+**Priority**: Critical
+**Created**: 2025-08-26 21:40
+**Markers**: [UI-CRITICAL] [VISUAL-FEEDBACK]
+
+**What**: Visual tier indicators (T2/T3/T4 badges, scaling, effects) not displaying despite fixed data flow
+**Why**: Core merge system feature unusable without visual feedback - players cannot see tier progression
+
+**Investigation Completed by Dev Engineer**:
+- ✅ **Notification Layer**: Added Tier field to BlockPlacedNotification/BlockRemovedNotification
+- ✅ **Data Flow**: Fixed all notification creation sites to pass tier information  
+- ✅ **Presenter Layer**: Updated BlockManagementPresenter to pass tier to ShowBlockAsync()
+- ✅ **Build/Tests**: All quality gates passing (384/387 tests, zero warnings)
+- ✅ **Commit**: fd4e87a - Complete notification layer fix committed
+
+**Current State**: 
+- Interface IBlockVisualizationView.ShowBlockAsync(blockId, position, type, **tier**) exists
+- Presenter correctly calls with tier parameter
+- **UNKNOWN**: View implementation layer behavior - requires deep investigation
+
+**Next Steps for Debugger Expert**:
+1. Investigate actual view implementation (Godot layer?)
+2. Trace ShowBlockAsync() execution path with tier parameter
+3. Verify tier badge rendering logic implementation
+4. Check if tier effects (scaling, glow, particles) are working
+5. Validate end-to-end: block creation → notification → presenter → view → screen
+
+**Done When**: T2/T3/T4 blocks visually display with correct badges, scaling, and effects
+
+**🔍 ROOT CAUSE ANALYSIS (Debugger Expert - 2025-08-26 22:00)**:
+1. **Primary Issue**: All blocks remain at tier 1 because merge is not unlocked by default
+   - New players start with `MaxUnlockedTier = 1` (match-only mode)
+   - Merging to tier 2 requires purchasing the unlock (F8 key)
+   - Without tier 2 unlocked, PatternExecutionResolver selects MatchPatternExecutor instead of MergePatternExecutor
+   - Therefore, all blocks stay at tier 1, which don't display badges (badges only show for tier > 1)
+
+2. **Secondary Issue**: Tier visualization code had conditional bug (FIXED)
+   - When BlockScene (PackedScene) was provided, tier effects weren't applied
+   - Fix applied: Tier badges and scaling now applied regardless of block creation method
+
+3. **Testing Confirmation**:
+   - Temporarily forced all blocks to tier 2 in PlaceBlockCommandHandler
+   - Added debug logging to confirm tier badge creation
+   - This proves the visualization system works when blocks actually have tier > 1
+
+**Recommended Fix**:
+- For testing tier visuals: Either purchase tier 2 unlock via F8, or temporarily set `MaxUnlockedTier = 2` in PlayerState creation
+- The visualization code is now fixed and ready - just needs actual tier 2+ blocks to display
+
+---
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*

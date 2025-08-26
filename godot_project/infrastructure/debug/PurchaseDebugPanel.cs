@@ -137,6 +137,35 @@ public partial class PurchaseDebugPanel : Control
 
     private void TogglePanel()
     {
+        // Safety check - ensure services are available
+        if (_mediator == null || _playerStateService == null)
+        {
+            GD.PrintErr("[PurchaseDebugPanel] ERROR: Services not available! Cannot open panel.");
+            GD.PrintErr("_mediator: " + (_mediator != null ? "OK" : "NULL"));
+            GD.PrintErr("_playerStateService: " + (_playerStateService != null ? "OK" : "NULL"));
+            
+            // Try to get services again from SceneRoot
+            if (SceneRoot.Instance?.ServiceProvider != null)
+            {
+                try
+                {
+                    _mediator = SceneRoot.Instance.ServiceProvider.GetRequiredService<IMediator>();
+                    _playerStateService = SceneRoot.Instance.ServiceProvider.GetRequiredService<IPlayerStateService>();
+                    GD.Print("[PurchaseDebugPanel] Services recovered from SceneRoot");
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[PurchaseDebugPanel] Failed to get services: {ex.Message}");
+                    return;
+                }
+            }
+            else
+            {
+                GD.PrintErr("[PurchaseDebugPanel] SceneRoot or ServiceProvider is null");
+                return;
+            }
+        }
+        
         Visible = !Visible;
         if (Visible)
         {
@@ -181,9 +210,15 @@ public partial class PurchaseDebugPanel : Control
 
     private void UpdatePlayerInfo()
     {
+        if (_playerInfoLabel == null)
+        {
+            GD.PrintErr("[PurchaseDebugPanel] _playerInfoLabel is null - UI not created properly");
+            return;
+        }
+        
         if (_playerStateService == null)
         {
-            _playerInfoLabel!.Text = "❌ PlayerStateService not available";
+            _playerInfoLabel.Text = "❌ PlayerStateService not available";
             return;
         }
 
@@ -195,14 +230,14 @@ public partial class PurchaseDebugPanel : Control
                 var tier = player.MaxUnlockedTier;
                 var mergeUnlocked = player.IsMergeUnlocked();
                 
-                _playerInfoLabel!.Text = $"Player: {player.Name}\n💰 Money: {money}\n🔓 Max Unlocked Tier: {tier}\n🔄 Merge Enabled: {mergeUnlocked}";
+                _playerInfoLabel.Text = $"Player: {player.Name}\n💰 Money: {money}\n🔓 Max Unlocked Tier: {tier}\n🔄 Merge Enabled: {mergeUnlocked}";
                 
                 // Update button states
                 UpdateButtonStates(money, tier);
             },
             None: () =>
             {
-                _playerInfoLabel!.Text = "❌ No current player found";
+                _playerInfoLabel.Text = "❌ No current player found";
             }
         );
     }

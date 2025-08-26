@@ -84,7 +84,7 @@ public class SimulationManager : ISimulationManager
             effect.BlockId,
             effect.Position,
             effect.Type,
-            1, // Normal placed blocks are tier 1
+            effect.Tier,
             effect.PlacedAt
         );
 

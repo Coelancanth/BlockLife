@@ -8,5 +8,6 @@ public sealed record BlockPlacedEffect(
     Guid BlockId,
     Vector2Int Position,
     BlockType Type,
+    int Tier,
     DateTime PlacedAt
 );
