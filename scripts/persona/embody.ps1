@@ -68,41 +68,74 @@ function Resolve-GitState {
     
     switch ($syncStrategy) {
         "squash-reset" {
-            Write-Decision "Detected squash merge - checking for local commits"
+            Write-Decision "Detected possible squash merge - validating..."
             
-            # CRITICAL: Check for unpushed local commits AFTER the squash merge
-            $localOnly = git log origin/$branch..HEAD --oneline 2>$null
-            if ($localOnly) {
-                Write-Warning "Found unpushed local commits after squash merge:"
-                $localOnly | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
-                Write-Warning "Preserving local commits - will rebase onto main"
+            # CRITICAL FIX: Check if we're ALREADY on the squashed commit
+            # If HEAD matches origin/main, we don't need to do anything!
+            $currentHead = git rev-parse HEAD
+            $mainHead = git rev-parse origin/main
+            
+            if ($currentHead -eq $mainHead) {
+                Write-Success "Already aligned with main after squash merge"
+                # Just update the remote tracking
+                git branch --set-upstream-to=origin/$branch $branch 2>$null
+            }
+            else {
+                # Check what commits we have locally that aren't on origin/dev/main
+                $localOnly = git log origin/$branch..HEAD --oneline 2>$null
                 
-                # Save the local commits
-                $tempBranch = "temp-save-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-                git branch $tempBranch
+                # Check if any of these are NEW (made after the squash)
+                # Simple heuristic: commits without PR numbers are likely new
+                $newCommits = @()
+                $squashedCommits = @()
                 
-                # Reset to main
-                git reset --hard origin/main
-                
-                # Cherry-pick the local commits back
-                $commits = git rev-list --reverse origin/$branch...$tempBranch
-                foreach ($commit in $commits) {
-                    git cherry-pick $commit
-                    if ($LASTEXITCODE -ne 0) {
-                        Write-Error "Failed to preserve commit $commit - manual intervention required"
-                        Write-Host "Your commits are saved in branch: $tempBranch" -ForegroundColor Yellow
-                        return $false
+                if ($localOnly) {
+                    foreach ($line in $localOnly) {
+                        if ($line -match '\(#\d+\)$') {
+                            # This is a squashed PR commit
+                            $squashedCommits += $line
+                        } else {
+                            # This is a new commit made after the squash
+                            $newCommits += $line
+                        }
                     }
                 }
                 
-                # Clean up temp branch
-                git branch -D $tempBranch
-                Write-Success "Preserved local commits after squash merge reset"
-            } else {
-                # No local commits, safe to reset
-                git reset --hard origin/main
-                git push origin $branch --force-with-lease 2>$null
-                Write-Success "Branch reset to match main after squash merge"
+                if ($newCommits.Count -gt 0) {
+                    Write-Warning "Found $($newCommits.Count) NEW commits made after squash merge:"
+                    $newCommits | ForEach-Object { Write-Host "  $_" -ForegroundColor Yellow }
+                    Write-Warning "Preserving these new commits..."
+                    
+                    # Save the local commits
+                    $tempBranch = "temp-save-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+                    git branch $tempBranch
+                    
+                    # Reset to main
+                    git reset --hard origin/main
+                    
+                    # Cherry-pick ONLY the new commits (not the squashed ones)
+                    # Extract just the commit hashes from newCommits
+                    foreach ($commitLine in $newCommits) {
+                        $hash = $commitLine.Split(' ')[0]
+                        $commitMsg = git log -1 --pretty=format:"%h %s" $hash
+                        
+                        git cherry-pick $hash 2>$null
+                        if ($LASTEXITCODE -eq 0) {
+                            Write-Success "Preserved: $commitMsg"
+                        } else {
+                            Write-Warning "Failed to preserve: $commitMsg"
+                            Write-Host "You can manually recover with: git cherry-pick $hash" -ForegroundColor Yellow
+                            git cherry-pick --skip 2>$null
+                        }
+                    }
+                    
+                    # Clean up temp branch
+                    git branch -D $tempBranch 2>$null
+                } else {
+                    Write-Success "No new commits to preserve - resetting to main"
+                    git reset --hard origin/main
+                    git push origin $branch --force-with-lease 2>$null
+                }
             }
         }
         
@@ -142,19 +175,52 @@ function Resolve-GitState {
                         git reset --hard origin/main
                         
                         # Cherry-pick the local commits back
-                        $commits = git rev-list --reverse origin/$branch...$tempBranch
+                        # CRITICAL FIX: Use TWO dots (..) not THREE (...) to get only commits unique to tempBranch
+                        $commits = git rev-list --reverse origin/main..$tempBranch
+                        $failedCommits = @()
+                        $successCount = 0
+                        
                         foreach ($commit in $commits) {
-                            git cherry-pick $commit
+                            # Get commit message for logging
+                            $commitMsg = git log -1 --pretty=format:"%h %s" $commit
+                            
+                            # Try to cherry-pick
+                            git cherry-pick $commit 2>$null
                             if ($LASTEXITCODE -ne 0) {
-                                Write-Error "Failed to preserve commit $commit - manual intervention required"
-                                Write-Host "Your commits are saved in branch: $tempBranch" -ForegroundColor Yellow
-                                return $false
+                                # Check if it's a real conflict or just already applied
+                                $conflicts = git diff --name-only --diff-filter=U
+                                if ($conflicts) {
+                                    Write-Warning "Conflict in commit: $commitMsg"
+                                    # Try to skip if it looks like it's already in the tree
+                                    git cherry-pick --skip 2>$null
+                                    $failedCommits += $commitMsg
+                                } else {
+                                    # Might be an empty commit (already applied)
+                                    git cherry-pick --skip 2>$null
+                                    Write-Warning "Skipped (possibly already applied): $commitMsg"
+                                }
+                            } else {
+                                $successCount++
+                                Write-Success "Preserved: $commitMsg"
                             }
                         }
                         
-                        # Clean up temp branch
-                        git branch -D $tempBranch
-                        Write-Success "Preserved local commits after hidden squash merge"
+                        # Report results
+                        if ($failedCommits.Count -gt 0) {
+                            Write-Warning "Some commits could not be preserved automatically:"
+                            $failedCommits | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
+                            Write-Host "`nYour original commits are safe in branch: $tempBranch" -ForegroundColor Cyan
+                            Write-Host "To manually recover them:" -ForegroundColor Cyan
+                            Write-Host "  git cherry-pick <commit-hash>" -ForegroundColor Green
+                            Write-Host "  (Get hashes with: git log --oneline $tempBranch)" -ForegroundColor Green
+                        } else {
+                            # Only delete temp branch if all commits were preserved
+                            git branch -D $tempBranch 2>$null
+                        }
+                        
+                        if ($successCount -gt 0) {
+                            Write-Success "Preserved $successCount local commits after hidden squash merge"
+                        }
                     } else {
                         # No local commits, safe to reset
                         git reset --hard origin/main
