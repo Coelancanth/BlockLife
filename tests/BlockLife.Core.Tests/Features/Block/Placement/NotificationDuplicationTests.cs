@@ -123,7 +123,7 @@ namespace BlockLife.Core.Tests.Features.Block.Placement
             var mockLogger = new Mock<ILogger<SimulationManager>>();
             var simulationManager = new SimulationManager(mockMediator.Object, mockLogger.Object);
 
-            var effect = new BlockPlacedEffect(blockId, position, BlockLife.Core.Domain.Block.BlockType.Basic, placedAt);
+            var effect = new BlockPlacedEffect(blockId, position, BlockLife.Core.Domain.Block.BlockType.Basic, 1, placedAt);
 
             // Act
             simulationManager.QueueEffect(effect);

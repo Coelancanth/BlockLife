@@ -72,6 +72,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         effectId,
                         new Vector2Int(threadId % 50, i % 50), // Distribute across grid
                         BlockLife.Core.Domain.Block.BlockType.Basic,
+                        1,
                         DateTime.UtcNow
                     );
 
@@ -138,6 +139,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         Guid.NewGuid(),
                         new Vector2Int(threadId, i),
                         BlockLife.Core.Domain.Block.BlockType.Basic,
+                        1,
                         DateTime.UtcNow
                     );
 
@@ -243,6 +245,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                                 Guid.NewGuid(),
                                 new Vector2Int(currentCycle, i * 5 + j),
                                 BlockLife.Core.Domain.Block.BlockType.Basic,
+                                1,
                                 DateTime.UtcNow
                             );
                             simulationManager.QueueEffect(effect);
@@ -306,6 +309,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                 Guid.NewGuid(),
                 new Vector2Int(0, 0),
                 BlockLife.Core.Domain.Block.BlockType.Basic,
+                1,
                 DateTime.UtcNow
             );
             _simulation.QueueEffect(warmupEffect);
@@ -327,6 +331,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         Guid.NewGuid(),
                         new Vector2Int(threadId % 20, i % 20),
                         BlockLife.Core.Domain.Block.BlockType.Basic,
+                        1,
                         DateTime.UtcNow
                     );
 
@@ -422,6 +427,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                             Guid.NewGuid(),
                             new Vector2Int(threadId, i),
                             BlockLife.Core.Domain.Block.BlockType.Basic,
+                            1,
                             DateTime.UtcNow
                         );
 
@@ -486,6 +492,7 @@ public class SimulationManagerThreadSafetyTests : IDisposable
                         Guid.NewGuid(),
                         new Vector2Int(i % 100, (i / 100) % 100),
                         BlockLife.Core.Domain.Block.BlockType.Basic,
+                        1,
                         DateTime.UtcNow
                     );
                     simulationManager.QueueEffect(effect);

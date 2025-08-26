@@ -7,8 +7,8 @@
 ## 🔢 Next Item Numbers by Type
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
-- **Next BR**: 015 (Last: BR_014 - 2025-08-26 21:40)
-- **Next TD**: 084 (Last: TD_083 - 2025-08-26 23:00)  
+- **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
+- **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
 - **Next VS**: 005 (Last: VS_003B-4 - 2025-08-25 18:50)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
@@ -65,43 +65,187 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### BR_015: Fix Failing PurchaseMergeUnlockCommandHandler Tests
+**Status**: Proposed
+**Owner**: Debugger Expert
+**Size**: S (2-3h)
+**Priority**: Critical
+**Created**: 2025-08-26 23:25
+**Markers**: [TEST-FAILURE] [BLOCKING-PR]
+
+**What**: 3 tests failing in PurchaseMergeUnlockCommandHandler due to incorrect test setup
+**Why**: Tests block PR merge and may indicate logic issues in merge unlock implementation
+
+**Failing Tests**:
+- Handle_WhenPlayerCanAffordT2_UnlocksTier2Successfully
+- Handle_WhenPlayerCannotAffordCost_ReturnsFailure  
+- Handle_WhenTryingToSkipTiers_ReturnsFailure
+
+**Root Cause Analysis**:
+- SetupTestPlayerWithMoneyAndUnlockedTier helper doesn't properly set MaxUnlockedTier
+- Tests expect validation errors that aren't being triggered
+- Comment "TODO: Need to implement test helper" confirms known issue
+
+**Done When**:
+- All 3 tests pass consistently
+- Test helpers properly set player state including MaxUnlockedTier
+- No skipped tests remain in the suite
 
 ---
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_003B: Merge System - Progressive Tier Progression
-**Status**: ~~Proposed~~ **Rejected - Too Large**
-**Owner**: ~~Product Owner → Tech Lead~~
-**Size**: ~~M (4-8h)~~ **XL (16h+ as specified)**
+### TD_084: Refactor to Use LanguageExt Collections Instead of System.Collections.Generic
+**Status**: Proposed
+**Owner**: Tech Lead
+**Size**: M (4-6h)
 **Priority**: Important
-**Created**: 2025-08-25 17:51
+**Created**: 2025-08-26 23:25
+**Markers**: [ARCHITECTURE] [FUNCTIONAL-PARADIGM]
 
-**Tech Lead Decision** (2025-08-25 18:50):
-- **REJECTED**: This slice is 3-4x larger than our thin slice limit (3 days max)
-- **Actual scope**: Resource system + pattern changes + services + UI + 50+ tests = 16+ hours
-- **Action**: Split into 4 thinner slices (VS_003B-1 through VS_003B-4)
-- **Key insight**: Should reuse existing MatchPattern, not create new pattern type
-- **Approach**: Merge is just Match with different executor when unlocked
+**What**: Replace System.Collections.Generic with LanguageExt immutable collections
+**Why**: Violates functional programming paradigm, causes potential mutation bugs
 
----
+**Current Violations** (10+ files):
+- MergePatternExecutor uses List<Block> (mutable)
+- MatchPatternRecognizer uses HashSet<Vector2Int> (mutable)
+- PlayerState uses Dictionary<ResourceType, int> (should use Map)
 
----
+**Proposed Solution**:
+- Replace List<T> with Lst<T> or Seq<T>
+- Replace HashSet<T> with Set<T>
+- Replace Dictionary<K,V> with Map<K,V>
+- Update all LINQ operations to LanguageExt equivalents
 
+**Pattern Match**: Follow existing patterns in IGridStateService which correctly uses Map
 
----
+**Done When**:
+- No System.Collections.Generic imports in Core domain
+- All collections are immutable
+- Tests still pass
 
+### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
+**Status**: Proposed
+**Owner**: Debugger Expert  
+**Size**: S (2-3h)
+**Priority**: Important
+**Created**: 2025-08-26 23:25
 
----
+**What**: MergePatternExecutor lacks defensive programming for several edge cases
+**Why**: Could cause runtime exceptions in production
 
+**Missing Validations**:
+1. No null check on context.GridService
+2. No validation that positions list isn't empty before First()
+3. No handling for concurrent modifications during execution
+4. Missing bounds checking for result tier (could exceed T4)
 
----
+**Proposed Fix**:
+- Add defensive null checks with proper Fin<T> error returns
+- Validate collections before operations
+- Add tier bounds validation (max T4)
+- Consider thread safety for grid operations
 
+**Done When**:
+- All edge cases return proper Error results
+- No possibility of NullReferenceException
+- Unit tests cover edge cases
+
+### TD_085: Add Comprehensive Logging and Telemetry to Pattern System
+**Status**: Proposed
+**Owner**: Dev Engineer
+**Size**: M (4-6h)
+**Priority**: Important
+**Created**: 2025-08-26 23:25
+
+**What**: Pattern recognition and execution lacks sufficient observability
+**Why**: Cannot debug production issues or understand performance bottlenecks
+
+**Missing Telemetry**:
+- Pattern recognition timing metrics
+- Match vs Merge execution counts
+- Tier progression statistics
+- Failed pattern execution reasons
+- Performance counters for grid operations
+
+**Proposed Solution**:
+- Add structured logging with correlation IDs
+- Implement performance counters
+- Track pattern success/failure rates
+- Add debug visualizations for pattern detection
+
+**Pattern Match**: Follow logging patterns in ProcessPatternsAfterPlacementHandler
+
+**Done When**:
+- Every pattern operation is logged
+- Performance metrics available
+- Can trace full pattern lifecycle
 
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
+
+### TD_086: Implement Property-Based Testing for Pattern Recognition
+**Status**: Proposed
+**Owner**: Test Specialist
+**Size**: L (8-12h)
+**Priority**: Ideas
+**Created**: 2025-08-26 23:25
+
+**What**: Add FsCheck property tests for pattern recognition invariants
+**Why**: Ensure pattern detection is mathematically correct under all conditions
+
+**Properties to Test**:
+- Pattern recognition is deterministic (same grid = same patterns)
+- No overlapping patterns (each position in max 1 pattern)
+- Merge patterns preserve block count invariants
+- Pattern execution is idempotent when repeated
+
+**Pattern Match**: Follow FsCheck 3.x patterns in existing property tests
+
+### TD_087: Performance Optimization for Large Grid Pattern Recognition
+**Status**: Proposed
+**Owner**: Dev Engineer
+**Size**: L (8-12h)
+**Priority**: Ideas
+**Created**: 2025-08-26 23:25
+
+**What**: Optimize pattern recognition for 100x100+ grids
+**Why**: Current O(n²) algorithm may lag with large grids
+
+**Optimization Opportunities**:
+- Implement spatial indexing for pattern detection
+- Cache adjacent block lookups
+- Use parallel pattern recognition for independent regions
+- Implement dirty region tracking to avoid full scans
+
+**Done When**:
+- Pattern recognition <16ms for 100x100 grid
+- Profiling shows no hot spots
+- Memory usage remains flat
+
+### TD_088: Add Visual Pattern Recognition Debugging Tools
+**Status**: Proposed
+**Owner**: Dev Engineer
+**Size**: M (6-8h)
+**Priority**: Ideas
+**Created**: 2025-08-26 23:25
+
+**What**: Create debug overlay showing pattern detection in real-time
+**Why**: Developers cannot easily see why patterns aren't triggering
+
+**Features**:
+- Overlay showing detected patterns with different colors
+- Pattern type labels (Match vs Merge)
+- Execution order visualization
+- Frame-by-frame pattern state replay
+- Export pattern detection logs
+
+**Done When**:
+- F10 key toggles pattern debug overlay
+- Can step through pattern execution
+- Clear visual indication of pattern boundaries
 
 ### TD_081: Add Comprehensive Merge System Test Coverage
 **Status**: Proposed
@@ -134,8 +278,8 @@
 **Pattern Match**: Follow existing test patterns in MatchPatternExecutorTests
 
 ### TD_082: Fix Pre-Existing Test Compilation Errors (BlockPlacedEffect Constructor)
-**Status**: Proposed
-**Owner**: Test Specialist
+**Status**: ~~Proposed~~ **Completed 2025-08-26 23:21**
+**Owner**: ~~Test Specialist~~
 **Size**: M (4-6h)
 **Priority**: Critical
 **Created**: 2025-08-26 23:00

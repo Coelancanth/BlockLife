@@ -121,6 +121,7 @@ public class SimplifiedStressTest : IDisposable
                         Guid.NewGuid(),
                         new Vector2Int(threadId, i),
                         BlockLife.Core.Domain.Block.BlockType.Basic,
+                        1,
                         DateTime.UtcNow
                     );
 
