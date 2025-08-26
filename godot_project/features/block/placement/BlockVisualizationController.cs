@@ -333,7 +333,6 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             blockNode.Scale = Vector2.One * tierScale;
             blockNode.AddChild(colorRect);
             
-            GD.Print($"[DEBUG] Created fallback block with tier={tier}, scale={tierScale}, size={baseSize}");
         }
         
         // ENHANCED: Display both type and tier information for ALL blocks
@@ -571,7 +570,6 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     /// </summary>
     private void AddBlockInfoDisplay(Node2D blockNode, BlockType type, int tier)
     {
-        GD.Print($"[DEBUG] Adding info display for {type} T{tier} block");
         
         // Create info container for layering
         var infoContainer = new Node2D
@@ -616,7 +614,6 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
         infoContainer.AddChild(tierLabel);
         blockNode.AddChild(infoContainer);
         
-        GD.Print($"[DEBUG] Block info display added: {typeText} T{tier} with tier color");
     }
     
     /// <summary>
