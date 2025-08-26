@@ -336,23 +336,8 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
             GD.Print($"[DEBUG] Created fallback block with tier={tier}, scale={tierScale}, size={baseSize}");
         }
         
-        // FIXED: Apply tier badges and effects regardless of block source
-        // Add tier badge for T2+
-        if (tier > 1)
-        {
-            AddTierBadge(blockNode, tier);
-            
-            // TEMPORARY: Add bright overlay to confirm tier 2+ blocks are visible
-            var debugOverlay = new ColorRect
-            {
-                Size = new Vector2(CellSize, CellSize),
-                Position = Vector2.Zero,
-                Color = new Color(1, 1, 0, 0.3f), // Yellow overlay, 30% opacity
-                ZIndex = 5
-            };
-            blockNode.AddChild(debugOverlay);
-            GD.Print($"[DEBUG] Added yellow overlay for tier {tier} block");
-        }
+        // ENHANCED: Display both type and tier information for ALL blocks
+        AddBlockInfoDisplay(blockNode, type, tier);
         
         // Add tier-specific effects
         AddTierEffects(blockNode, tier);
@@ -581,44 +566,99 @@ public partial class BlockVisualizationController : Node2D, IBlockVisualizationV
     };
 
     /// <summary>
-    /// Adds a tier badge (T2, T3, T4) to the top-right corner of a block node.
+    /// Adds comprehensive block information display showing both type and tier.
+    /// ALL blocks (including T1) now display their information clearly.
     /// </summary>
-    private void AddTierBadge(Node2D blockNode, int tier)
+    private void AddBlockInfoDisplay(Node2D blockNode, BlockType type, int tier)
     {
-        GD.Print($"[DEBUG] Adding tier badge T{tier} to block node");
+        GD.Print($"[DEBUG] Adding info display for {type} T{tier} block");
         
-        // Create a container for the badge to ensure proper layering
-        var badgeContainer = new Node2D
+        // Create info container for layering
+        var infoContainer = new Node2D
         {
-            Name = $"TierBadge_T{tier}",
-            ZIndex = 10 // Ensure badge renders on top
+            Name = $"BlockInfo_{type}_T{tier}",
+            ZIndex = 10 // Render on top of block
         };
         
-        // Add semi-transparent background first
-        var background = new ColorRect
+        // Background panel for readability
+        var backgroundPanel = new ColorRect
         {
-            Size = new Vector2(20, 16),
-            Position = new Vector2(CellSize - 24, 2), // Adjusted position for visibility
-            Color = Colors.Black with { A = 0.8f },
+            Size = new Vector2(CellSize - 4, 24),
+            Position = new Vector2(2, CellSize - 26),
+            Color = Colors.Black with { A = 0.85f },
             ShowBehindParent = false
         };
         
+        // Block type label (shortened names for space)
+        var typeText = GetShortTypeName(type);
+        var typeLabel = new Label
+        {
+            Text = typeText,
+            Position = new Vector2(6, CellSize - 24),
+            Modulate = Colors.White,
+            ZIndex = 11
+        };
+        typeLabel.AddThemeFontSizeOverride("font_size", 10);
+        
+        // Tier indicator (all tiers including T1)
         var tierLabel = new Label
         {
             Text = $"T{tier}",
-            Position = new Vector2(CellSize - 22, 0), // Adjusted to be within block bounds
-            Modulate = Colors.White,
-            ZIndex = 11 // Above background
+            Position = new Vector2(CellSize - 20, CellSize - 24),
+            Modulate = GetTierColor(tier),
+            ZIndex = 11
         };
+        tierLabel.AddThemeFontSizeOverride("font_size", 10);
         
-        // Set label font size explicitly
-        tierLabel.AddThemeFontSizeOverride("font_size", 12);
+        // Assembly: Add all elements to container
+        infoContainer.AddChild(backgroundPanel);
+        infoContainer.AddChild(typeLabel);
+        infoContainer.AddChild(tierLabel);
+        blockNode.AddChild(infoContainer);
         
-        badgeContainer.AddChild(background);
-        badgeContainer.AddChild(tierLabel);
-        blockNode.AddChild(badgeContainer);
-        
-        GD.Print($"[DEBUG] Tier badge T{tier} added with ZIndex={badgeContainer.ZIndex} at position ({CellSize - 22}, 0)");
+        GD.Print($"[DEBUG] Block info display added: {typeText} T{tier} with tier color");
+    }
+    
+    /// <summary>
+    /// Gets shortened block type names that fit in the display space.
+    /// </summary>
+    private string GetShortTypeName(BlockType type) => type switch
+    {
+        BlockType.Work => "Work",
+        BlockType.Study => "Study", 
+        BlockType.Health => "Health",
+        BlockType.Fun => "Fun",
+        BlockType.Creativity => "Create",
+        BlockType.Relationship => "Relate",
+        BlockType.CareerOpportunity => "Career",
+        BlockType.Partnership => "Partner",
+        BlockType.Passion => "Passion",
+        BlockType.Basic => "Basic",
+        _ => type.ToString().Substring(0, Math.Min(6, type.ToString().Length))
+    };
+    
+    /// <summary>
+    /// Gets tier-specific colors for visual hierarchy.
+    /// T1=White, T2=Yellow, T3=Orange, T4=Red
+    /// </summary>
+    private Color GetTierColor(int tier) => tier switch
+    {
+        1 => Colors.White,      // T1: Standard/baseline
+        2 => Colors.Yellow,     // T2: Enhanced  
+        3 => Colors.Orange,     // T3: Advanced
+        4 => Colors.Red,        // T4: Elite
+        _ => Colors.Magenta     // T5+: Special
+    };
+
+    /// <summary>
+    /// Legacy tier badge method - kept for backward compatibility.
+    /// New code should use AddBlockInfoDisplay instead.
+    /// </summary>
+    private void AddTierBadge(Node2D blockNode, int tier)
+    {
+        // Redirect to comprehensive info display
+        // This method is deprecated but kept for any existing callers
+        GD.PrintErr($"[DEPRECATED] AddTierBadge called - use AddBlockInfoDisplay instead");
     }
 
     /// <summary>
