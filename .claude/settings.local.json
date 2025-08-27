@@ -94,7 +94,9 @@
       "Bash(./scripts/test/test-embody.ps1)",
       "Bash(./scripts/persona/embody.ps1 product-owner)",
       "Bash(./scripts/core/build.ps1 build)",
-      "Bash(./scripts/test/quick.ps1)"
+      "Bash(./scripts/test/quick.ps1)",
+      "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife\\src\\Features\\Block/**)",
+      "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife/**)"
     ],
     "deny": [],
     "ask": [],
