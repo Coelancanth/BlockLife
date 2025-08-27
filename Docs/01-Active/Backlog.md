@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 13:53
+**Last Updated**: 2025-08-27 16:10
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -66,34 +66,39 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### VS_006: Core Turn System
-**Status**: Ready for Dev (Phase 0/4)
+**Status**: In Progress (Phase 1/4 ✅ COMPLETE)
 **Owner**: Dev Engineer
-**Size**: S (4h)
+**Size**: S (4h - 1h complete, 3h remaining)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
+**Updated**: 2025-08-27 16:10 - Phase 1 COMPLETE with 48 passing tests
 
 **What**: Implement turn counter with one-action-per-turn limitation
 **Why**: Creates time pressure that makes the game challenging and meaningful
 
 **Phase Breakdown (Model-First Protocol)**:
 
-#### Phase 1: Domain Model (1h)
-**Acceptance**: Turn logic correctly tracks and increments
-- Create `Turn` value object with number and validation
-- Create `TurnManager` domain service with business rules
-- Unit tests for turn increment logic
-- Unit tests for validation rules (only moves advance turn)
-**Commit**: `feat(turn): domain model [Phase 1/4]`
+#### Phase 1: Domain Model ✅ COMPLETE (1h)
+**Acceptance**: Turn logic correctly tracks and increments ✅
+- ✅ Create `Turn` value object with number and validation
+- ✅ Create `TurnManager` domain service with business rules
+- ✅ Unit tests for turn increment logic (48 tests passing)
+- ✅ Unit tests for validation rules (only moves advance turn)
+**Commit**: `e82c58b feat(VS_006): implement turn system domain model [Phase 1/4]`
+**Completed**: 2025-08-27 16:13
+**Files Created**: 5 files (Turn.cs, ITurnManager.cs, TurnManager.cs, 2 test files)
+**Key Learnings**: LanguageExt patterns require Context7 first, functional error handling with Fin<T>
 
-#### Phase 2: Application Layer (1h)
+#### Phase 2: Application Layer 🎯 READY TO START (1h)
 **Acceptance**: Commands process turn advancement
 - Create `AdvanceTurnCommand` and handler
 - Create `TurnStartNotification` and `TurnEndNotification`
 - Wire into existing move completion flow
 - Handler tests with mocked services
-**Commit**: `feat(turn): command handlers [Phase 2/4]`
+**Commit**: `feat(VS_006): command handlers [Phase 2/4]`
+**Pattern**: Copy from MoveBlockCommand/Handler structure
+**Integration**: Hook after ProcessPatternsAfterPlacement completes
 
 #### Phase 3: Infrastructure (1h)
 **Acceptance**: Turn state persists correctly
@@ -123,13 +128,13 @@
 ---
 
 ### VS_007: Auto-Spawn System  
-**Status**: Ready for Dev (Phase 0/4)
+**Status**: Blocked - Depends on VS_006 completion
 **Owner**: Dev Engineer
 **Size**: S (4.5h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
+**Updated**: 2025-08-27 16:10 - Blocked until VS_006 Phases 2-4 complete
 
 **What**: Automatically spawn new blocks at the start of each turn
 **Why**: Forces space management decisions and prevents infinite planning
@@ -170,7 +175,7 @@
 - Manual test game over scenarios
 **Commit**: `feat(spawn): UI and effects [Phase 4/4]`
 
-**Depends On**: VS_006 (Turn System)
+**Depends On**: VS_006 Phase 2+ (Turn System commands/handlers needed for TurnStartNotification)
 
 **Tech Lead Decision** (2025-08-27 14:05):
 - Complexity: 4/10 - Strategy pattern adds slight complexity
@@ -184,13 +189,13 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_008: Godot Resource-Based Rewards
-**Status**: Ready for Dev (Phase 0/4)
+**Status**: Ready for Dev (Phase 0/4) - Can run in parallel with VS_006
 **Owner**: Dev Engineer
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
+**Updated**: 2025-08-27 16:10 - Available now, no dependencies on VS_006
 
 **What**: Migrate hardcoded reward values to Godot Resource files
 **Why**: Enables rapid balancing and debugging without recompiling

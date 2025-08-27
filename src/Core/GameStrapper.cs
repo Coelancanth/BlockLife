@@ -184,6 +184,11 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
 
+        // --- Turn System Services (VS_006) ---
+        services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager,
+            BlockLife.Core.Features.Turn.Services.TurnManager>();
+        services.AddTransient<BlockLife.Core.Features.Turn.Commands.AdvanceTurnCommandHandler>();
+
         // --- Notification Handlers ---
         // NOTE: MediatR automatically discovers and registers INotificationHandler implementations
         // during assembly scanning. Manual registration can interfere with MediatR's lifecycle management.
@@ -417,6 +422,11 @@ public static class GameStrapper
         services.AddTransient<BlockLife.Core.Features.Block.Placement.PlaceBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockCommandHandler>();
         services.AddTransient<BlockLife.Core.Features.Block.Placement.RemoveBlockByIdCommandHandler>();
+        
+        // --- Turn System Services (VS_006) ---
+        services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager,
+            BlockLife.Core.Features.Turn.Services.TurnManager>();
+        services.AddTransient<BlockLife.Core.Features.Turn.Commands.AdvanceTurnCommandHandler>();
         
         // --- Player Command Services (VS_003B-3) ---
         services.AddTransient<BlockLife.Core.Features.Player.Commands.PurchaseMergeUnlockCommandHandler>();
