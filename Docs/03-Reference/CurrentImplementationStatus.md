@@ -1,143 +1,215 @@
 # BlockLife - Current Implementation Status
 
-*Ground truth of what's actually working vs. what's planned*
+*Ground truth of what's actually built and working in the codebase*
 
-**Last Verified**: 2025-08-19 (via code inspection and test review)
-**Test Status**: 79 tests passing ✅
-
----
-
-## 🎮 Core Gameplay Loop
-
-### ✅ What Players Can Do NOW
-1. **Click to place** blocks on a 10x10 grid
-2. **Drag blocks** to new positions (3-position range limit)
-3. **Swap blocks** when dragging to occupied spaces
-4. **See visual feedback** with color-coded block types
-5. **Experience validated moves** (can't place outside grid, overlap blocks, etc.)
-
-### ❌ What Players CAN'T Do Yet
-- Match blocks to earn resources/attributes
-- Tier-up blocks (no progression mechanics)
-- Transmute blocks (no type conversion)
-- Earn bonuses from larger matches
-- Receive rewards for achievements
-- Progress through life stages
-- Experience time progression
-- See narrative/story elements
+**Last Verified**: 2025-08-27 12:34 PM (via code inspection and test execution)
+**Test Status**: 401 tests passing ✅ (up from 79!)
+**Architecture**: Clean VSA with CQRS + LanguageExt functional patterns
 
 ---
 
-## 📦 Feature Implementation Status
+## 🎮 Player Experience Reality
 
-### ✅ Fully Implemented & Working
+### What Players Can ACTUALLY Do Right Now
 
-#### Grid System
-- [x] 10x10 grid with visual rendering
-- [x] Thread-safe block management (ConcurrentDictionary)
-- [x] Position validation and bounds checking
-- [x] Adjacent block detection
-- [x] Block occupancy tracking
+#### ✅ Core Gameplay Working
+1. **Place blocks** on 10x10 grid via click
+2. **Drag blocks** to new positions (3-range limit with visual feedback)
+3. **Match-3 blocks** to earn resources (automatic pattern detection)
+4. **Purchase merge unlocks** via F8 debug panel (100/500/2500 Money)
+5. **Merge blocks** into higher tiers (when unlocked, replaces match behavior)
+6. **See block information** - type and tier displayed on each block (e.g., "Work T2")
+7. **Experience merge animations** - blocks converge, flash, and burst
+8. **Track resources** - Money and attributes visible in UI
 
-#### Block Operations
-- [x] **Place Block**: Click empty position to place
-- [x] **Move Block**: Drag to new position (3-position range)
-- [x] **Remove Block**: Delete by position or ID
-- [x] **Swap Blocks**: Exchange positions when dragging to occupied
-- [x] **Cancel Drag**: ESC or right-click to cancel
+#### ⚠️ Debug-Only Features (Need Player UI)
+- **Merge unlock purchases** - Currently requires F8 debug panel (VS_005 will fix this)
+- **Performance profiling** - F9/F10/F11 hotkeys for developers
 
-#### Block Types (9 types defined, visual only)
-- [x] Basic, Work, Study, Relationship
-- [x] Health, Creativity, Fun  
-- [x] Special: CareerOpportunity, Partnership, Passion
+#### ❌ Not Implemented Yet
+- **Auto-spawn system** - No turn-based pressure mechanics
+- **Transmutation** - Logic exists but no UI trigger
+- **Save/Load** - No persistence between sessions
+- **Grid expansion** - Fixed 10x10 size
+- **Life stages** - No aging or time progression
+- **Narrative events** - No story elements
 
-#### Technical Infrastructure
-- [x] Clean Architecture (UI → Application → Domain)
-- [x] CQRS pattern with MediatR
-- [x] Functional error handling (LanguageExt.Core)
-- [x] Comprehensive test coverage (79 tests)
-- [x] Performance profiling (F9/F10/F11 hotkeys)
+---
 
-### 🚧 Partially Implemented
+## 🏗️ Vertical Slice Implementation Map
 
-#### Block Transmutation Logic
-- [x] Combination logic exists in code (Work+Study→Career)
-- [ ] No UI trigger for transmutation
-- [ ] No visual feedback for transmutation
-- [ ] No transmutation animations
-- [ ] No unlock system for transmutation abilities
+### VS_001: Block Placement & Movement [COMPLETE]
+**Player Action Flow:**
+```
+Click Empty Cell → PlaceBlockCommand → ValidationRules → GridStateService
+    ↓ Data: Position → Block Entity → Grid State Update
+    ✅ Place, move, swap, remove operations
+    ✅ 3-position range validation
+    ✅ Visual feedback for valid/invalid moves
+```
 
-### ❌ Not Started (Vision.md Features)
+### VS_003A: Match-3 Pattern System [COMPLETE]
+**Pattern Recognition Flow:**
+```
+Block Placed/Moved → ProcessPatternsAfterPlacement → MatchPatternRecognizer
+    ↓ Data: Grid State → Adjacent Blocks → Match Groups (3+)
+    ↓ Execution: MatchPatternExecutor → Remove Blocks → Grant Resources
+    ✅ Automatic pattern detection on placement/movement
+    ✅ Resource rewards (Money: 10×multiplier, Attributes: varied)
+    ✅ Chain multipliers (×1.5 for 4-match, ×2.0 for 5-match)
+```
 
-#### Life Simulation Core
-- [ ] Time progression system
-- [ ] Life stages (Child → Teen → Adult → Elder)
-- [ ] Aging mechanics
-- [ ] Life events (marriage, job, crisis)
+### VS_003B: Merge Pattern System [COMPLETE]
+**Merge Unlock & Execution Flow:**
+```
+Player Has Money → F8 Debug Panel → PurchaseMergeUnlockCommand
+    ↓ Data: MaxUnlockedTier Update (T1→T2, costs 100 Money)
+    
+When T2+ Unlocked → Pattern Recognition Changes:
+    Same blocks detected → MergePatternExecutor (replaces MatchPatternExecutor)
+    ↓ Data: 3 T1 blocks → 1 T2 block at center position
+    ↓ Visual: Convergence animation → Flash → Burst effect
+    ✅ Progressive unlock system (T2: 100, T3: 500, T4: 2500)
+    ✅ Merge REPLACES match behavior when unlocked
+    ⚠️ Debug UI only - needs VS_005 for player accessibility
+```
 
-#### Advanced Block Mechanics  
-- [ ] Match-3 clearing for resources/attributes
-- [ ] Tier-up progression system (unlockable)
-- [ ] Transmutation recipes (cross-type combinations)
-- [ ] Match size bonuses (×1.5 for Match-4, ×2.0 for Match-5)
-- [ ] Chain bonuses and rewards
-- [ ] Block evolution over time
-- [ ] Block narratives and stories
-- [ ] Tags and effect system
+### VS_003B-3: Pattern Framework Architecture [COMPLETE]
+**Technical Foundation:**
+```
+IPatternRecognizer → Detects patterns in grid
+IPatternResolver → Determines which executor to use
+IPatternExecutor → Executes pattern (match vs merge)
+    ↓ PatternExecutionResolver makes decisions based on:
+    - Player's MaxUnlockedTier
+    - Block tiers in pattern
+    - Pattern type (match/merge)
+    ✅ Extensible for future patterns (transmutation, special)
+```
 
-#### Meta Systems
-- [ ] Memory Palace
-- [ ] Character Origins & Talents
-- [ ] MBTI personality development
-- [ ] Generational Legacy
-- [ ] Save/Load system
+---
 
-#### Game Modes
-- [ ] Authentic Mode
-- [ ] Destiny Mode  
-- [ ] Legacy Mode
+## 🔌 Integration Points & Data Flow
 
-#### Social Features
-- [ ] Relationship bonds
-- [ ] Social network visualization
-- [ ] Character interactions
+### Pattern System Integration
+```
+User Input → Command → Notification → Pattern Processing
+                           ↓
+                    ProcessPatternsAfterPlacement
+                    ProcessPatternsAfterMove
+                           ↓
+                    PatternExecutionResolver
+                    (Decides: Match or Merge?)
+                           ↓
+                    MatchExecutor / MergeExecutor
+                           ↓
+                    State Updates + Visual Feedback
+```
 
-#### UI/UX Missing
-- [ ] Main menu
-- [ ] Settings screen
-- [ ] Tutorial/onboarding
-- [ ] Resource display (Money, Social Capital)
-- [ ] Attribute display (Knowledge, Health, Creativity)
-- [ ] Bonus multiplier indicators
-- [ ] Reward notifications
-- [ ] Unlock shop interface
-- [ ] Life stage indicators
+### Resource Flow
+```
+Pattern Execution → Rewards Calculated → ApplyMatchRewardsCommand
+    ↓ Updates PlayerState:
+    - Resources (Money, Social Capital)
+    - Attributes (Knowledge, Health, etc.)
+    ↓ UI Updates via IPlayerStateService
+```
+
+### Visual System
+```
+Domain Events → BlockVisualizationController
+    - ShowBlockAsync(id, pos, type, tier)
+    - ShowMergeAnimationAsync(sources, target, tier)
+    - AddBlockInfoDisplay(type, tier) - Shows "Work T2" labels
+    - Tier-based scaling (T1: 1.0x, T2: 1.15x, T3: 1.3x, T4: 1.5x)
+    - Tier-based effects (T2: pulse, T3: glow, T4: particles)
+```
+
+---
+
+## 📊 Technical Foundation Details
+
+### Architecture Layers
+- **Godot UI** → Presentation layer with visual controllers
+- **Application** → CQRS commands/queries with MediatR
+- **Domain** → Pure C# core with LanguageExt functional types
+- **Infrastructure** → Services, persistence (when implemented)
+
+### Key Services
+- **IGridStateService**: Thread-safe block management
+- **IPlayerStateService**: Resource and attribute tracking
+- **IMergeUnlockService**: Unlock progression management
+- **IPatternRecognizer**: Pattern detection algorithms
+- **IBlockVisualizationView**: Visual representation contract
+
+### Performance Optimizations
+- Tween system pre-warming (eliminates 289ms first-move lag)
+- Concurrent dictionary for thread-safe grid operations
+- Performance profiler integration (F9/F10/F11)
+- Efficient pattern detection with position caching
+
+---
+
+## 🚧 Partial Implementations
+
+### Block Transmutation
+- ✅ Combination logic defined (Work + Study → Career)
+- ❌ No UI trigger mechanism
+- ❌ No visual feedback system
+- ❌ Not integrated with pattern framework
+
+### Player Progression
+- ✅ Starting resources granted (100 Money, varied attributes)
+- ✅ Resource earning through matches
+- ✅ Unlock purchasing system
+- ❌ No save/load persistence
+- ❌ No achievement tracking
+
+---
+
+## 📈 Next Logical Steps (Product Owner Perspective)
+
+### Immediate Needs (Blocking Gameplay)
+1. **VS_005**: User-facing merge unlock UI (remove F8 dependency)
+2. **VS_006**: Auto-spawn system (turn-based pressure mechanic)
+
+### Core Loop Completion
+3. **VS_003C**: Transmutation patterns (cross-type combinations)
+4. **Save/Load**: Game persistence
+
+### Polish & Expansion
+5. Grid expansion mechanics
+6. Special block types
+7. Life stage progression
 
 ---
 
 ## 🔍 Reality Check
 
-### What We Have
-**A solid technical foundation** with excellent architecture, clean code, and robust testing. The core grid and block manipulation works perfectly.
+### What's Really Working Well
+- Pattern framework is robust and extensible
+- Merge system fully replaces match behavior as designed
+- Visual feedback is comprehensive (type, tier, animations)
+- Test coverage is excellent (401 passing tests)
+- Performance is optimized (pre-warming, profiling)
 
-### What We Don't Have  
-**Any actual game progression** - no scoring, no goals, no win/lose conditions, no progression mechanics. It's a sandbox with blocks.
+### Hidden Complexities Found
+- Pattern resolution logic correctly handles tier mismatches
+- Merge animations properly handle multiple source blocks
+- Resource calculations include proper chain multipliers
+- Block info display works for all tiers (not just T2+)
 
-### The Gap
-The Vision.md describes a **deep life simulation game**. The current implementation is a **block manipulation prototype**. The gap is approximately 80-90% of the vision.
-
-### Next Logical Steps (Product Owner Perspective)
-Based on what's built, the most valuable next features would be:
-
-1. **VS_003A: Match-3 with Resources/Attributes** - Clear blocks to earn Money, Knowledge, Health
-2. **VS_003B: Tier System Introduction** - Visual tiers with bonus multipliers
-3. **VS_003C: Unlockable Tier-Up** - Spend resources to unlock progression
-4. **VS_003D: Cross-Type Transmutation** - Advanced recipes for special blocks
-5. **VS_004: Auto-Spawn System** - Grid pressure and game over conditions
-6. **VS_005: Chain Reactions** - Cascading matches with exponential bonuses
-
-These would transform the prototype into a playable game before tackling the ambitious life simulation features.
+### Technical Debt Addressed
+- BF_001: First-move lag eliminated via tween pre-warming
+- Thread safety: ConcurrentDictionary prevents race conditions
+- Duplicate notifications: Handled gracefully in visualization
 
 ---
 
-*This document is the single source of truth for implementation status. Update after each feature completion.*
+## 📝 Document Maintenance Notes
+
+**Update Frequency**: After each VS completion or major implementation change
+**Owner**: Product Owner (maintains ground truth)
+**Verification Method**: Run tests + code inspection + manual testing
+
+*This document represents the actual state of the codebase, not the planned or desired state.*

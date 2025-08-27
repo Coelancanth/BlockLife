@@ -70,8 +70,8 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_005: User-Facing Merge Unlock UI
-**Status**: Proposed
-**Owner**: Product Owner
+**Status**: Approved
+**Owner**: Dev Engineer
 **Size**: M (4-6h)
 **Priority**: Important
 **Created**: 2025-08-26 23:43
@@ -96,6 +96,17 @@
 - No debug keys required for unlock progression
 - Clear cost/benefit shown before purchase
 - Visual confirmation of successful unlock
+- Unlock button shows near resource display (spatial proximity)
+- Button states: Available (can afford), Locked (can't afford), Owned (already unlocked)
+- Tooltip/hover shows: "Unlock Tier 2 Merging: Combine 3 T1 blocks into 1 T2 block"
+- Purchase failure shows reason: "Need 100 Money (you have 85)"
+
+**Product Owner Decision** (2025-08-27 12:39):
+- APPROVED - Critical accessibility gap blocking core progression
+- Players literally cannot progress without this UI
+- Backend fully functional, purely UI integration task
+- Place near AttributeDisplay for spatial proximity
+- Ready for Dev Engineer implementation
 
 ---
 
