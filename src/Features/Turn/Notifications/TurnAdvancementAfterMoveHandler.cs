@@ -11,8 +11,10 @@ namespace BlockLife.Core.Features.Turn.Notifications
 {
     /// <summary>
     /// Handles block movement notifications by advancing turns.
-    /// Only user-initiated moves should consume turns, not cascades or pattern effects.
-    /// This ensures one-action-per-turn gameplay is properly enforced.
+    /// IMPORTANT: Only block MOVEMENT consumes turns, not block PLACEMENT.
+    /// - Placing a new block: FREE (no turn consumed)
+    /// - Moving an existing block: COSTS 1 TURN
+    /// This creates strategic depth - initial placement is critical since fixes cost turns.
     /// </summary>
     public class TurnAdvancementAfterMoveHandler : INotificationHandler<BlockMovedNotification>
     {
