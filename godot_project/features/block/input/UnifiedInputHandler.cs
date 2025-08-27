@@ -203,23 +203,25 @@ public sealed class UnifiedInputHandler : IDisposable
                 _logger?.Information("BLOCK INFO at {Position}:", position);
                 _logger?.Information("   BlockId: {BlockId}", block.Id);
                 _logger?.Information("   Type: {BlockType}", block.Type);
+                _logger?.Information("   Tier: {Tier}", block.Tier);
                 _logger?.Information("   CreatedAt: {CreatedAt}", block.CreatedAt);
 
-                // Commented out verbose debug output
-                // GD.Print($"=== BLOCK INSPECTION ===");
-                // GD.Print($"Position: ({position.X}, {position.Y})");
-                // GD.Print($"BlockId: {block.Id}");
-                // GD.Print($"Type: {block.Type}");
-                // GD.Print($"========================");
+                // Print to Godot console for easier debugging
+                GD.Print($"=== BLOCK INSPECTION ===");
+                GD.Print($"Position: ({position.X}, {position.Y})");
+                GD.Print($"BlockId: {block.Id}");
+                GD.Print($"Type: {block.Type}");
+                GD.Print($"Tier: {block.Tier}");
+                GD.Print($"========================");
             },
             None: () =>
             {
                 _logger?.Information("EMPTY POSITION at {Position}", position);
-                // Commented out verbose debug output
-                // GD.Print($"=== POSITION INSPECTION ===");
-                // GD.Print($"Position: ({position.X}, {position.Y})");
-                // GD.Print($"Status: Empty");
-                // GD.Print($"===========================");
+                // Print to Godot console for easier debugging
+                GD.Print($"=== POSITION INSPECTION ===");
+                GD.Print($"Position: ({position.X}, {position.Y})");
+                GD.Print($"Status: Empty");
+                GD.Print($"===========================");
             }
         );
     }

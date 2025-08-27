@@ -879,3 +879,13 @@
 **Reason**: Classic premature optimization. Current grid is 10x10, not 100x100. No evidence of performance problems. "May lag" = theoretical problem, not real.
 **Alternative**: Keep current O(n²) algorithm which works fine for actual grid sizes. Profile first if issues arise.
 [RESURRECT-IF: Grid size increases beyond 20x20 AND profiling shows pattern recognition as bottleneck]
+
+#### VS_005: User-Facing Merge Unlock UI ❌ REJECTED
+**Rejected**: 2025-08-27 13:00
+**Proposed Size**: M (4-6h)
+**Reason**: User decided to remove all UI-related debug code instead - F8 debug panel completely removed to prevent bugs
+**Alternative**: Debug functionality preserved through keyboard shortcuts (Space/Tab/I keys), merge unlocks remain backend-only for now
+**Background**: Backend purchase system fully working (VS_003B-3), but Product Owner had initially approved creating accessible UI for players to purchase merge pattern unlocks without debug keys
+**Decision Context**: User preference for keyboard shortcuts over UI complexity, simplified debug approach without visual panels
+[RESURRECT-IF: user-requests-visual-unlock-ui, debug-panel-complexity-becomes-necessary]
+[METADATA: ui-rejection, debug-simplification, merge-unlock-system, user-preference, keyboard-shortcuts]

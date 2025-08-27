@@ -91,7 +91,10 @@
       "Bash(git branch:*)",
       "Bash(git cherry-pick:*)",
       "Bash(Remove-Item scripts/persona/embody-v3-backup.ps1 -Force)",
-      "Bash(./scripts/test/test-embody.ps1)"
+      "Bash(./scripts/test/test-embody.ps1)",
+      "Bash(./scripts/persona/embody.ps1 product-owner)",
+      "Bash(./scripts/core/build.ps1 build)",
+      "Bash(./scripts/test/quick.ps1)"
     ],
     "deny": [],
     "ask": [],

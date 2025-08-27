@@ -9,7 +9,7 @@
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
 - **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 006 (Last: VS_005 - 2025-08-26 23:43)
+- **Next VS**: 006 (Last: VS_005 - REJECTED 2025-08-27 13:00)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -69,80 +69,8 @@
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_005: User-Facing Merge Unlock UI
-**Status**: Approved
-**Owner**: Dev Engineer
-**Size**: M (4-6h)
-**Priority**: Important
-**Created**: 2025-08-26 23:43
-
-**What**: Create accessible UI for players to purchase merge pattern unlocks without debug keys
-**Why**: Players currently can only unlock merge abilities via F8 debug panel - needs proper in-game UI
-
-**Current State**:
-- Backend purchase system fully working (VS_003B-3)
-- F8 debug panel has functional unlock UI but is developer-only
-- Players start with T1 (match-only), need to buy T2+ for merge patterns
-
-**Proposed Solution**:
-- Add unlock button/shop to main game UI (not debug panel)
-- Show current tier and available upgrades
-- Display costs clearly (T2: 100, T3: 500, T4: 2500)
-- Visual feedback when unlock succeeds
-- Integrate with existing PurchaseMergeUnlockCommand
-
-**Done When**:
-- Players can see and purchase merge unlocks in normal gameplay
-- No debug keys required for unlock progression
-- Clear cost/benefit shown before purchase
-- Visual confirmation of successful unlock
-- Unlock button shows near resource display (spatial proximity)
-- Button states: Available (can afford), Locked (can't afford), Owned (already unlocked)
-- Tooltip/hover shows: "Unlock Tier 2 Merging: Combine 3 T1 blocks into 1 T2 block"
-- Purchase failure shows reason: "Need 100 Money (you have 85)"
-
-**Product Owner Decision** (2025-08-27 12:39):
-- APPROVED - Critical accessibility gap blocking core progression
-- Players literally cannot progress without this UI
-- Backend fully functional, purely UI integration task
-- Place near AttributeDisplay for spatial proximity
-- Ready for Dev Engineer implementation
-
 ---
 
-### TD_084: Refactor to Use LanguageExt Collections Instead of System.Collections.Generic
-**Status**: Approved
-**Owner**: Dev Engineer
-**Size**: S (2-3h)
-**Priority**: Important
-**Created**: 2025-08-26 23:25
-**Markers**: [ARCHITECTURE] [FUNCTIONAL-PARADIGM]
-
-**What**: Replace System.Collections.Generic with LanguageExt immutable collections
-**Why**: Violates functional programming paradigm, causes potential mutation bugs
-
-**Current Violations** (verified by Tech Lead):
-- MergePatternExecutor uses List<Block> (mutable) ✅
-- MatchPatternRecognizer uses HashSet<Vector2Int> and Dictionary (mutable) ✅
-- ~~PlayerState~~ already uses Map correctly ❌
-
-**Proposed Solution**:
-- Replace List<T> with Lst<T> or Seq<T>
-- Replace HashSet<T> with Set<T>
-- Replace Dictionary<K,V> with Map<K,V>
-- Update all LINQ operations to LanguageExt equivalents
-
-**Pattern Match**: Follow existing patterns in IGridStateService and PlayerState which correctly use Map
-
-**Done When**:
-- No System.Collections.Generic imports in Core domain
-- All collections are immutable
-- Tests still pass
-
-**Tech Lead Decision** (2025-08-27): APPROVED with corrections
-- Reduced time estimate from 4-6h to 2-3h
-- Removed false PlayerState claim
-- Worth doing for consistency
 
 
 ## 💡 Ideas (Do Later)
