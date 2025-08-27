@@ -21,7 +21,7 @@
 ### 2. Set Up Persona Workspaces (One-time)
 ```bash
 # Creates 6 isolated persona clones
-./scripts/persona/setup-personas.ps1
+# Deprecated - use embody.ps1 instead
 
 # Navigate between personas
 cd ../blocklife-dev-engineer     # Dev work
@@ -51,8 +51,7 @@ cd ../blocklife-test-specialist  # Testing focus
 | Check branch status | `branch-status-check.ps1` | `scripts/git/` |
 | Clean merged branches | `branch-cleanup.ps1` | `scripts/git/` |
 | **Persona Management** |
-| Setup all personas | `setup-personas.ps1` | `scripts/persona/` |
-| Sync personas | `sync-personas.ps1` | `scripts/persona/` |
+| Embody persona | `embody.ps1` | `scripts/persona/` |
 | **Verification** |
 | Verify subagent work | `verify-subagent.ps1` | `scripts/verification/` |
 | Verify backlog updates | `verify-backlog-update.ps1` | `scripts/verification/` |
@@ -151,7 +150,7 @@ git commit --no-verify
 ### Initial Setup
 ```bash
 # Run once to set up all 6 personas
-./scripts/persona/setup-personas.ps1
+# Deprecated - use embody.ps1 instead
 
 # Creates these directories (in parent folder):
 # blocklife-dev-engineer/
@@ -165,7 +164,7 @@ git commit --no-verify
 ### Daily Usage
 ```bash
 # Sync all personas with remote (weekly)
-./scripts/persona/sync-personas.ps1
+# Deprecated - now handled by embody.ps1
 
 # Work in specific persona
 cd ../blocklife-dev-engineer
@@ -207,7 +206,7 @@ git add -A && git commit      # Retry commit
 
 # Persona setup issues
 git --version                 # Verify git available
-./scripts/persona/setup-personas.ps1 -SkipExisting  # Clean retry
+# Deprecated - use embody.ps1 instead -SkipExisting  # Clean retry
 ```
 
 ### Performance Issues
@@ -228,7 +227,7 @@ git --version                 # Verify git available
 # Shell aliases for common commands
 alias bt='./scripts/core/build.ps1 test'
 alias bb='./scripts/core/build.ps1 build' 
-alias sync='./scripts/persona/sync-personas.ps1'
+alias embody='./scripts/persona/embody.ps1'
 ```
 
 ### Workflow Optimization

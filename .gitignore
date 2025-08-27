@@ -102,4 +102,10 @@ personas/
 # --- Memory Bank (Local Only) ---
 # Memory Bank is now local-only per TD_053
 # Each developer/clone maintains their own context
-.claude/memory-bank/  
+.claude/memory-bank/
+
+# --- Backup Files ---
+# Temporary backups created during script migrations
+*.backup-*
+*backup-*
+scripts/archive/  

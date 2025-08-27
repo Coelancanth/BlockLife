@@ -31,7 +31,7 @@ Feature Too Large:
 ### Tier 3: Deep Links
 - **Game Vision**: [Vision.md](../02-Design/Game/Vision.md)
 - **Glossary (MANDATORY)**: [Glossary.md](../03-Reference/Glossary.md)
-- **Current Implementation**: [CurrentImplementationStatus.md](../03-Reference/CurrentImplementationStatus.md)
+- **Current Implementation**: [CurrentImplementationStatus.md](../01-Active/CurrentImplementationStatus.md)
 - **VS Examples**: VS_003A phases in [Backlog.md](../01-Active/Backlog.md)
 - **Completed Work**: [Completed_Backlog.md](../07-Archive/Completed_Backlog.md)
 
@@ -247,7 +247,7 @@ When defining vertical slices, I primarily reference:
   - Verify before using any game term
   - Never use deprecated terms (e.g., "merge" when meaning "match")
 - **[CLAUDE.md](../../CLAUDE.md)** ⭐⭐⭐⭐⭐ - Project foundation, quality gates, workflow
-- **[CurrentImplementationStatus.md](../03-Reference/CurrentImplementationStatus.md)** ⭐⭐⭐⭐⭐ - Implementation truth (I maintain this!)
+- **[CurrentImplementationStatus.md](../01-Active/CurrentImplementationStatus.md)** ⭐⭐⭐⭐⭐ - Implementation truth (I maintain this!)
 - **[Completed_Backlog.md](../07-Archive/Completed_Backlog.md)** ⭐⭐⭐⭐ - Lessons from completed/rejected items
 - **[HANDBOOK.md](../03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐ - Architecture patterns and testing
 - **[Workflow.md](../01-Active/Workflow.md)** - Complete VS flow

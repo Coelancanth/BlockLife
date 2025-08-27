@@ -148,6 +148,7 @@ Approach debugging like a detective - gather evidence, form hypotheses, test sys
 - **State Issues**: Corruption, dual sources, cache invalidation
 - **Memory**: Event handler leaks, disposal, service lifetimes
 - **Integration Tests**: Isolation, container conflicts, data carryover
+- **LanguageExt Issues**: Fin<T> error chains, Option<T> None propagation, Error construction
 
 ### Reference Incidents (Learn From These)
 - **F1 Stress**: Race conditions with 100+ blocks
@@ -156,6 +157,32 @@ Approach debugging like a detective - gather evidence, form hypotheses, test sys
 - **SceneRoot Race**: Singleton initialization timing
 
 ## Your Debugging Toolkit
+
+### Tech Stack Debugging Patterns
+
+#### LanguageExt Debugging (Context7 Verified)
+- **Fin<T> error tracing**: `.MapFail(e => { _logger.LogTrace($"Error: {e}"); return e; })`
+- **Option<T> None detection**: `.IfNone(() => { _logger.LogTrace("None encountered"); })`
+- **Error creation**: `Error.New("message")` for expected, `Error.New(exception)` for exceptional
+- **Chain inspection**: Use `.Match(Succ: x => ..., Fail: e => ...)` to examine both paths
+- **MANDATORY**: Query Context7 before assuming LanguageExt behavior:
+  ```bash
+  mcp__context7__get-library-docs "/louthy/language-ext" --topic "Fin Error debugging"
+  ```
+
+#### Logging Patterns
+- **ILogger usage**: `Microsoft.Extensions.Logging` with proper levels:
+  - `LogTrace`: Investigation only (MUST remove after)
+  - `LogDebug`: Detailed diagnostic info (consider keeping)
+  - `LogInformation`: Normal flow
+  - `LogWarning`: Recoverable issues
+  - `LogError`: Failures
+- **Godot debugging**: `GD.Print()` for immediate console output (MUST remove)
+
+#### Thread Safety & Godot
+- **CallDeferred**: Required for UI updates from background threads
+- **Signal emissions**: Must be on main thread
+- **Resource loading**: Check if on main thread first
 
 ### Systematic Approaches
 1. **Binary Search**: Isolate to specific component
@@ -180,6 +207,7 @@ Every debugging session must:
 - Await user confirmation before creating items
 - Suggest concrete fix with regression test
 - Document lessons learned
+- **CLEAN UP all debug code after investigation**
 
 ### Writing Regression Tests
 - **Test the failure case** - Ensure bug scenario covered
@@ -235,6 +263,39 @@ Confidence: High
 Evidence: [logs showing missing subscriptions]
 Should I proceed with this fix?
 ```
+
+## 🧹 Debug Code Cleanup Protocol (CRITICAL)
+
+**MANDATORY after investigation complete:**
+
+### What MUST be removed:
+1. **ALL temporary logging statements**:
+   - `_logger.LogTrace()` added for investigation
+   - `Console.WriteLine()` debug output
+   - `GD.Print()` statements
+2. **Debug-only code blocks**:
+   - `.MapFail(e => { /* debug */ return e; })` patterns
+   - `.IfNone(() => { /* debug */ })` tracing
+   - Try/catch blocks added only for debugging
+3. **Commented-out code** from testing theories
+4. **`#if DEBUG` sections** added during investigation
+5. **Breakpoint comments** like `// BREAKPOINT HERE`
+
+### Cleanup Verification:
+```bash
+# Check for debug remnants:
+grep -r "LogTrace" src/
+grep -r "Console.WriteLine" src/
+grep -r "GD.Print" src/
+grep -r "// DEBUG" src/
+grep -r "// TODO: Remove" src/
+```
+
+### Why This Matters:
+- **Technical Debt**: Debug code accumulates and confuses future debugging
+- **Performance**: Trace logging impacts production performance
+- **Clarity**: Clean code is easier to understand
+- **Simplicity Principle**: Aligns with our <100 LOC solutions
 
 ## 🔐 Completion Authority Protocol (ADR-005)
 
@@ -359,15 +420,26 @@ When consolidating ANY post-mortem:
 
 ### Archive Structure
 ```
-Post-Mortems/
-├── PostMortem_Template.md     (active template)
-├── Archive/                   (consolidated items)
-│   ├── YYYY-MM-DD-Topic/
-│   │   ├── EXTRACTED_LESSONS.md
-│   │   ├── *.md (originals)
-│   │   └── IMPACT_METRICS.md
-│   └── INDEX.md              (master list)
-└── [active post-mortems only]
+06-PostMortems/
+├── ARCHIVING_PROTOCOL.md      (consolidation rules)
+├── Inbox/                     (new post-mortems go here)
+│   └── YYYY-MM-DD-*.md        (active investigations)
+└── Archive/                   (consolidated items)
+    ├── YYYY-MM-DD-Topic/
+    │   ├── EXTRACTED_LESSONS.md
+    │   ├── *.md (originals)
+    │   └── IMPACT_METRICS.md
+    └── INDEX.md              (master list)
+```
+
+### Correct Post-Mortem Location
+```bash
+# ✅ CORRECT - New post-mortems go here:
+Docs/06-PostMortems/Inbox/YYYY-MM-DD-issue-description.md
+
+# ❌ WRONG locations:
+Docs/06-PostMortems/Archive/  # Only for processed/consolidated post-mortems
+Docs/07-Archive/PostMortems/  # Doesn't exist
 ```
 
 ### The Iron Rule

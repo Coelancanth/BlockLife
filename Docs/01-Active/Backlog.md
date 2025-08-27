@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-26 19:21
+**Last Updated**: 2025-08-27 13:53
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -9,7 +9,7 @@
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
 - **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 006 (Last: VS_005 - 2025-08-26 23:43)
+- **Next VS**: 009 (Last: VS_008 - 2025-08-27 13:53)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,299 +65,151 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### BR_015: Fix Failing PurchaseMergeUnlockCommandHandler Tests
-**Status**: ~~Proposed~~ **Resolved** 2025-08-26 23:41
-**Owner**: Debugger Expert
-**Size**: S (2-3h actual: 40 min)
+### VS_006: Core Turn System
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4h)
 **Priority**: Critical
-**Created**: 2025-08-26 23:25
-**Markers**: [TEST-FAILURE] [BLOCKING-PR]
+**Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
 
-**What**: 3 tests failing in PurchaseMergeUnlockCommandHandler due to incorrect test setup
-**Why**: Tests block PR merge and may indicate logic issues in merge unlock implementation
+**What**: Implement turn counter with one-action-per-turn limitation
+**Why**: Creates time pressure that makes the game challenging and meaningful
 
-**Root Cause Found**:
-1. PlayerState.CreateNew() defaulted MaxUnlockedTier = 2 (for testing)
-2. This broke purchase validation - player already had T2 unlocked
-3. Test helper also needed proper UpdatePlayer() call with version tracking
+**How**:
+- Add TurnManager service to track current turn number
+- Display turn counter in UI (starts at 1)
+- Only VALID MOVES advance the turn (not placements or failed moves)
+- Turn advances after move completes (including all chains)
+- Fire TurnStartNotification and TurnEndNotification events
 
-**Fix Applied**:
-- Changed default MaxUnlockedTier from 2 to 1 in PlayerState
-- Fixed SetupTestPlayerWithMoneyAndUnlockedTier helper to use UpdatePlayer()
-- Enabled 2 previously skipped tests that now work
+**Done When**:
+- Turn counter visible in game UI showing "Turn: X"
+- Only successful block movements advance the turn
+- Turn waits for all chain reactions to complete before advancing
+- Turn events allow other systems to hook in
+- Turn number persists in PlayerDataService
 
-**Result**: All 9 PurchaseMergeUnlockCommandHandler tests now pass
+**Depends On**: None
+
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 3/10 - Follows existing patterns exactly
+- Pattern: Copy from MoveBlockCommand/Handler structure
+- Integration: Hook after ProcessPatternsAfterPlacement completes
+- Risk: Low - well-established integration points
 
 ---
+
+### VS_007: Auto-Spawn System  
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4.5h)
+**Priority**: Critical
+**Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
+
+**What**: Automatically spawn new blocks at the start of each turn
+**Why**: Forces space management decisions and prevents infinite planning
+
+**How**:
+- Create SpawnService with IAutoSpawnStrategy interface
+- Hook into TurnStartNotification from VS_006
+- Spawn one random Tier-1 block at turn start
+- Select random empty position for spawn
+- Trigger game over if no empty positions available
+
+**Done When**:
+- One block spawns automatically when turn starts
+- Block appears in random empty grid position
+- Block type is randomly selected from available types
+- Always spawns at Tier 1
+- Visual/sound effect plays on spawn
+- Game over triggers when grid is full
+
+**Depends On**: VS_006 (Turn System)
+
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 4/10 - Strategy pattern adds slight complexity
+- Pattern: Strategy for spawn logic, reuse PlaceBlockCommand
+- Safety-critical: Game over detection must be bulletproof
+- Risk: Medium - game over is critical feature
+
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_005: User-Facing Merge Unlock UI
-**Status**: Proposed
-**Owner**: Product Owner
-**Size**: M (4-6h)
+### VS_008: Godot Resource-Based Rewards
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4h)
 **Priority**: Important
-**Created**: 2025-08-26 23:43
+**Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
 
-**What**: Create accessible UI for players to purchase merge pattern unlocks without debug keys
-**Why**: Players currently can only unlock merge abilities via F8 debug panel - needs proper in-game UI
+**What**: Migrate hardcoded reward values to Godot Resource files
+**Why**: Enables rapid balancing and debugging without recompiling
 
-**Current State**:
-- Backend purchase system fully working (VS_003B-3)
-- F8 debug panel has functional unlock UI but is developer-only
-- Players start with T1 (match-only), need to buy T2+ for merge patterns
-
-**Proposed Solution**:
-- Add unlock button/shop to main game UI (not debug panel)
-- Show current tier and available upgrades
-- Display costs clearly (T2: 100, T3: 500, T4: 2500)
-- Visual feedback when unlock succeeds
-- Integrate with existing PurchaseMergeUnlockCommand
+**How**:
+- Create BlockRewardResource.tres for each block type
+- Define tier-based reward scaling in resources
+- Add debug overlay (F12) showing current reward values
+- Implement GodotResourceBridge service for C# integration
+- Support hot reload in debug builds
 
 **Done When**:
-- Players can see and purchase merge unlocks in normal gameplay
-- No debug keys required for unlock progression
-- Clear cost/benefit shown before purchase
-- Visual confirmation of successful unlock
+- Each block type has a .tres resource file defining rewards
+- Resources specify base values and tier multipliers
+- Debug overlay displays loaded reward values
+- Reward calculator uses resource data instead of hardcoded values
+- Values can be modified without recompiling
+
+**Depends On**: None (but more useful after VS_007)
+
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 5/10 - New architectural boundary (C# ↔ Godot)
+- Pattern: Bridge service pattern, first of its kind
+- Can run parallel with VS_006 - no dependencies
+- Risk: Medium - sets precedent for resource integration
 
 ---
 
-### TD_084: Refactor to Use LanguageExt Collections Instead of System.Collections.Generic
-**Status**: Proposed
-**Owner**: Tech Lead
-**Size**: M (4-6h)
-**Priority**: Important
-**Created**: 2025-08-26 23:25
-**Markers**: [ARCHITECTURE] [FUNCTIONAL-PARADIGM]
-
-**What**: Replace System.Collections.Generic with LanguageExt immutable collections
-**Why**: Violates functional programming paradigm, causes potential mutation bugs
-
-**Current Violations** (10+ files):
-- MergePatternExecutor uses List<Block> (mutable)
-- MatchPatternRecognizer uses HashSet<Vector2Int> (mutable)
-- PlayerState uses Dictionary<ResourceType, int> (should use Map)
-
-**Proposed Solution**:
-- Replace List<T> with Lst<T> or Seq<T>
-- Replace HashSet<T> with Set<T>
-- Replace Dictionary<K,V> with Map<K,V>
-- Update all LINQ operations to LanguageExt equivalents
-
-**Pattern Match**: Follow existing patterns in IGridStateService which correctly uses Map
-
-**Done When**:
-- No System.Collections.Generic imports in Core domain
-- All collections are immutable
-- Tests still pass
-
-### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
-**Status**: ~~Proposed~~ **Resolved** 2025-08-26 23:50
-**Owner**: Debugger Expert  
-**Size**: S (2-3h actual: 25 min)
-**Priority**: Important
-**Created**: 2025-08-26 23:25
-
-**What**: MergePatternExecutor lacks defensive programming for several edge cases
-**Why**: Could cause runtime exceptions in production
-
-**Defensive Programming Added**:
-1. ✅ Null checks for context and context.GridService
-2. ✅ Empty collection validation before First()
-3. ✅ Created defensive copy of positions to avoid concurrent modification
-4. ✅ Tier bounds validation (max T4) with proper error messages
-5. ✅ Null pattern checks in CanExecute and EstimateExecutionTime
-
-**Tests Added**: 8 new defensive programming tests covering all edge cases
-**Result**: MergePatternExecutor now gracefully handles all edge cases with Fin<T> errors
-
-**Done When**:
-- All edge cases return proper Error results
-- No possibility of NullReferenceException
-- Unit tests cover edge cases
-
-### TD_085: Add Comprehensive Logging and Telemetry to Pattern System
-**Status**: Proposed
-**Owner**: Dev Engineer
-**Size**: M (4-6h)
-**Priority**: Important
-**Created**: 2025-08-26 23:25
-
-**What**: Pattern recognition and execution lacks sufficient observability
-**Why**: Cannot debug production issues or understand performance bottlenecks
-
-**Missing Telemetry**:
-- Pattern recognition timing metrics
-- Match vs Merge execution counts
-- Tier progression statistics
-- Failed pattern execution reasons
-- Performance counters for grid operations
-
-**Proposed Solution**:
-- Add structured logging with correlation IDs
-- Implement performance counters
-- Track pattern success/failure rates
-- Add debug visualizations for pattern detection
-
-**Pattern Match**: Follow logging patterns in ProcessPatternsAfterPlacementHandler
-
-**Done When**:
-- Every pattern operation is logged
-- Performance metrics available
-- Can trace full pattern lifecycle
 
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_086: Implement Property-Based Testing for Pattern Recognition
-**Status**: Proposed
+
+### TD_081: Add Merge System Test Coverage
+**Status**: Approved
 **Owner**: Test Specialist
-**Size**: L (8-12h)
-**Priority**: Ideas
-**Created**: 2025-08-26 23:25
-
-**What**: Add FsCheck property tests for pattern recognition invariants
-**Why**: Ensure pattern detection is mathematically correct under all conditions
-
-**Properties to Test**:
-- Pattern recognition is deterministic (same grid = same patterns)
-- No overlapping patterns (each position in max 1 pattern)
-- Merge patterns preserve block count invariants
-- Pattern execution is idempotent when repeated
-
-**Pattern Match**: Follow FsCheck 3.x patterns in existing property tests
-
-### TD_087: Performance Optimization for Large Grid Pattern Recognition
-**Status**: Proposed
-**Owner**: Dev Engineer
-**Size**: L (8-12h)
-**Priority**: Ideas
-**Created**: 2025-08-26 23:25
-
-**What**: Optimize pattern recognition for 100x100+ grids
-**Why**: Current O(n²) algorithm may lag with large grids
-
-**Optimization Opportunities**:
-- Implement spatial indexing for pattern detection
-- Cache adjacent block lookups
-- Use parallel pattern recognition for independent regions
-- Implement dirty region tracking to avoid full scans
-
-**Done When**:
-- Pattern recognition <16ms for 100x100 grid
-- Profiling shows no hot spots
-- Memory usage remains flat
-
-### TD_088: Add Visual Pattern Recognition Debugging Tools
-**Status**: Proposed
-**Owner**: Dev Engineer
-**Size**: M (6-8h)
-**Priority**: Ideas
-**Created**: 2025-08-26 23:25
-
-**What**: Create debug overlay showing pattern detection in real-time
-**Why**: Developers cannot easily see why patterns aren't triggering
-
-**Features**:
-- Overlay showing detected patterns with different colors
-- Pattern type labels (Match vs Merge)
-- Execution order visualization
-- Frame-by-frame pattern state replay
-- Export pattern detection logs
-
-**Done When**:
-- F10 key toggles pattern debug overlay
-- Can step through pattern execution
-- Clear visual indication of pattern boundaries
-
-### TD_081: Add Comprehensive Merge System Test Coverage
-**Status**: Proposed
-**Owner**: Test Specialist
-**Size**: M (4-6h)
+**Size**: S (2-3h)
 **Priority**: Important
 **Created**: 2025-08-26 20:20
-**Complexity Score**: 3/10 (straightforward testing work)
+**Complexity Score**: 2/10 (straightforward testing work)
 
 **What**: Add missing test coverage for merge pattern execution system
-**Why**: Core game mechanic has only 5 basic tests, missing critical path validation
+**Why**: Core game mechanic has only edge case tests, missing actual merge logic tests
 
-**Current State**:
-- MergePatternExecutorBasicTests: 5 tests (config and error cases only)
-- Missing: Actual merge execution tests
-- Missing: Tier scaling validation
-- Missing: Integration tests
+**Current State** (verified by Tech Lead):
+- MergePatternExecutorBasicTests: 14 tests (ALL edge cases/errors)
+- MergePatternExecutionTests: 6 integration tests
+- Missing: Unit tests for actual merge transformation logic
 
-**Proposed Solution**:
-- Add 20+ tests to MergePatternExecutorTests
+**Focused Solution** (5-10 tests):
 - Test 3 T1 → 1 T2 transformation
 - Test tier scaling (3x, 9x, 27x multipliers)
+- Test resource reward calculations
 - Test mixed tier validation (should fail)
-- Integration tests for full merge flow
-- Property-based tests for invariants
-
-**Simpler Alternative**: Just add 5-10 happy path tests (Score: 1/10)
-- Would cover basic functionality but miss edge cases
+- Test position preservation at trigger
 
 **Pattern Match**: Follow existing test patterns in MatchPatternExecutorTests
 
-### TD_082: Fix Pre-Existing Test Compilation Errors (BlockPlacedEffect Constructor)
-**Status**: ~~Proposed~~ **Completed 2025-08-26 23:21**
-**Owner**: ~~Test Specialist~~
-**Size**: M (4-6h)
-**Priority**: Critical
-**Created**: 2025-08-26 23:00
-**Complexity Score**: 4/10 (systematic test fixing)
+**Tech Lead Decision** (2025-08-27): APPROVED with focus
+- Reduced from 20+ tests to 5-10 focused tests
+- Reduced from 4-6h to 2-3h
+- Focus on missing unit tests, not redundant edge cases
 
-**What**: Fix compilation errors preventing test suite execution
-**Why**: PR can't merge with failing tests - CI/CD requires clean build
 
-**Current Issue**:
-- 14 test files failing with `CS7036: There is no argument given that corresponds to the required parameter 'PlacedAt'`
-- BlockPlacedEffect constructor signature changed but tests not updated
-- Affects SimulationManagerThreadSafetyTests, SimulationManagerRegressionTests, etc.
-
-**Proposed Solution**:
-- Add missing `PlacedAt` parameter to all BlockPlacedEffect constructor calls
-- Verify parameter order matches current constructor signature  
-- Run test suite to ensure no remaining compilation errors
-- Add proper DateTime values for PlacedAt parameter
-
-**Pattern Match**: Follow existing test patterns for effect creation
-
-**Simpler Alternative**: Fix just the failing tests (Score: 2/10)
-- Would get tests compiling but might miss parameter usage patterns
-
-### TD_083: Polish Merge System for Production Readiness  
-**Status**: Proposed
-**Owner**: Dev Engineer
-**Size**: S (3-4h)
-**Priority**: Important
-**Created**: 2025-08-26 23:00
-**Complexity Score**: 3/10 (refinement work)
-
-**What**: Polish and refine merge system implementation for production quality
-**Why**: Current implementation works but needs final polish before release
-
-**Polish Areas**:
-- Performance optimization for pattern recognition with tier checking
-- Error message improvements for invalid merge scenarios
-- Edge case handling (empty patterns, invalid positions)
-- Code documentation for maintenance
-- Consider adding merge animation timing controls
-
-**Proposed Solution**:
-- Review pattern recognition performance impact of tier checking
-- Enhance error messages with more context
-- Add comprehensive parameter validation
-- Clean up any remaining TODO/FIXME comments
-- Performance testing with large grids
-
-**Pattern Match**: Follow existing performance optimization patterns
-
-**Simpler Alternative**: Just add documentation (Score: 1/10)
-- Would improve maintainability but miss performance opportunities
 
 
 
@@ -371,6 +223,27 @@
 
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
+
+### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
+**Status**: Resolved
+**Completed**: 2025-08-26 23:50 (actual: 25 min)
+**Owner**: Debugger Expert  
+**Size**: S (estimated 2-3h, actual: 25 min)
+
+**What**: Added defensive programming to MergePatternExecutor
+**Resolution**: Added null checks, empty validation, tier bounds, defensive copying
+**Tests Added**: 8 new defensive programming tests
+**Result**: MergePatternExecutor now gracefully handles all edge cases with Fin<T> errors
+
+### TD_082: Fix Pre-Existing Test Compilation Errors
+**Status**: Completed
+**Completed**: 2025-08-26 23:21
+**Owner**: Test Specialist
+**Size**: M (estimated 4-6h)
+
+**What**: Fixed compilation errors in test suite
+**Resolution**: Added missing PlacedAt parameters to BlockPlacedEffect constructors
+**Result**: All tests compile and pass (verified with quick.ps1)
 
 
 
