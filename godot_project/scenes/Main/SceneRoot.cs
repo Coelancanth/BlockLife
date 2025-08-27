@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BlockLife.Core;
 using BlockLife.Core.Domain.Player;
 using BlockLife.Core.Features.Player.Commands;
+using BlockLife.Core.Domain.Turn;
 using BlockLife.Core.Infrastructure.Logging;
 using BlockLife.Core.Presentation;
 // using BlockLife.godot_project.infrastructure.debug; // Removed - merge enabled by default
@@ -160,6 +161,9 @@ public partial class SceneRoot : Node
 
             // --- 6. Initialize Default Player for Match-3 Game ---
             await InitializeDefaultPlayerAsync();
+            
+            // --- 7. Initialize Turn System ---
+            await InitializeTurnSystemAsync();
 
             // Debug UI removed - merge now enabled by default
         }
@@ -273,6 +277,45 @@ public partial class SceneRoot : Node
             Logger?.Error(ex, "Error during player initialization");
             // Don't throw - game can continue without player, it just won't show attributes
         }
+    }
+
+    /// <summary>
+    /// Initializes the turn system by calling Reset() to create the initial turn.
+    /// This must be called after the DI container is set up but before gameplay begins.
+    /// </summary>
+    private System.Threading.Tasks.Task InitializeTurnSystemAsync()
+    {
+        try
+        {
+            var turnManager = _serviceProvider?.GetRequiredService<ITurnManager>();
+            if (turnManager == null)
+            {
+                Logger?.Warning("ITurnManager not available - skipping turn system initialization");
+                return System.Threading.Tasks.Task.CompletedTask;
+            }
+
+            Logger?.Information("Initializing turn system");
+
+            // Initialize the turn system by resetting to turn 1
+            var result = turnManager.Reset();
+            
+            result.Match(
+                Succ: turn =>
+                {
+                    Logger?.Information("Turn system initialized successfully - starting at Turn {TurnNumber}", turn.Number);
+                },
+                Fail: error =>
+                {
+                    Logger?.Error("Failed to initialize turn system: {Error}", error.Message);
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            Logger?.Error(ex, "Exception during turn system initialization: {ErrorMessage}", ex.Message);
+        }
+        
+        return System.Threading.Tasks.Task.CompletedTask;
     }
 
     /// <summary>

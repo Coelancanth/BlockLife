@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bx5dw2v3qkh8p" path="res://godot_project/scenes/AttributeDisplay.tscn" id="2_attribute"]
 [ext_resource type="PackedScene" uid="uid://ko2eo5hcjxkl" path="res://godot_project/scenes/grid.tscn" id="3_iyj48"]
-[ext_resource type="PackedScene" uid="uid://bguh4klmnopq5" path="res://godot_project/scenes/TurnDisplay.tscn" id="4_turn"]
+[ext_resource type="PackedScene" path="res://godot_project/scenes/TurnDisplay.tscn" id="4_turn"]
 
 [node name="main" type="Node"]
 
