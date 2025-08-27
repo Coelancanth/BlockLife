@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 03:05
+**Last Updated**: 2025-08-27 13:53
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -9,7 +9,7 @@
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
 - **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 006 (Last: VS_005 - REJECTED 2025-08-27 13:00)
+- **Next VS**: 009 (Last: VS_008 - 2025-08-27 13:53)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,9 +65,90 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### VS_006: Core Turn System
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: M (4-6h)
+**Priority**: Critical
+**Created**: 2025-08-27 13:53
+
+**What**: Implement turn counter with one-action-per-turn limitation
+**Why**: Creates time pressure that makes the game challenging and meaningful
+
+**How**:
+- Add TurnManager service to track current turn number
+- Display turn counter in UI (starts at 1)
+- Only VALID MOVES advance the turn (not placements or failed moves)
+- Turn advances after move completes (including all chains)
+- Fire TurnStartNotification and TurnEndNotification events
+
+**Done When**:
+- Turn counter visible in game UI showing "Turn: X"
+- Only successful block movements advance the turn
+- Turn waits for all chain reactions to complete before advancing
+- Turn events allow other systems to hook in
+- Turn number persists in PlayerDataService
+
+**Depends On**: None
+
+---
+
+### VS_007: Auto-Spawn System  
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: M (4-6h)
+**Priority**: Critical
+**Created**: 2025-08-27 13:53
+
+**What**: Automatically spawn new blocks at the start of each turn
+**Why**: Forces space management decisions and prevents infinite planning
+
+**How**:
+- Create SpawnService with IAutoSpawnStrategy interface
+- Hook into TurnStartNotification from VS_006
+- Spawn one random Tier-1 block at turn start
+- Select random empty position for spawn
+- Trigger game over if no empty positions available
+
+**Done When**:
+- One block spawns automatically when turn starts
+- Block appears in random empty grid position
+- Block type is randomly selected from available types
+- Always spawns at Tier 1
+- Visual/sound effect plays on spawn
+- Game over triggers when grid is full
+
+**Depends On**: VS_006 (Turn System)
+
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
+
+### VS_008: Godot Resource-Based Rewards
+**Status**: Proposed
+**Owner**: Product Owner
+**Size**: S (2-4h)
+**Priority**: Important
+**Created**: 2025-08-27 13:53
+
+**What**: Migrate hardcoded reward values to Godot Resource files
+**Why**: Enables rapid balancing and debugging without recompiling
+
+**How**:
+- Create BlockRewardResource.tres for each block type
+- Define tier-based reward scaling in resources
+- Add debug overlay (F12) showing current reward values
+- Implement GodotResourceBridge service for C# integration
+- Support hot reload in debug builds
+
+**Done When**:
+- Each block type has a .tres resource file defining rewards
+- Resources specify base values and tier multipliers
+- Debug overlay displays loaded reward values
+- Reward calculator uses resource data instead of hardcoded values
+- Values can be modified without recompiling
+
+**Depends On**: None (but more useful after VS_007)
 
 ---
 
@@ -76,32 +157,6 @@
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
 
-### TD_088: Add Visual Pattern Recognition Debugging Tools
-**Status**: Approved
-**Owner**: Dev Engineer
-**Size**: S (4h)
-**Priority**: Ideas
-**Created**: 2025-08-26 23:25
-
-**What**: Create debug overlay showing pattern detection in real-time
-**Why**: Developers cannot easily see why patterns aren't triggering
-
-**Features** (simplified scope):
-- Overlay showing detected patterns with different colors
-- Pattern type labels (Match vs Merge)
-- Execution order visualization
-- ~~Frame-by-frame pattern state replay~~ (gold plating)
-- ~~Export pattern detection logs~~ (unnecessary)
-
-**Done When**:
-- F10 key toggles pattern debug overlay
-- Clear visual indication of pattern boundaries
-- Pattern types visible
-
-**Tech Lead Decision** (2025-08-27): APPROVED with reduced scope
-- Reduced from 6-8h to 4h
-- Simple overlay only, no fancy replay
-- Actually useful for debugging
 
 ### TD_081: Add Merge System Test Coverage
 **Status**: Approved
