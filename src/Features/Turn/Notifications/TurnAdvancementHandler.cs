@@ -17,7 +17,8 @@ namespace BlockLife.Core.Features.Turn.Notifications
     /// See TurnAdvancementAfterMoveHandler for correct implementation.
     /// </summary>
     [Obsolete("Use TurnAdvancementAfterMoveHandler instead. Block placement should not advance turns.")]
-    public class TurnAdvancementHandler_DISABLED : INotificationHandler<BlockPlacedNotification>
+    // DISABLED: Removed INotificationHandler interface to prevent MediatR registration
+    public class TurnAdvancementHandler_DISABLED // : INotificationHandler<BlockPlacedNotification>
     {
         private readonly ITurnManager _turnManager;
         private readonly IMediator _mediator;
@@ -33,6 +34,7 @@ namespace BlockLife.Core.Features.Turn.Notifications
             _logger = logger;
         }
 
+        /* DISABLED: Method commented out to prevent compilation and registration
         public async Task Handle(BlockPlacedNotification notification, CancellationToken cancellationToken)
         {
             try
@@ -69,5 +71,6 @@ namespace BlockLife.Core.Features.Turn.Notifications
                 // Don't throw - turn advancement failure shouldn't break the block placement
             }
         }
+        */
     }
 }
