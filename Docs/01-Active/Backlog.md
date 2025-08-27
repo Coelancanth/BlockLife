@@ -65,117 +65,6 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### VS_006: Core Turn System
-**Status**: Done ✅ (Phase 4/4 + Integration COMPLETE)
-**Completed**: 2025-08-27 19:25
-**Owner**: Dev Engineer
-**Size**: S (4h total - 3h backend + 1h integration)
-**Priority**: Critical
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 19:25 - FINAL COMPLETION: Turn system fully working with critical bug fixes
-
-**What**: Implement turn counter with one-action-per-turn limitation
-**Why**: Creates time pressure that makes the game challenging and meaningful
-
-**Phase Breakdown (Model-First Protocol)**:
-
-#### Phase 1: Domain Model ✅ COMPLETE (1h)
-**Acceptance**: Turn logic correctly tracks and increments ✅
-- ✅ Create `Turn` value object with number and validation
-- ✅ Create `TurnManager` domain service with business rules
-- ✅ Unit tests for turn increment logic (48 tests passing)
-- ✅ Unit tests for validation rules (only moves advance turn)
-**Commit**: `e82c58b feat(VS_006): implement turn system domain model [Phase 1/4]`
-**Completed**: 2025-08-27 16:13
-**Files Created**: 5 files (Turn.cs, ITurnManager.cs, TurnManager.cs, 2 test files)
-**Key Learnings**: LanguageExt patterns require Context7 first, functional error handling with Fin<T>
-
-#### Phase 2: Application Layer ✅ COMPLETE (1h)
-**Acceptance**: Commands process turn advancement ✅
-- ✅ Create `AdvanceTurnCommand` and handler
-- ✅ Create `TurnStartNotification` and `TurnEndNotification`
-- ✅ Create `TurnAdvancementHandler` for automatic progression
-- ✅ Handler tests with mocked services (54 comprehensive unit tests)
-- ✅ Fixed LanguageExt error message assertions (error codes not descriptions)
-**Commit**: `ef96a89 feat(VS_006): complete Phase 2 CQRS handlers with passing tests [Phase 2/4]`
-**Completed**: 2025-08-27 16:41
-**Files Created**: 7 files (commands, handlers, notifications, tests)
-**Key Learning**: LanguageExt Error.Message returns error code, not description
-**Integration**: TurnAdvancementHandler auto-advances on BlockPlacedNotification
-
-#### Phase 3: Infrastructure ⏭️ DEFERRED - No save/load system exists
-**Acceptance**: Turn state persists correctly
-- ~~Implement turn persistence in `PlayerDataService`~~
-- ~~Add turn tracking to game state~~
-- ~~Integration tests for save/load~~
-- ~~Verify turn survives game restart~~
-**Commit**: `feat(VS_006): state persistence [Phase 3/4]`
-**Deferred Reason**: YAGNI violation - no save/load system exists to consume turn persistence
-**When to Implement**: After save/load system is implemented and we need cross-session turn persistence
-
-#### Phase 4: Presentation ✅ COMPLETE (1h) 
-**Acceptance**: MVP presentation infrastructure ready ✅
-- ✅ Create `ITurnDisplayView` interface contract
-- ✅ Create `TurnNotificationBridge` for MediatR → static event bridge
-- ✅ Create `TurnDisplayPresenter` with proper MVP lifecycle
-- ✅ Thread-safe weak event subscriptions prevent memory leaks
-- ✅ All 465 tests passing, zero warnings, clean compilation
-**Commit**: `fd219ea feat(VS_006): complete Phase 4 presentation layer [Phase 4/4]`
-**Completed**: 2025-08-27 16:57
-**Files Created**: 3 files (ITurnDisplayView.cs, TurnNotificationBridge.cs, TurnDisplayPresenter.cs)
-**Key Achievement**: Complete MVP presentation infrastructure following Move Block patterns
-
-#### Phase 4B: Godot UI Integration 🎯 OPTIONAL (1h)
-**Acceptance**: Visual turn counter in game
-- Create Godot scene implementing `ITurnDisplayView`
-- Wire presenter to view lifecycle in main scene
-- Display "Turn: X" in game HUD with updates
-- Manual test all turn advancement scenarios in editor
-**Commit**: `feat(VS_006): Godot turn counter UI [Phase 4B/4]`
-**Status**: Optional - turn system backend fully functional without UI
-
-**Depends On**: None
-
-**Tech Lead Decision** (2025-08-27 14:05):
-- Complexity: 3/10 - Follows existing patterns exactly
-- Pattern: Copy from MoveBlockCommand/Handler structure
-- Integration: Hook after ProcessPatternsAfterPlacement completes
-- Risk: Low - well-established integration points
-- **Phase Gates**: Each phase must have GREEN tests before proceeding
-
-**Dev Engineer Decision** (2025-08-27 16:42):
-- **Phase 3 DEFERRED**: No save/load system exists - YAGNI principle applies
-- Turn system functionally complete without persistence
-- Phase 4 (UI) can proceed independently
-- Will implement Phase 3 when save/load system is available
-
-#### ✅ COMPLETION SUMMARY (2025-08-27 19:25)
-**Final Integration Achieved**:
-- ✅ **Turn Marking**: PlaceBlockCommandHandler calls `MarkActionPerformed()` after successful block placement
-- ✅ **Unlock Merge System**: Added M key to globally unlock merge functionality for E2E testing
-- ✅ **Resource Debug Logging**: Comprehensive reward tracking in MatchPatternExecutor and MergePatternExecutor
-- ✅ **Critical Bug Fix**: PurchaseMergeUnlockCommandHandler now properly persists player state changes
-- ✅ **Test Updates**: All unit tests updated with ITurnManager dependencies (465 tests passing)
-
-**🔧 CRITICAL BUG FIX COMPLETED (2025-08-27 19:25)**:
-- ✅ **Turn Advancement Bug**: Fixed issue where only block movement (not placement) should advance turns
-- ✅ **Cascade Turn Bug**: Fixed cascades consuming extra turns - now properly excluded from turn advancement
-- ✅ **Turn System Integration**: All turn mechanics now work correctly according to game rules
-- **Result**: Turn system is fully functional with proper game flow
-
-**Key Technical Achievements**:
-- Turn progression fully integrated with core game mechanics
-- Unlock merge flow works end-to-end (M key → unlock tiers → patterns become merges)
-- Resource tracking provides visibility into rewards: "🎯 MATCH REWARDS: Money:+1", "🚀 MERGE REWARDS: Money:+2" 
-- All code builds successfully, architecture tests pass
-
-**Dev Engineer Update** (2025-08-27 16:57):
-- **Phase 4 COMPLETE**: Full MVP presentation infrastructure implemented
-- Turn system backend 100% functional and ready for consumption
-- Optional Phase 4B available for visual UI when needed
-- **UNBLOCKS**: VS_007 Auto-Spawn, VS_008 Resource Rewards can proceed
-
 ---
 
 ### VS_007: Auto-Spawn System  
@@ -348,6 +237,33 @@
 
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
+
+### VS_006: Core Turn System ⭐ MAJOR COMPLETION
+**Status**: Done ✅ (Phase 4/4 + Critical Bug Fix COMPLETE)
+**Completed**: 2025-08-27 19:33 (Final bug fix and archival)
+**Owner**: Dev Engineer
+**Size**: S (4h total - 3h backend + 1h integration + bug fix)
+**Priority**: Critical
+
+**What**: Implement turn counter with one-action-per-turn limitation
+**Why**: Creates time pressure that makes the game challenging and meaningful
+
+**🔧 CRITICAL BUG FIX**: Fixed fundamental game economy issue where block placement was incorrectly advancing turns
+- **Before**: ALL block actions consumed turns (placement, cascades, merges)
+- **After**: Only block MOVEMENT consumes turns (placement is free, cascades are free)
+- **Impact**: Restored strategic depth - placement is for positioning, movement costs turns
+- **Technical**: Replaced TurnAdvancementHandler with TurnAdvancementAfterMoveHandler
+
+**Key Achievements**:
+- ✅ Complete turn system with proper game mechanics
+- ✅ Fixed turn advancement bug that made game unplayable
+- ✅ All 450+ tests passing after DI container fixes
+- ✅ Clean logging and production-ready code
+- ✅ Model-First implementation across all 4 phases
+- ✅ **UNBLOCKS**: VS_007 Auto-Spawn, VS_008 Resource Rewards
+
+**Phase Summary**: Phase 1-2 complete, Phase 3 deferred (YAGNI), Phase 4 complete
+**Files Created**: 15+ files across domain, application, and presentation layers
 
 ### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
 **Status**: Resolved
