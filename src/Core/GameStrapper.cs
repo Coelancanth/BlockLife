@@ -14,6 +14,26 @@ using System.Reflection;
 namespace BlockLife.Core;
 
 /// <summary>
+/// Serilog enricher that creates a shortened version of the SourceContext (class name)
+/// Converts "BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterPlacementHandler" 
+/// to "ProcessPatternsAfterPlacementHandler"
+/// </summary>
+public class ShortSourceContextEnricher : ILogEventEnricher
+{
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
+        if (logEvent.Properties.TryGetValue("SourceContext", out var sourceContextProperty) &&
+            sourceContextProperty is ScalarValue scalarValue &&
+            scalarValue.Value is string sourceContext)
+        {
+            var shortName = sourceContext.Split('.').LastOrDefault() ?? sourceContext;
+            var shortSourceContextProperty = propertyFactory.CreateProperty("ShortSourceContext", shortName);
+            logEvent.AddPropertyIfAbsent(shortSourceContextProperty);
+        }
+    }
+}
+
+/// <summary>
 /// **ENHANCED** bootstrapper for the C# application logic with comprehensive safety features.
 /// 
 /// Configures and initializes the dependency injection container with:
@@ -213,6 +233,7 @@ public static class GameStrapper
         var loggerConfig = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(masterSwitch)
             .Enrich.FromLogContext()
+            .Enrich.With(new ShortSourceContextEnricher())
             // Filter out pre-warming messages
             .Filter.ByExcluding(evt =>
                 evt.Properties.ContainsKey("PreWarm") ||
@@ -258,12 +279,14 @@ public static class GameStrapper
                 .MinimumLevel.Is(defaultLevel)
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Application", "BlockLife")
+                .Enrich.With(new ShortSourceContextEnricher())
                 // Filter out pre-warming messages
                 .Filter.ByExcluding(evt =>
                     evt.Properties.ContainsKey("PreWarm") ||
                     evt.Properties.ContainsKey("SourceContext") &&
                     evt.Properties["SourceContext"].ToString().Contains("PreWarm"))
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}");
+                .Enrich.With(new ShortSourceContextEnricher())
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{ShortSourceContext}] {Message:lj}{NewLine}{Exception}");
 
             // Apply category-specific levels
             if (categoryLevels != null)

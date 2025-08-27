@@ -129,7 +129,7 @@ public partial class SceneRoot : Node
         {
             // Create GodotConsoleSink for console output (always)
             var godotConsoleSink = new GodotConsoleSink(
-                "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}",
+                "[{Timestamp:HH:mm:ss} {Level:u3}] [{ShortSourceContext}] {Message:lj}{NewLine}{Exception}",
                 null);
 
             // Use legacy API with GodotConsoleSink for console output
