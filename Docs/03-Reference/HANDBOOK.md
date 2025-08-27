@@ -474,6 +474,50 @@ services.AddScoped<IPlayerStateService, PlayerStateService>();
 ```
 **Debugging**: When multiple tests fail, check DI registrations first
 
+### Notification Layer Completeness (Critical)
+**Pattern**: Model changes MUST notify view or nothing happens visually
+```csharp
+// ❌ WRONG - Updates model but view never knows
+gridService.RemoveBlock(position);
+
+// ✅ CORRECT - Model update + view notification
+gridService.RemoveBlock(position);
+_mediator.Publish(new BlockRemovedNotification(blockId, position, type, DateTime.UtcNow));
+```
+**Impact**: Without notifications, UI becomes disconnected from game state
+**Prevention**: Every model change needs corresponding notification
+
+### All Entry Points Must Trigger Patterns
+**Pattern**: Game mechanics need handlers for ALL triggering events
+```csharp
+// ❌ WRONG - Only handles moves, not placements
+public class ProcessPatternsAfterMoveHandler : INotificationHandler<BlockMovedNotification>
+
+// ✅ CORRECT - Need both handlers
+public class ProcessPatternsAfterMoveHandler : INotificationHandler<BlockMovedNotification>
+public class ProcessPatternsAfterPlacementHandler : INotificationHandler<BlockPlacedNotification>
+```
+**Example**: Match detection failed because only BlockMovedNotification triggered patterns
+**Prevention**: List all events that should trigger mechanics, ensure handlers exist
+
+### Conditional Logic Coverage
+**Pattern**: New features must work in ALL code paths
+```csharp
+// ❌ WRONG - Tier effects only in fallback path
+if (BlockScene != null) {
+    blockNode = BlockScene.Instantiate();  // Missing tier setup!
+} else {
+    // Tier effects only here
+}
+
+// ✅ CORRECT - Apply features in all branches
+if (BlockScene != null) {
+    blockNode = BlockScene.Instantiate();
+    ApplyTierEffects(blockNode, tier);  // Apply everywhere
+}
+```
+**Impact**: Features work inconsistently based on execution path
+
 ---
 
 ## 📏 C# Naming Standards
@@ -566,6 +610,75 @@ grep "Status: Completed"
 8. **DI Registration Cascade Failures**
    - **Issue**: Missing IPlayerStateService causes widespread failures
    - **Fix**: Always register services in GameStrapper.cs
+
+### Architectural Best Practices (From Memory Bank Extraction 2025-08-27)
+
+#### 🔴 The Simplicity Principle (MOST CRITICAL)
+**Before writing ANY code, ask**: "Can I add one condition to existing code?"
+- **Red flag**: Solution > 100 lines for a "simple" feature
+- **Example**: Merge pattern needed 5 lines, not 369 lines of new recognizer
+- **Enforcement**: Estimate LOC before coding, >100 = mandatory design review
+
+#### 🔴 Data Flow Completeness
+**When adding fields to domain objects**: Trace through ENTIRE pipeline
+- **Critical path**: Domain → Effect → Notification → Presenter → View
+- **Common failure**: Adding field to domain but forgetting effect/notification layer
+- **Example**: BlockPlacedEffect missing Tier field broke entire visualization
+- **Prevention**: Create data flow checklist for new fields
+
+#### 🔴 Reuse Before Create
+**Exhaust reuse opportunities** before new abstractions:
+- Check existing patterns, services, components FIRST
+- Example: MatchPattern worked perfectly for merge, didn't need TierUpPattern
+- Metric: 257 lines of focused code vs 500+ with new abstractions
+
+#### 🟡 Service Lifetime Based on State
+Choose DI lifetime based on statefulness, not convention:
+- **Stateless services** → Singleton (e.g., PatternRecognizer, Executors)
+- **Request state services** → Scoped (e.g., Handlers with context)
+- **Transient state services** → Transient (rarely needed)
+- **Common mistake**: Registering stateless services as Scoped causes resolution errors
+
+#### 🟡 Defensive Programming with Fin<T>
+Add comprehensive defensive checks using functional patterns:
+- **Example**: MergePatternExecutor needs null checks, bounds validation
+- **Solution**: Use Fin<T> error handling for graceful degradation
+- **Impact**: Prevents runtime exceptions in production
+
+#### 🟢 Ultra-Careful Development Approach
+"Slow is smooth, smooth is fast" methodology:
+- Ultra-think each step, validate before proceeding
+- Example: VS_003B-2 completed in single session with E2E success
+- Contrast: Previous sessions had more trial-and-error cycles
+
+### Critical Process Patterns (From Memory Bank Extraction 2025-08-27)
+
+#### 📋 Pre-Coding Checklist (MANDATORY)
+Before writing ANY code:
+- [ ] **Check Glossary.md** for correct terminology
+- [ ] **Question arbitrary requirements** (e.g., "exactly 3" - why not 3+?)
+- [ ] **Look for existing patterns** to reuse
+- [ ] **Estimate lines of code** (>100 = review first)
+- [ ] **Query Context7** for unfamiliar APIs (especially LanguageExt)
+
+#### 🔍 Verification Protocol
+Don't trust issue descriptions without verification:
+- **Example**: TD_084 claimed 40% false violations
+- **Prevention**: Always check actual code before accepting problem statements
+- **Tool**: Use grep/search to verify claims quickly
+
+#### 📝 Test Design Philosophy
+Test effectiveness = (Coverage × Maintainability) ÷ Complexity
+- **Failed approach**: 21-test suite, 45+ min fixing compilation
+- **Successful approach**: 7 focused tests covering critical functionality
+- **Principle**: Start simple, expand incrementally
+- **Test defaults**: MUST match production defaults (e.g., PlayerState.MaxUnlockedTier)
+
+#### 🎯 Strategic Deferral Pattern
+Document what you're NOT fixing to prevent scope creep:
+- Example: VS_003B-2 fixed 2 of 3 limitations, deferred tier detection
+- Benefit: Delivers value faster, prevents over-engineering
+- Communication: Be explicit about deferred items in commit messages
    - **Debug**: When multiple tests fail, check DI first
 
 9. **Modern C# Required Properties**

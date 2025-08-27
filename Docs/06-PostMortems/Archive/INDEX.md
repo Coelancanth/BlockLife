@@ -5,6 +5,35 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Archive Entries
 
+### 2025-08-27: Memory Bank and Post-Mortem Consolidation
+**Location**: `2025-08-27-Memory-Bank-Extraction/`  
+**Original Count**: 4 post-mortems + 6 memory bank files  
+**Key Documents**:
+- `EXTRACTED_LESSONS.md` - 22 unique lessons deduplicated
+- `IMPACT_METRICS.md` - Extraction statistics and expected impact
+- `PM_001_Tier_Display_Bug.md` - Critical tier visualization issues
+- Inbox post-mortems on merge over-engineering, data loss, embody script
+
+**Key Issues**: Over-engineering simple problems, incomplete data flow, test defaults mismatch  
+**Primary Lessons**:
+- **The Simplicity Principle**: "Can I add one condition to existing code?" (prevents 80% over-engineering)
+- Data flow completeness: Domain → Effect → Notification → Presenter → View
+- Test effectiveness = (Coverage × Maintainability) ÷ Complexity
+- Service lifetime based on statefulness not convention
+- Always check Glossary.md BEFORE coding
+- Question arbitrary requirements ("exactly 3" vs "3+")
+
+**Solutions Applied**:
+- ✅ Added 2 new sections to HANDBOOK.md (120+ lines)
+- ✅ Enhanced Common Bug Patterns with 4 critical patterns
+- ✅ Created mandatory Pre-Coding Checklist
+- ✅ Established Verification Protocol for claims
+- ✅ Documented Strategic Deferral Pattern
+
+**Impact**: 98.6% code reduction potential (369→5 lines), prevents notification layer bugs, eliminates terminology errors
+
+---
+
 ### 2025-08-23: Comprehensive Lessons Extraction
 **Location**: `2025-08-23-Lessons-Extraction/`  
 **Original Count**: 10 active post-mortems + 3 extraction documents  
@@ -109,8 +138,13 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 ## Search Tags
 
 ### By Issue Type
+- **over-engineering**: 2025-08-27
+- **data-flow-incomplete**: 2025-08-27
+- **test-defaults-mismatch**: 2025-08-27
+- **notification-layer-bugs**: 2025-08-27
+- **terminology-errors**: 2025-08-27
 - **namespace-issues**: 2025-08-23
-- **di-failures**: 2025-08-23
+- **di-failures**: 2025-08-23, 2025-08-27
 - **knowledge-loss**: 2025-08-23
 - **process-violations**: 2025-08-23
 - **framework-confusion**: 2025-08-18
@@ -124,8 +158,13 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 - **false-positives**: 2025-08-18 (CI-Timing)
 
 ### By Solution
-- **knowledge-extraction**: 2025-08-23
-- **documentation-consolidation**: 2025-08-23
+- **simplicity-principle**: 2025-08-27
+- **pre-coding-checklist**: 2025-08-27
+- **verification-protocol**: 2025-08-27
+- **strategic-deferral**: 2025-08-27
+- **defensive-programming**: 2025-08-27
+- **knowledge-extraction**: 2025-08-23, 2025-08-27
+- **documentation-consolidation**: 2025-08-23, 2025-08-27
 - **regression-tests**: 2025-08-23
 - **phase-based-implementation**: 2025-08-23
 - **context7**: 2025-08-18
@@ -147,10 +186,10 @@ Track all archived post-mortems with searchable metadata for pattern recognition
 
 ## Statistics
 
-**Total Archived**: 18 post-mortems (13 in latest extraction)  
-**Lessons Extracted**: 65+ (50+ in latest extraction)  
-**Documents Updated**: 6 (HANDBOOK.md, Testing.md, Memory Banks, etc.)  
-**Systemic Improvements**: 8 (namespace validation, regression tests, phase-based implementation, etc.)  
+**Total Archived**: 22 post-mortems (4 in 2025-08-27 extraction)  
+**Lessons Extracted**: 87+ (22 unique in latest extraction)  
+**Documents Updated**: 7 (HANDBOOK.md enhanced with 120+ lines)  
+**Systemic Improvements**: 13 (simplicity principle, pre-coding checklist, verification protocol, defensive programming, strategic deferral, etc.)  
 
 ## Archive Protocol
 
