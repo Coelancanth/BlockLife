@@ -209,6 +209,10 @@ public static class GameStrapper
             BlockLife.Core.Features.Turn.Services.TurnManager>();
         services.AddTransient<BlockLife.Core.Features.Turn.Commands.AdvanceTurnCommandHandler>();
 
+        // --- Auto-Spawn System Services (VS_007) ---
+        services.AddSingleton<BlockLife.Core.Features.Spawn.Domain.IAutoSpawnStrategy,
+            BlockLife.Core.Features.Spawn.Domain.RandomSpawnStrategy>();
+
         // --- Notification Handlers ---
         // NOTE: MediatR automatically discovers and registers INotificationHandler implementations
         // during assembly scanning. Manual registration can interfere with MediatR's lifecycle management.
