@@ -1,7 +1,7 @@
 using BlockLife.Core.Domain.Turn;
 using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
-using BlockLife.Core.Features.Block.Placement.Notifications;
+using BlockLife.Core.Features.Block.Effects;
 using BlockLife.Core.Features.Turn.Commands;
 using BlockLife.Core.Features.Turn.Notifications;
 using BlockLife.Core.Tests.Utils;
@@ -20,26 +20,27 @@ using static LanguageExt.Prelude;
 namespace BlockLife.Core.Tests.Features.Turn.Notifications
 {
     /// <summary>
-    /// TDD Tests for TurnAdvancementHandler - Following Comprehensive Development Workflow
-    /// Tests integration between block placement and turn system.
+    /// TDD Tests for TurnAdvancementAfterMoveHandler - Following Comprehensive Development Workflow
+    /// Tests integration between block movement and turn system.
+    /// Only user moves should advance turns, not cascades or patterns.
     /// </summary>
     [Trait("Category", "Unit")]
     [Trait("Feature", "Turn")]
     [Trait("Layer", "Handlers")]
-    public class TurnAdvancementHandlerTests
+    public class TurnAdvancementAfterMoveHandlerTests
     {
         private readonly Mock<ITurnManager> _mockTurnManager;
         private readonly Mock<IMediator> _mockMediator;
         private readonly Mock<ILogger> _mockLogger;
-        private readonly TurnAdvancementHandler _handler;
+        private readonly TurnAdvancementAfterMoveHandler _handler;
 
-        public TurnAdvancementHandlerTests()
+        public TurnAdvancementAfterMoveHandlerTests()
         {
             _mockTurnManager = new Mock<ITurnManager>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger>();
 
-            _handler = new TurnAdvancementHandler(
+            _handler = new TurnAdvancementAfterMoveHandler(
                 _mockTurnManager.Object,
                 _mockMediator.Object,
                 _mockLogger.Object
@@ -47,15 +48,13 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         }
 
         [Fact]
-        public async Task Handle_WhenBlockPlacedAndCanAdvanceTurn_MarksActionAndAdvancesTurn()
+        public async Task Handle_WhenBlockMovedAndCanAdvanceTurn_MarksActionAndAdvancesTurn()
         {
             // Arrange
-            var blockPlacedNotification = new BlockPlacedNotification(
+            var blockMovedNotification = BlockMovedNotification.Create(
                 TestGuids.BlockA,
                 new Vector2Int(2, 3),
-                BlockType.Work,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(4, 5)
             );
 
             _mockTurnManager
@@ -75,7 +74,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
                 .ReturnsAsync(FinSucc(LanguageExt.Unit.Default));
 
             // Act
-            await _handler.Handle(blockPlacedNotification, CancellationToken.None);
+            await _handler.Handle(blockMovedNotification, CancellationToken.None);
 
             // Assert - Action marked
             _mockTurnManager.Verify(m => m.MarkActionPerformed(), Times.Once);
@@ -92,15 +91,13 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         }
 
         [Fact]
-        public async Task Handle_WhenBlockPlacedButCannotAdvanceTurn_MarksActionButDoesNotAdvance()
+        public async Task Handle_WhenBlockMovedButCannotAdvanceTurn_MarksActionButDoesNotAdvance()
         {
             // Arrange
-            var blockPlacedNotification = new BlockPlacedNotification(
+            var blockMovedNotification = BlockMovedNotification.Create(
                 TestGuids.BlockB,
                 new Vector2Int(1, 1),
-                BlockType.Study,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(2, 2)
             );
 
             _mockTurnManager
@@ -108,7 +105,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
                 .Returns(false);
 
             // Act
-            await _handler.Handle(blockPlacedNotification, CancellationToken.None);
+            await _handler.Handle(blockMovedNotification, CancellationToken.None);
 
             // Assert - Action marked
             _mockTurnManager.Verify(m => m.MarkActionPerformed(), Times.Once);
@@ -125,12 +122,10 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         public async Task Handle_WhenAdvanceTurnCommandFails_DoesNotThrowException()
         {
             // Arrange
-            var blockPlacedNotification = new BlockPlacedNotification(
+            var blockMovedNotification = BlockMovedNotification.Create(
                 TestGuids.BlockC,
                 new Vector2Int(4, 4),
-                BlockType.Health,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(5, 5)
             );
 
             _mockTurnManager
@@ -141,7 +136,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
                 .ReturnsAsync(FinFail<LanguageExt.Unit>(Error.New("ADVANCE_FAILED", "Turn advancement failed")));
 
             // Act - Should not throw
-            Func<Task> act = async () => await _handler.Handle(blockPlacedNotification, CancellationToken.None);
+            Func<Task> act = async () => await _handler.Handle(blockMovedNotification, CancellationToken.None);
 
             // Assert - No exception thrown
             await act.Should().NotThrowAsync();
@@ -159,19 +154,15 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         public async Task Handle_MultipleBlockPlacements_MarksActionEachTime()
         {
             // Arrange
-            var notification1 = new BlockPlacedNotification(
+            var notification1 = BlockMovedNotification.Create(
                 TestGuids.BlockA,
                 new Vector2Int(1, 1),
-                BlockType.Work,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(3, 3)
             );
-            var notification2 = new BlockPlacedNotification(
+            var notification2 = BlockMovedNotification.Create(
                 TestGuids.BlockB,
                 new Vector2Int(2, 2),
-                BlockType.Fun,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(4, 4)
             );
 
             _mockTurnManager
@@ -191,12 +182,10 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         public async Task Handle_WhenTurnManagerThrows_DoesNotPropagatException()
         {
             // Arrange
-            var blockPlacedNotification = new BlockPlacedNotification(
+            var blockMovedNotification = BlockMovedNotification.Create(
                 TestGuids.BlockD,
                 new Vector2Int(0, 0),
-                BlockType.Relationship,
-                1,
-                DateTime.UtcNow
+                new Vector2Int(1, 1)
             );
 
             _mockTurnManager
@@ -204,7 +193,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
                 .Throws(new InvalidOperationException("Turn manager error"));
 
             // Act - Should not throw
-            Func<Task> act = async () => await _handler.Handle(blockPlacedNotification, CancellationToken.None);
+            Func<Task> act = async () => await _handler.Handle(blockMovedNotification, CancellationToken.None);
 
             // Assert - No exception propagated (logged instead)
             await act.Should().NotThrowAsync();
@@ -219,12 +208,10 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
         public async Task Handle_WhenCanAdvanceTurnThrows_ContinuesGracefully()
         {
             // Arrange
-            var blockPlacedNotification = new BlockPlacedNotification(
+            var blockMovedNotification = BlockMovedNotification.Create(
                 TestGuids.BlockE,
                 new Vector2Int(3, 3),
-                BlockType.CareerOpportunity,
-                2,
-                DateTime.UtcNow
+                new Vector2Int(6, 6)
             );
 
             _mockTurnManager
@@ -232,7 +219,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Notifications
                 .Throws(new InvalidOperationException("Cannot check turn advancement"));
 
             // Act - Should not throw
-            Func<Task> act = async () => await _handler.Handle(blockPlacedNotification, CancellationToken.None);
+            Func<Task> act = async () => await _handler.Handle(blockMovedNotification, CancellationToken.None);
 
             // Assert - No exception propagated
             await act.Should().NotThrowAsync();

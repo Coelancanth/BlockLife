@@ -4,23 +4,26 @@ using BlockLife.Core.Features.Turn.Commands;
 using LanguageExt;
 using MediatR;
 using Serilog;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlockLife.Core.Features.Turn.Notifications
 {
     /// <summary>
-    /// Handles block placement notifications by marking actions as performed in the turn system
-    /// and optionally advancing turns when conditions are met.
-    /// Following TDD+VSA Comprehensive Development Workflow.
+    /// DEPRECATED: This handler incorrectly advances turns on block placement.
+    /// Block placement (including cascades) should NOT consume turns.
+    /// Only explicit user moves should advance turns.
+    /// See TurnAdvancementAfterMoveHandler for correct implementation.
     /// </summary>
-    public class TurnAdvancementHandler : INotificationHandler<BlockPlacedNotification>
+    [Obsolete("Use TurnAdvancementAfterMoveHandler instead. Block placement should not advance turns.")]
+    public class TurnAdvancementHandler_DISABLED : INotificationHandler<BlockPlacedNotification>
     {
         private readonly ITurnManager _turnManager;
         private readonly IMediator _mediator;
         private readonly ILogger _logger;
 
-        public TurnAdvancementHandler(
+        public TurnAdvancementHandler_DISABLED(
             ITurnManager turnManager,
             IMediator mediator,
             ILogger logger)
