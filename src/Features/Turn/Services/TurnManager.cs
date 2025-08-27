@@ -3,6 +3,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 using System.Threading;
+using Serilog;
 
 namespace BlockLife.Core.Features.Turn.Services
 {
@@ -17,6 +18,7 @@ namespace BlockLife.Core.Features.Turn.Services
         private Option<Core.Domain.Turn.Turn> _currentTurn = None;
         private bool _actionPerformed = false;
         private readonly object _lock = new object();
+        private readonly ILogger _logger = Log.ForContext<TurnManager>();
 
         /// <summary>
         /// Gets the current turn.
@@ -49,6 +51,8 @@ namespace BlockLife.Core.Features.Turn.Services
                         return current.Next().Match(
                             Succ: nextTurn =>
                             {
+                                _logger.Information("🔄 TURN ADVANCING: Turn {CurrentTurn} → Turn {NextTurn}", 
+                                    current.Number, nextTurn.Number);
                                 _currentTurn = Some(nextTurn);
                                 _actionPerformed = false; // Reset for new turn
                                 return nextTurn;
@@ -112,6 +116,13 @@ namespace BlockLife.Core.Features.Turn.Services
                 if (!_actionPerformed)
                 {
                     _actionPerformed = true;
+                    var turnNum = _currentTurn.Match(Some: t => t.Number, None: () => 0);
+                    _logger.Debug("✓ ACTION MARKED for Turn {Turn}", turnNum);
+                }
+                else
+                {
+                    var turnNum = _currentTurn.Match(Some: t => t.Number, None: () => 0);
+                    _logger.Debug("⚠️ ACTION ALREADY MARKED for Turn {Turn} - ignoring duplicate", turnNum);
                 }
                 // Note: Silently ignore if already performed to avoid exceptions
                 // in complex command chains

@@ -34,16 +34,17 @@ namespace BlockLife.Core.Features.Turn.Notifications
         {
             try
             {
-                _logger.Debug("Processing turn advancement after block placement at {Position}", notification.Position);
+                var currentTurn = _turnManager.GetTurnsElapsed();
+                _logger.Information("📍 BLOCK PLACED at {Position}, Turn {Turn} - checking turn advancement", 
+                    notification.Position, currentTurn);
 
                 // Step 1: Mark that an action has been performed this turn
                 _turnManager.MarkActionPerformed();
-                _logger.Debug("Marked action as performed for current turn");
 
                 // Step 2: Check if turn advancement is available and auto-advance
                 if (_turnManager.CanAdvanceTurn())
                 {
-                    _logger.Debug("Turn advancement is available, auto-advancing");
+                    _logger.Information("➡️ ADVANCING TURN after block placement");
                     
                     var command = AdvanceTurnCommand.Create();
                     var result = await _mediator.Send(command, cancellationToken);
