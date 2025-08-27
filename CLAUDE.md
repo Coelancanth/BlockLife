@@ -165,6 +165,37 @@ BlockLife is a C# Godot 4.4 game implementing Clean Architecture with MVP patter
 
 **🎯 Reference Implementation**: `src/Features/Block/Move/` - COPY THIS for all new work.
 
+## 🔄 MANDATORY: Model-First Implementation Protocol (ADR-006)
+
+**YOU MUST implement all features in strict phases:**
+
+### Phase Progression (NO EXCEPTIONS)
+```
+Phase 1: Domain → Phase 2: Application → Phase 3: Infrastructure → Phase 4: Presentation
+(Pure C# Logic)    (Commands/Handlers)     (State/Services)         (Godot UI)
+```
+
+### Enforcement Rules
+**NEVER:**
+- Skip phases for "simple" features
+- Start with UI for "quick demos"
+- Combine phases to "save time"
+- Proceed without GREEN tests
+
+**ALWAYS:**
+- Complete each phase before starting next
+- Run tests: `dotnet test --filter Category=[Phase]`
+- Commit with phase markers: `feat(X): description [Phase X/4]`
+- Follow Move Block pattern as reference
+
+### Phase Testing
+- **Phase 1**: `dotnet test --filter Category=Unit` (must pass in <100ms)
+- **Phase 2**: `dotnet test --filter Category=Handlers` (<500ms)
+- **Phase 3**: `dotnet test --filter Category=Integration` (<2s)
+- **Phase 4**: Manual testing in Godot editor
+
+**Reference**: [ADR-006](Docs/03-Reference/ADR/ADR-006-model-first-implementation-protocol.md) - Architectural decision and examples
+
 ## 📅 IMPORTANT: Date-Sensitive Documents (TD_078 Enhanced)
 
 **ALWAYS run `date` command first when creating or updating:**

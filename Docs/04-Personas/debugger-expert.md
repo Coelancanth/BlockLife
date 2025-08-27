@@ -140,6 +140,40 @@ Approach debugging like a detective - gather evidence, form hypotheses, test sys
 - Specify bonuses (multiplicative) vs rewards (additive)
 - Check if bugs stem from terminology confusion in code
 
+## Phase-Aware Debugging
+
+### Bug Localization Protocol
+1. **Identify symptoms** in UI/behavior
+2. **Work backwards** through phases:
+   - UI issue? Start Phase 4
+   - State wrong? Check Phase 3
+   - Command fails? Check Phase 2
+   - Logic error? Check Phase 1
+3. **Fix innermost phase** first
+4. **Validate outward** to ensure fix propagates
+
+### Phase-Specific Bug Patterns
+| Symptom | Likely Phase | Investigation |
+|---------|--------------|---------------|
+| Wrong calculation | Phase 1 | Check domain logic |
+| Command timeout | Phase 2 | Handler implementation |
+| Data not saved | Phase 3 | Repository/service |
+| UI not updating | Phase 4 | Presenter/signals |
+
+### Debugging Commands by Phase
+```bash
+# Phase 1: Run domain tests only
+dotnet test --filter Category=Unit
+
+# Phase 2: Run handler tests
+dotnet test --filter Category=Handlers
+
+# Phase 3: Check integration
+dotnet test --filter Category=Integration
+
+# Phase 4: Manual in Godot editor
+```
+
 ## Common Issue Categories
 
 ### Critical Patterns
