@@ -96,7 +96,8 @@
       "Bash(./scripts/core/build.ps1 build)",
       "Bash(./scripts/test/quick.ps1)",
       "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife\\src\\Features\\Block/**)",
-      "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife/**)"
+      "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife/**)",
+      "Read(/C:\\C:\\Users\\Coel\\Documents\\Godot\\BlockLife\\godot_project/**)"
     ],
     "deny": [],
     "ask": [],
