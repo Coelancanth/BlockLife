@@ -37,7 +37,7 @@ namespace BlockLife.Core.Features.Turn.Notifications
             try
             {
                 var currentTurn = _turnManager.GetTurnsElapsed();
-                _logger.Information("🎯 BLOCK MOVED from {FromPosition} to {ToPosition}, Turn {Turn} - advancing turn", 
+                _logger.Debug("Block moved from {FromPosition} to {ToPosition} on Turn {Turn}", 
                     notification.FromPosition, notification.ToPosition, currentTurn);
 
                 // Mark that the user has performed their action for this turn
@@ -46,19 +46,13 @@ namespace BlockLife.Core.Features.Turn.Notifications
                 // Check if turn advancement is available and auto-advance
                 if (_turnManager.CanAdvanceTurn())
                 {
-                    _logger.Information("➡️ ADVANCING TURN after block movement");
-                    
                     var command = AdvanceTurnCommand.Create();
                     var result = await _mediator.Send(command, cancellationToken);
                     
                     result.Match(
-                        Succ: _ => _logger.Debug("Successfully auto-advanced turn after block movement"),
-                        Fail: error => _logger.Warning("Failed to auto-advance turn: {Error}", error.Message)
+                        Succ: _ => { /* Turn advancement logged by TurnManager */ },
+                        Fail: error => _logger.Warning("Failed to advance turn: {Error}", error.Message)
                     );
-                }
-                else
-                {
-                    _logger.Debug("Turn advancement not available (conditions not met)");
                 }
             }
             catch (System.Exception ex)

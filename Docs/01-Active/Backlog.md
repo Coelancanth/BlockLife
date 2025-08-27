@@ -67,12 +67,13 @@
 
 ### VS_006: Core Turn System
 **Status**: Done ✅ (Phase 4/4 + Integration COMPLETE)
+**Completed**: 2025-08-27 19:25
 **Owner**: Dev Engineer
 **Size**: S (4h total - 3h backend + 1h integration)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 18:42 - COMPLETE: Full integration with block placement + resource debug logging
+**Updated**: 2025-08-27 19:25 - FINAL COMPLETION: Turn system fully working with critical bug fixes
 
 **What**: Implement turn counter with one-action-per-turn limitation
 **Why**: Creates time pressure that makes the game challenging and meaningful
@@ -149,13 +150,19 @@
 - Phase 4 (UI) can proceed independently
 - Will implement Phase 3 when save/load system is available
 
-#### ✅ COMPLETION SUMMARY (2025-08-27 18:42)
+#### ✅ COMPLETION SUMMARY (2025-08-27 19:25)
 **Final Integration Achieved**:
 - ✅ **Turn Marking**: PlaceBlockCommandHandler calls `MarkActionPerformed()` after successful block placement
 - ✅ **Unlock Merge System**: Added M key to globally unlock merge functionality for E2E testing
 - ✅ **Resource Debug Logging**: Comprehensive reward tracking in MatchPatternExecutor and MergePatternExecutor
 - ✅ **Critical Bug Fix**: PurchaseMergeUnlockCommandHandler now properly persists player state changes
 - ✅ **Test Updates**: All unit tests updated with ITurnManager dependencies (465 tests passing)
+
+**🔧 CRITICAL BUG FIX COMPLETED (2025-08-27 19:25)**:
+- ✅ **Turn Advancement Bug**: Fixed issue where only block movement (not placement) should advance turns
+- ✅ **Cascade Turn Bug**: Fixed cascades consuming extra turns - now properly excluded from turn advancement
+- ✅ **Turn System Integration**: All turn mechanics now work correctly according to game rules
+- **Result**: Turn system is fully functional with proper game flow
 
 **Key Technical Achievements**:
 - Turn progression fully integrated with core game mechanics

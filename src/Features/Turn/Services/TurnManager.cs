@@ -51,7 +51,7 @@ namespace BlockLife.Core.Features.Turn.Services
                         return current.Next().Match(
                             Succ: nextTurn =>
                             {
-                                _logger.Information("🔄 TURN ADVANCING: Turn {CurrentTurn} → Turn {NextTurn}", 
+                                _logger.Information("Turn {CurrentTurn} → Turn {NextTurn}", 
                                     current.Number, nextTurn.Number);
                                 _currentTurn = Some(nextTurn);
                                 _actionPerformed = false; // Reset for new turn
@@ -116,14 +116,9 @@ namespace BlockLife.Core.Features.Turn.Services
                 if (!_actionPerformed)
                 {
                     _actionPerformed = true;
-                    var turnNum = _currentTurn.Match(Some: t => t.Number, None: () => 0);
-                    _logger.Debug("✓ ACTION MARKED for Turn {Turn}", turnNum);
+                    // Debug logging removed - action marking is internal implementation detail
                 }
-                else
-                {
-                    var turnNum = _currentTurn.Match(Some: t => t.Number, None: () => 0);
-                    _logger.Debug("⚠️ ACTION ALREADY MARKED for Turn {Turn} - ignoring duplicate", turnNum);
-                }
+                // Silently ignore if already performed - this is expected behavior
                 // Note: Silently ignore if already performed to avoid exceptions
                 // in complex command chains
             }

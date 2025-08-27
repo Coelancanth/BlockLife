@@ -57,6 +57,10 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
             // Add move command handler (needed by CompleteDragCommandHandler)
             services.AddTransient<BlockLife.Core.Features.Block.Commands.MoveBlockCommandHandler>();
 
+            // Add turn manager (required by TurnAdvancementAfterMoveHandler)
+            services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager, 
+                BlockLife.Core.Features.Turn.Services.TurnManager>();
+
             // Add simulation manager (required by some handlers)
             services.AddSingleton<BlockLife.Core.Application.Simulation.ISimulationManager,
                 BlockLife.Core.Application.Simulation.SimulationManager>();
