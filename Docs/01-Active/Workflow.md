@@ -24,6 +24,54 @@
 
 **Complete Protocols**: [BranchAndCommitDecisionProtocols.md](../02-Design/Protocols/BranchAndCommitDecisionProtocols.md)
 
+## 🔄 Model-First Implementation Protocol (ADR-006)
+
+### Core Principle: Build Inside-Out
+All features MUST be implemented in strict phases, starting with pure domain logic and expanding outward. **NO EXCEPTIONS**.
+
+### Phase Progression (MANDATORY)
+```
+Phase 1: Domain      Phase 2: Application    Phase 3: Infrastructure    Phase 4: Presentation
+   ↓                      ↓                         ↓                          ↓
+Pure C# Logic        Commands/Handlers         State/Services              Godot/UI
+Unit Tests           Handler Tests             Integration Tests           Manual/E2E
+(<100ms)             (<500ms)                  (<2s)                       (Variable)
+```
+
+### Phase Gates (Enforced by CI)
+- ❌ **CANNOT** skip phases - even for "simple" features
+- ❌ **CANNOT** start next phase until current has GREEN tests
+- ✅ **MUST** commit at each phase completion
+- ✅ **MUST** use phase marker in commit: `feat(X): domain [Phase 1/4]`
+
+### Implementation Timeline Example
+```
+Day 1 Morning:   Phase 1 - Domain Model (2h)
+Day 1 Afternoon: Phase 2 - Application Layer (1h)
+Day 1 Late:      Phase 3 - Infrastructure (1h)
+Day 2 Morning:   Phase 4 - Presentation (2h)
+```
+
+### Why This Matters
+- **Bug Detection**: Logic errors caught in milliseconds, not runtime
+- **Refactoring Safety**: Change domain without touching UI
+- **Test Speed**: Core tests stay fast as codebase grows
+- **Clear Dependencies**: Each layer only knows layers below
+
+### VS Item Phase Tracking
+```markdown
+VS_042: Block Merging
+Status: Phase 2/4 Complete ← NEW: Phase progress
+Owner: Dev Engineer
+Phases:
+  ✅ Domain Model (tests passing)
+  ✅ Application Layer (handlers done)
+  ⏳ Infrastructure (in progress)
+  ⬜ Presentation (not started)
+```
+
+**Complete Details**: [ADR-006](../03-Reference/ADR/ADR-006-model-first-implementation-protocol.md) | **Reference**: [Move Block Pattern](../../src/Features/Block/Move/)
+
 ## 🧠 Owner-Based Ultra-Think Protocol
 
 ### Core Principle

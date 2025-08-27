@@ -220,6 +220,12 @@ TD_001 Review:
 - Decision: REJECTED - Use simpler alternative
 ```
 
+### TD Related to Phases
+- **"Skip Phase 1"**: ALWAYS REJECT - violates ADR-006
+- **"Combine phases"**: ALWAYS REJECT - breaks isolation
+- **"UI first for demo"**: ALWAYS REJECT - technical debt trap
+- **"Phase tooling improvement"**: Route to DevOps
+
 ## 📝 Architecture Decision Records (ADRs)
 
 ### When to Create an ADR
@@ -247,31 +253,41 @@ TD_001 Review:
 ### Current ADRs
 - **[ADR-001](../03-Reference/ADR/ADR-001-pattern-recognition-framework.md)**: Pattern Recognition Framework
 
-## Standard Phase Breakdown
+## Standard Phase Breakdown (Model-First Protocol)
 
-### Phase 1: Domain Logic
-- Write failing tests for commands/handlers
-- Implement core logic with Fin<T> error handling
-- Define domain events and notifications
-- Register services in DI container
+### Phase 1: Domain Logic [GATE: All tests GREEN]
+- Write failing domain tests
+- Implement pure C# business logic
+- No dependencies, no Godot, no services
+- Fin<T> for error handling
+- **Commit**: `feat(X): domain model [Phase 1/4]`
 
-### Phase 2: Infrastructure
-- Write integration tests for services
-- Implement state services and repositories
-- Add external integration points
-- Verify data flow works correctly
+### Phase 2: Application Layer [GATE: Handlers work]
+- Write handler tests
+- Implement CQRS commands/queries
+- Wire up MediatR pipeline
+- Mock repositories only
+- **Commit**: `feat(X): handlers [Phase 2/4]`
 
-### Phase 3: Presentation
-- Design view interfaces and presenter contracts
-- Implement MVP pattern with proper lifecycle
-- Create Godot scenes and wire signals
-- Handle UI updates and user interactions
+### Phase 3: Infrastructure [GATE: Integration passes]
+- Write integration tests
+- Implement state services
+- Add real repositories
+- Verify data flow
+- **Commit**: `feat(X): infrastructure [Phase 3/4]`
 
-### Phase 4: Testing & Polish
-- Add stress tests and edge cases
-- Performance validation and optimization
-- Integration with existing features
-- Documentation and cleanup
+### Phase 4: Presentation [GATE: UI works]
+- Create MVP presenter
+- Wire Godot signals
+- Manual testing in editor
+- Performance validation
+- **Commit**: `feat(X): presentation [Phase 4/4]`
+
+### Phase Gate Enforcement
+- Review each phase completion
+- Block progression if tests fail
+- Validate commit messages include phase markers
+- No exceptions for "simple" features
 
 ## Pattern Decisions
 

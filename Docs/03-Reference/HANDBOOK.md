@@ -311,14 +311,40 @@ Prop.ForAll(
 **Example**: `.github/workflows/ci.yml:49-99`  
 **Rationale**: Prevents surprise conflicts during merge
 
-### Phase-Based Implementation for Large Features
-**Pattern**: Break features into discrete phases to prevent context exhaustion  
-**Example**: VS_003A implemented in 5 phases across separate sessions  
-**Benefits**:  
-- Prevents 10+ hour continuous sessions
-- Each phase independently testable
-- Clear progress tracking
-- Reduced cognitive load
+### Model-First Implementation Protocol (ADR-006)
+**Pattern**: Build all features in strict phases from domain outward
+**Phases**: Domain → Application → Infrastructure → Presentation
+**Enforcement**: Each phase must have GREEN tests before proceeding
+
+#### Phase 1: Domain Model
+- Pure C# business logic, zero dependencies
+- Unit tests only (<100ms)
+- `dotnet test --filter Category=Unit`
+- Commit: `feat(X): domain [Phase 1/4]`
+
+#### Phase 2: Application Layer  
+- CQRS commands and handlers
+- Mocked repositories only (<500ms)
+- `dotnet test --filter Category=Handlers`
+- Commit: `feat(X): handlers [Phase 2/4]`
+
+#### Phase 3: Infrastructure
+- Real services and state management
+- Integration tests (<2s)
+- `dotnet test --filter Category=Integration`
+- Commit: `feat(X): infrastructure [Phase 3/4]`
+
+#### Phase 4: Presentation
+- Godot UI and MVP wiring
+- Manual testing in editor
+- Commit: `feat(X): presentation [Phase 4/4]`
+
+**Reference**: Move Block pattern in `src/Features/Block/Move/`
+**Benefits**:
+- Logic errors caught in milliseconds not runtime
+- Safe refactoring without UI breaks
+- Test suite stays fast
+- Clean architectural boundaries
 
 ### MVP Pattern for UI Integration
 **Pattern**: Humble views with business logic in presenters  

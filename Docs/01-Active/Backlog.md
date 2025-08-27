@@ -66,29 +66,50 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### VS_006: Core Turn System
-**Status**: Ready for Dev
+**Status**: Ready for Dev (Phase 0/4)
 **Owner**: Dev Engineer
 **Size**: S (4h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
+**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
 
 **What**: Implement turn counter with one-action-per-turn limitation
 **Why**: Creates time pressure that makes the game challenging and meaningful
 
-**How**:
-- Add TurnManager service to track current turn number
-- Display turn counter in UI (starts at 1)
-- Only VALID MOVES advance the turn (not placements or failed moves)
-- Turn advances after move completes (including all chains)
-- Fire TurnStartNotification and TurnEndNotification events
+**Phase Breakdown (Model-First Protocol)**:
 
-**Done When**:
-- Turn counter visible in game UI showing "Turn: X"
-- Only successful block movements advance the turn
-- Turn waits for all chain reactions to complete before advancing
-- Turn events allow other systems to hook in
-- Turn number persists in PlayerDataService
+#### Phase 1: Domain Model (1h)
+**Acceptance**: Turn logic correctly tracks and increments
+- Create `Turn` value object with number and validation
+- Create `TurnManager` domain service with business rules
+- Unit tests for turn increment logic
+- Unit tests for validation rules (only moves advance turn)
+**Commit**: `feat(turn): domain model [Phase 1/4]`
+
+#### Phase 2: Application Layer (1h)
+**Acceptance**: Commands process turn advancement
+- Create `AdvanceTurnCommand` and handler
+- Create `TurnStartNotification` and `TurnEndNotification`
+- Wire into existing move completion flow
+- Handler tests with mocked services
+**Commit**: `feat(turn): command handlers [Phase 2/4]`
+
+#### Phase 3: Infrastructure (1h)
+**Acceptance**: Turn state persists correctly
+- Implement turn persistence in `PlayerDataService`
+- Add turn tracking to game state
+- Integration tests for save/load
+- Verify turn survives game restart
+**Commit**: `feat(turn): state persistence [Phase 3/4]`
+
+#### Phase 4: Presentation (1h)
+**Acceptance**: UI displays current turn
+- Create `TurnCounterView` and presenter
+- Wire to Godot UI scene
+- Display "Turn: X" in game HUD
+- Manual test all turn advancement scenarios
+**Commit**: `feat(turn): UI integration [Phase 4/4]`
 
 **Depends On**: None
 
@@ -97,34 +118,57 @@
 - Pattern: Copy from MoveBlockCommand/Handler structure
 - Integration: Hook after ProcessPatternsAfterPlacement completes
 - Risk: Low - well-established integration points
+- **Phase Gates**: Each phase must have GREEN tests before proceeding
 
 ---
 
 ### VS_007: Auto-Spawn System  
-**Status**: Ready for Dev
+**Status**: Ready for Dev (Phase 0/4)
 **Owner**: Dev Engineer
 **Size**: S (4.5h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
+**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
 
 **What**: Automatically spawn new blocks at the start of each turn
 **Why**: Forces space management decisions and prevents infinite planning
 
-**How**:
-- Create SpawnService with IAutoSpawnStrategy interface
-- Hook into TurnStartNotification from VS_006
-- Spawn one random Tier-1 block at turn start
-- Select random empty position for spawn
-- Trigger game over if no empty positions available
+**Phase Breakdown (Model-First Protocol)**:
 
-**Done When**:
-- One block spawns automatically when turn starts
-- Block appears in random empty grid position
-- Block type is randomly selected from available types
-- Always spawns at Tier 1
-- Visual/sound effect plays on spawn
-- Game over triggers when grid is full
+#### Phase 1: Domain Model (1.5h)
+**Acceptance**: Spawn logic and game over detection work correctly
+- Create `SpawnPosition` selection logic (pure function)
+- Create `IAutoSpawnStrategy` interface and `RandomSpawnStrategy`
+- Implement game over detection logic (no empty spaces)
+- Unit tests for spawn position selection
+- Unit tests for game over conditions
+**Commit**: `feat(spawn): domain model [Phase 1/4]`
+
+#### Phase 2: Application Layer (1h)
+**Acceptance**: Spawn triggered by turn events
+- Create `AutoSpawnHandler` for `TurnStartNotification`
+- Implement `GameOverCommand` and handler
+- Wire spawn to use existing `PlaceBlockCommand`
+- Handler tests with mocked grid state
+**Commit**: `feat(spawn): command handlers [Phase 2/4]`
+
+#### Phase 3: Infrastructure (1h)
+**Acceptance**: Grid state correctly tracks spawns
+- Integrate with `GridStateService` for empty position queries
+- Add spawn tracking to game statistics
+- Integration tests for spawn → place flow
+- Verify game over triggers correctly
+**Commit**: `feat(spawn): state integration [Phase 3/4]`
+
+#### Phase 4: Presentation (1h)
+**Acceptance**: Visual/audio feedback for spawns
+- Create spawn animation in Godot
+- Add spawn sound effect
+- Create game over screen
+- Manual test spawn variations
+- Manual test game over scenarios
+**Commit**: `feat(spawn): UI and effects [Phase 4/4]`
 
 **Depends On**: VS_006 (Turn System)
 
@@ -133,35 +177,59 @@
 - Pattern: Strategy for spawn logic, reuse PlaceBlockCommand
 - Safety-critical: Game over detection must be bulletproof
 - Risk: Medium - game over is critical feature
+- **Phase Gates**: Game over logic MUST be thoroughly tested in Phase 1
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_008: Godot Resource-Based Rewards
-**Status**: Ready for Dev
+**Status**: Ready for Dev (Phase 0/4)
 **Owner**: Dev Engineer
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
+**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
 
 **What**: Migrate hardcoded reward values to Godot Resource files
 **Why**: Enables rapid balancing and debugging without recompiling
 
-**How**:
-- Create BlockRewardResource.tres for each block type
-- Define tier-based reward scaling in resources
-- Add debug overlay (F12) showing current reward values
-- Implement GodotResourceBridge service for C# integration
-- Support hot reload in debug builds
+**Phase Breakdown (Model-First Protocol)**:
 
-**Done When**:
-- Each block type has a .tres resource file defining rewards
-- Resources specify base values and tier multipliers
-- Debug overlay displays loaded reward values
-- Reward calculator uses resource data instead of hardcoded values
-- Values can be modified without recompiling
+#### Phase 1: Domain Model (1h)
+**Acceptance**: Reward calculation logic abstracted from data source
+- Create `IRewardDataProvider` interface
+- Create `RewardCalculator` with provider dependency
+- Implement tier-based scaling logic (pure functions)
+- Unit tests with mock data provider
+- Unit tests for all reward calculations
+**Commit**: `feat(rewards): domain model [Phase 1/4]`
+
+#### Phase 2: Application Layer (0.5h)
+**Acceptance**: Commands use abstracted reward system
+- Update existing reward handlers to use new calculator
+- Create `ReloadRewardsCommand` for hot reload
+- Handler tests with mocked provider
+**Commit**: `feat(rewards): command integration [Phase 2/4]`
+
+#### Phase 3: Infrastructure (1.5h)
+**Acceptance**: Bridge to Godot resources works
+- Create `GodotResourceBridge` service
+- Implement `GodotRewardDataProvider` using bridge
+- Create `.tres` resource files for each block type
+- Integration tests loading from resources
+- Verify hot reload in debug builds
+**Commit**: `feat(rewards): Godot bridge [Phase 3/4]`
+
+#### Phase 4: Presentation (1h)
+**Acceptance**: Debug overlay shows live values
+- Create F12 debug overlay UI
+- Display current reward values from resources
+- Show tier multipliers and calculations
+- Manual test hot reload changes
+- Manual test all block type rewards
+**Commit**: `feat(rewards): debug overlay [Phase 4/4]`
 
 **Depends On**: None (but more useful after VS_007)
 
@@ -170,6 +238,7 @@
 - Pattern: Bridge service pattern, first of its kind
 - Can run parallel with VS_006 - no dependencies
 - Risk: Medium - sets precedent for resource integration
+- **Phase Gates**: Bridge pattern must be clean and reusable
 
 ---
 

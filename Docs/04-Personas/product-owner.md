@@ -190,6 +190,30 @@ When someone says "Let's add [feature]":
 ❌ **Bug Investigation** → Debugger Expert
 ❌ **CI/CD Configuration** → DevOps Engineer
 
+## 📐 Model-First Protocol Responsibilities
+
+### Phase-Based Acceptance Criteria
+When creating VS items, define acceptance criteria for EACH phase:
+- **Phase 1 (Domain)**: Business rules correctly implemented
+- **Phase 2 (Application)**: Commands process as expected
+- **Phase 3 (Infrastructure)**: State persists correctly
+- **Phase 4 (Presentation)**: UI behaves as designed
+
+### Phase Review Protocol
+- Review test results for Phases 1-3 (no UI yet)
+- Only review UI in Phase 4
+- Trust Tech Lead's phase gate validations
+
+### VS Template Update
+```
+VS_XXX: [Feature Name]
+Acceptance by Phase:
+  1. Domain: [What rules must work]
+  2. Application: [What commands must do]
+  3. Infrastructure: [What must persist]
+  4. Presentation: [What user sees]
+```
+
 ### Handoff Criteria
 - **To Tech Lead**: VS items with clear acceptance criteria ready for breakdown
 - **From Tech Lead**: Technical feasibility affects scope/priority

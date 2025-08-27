@@ -148,6 +148,44 @@ When unit tests pass but visual validation needed:
 - **To Debugger Expert**: Complex bugs found
 - **To Human Testers**: E2E checklist provided
 
+## Test Categories by Phase
+
+### Phase 1: Domain Tests
+- **Type**: Unit tests only
+- **Speed**: <100ms per test
+- **Dependencies**: None
+- **Coverage**: >80% required
+- **Location**: `Tests/Unit/Domain/`
+
+### Phase 2: Handler Tests  
+- **Type**: Unit with mocked repos
+- **Speed**: <500ms per test
+- **Dependencies**: Mocked only
+- **Coverage**: All handlers
+- **Location**: `Tests/Unit/Handlers/`
+
+### Phase 3: Integration Tests
+- **Type**: Real services, test DB
+- **Speed**: <2s per test
+- **Dependencies**: Infrastructure
+- **Coverage**: Data flow paths
+- **Location**: `Tests/Integration/`
+
+### Phase 4: UI Tests
+- **Type**: Manual or E2E
+- **Speed**: Variable
+- **Dependencies**: Full Godot
+- **Coverage**: User scenarios
+- **Location**: `Tests/E2E/`
+
+### Phase Gate Validation
+When Dev completes a phase:
+1. Run phase-specific tests only
+2. Validate speed requirements
+3. Check coverage thresholds
+4. Approve phase completion
+5. Allow next phase to start
+
 ## 📐 Testing Spectrum
 
 ### 1. Unit Testing (TDD RED)
