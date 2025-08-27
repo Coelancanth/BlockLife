@@ -49,6 +49,10 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
             services.AddSingleton<IBlockRepository>(p => p.GetRequiredService<GridStateService>());
             services.AddSingleton<IDragStateService, DragStateService>();
 
+            // Add turn manager (required by TurnAdvancementAfterMoveHandler)
+            services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager, 
+                BlockLife.Core.Features.Turn.Services.TurnManager>();
+
             _serviceProvider = services.BuildServiceProvider();
             _mediator = _serviceProvider.GetRequiredService<IMediator>();
             _gridStateService = _serviceProvider.GetRequiredService<IGridStateService>();

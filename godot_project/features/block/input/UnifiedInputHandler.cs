@@ -159,6 +159,75 @@ public sealed class UnifiedInputHandler : IDisposable
     }
 
     /// <summary>
+    /// Handles unlock merge key press - globally unlocks merge functionality for testing.
+    /// Purchases merge unlock for tiers 2, 3, and 4 so all patterns become merges.
+    /// </summary>
+    public async Task HandleUnlockMerge()
+    {
+        _logger?.Information("Unlocking merge functionality globally for testing...");
+
+        try
+        {
+            // Unlock merge tiers sequentially (system requires sequential unlocking)
+            for (int tier = 2; tier <= 4; tier++)
+            {
+                var command = BlockLife.Core.Features.Player.Commands.PurchaseMergeUnlockCommand.Create(tier);
+                var result = await _mediator.Send(command);
+
+                await result.Match(
+                    Succ: async player => 
+                    {
+                        _logger?.Information("Successfully unlocked merge to tier {Tier}! Player MaxUnlockedTier: {MaxTier}", tier, player.MaxUnlockedTier);
+                        // Small delay to ensure proper sequencing
+                        await Task.Delay(10);
+                    },
+                    Fail: async error => 
+                    {
+                        if (error.Message.Contains("INSUFFICIENT_MONEY"))
+                        {
+                            _logger?.Warning("Not enough money for tier {Tier}: {Error}", tier, error.Message);
+                        }
+                        else if (error.Message.Contains("NON_SEQUENTIAL_UNLOCK"))
+                        {
+                            _logger?.Debug("Tier {Tier} requires sequential unlock - skipping", tier);
+                        }
+                        else if (error.Message.Contains("ALREADY_UNLOCKED"))
+                        {
+                            _logger?.Debug("Tier {Tier} already unlocked", tier);
+                        }
+                        else
+                        {
+                            _logger?.Warning("Could not unlock tier {Tier}: {Error}", tier, error.Message);
+                        }
+                        await Task.CompletedTask;
+                    }
+                );
+            }
+
+            _logger?.Information("Merge unlock complete! At least T2 merges are now available.");
+            
+            // Debug: Try to get current player state to verify unlock
+            try 
+            {
+                var query = new BlockLife.Core.Features.Player.Queries.GetCurrentPlayerQuery();
+                var playerResult = await _mediator.Send(query);
+                playerResult.Match(
+                    Succ: player => _logger?.Information("DEBUG: Current player MaxUnlockedTier after unlock: {Tier}", player.MaxUnlockedTier),
+                    Fail: error => _logger?.Debug("Could not get player state: {Error}", error.Message)
+                );
+            }
+            catch (Exception debugEx)
+            {
+                _logger?.Debug(debugEx, "Could not query player state for debugging");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.Warning(ex, "Error during merge unlock process");
+        }
+    }
+
+    /// <summary>
     /// Updates the hover position for the handler.
     /// </summary>
     public void UpdateHoverPosition(Vector2Int position)

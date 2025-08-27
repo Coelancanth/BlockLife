@@ -1,4 +1,5 @@
 using BlockLife.Core.Domain.Player;
+using BlockLife.Core.Domain.Turn;
 using BlockLife.Core.Features.Player.Notifications;
 using BlockLife.Core.Infrastructure.Services;
 using LanguageExt;
@@ -70,6 +71,12 @@ namespace BlockLife.Core.Features.Player.Commands
             _logger.Debug("Successfully purchased tier {TargetTier} unlock. Player {PlayerName} MaxUnlockedTier: {MaxUnlockedTier}",
                 request.TargetTier, updatedPlayer.Name, updatedPlayer.MaxUnlockedTier);
 
+            // DEBUG: Show money spent  
+            var cost = PurchaseMergeUnlockCommand.GetCostForTier(request.TargetTier);
+            
+            _logger.Information("💰 PURCHASE: Money:-{Cost} (Unlocked Merge Tier {Tier})",
+                cost, request.TargetTier);
+
             // Step 4: Publish notification for UI updates
             var notification = PlayerStateChangedNotification.Create(
                 updatedPlayer,
@@ -139,6 +146,14 @@ namespace BlockLife.Core.Features.Player.Commands
             
             // Update MaxUnlockedTier
             var updatedPlayer = playerWithSpentMoney with { MaxUnlockedTier = targetTier };
+
+            // Save the updated player state back to the service
+            var saveResult = _playerStateService.UpdatePlayer(updatedPlayer);
+            if (saveResult.IsFail)
+            {
+                var error = saveResult.Match<Error>(Succ: _ => Error.New("UNKNOWN", "Unknown error"), Fail: e => e);
+                return FinFail<PlayerState>(error);
+            }
 
             return FinSucc(updatedPlayer);
         }

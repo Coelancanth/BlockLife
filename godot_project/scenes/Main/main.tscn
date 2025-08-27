@@ -1,11 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://o8gakj4jxun8"]
+[gd_scene load_steps=4 format=3 uid="uid://o8gakj4jxun8"]
 
 [ext_resource type="PackedScene" uid="uid://bx5dw2v3qkh8p" path="res://godot_project/scenes/AttributeDisplay.tscn" id="2_attribute"]
 [ext_resource type="PackedScene" uid="uid://ko2eo5hcjxkl" path="res://godot_project/scenes/grid.tscn" id="3_iyj48"]
+[ext_resource type="PackedScene" path="res://godot_project/scenes/TurnDisplay.tscn" id="4_turn"]
 
 [node name="main" type="Node"]
 
 [node name="Grid" parent="." instance=ExtResource("3_iyj48")]
 
 [node name="AttributeDisplay" parent="." instance=ExtResource("2_attribute")]
+layout_mode = 3
+
+[node name="TurnDisplay" parent="." instance=ExtResource("4_turn")]
 layout_mode = 3

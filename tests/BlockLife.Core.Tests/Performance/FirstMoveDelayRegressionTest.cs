@@ -67,6 +67,10 @@ public class FirstMoveDelayRegressionTest : IDisposable
         services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IBlockExistsRule,
             BlockLife.Core.Features.Block.Placement.Rules.BlockExistsRule>();
 
+        // Add turn manager (required by TurnAdvancementAfterMoveHandler)
+        services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager, 
+            BlockLife.Core.Features.Turn.Services.TurnManager>();
+
         _serviceProvider = services.BuildServiceProvider();
         _mediator = _serviceProvider.GetRequiredService<IMediator>();
         _gridStateService = _serviceProvider.GetRequiredService<IGridStateService>();

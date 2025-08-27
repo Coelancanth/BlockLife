@@ -1,10 +1,31 @@
-[gd_scene load_steps=6 format=3 uid="uid://ko2eo5hcjxkl"]
+[gd_scene load_steps=8 format=3 uid="uid://ko2eo5hcjxkl"]
 
 [ext_resource type="Script" uid="uid://cnkwf7d32dn6h" path="res://godot_project/features/block/placement/GridView.cs" id="1_kkt3w"]
 [ext_resource type="Script" uid="uid://1y7361a257ob" path="res://godot_project/features/block/placement/BlockVisualizationController.cs" id="2_3okcj"]
 [ext_resource type="Script" uid="uid://beyv8auwjrhvi" path="res://godot_project/features/block/placement/GridInteractionController.cs" id="3_7qbr8"]
-[ext_resource type="Script" uid="uid://dhh5e143i6en4" path="res://godot_project/features/block/input/BlockInputManager.cs" id="4_input"]
-[ext_resource type="Script" uid="uid://m3xrr3gwgfsw" path="res://godot_project/features/block/drag/DragView.cs" id="5_drag"]
+[ext_resource type="Script" uid="uid://b5o1pqa4ygap3" path="res://godot_project/features/block/input/BlockInputManager.cs" id="4_input"]
+[ext_resource type="Script" uid="uid://bctntt6du40y6" path="res://godot_project/features/block/drag/DragView.cs" id="5_drag"]
+[ext_resource type="Script" uid="uid://cro0ip0by0vbs" path="res://godot_project/features/block/input/InputMappings.cs" id="5_jppq3"]
+
+[sub_resource type="Resource" id="Resource_jppq3"]
+script = ExtResource("5_jppq3")
+PlaceBlockKey = 32
+InspectBlockKey = 73
+CycleBlockTypeKey = 4194306
+SelectButton = 1
+CancelButton = 2
+UnlockMergeKey = 77
+SwapBlockKey = 83
+SwapMaxDistance = 3.0
+CameraUpKey = 87
+CameraDownKey = 83
+CameraLeftKey = 65
+CameraRightKey = 68
+QuickPlaceModifier = 4194325
+MultiSelectModifier = 4194326
+DebugToggleKey = 4194334
+ReloadSceneKey = 4194336
+metadata/_custom_type_script = "uid://cro0ip0by0vbs"
 
 [node name="Grid" type="Control" node_paths=PackedStringArray("VisualizationController", "InteractionController")]
 layout_mode = 3
@@ -37,6 +58,7 @@ script = ExtResource("3_7qbr8")
 
 [node name="BlockInputManager" type="Node" parent="."]
 script = ExtResource("4_input")
+_inputMappings = SubResource("Resource_jppq3")
 
 [node name="DragView" type="Control" parent="."]
 anchors_preset = 0

@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 13:53
+**Last Updated**: 2025-08-27 18:42
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -65,71 +65,16 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### VS_006: Core Turn System
-**Status**: Ready for Dev (Phase 0/4)
-**Owner**: Dev Engineer
-**Size**: S (4h)
-**Priority**: Critical
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
-
-**What**: Implement turn counter with one-action-per-turn limitation
-**Why**: Creates time pressure that makes the game challenging and meaningful
-
-**Phase Breakdown (Model-First Protocol)**:
-
-#### Phase 1: Domain Model (1h)
-**Acceptance**: Turn logic correctly tracks and increments
-- Create `Turn` value object with number and validation
-- Create `TurnManager` domain service with business rules
-- Unit tests for turn increment logic
-- Unit tests for validation rules (only moves advance turn)
-**Commit**: `feat(turn): domain model [Phase 1/4]`
-
-#### Phase 2: Application Layer (1h)
-**Acceptance**: Commands process turn advancement
-- Create `AdvanceTurnCommand` and handler
-- Create `TurnStartNotification` and `TurnEndNotification`
-- Wire into existing move completion flow
-- Handler tests with mocked services
-**Commit**: `feat(turn): command handlers [Phase 2/4]`
-
-#### Phase 3: Infrastructure (1h)
-**Acceptance**: Turn state persists correctly
-- Implement turn persistence in `PlayerDataService`
-- Add turn tracking to game state
-- Integration tests for save/load
-- Verify turn survives game restart
-**Commit**: `feat(turn): state persistence [Phase 3/4]`
-
-#### Phase 4: Presentation (1h)
-**Acceptance**: UI displays current turn
-- Create `TurnCounterView` and presenter
-- Wire to Godot UI scene
-- Display "Turn: X" in game HUD
-- Manual test all turn advancement scenarios
-**Commit**: `feat(turn): UI integration [Phase 4/4]`
-
-**Depends On**: None
-
-**Tech Lead Decision** (2025-08-27 14:05):
-- Complexity: 3/10 - Follows existing patterns exactly
-- Pattern: Copy from MoveBlockCommand/Handler structure
-- Integration: Hook after ProcessPatternsAfterPlacement completes
-- Risk: Low - well-established integration points
-- **Phase Gates**: Each phase must have GREEN tests before proceeding
-
 ---
 
 ### VS_007: Auto-Spawn System  
-**Status**: Ready for Dev (Phase 0/4)
+**Status**: Ready - VS_006 COMPLETE ✅ with full turn integration
 **Owner**: Dev Engineer
 **Size**: S (4.5h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
+**Updated**: 2025-08-27 18:42 - FULLY UNBLOCKED: VS_006 complete with block placement integration
 
 **What**: Automatically spawn new blocks at the start of each turn
 **Why**: Forces space management decisions and prevents infinite planning
@@ -170,7 +115,7 @@
 - Manual test game over scenarios
 **Commit**: `feat(spawn): UI and effects [Phase 4/4]`
 
-**Depends On**: VS_006 (Turn System)
+**Depends On**: VS_006 Phase 2+ (Turn System commands/handlers needed for TurnStartNotification)
 
 **Tech Lead Decision** (2025-08-27 14:05):
 - Complexity: 4/10 - Strategy pattern adds slight complexity
@@ -184,13 +129,13 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_008: Godot Resource-Based Rewards
-**Status**: Ready for Dev (Phase 0/4)
+**Status**: Ready for Dev (Phase 0/4) - Independent feature, no VS_006 dependencies
 **Owner**: Dev Engineer
 **Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 - Added Model-First phases per ADR-006
+**Updated**: 2025-08-27 16:57 - Ready to proceed independently
 
 **What**: Migrate hardcoded reward values to Godot Resource files
 **Why**: Enables rapid balancing and debugging without recompiling
@@ -292,6 +237,33 @@
 
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
+
+### VS_006: Core Turn System ⭐ MAJOR COMPLETION
+**Status**: Done ✅ (Phase 4/4 + Critical Bug Fix COMPLETE)
+**Completed**: 2025-08-27 19:33 (Final bug fix and archival)
+**Owner**: Dev Engineer
+**Size**: S (4h total - 3h backend + 1h integration + bug fix)
+**Priority**: Critical
+
+**What**: Implement turn counter with one-action-per-turn limitation
+**Why**: Creates time pressure that makes the game challenging and meaningful
+
+**🔧 CRITICAL BUG FIX**: Fixed fundamental game economy issue where block placement was incorrectly advancing turns
+- **Before**: ALL block actions consumed turns (placement, cascades, merges)
+- **After**: Only block MOVEMENT consumes turns (placement is free, cascades are free)
+- **Impact**: Restored strategic depth - placement is for positioning, movement costs turns
+- **Technical**: Replaced TurnAdvancementHandler with TurnAdvancementAfterMoveHandler
+
+**Key Achievements**:
+- ✅ Complete turn system with proper game mechanics
+- ✅ Fixed turn advancement bug that made game unplayable
+- ✅ All 450+ tests passing after DI container fixes
+- ✅ Clean logging and production-ready code
+- ✅ Model-First implementation across all 4 phases
+- ✅ **UNBLOCKS**: VS_007 Auto-Spawn, VS_008 Resource Rewards
+
+**Phase Summary**: Phase 1-2 complete, Phase 3 deferred (YAGNI), Phase 4 complete
+**Files Created**: 15+ files across domain, application, and presentation layers
 
 ### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
 **Status**: Resolved

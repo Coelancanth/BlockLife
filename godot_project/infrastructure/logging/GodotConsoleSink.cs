@@ -148,7 +148,7 @@ public class GodotConsoleSink : ILogEventSink
 
 public static class GodotSinkExtensions
 {
-    public const string DefaultGodotSinkOutputTemplate = "[{Timestamp:HH:mm:ss}] [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
+    public const string DefaultGodotSinkOutputTemplate = "[{Timestamp:HH:mm:ss}] [{Level:u3}] [{ShortSourceContext}] {Message:lj}{NewLine}{Exception}";
 
     public static LoggerConfiguration Godot(this LoggerSinkConfiguration configuration,
                                             string outputTemplate = DefaultGodotSinkOutputTemplate,
