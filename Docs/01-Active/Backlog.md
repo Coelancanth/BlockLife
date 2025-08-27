@@ -66,11 +66,12 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### VS_006: Core Turn System
-**Status**: Proposed
-**Owner**: Product Owner
-**Size**: M (4-6h)
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
 
 **What**: Implement turn counter with one-action-per-turn limitation
 **Why**: Creates time pressure that makes the game challenging and meaningful
@@ -91,14 +92,21 @@
 
 **Depends On**: None
 
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 3/10 - Follows existing patterns exactly
+- Pattern: Copy from MoveBlockCommand/Handler structure
+- Integration: Hook after ProcessPatternsAfterPlacement completes
+- Risk: Low - well-established integration points
+
 ---
 
 ### VS_007: Auto-Spawn System  
-**Status**: Proposed
-**Owner**: Product Owner
-**Size**: M (4-6h)
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4.5h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
 
 **What**: Automatically spawn new blocks at the start of each turn
 **Why**: Forces space management decisions and prevents infinite planning
@@ -120,16 +128,23 @@
 
 **Depends On**: VS_006 (Turn System)
 
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 4/10 - Strategy pattern adds slight complexity
+- Pattern: Strategy for spawn logic, reuse PlaceBlockCommand
+- Safety-critical: Game over detection must be bulletproof
+- Risk: Medium - game over is critical feature
+
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
 ### VS_008: Godot Resource-Based Rewards
-**Status**: Proposed
-**Owner**: Product Owner
-**Size**: S (2-4h)
+**Status**: Ready for Dev
+**Owner**: Dev Engineer
+**Size**: S (4h)
 **Priority**: Important
 **Created**: 2025-08-27 13:53
+**Reviewed**: 2025-08-27 14:05
 
 **What**: Migrate hardcoded reward values to Godot Resource files
 **Why**: Enables rapid balancing and debugging without recompiling
@@ -149,6 +164,12 @@
 - Values can be modified without recompiling
 
 **Depends On**: None (but more useful after VS_007)
+
+**Tech Lead Decision** (2025-08-27 14:05):
+- Complexity: 5/10 - New architectural boundary (C# ↔ Godot)
+- Pattern: Bridge service pattern, first of its kind
+- Can run parallel with VS_006 - no dependencies
+- Risk: Medium - sets precedent for resource integration
 
 ---
 

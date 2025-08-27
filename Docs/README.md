@@ -17,7 +17,7 @@ Welcome to the BlockLife documentation. This guide helps you navigate our organi
 ### [03-Reference/](03-Reference/) - Current Technical Guidelines
 - **[HANDBOOK.md](03-Reference/HANDBOOK.md)** ⭐⭐⭐⭐⭐ - Daily companion (architecture, workflow, testing, patterns)
 - **[Glossary.md](03-Reference/Glossary.md)** ⭐⭐⭐⭐⭐ - Authoritative vocabulary for all code
-- **[CurrentImplementationStatus.md](03-Reference/CurrentImplementationStatus.md)** - Implementation status vs. vision
+- **[CurrentImplementationStatus.md](01-Active/CurrentImplementationStatus.md)** - Implementation status vs. vision (SSOT)
 - **[ADR/](03-Reference/ADR/)** - Architecture Decision Records
 - **[README.md](03-Reference/README.md)** - Reference directory navigation
 

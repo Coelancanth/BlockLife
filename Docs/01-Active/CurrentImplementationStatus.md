@@ -74,26 +74,26 @@ When T2+ Unlocked → Pattern Recognition Changes:
     ✅ Merge REPLACES match behavior when unlocked
 ```
 
-### VS_006: Core Turn System [PROPOSED]
-**Planned Implementation:**
-- Turn counter with UI display
-- One action per turn (only valid moves count)
-- Turn advancement after chains complete
-- Foundation for all time-based mechanics
+### VS_006: Core Turn System [READY FOR DEV]
+**Technical Breakdown (2025-08-27 Tech Lead):**
+- TurnManager service tracking turn number (4h estimate)
+- Integration with MoveBlockCommandHandler
+- Turn advances AFTER all chain reactions
+- Complexity: 3/10 - follows existing patterns
 
-### VS_007: Auto-Spawn System [PROPOSED]
-**Planned Implementation:**
-- Automatic block spawning at turn start
-- Random type and position selection
-- Creates gameplay pressure and space management
-- Game over when grid fills
+### VS_007: Auto-Spawn System [READY FOR DEV - Depends on VS_006]
+**Technical Breakdown (2025-08-27 Tech Lead):**
+- SpawnService with IAutoSpawnStrategy (4.5h estimate)
+- Hooks into TurnStartNotification
+- Safety-critical: Game over detection
+- Complexity: 4/10 - strategy pattern
 
-### VS_008: Resource-Based Rewards [PROPOSED]
-**Planned Implementation:**
-- Godot .tres files for reward configuration
-- Hot-reload support for rapid balancing
-- Debug overlay for reward inspection
-- Separation of data from logic
+### VS_008: Resource-Based Rewards [READY FOR DEV - Independent]
+**Technical Breakdown (2025-08-27 Tech Lead):**
+- GodotResourceBridge service pattern (4h estimate)
+- First Godot resource integration (sets precedent)
+- Can run parallel with VS_006
+- Complexity: 5/10 - new architectural boundary
 
 ---
 
