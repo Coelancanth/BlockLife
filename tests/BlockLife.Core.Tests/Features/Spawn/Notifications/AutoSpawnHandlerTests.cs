@@ -2,7 +2,7 @@ using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Features.Block.Placement;
 using BlockLife.Core.Features.Spawn.Domain;
-using BlockLife.Core.Features.Spawn.Handlers;
+using BlockLife.Core.Features.Spawn.Notifications;
 using BlockLife.Core.Features.Turn.Effects;
 using BlockLife.Core.Infrastructure.Services;
 using FluentAssertions;
@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 using Xunit;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Core.Tests.Features.Spawn.Handlers
+namespace BlockLife.Core.Tests.Features.Spawn.Notifications
 {
     /// <summary>
     /// Comprehensive tests for AutoSpawnHandler application logic.

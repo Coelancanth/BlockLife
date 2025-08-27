@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static LanguageExt.Prelude;
 
-namespace BlockLife.Core.Features.Spawn.Handlers
+namespace BlockLife.Core.Features.Spawn.Notifications
 {
     /// <summary>
     /// Handles turn start notifications by attempting to spawn a new block.
