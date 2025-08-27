@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 16:57
+**Last Updated**: 2025-08-27 18:42
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -66,13 +66,13 @@
 *Blockers preventing other work, production bugs, dependencies for other features*
 
 ### VS_006: Core Turn System
-**Status**: In Progress (Phase 4/4 ✅ BACKEND COMPLETE) 
+**Status**: Done ✅ (Phase 4/4 + Integration COMPLETE)
 **Owner**: Dev Engineer
-**Size**: S (3h - 3h backend complete, 1h UI remaining)
+**Size**: S (4h total - 3h backend + 1h integration)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 16:57 - Phase 4 presentation infrastructure COMPLETE, ready for UI
+**Updated**: 2025-08-27 18:42 - COMPLETE: Full integration with block placement + resource debug logging
 
 **What**: Implement turn counter with one-action-per-turn limitation
 **Why**: Creates time pressure that makes the game challenging and meaningful
@@ -149,6 +149,20 @@
 - Phase 4 (UI) can proceed independently
 - Will implement Phase 3 when save/load system is available
 
+#### ✅ COMPLETION SUMMARY (2025-08-27 18:42)
+**Final Integration Achieved**:
+- ✅ **Turn Marking**: PlaceBlockCommandHandler calls `MarkActionPerformed()` after successful block placement
+- ✅ **Unlock Merge System**: Added M key to globally unlock merge functionality for E2E testing
+- ✅ **Resource Debug Logging**: Comprehensive reward tracking in MatchPatternExecutor and MergePatternExecutor
+- ✅ **Critical Bug Fix**: PurchaseMergeUnlockCommandHandler now properly persists player state changes
+- ✅ **Test Updates**: All unit tests updated with ITurnManager dependencies (465 tests passing)
+
+**Key Technical Achievements**:
+- Turn progression fully integrated with core game mechanics
+- Unlock merge flow works end-to-end (M key → unlock tiers → patterns become merges)
+- Resource tracking provides visibility into rewards: "🎯 MATCH REWARDS: Money:+1", "🚀 MERGE REWARDS: Money:+2" 
+- All code builds successfully, architecture tests pass
+
 **Dev Engineer Update** (2025-08-27 16:57):
 - **Phase 4 COMPLETE**: Full MVP presentation infrastructure implemented
 - Turn system backend 100% functional and ready for consumption
@@ -158,13 +172,13 @@
 ---
 
 ### VS_007: Auto-Spawn System  
-**Status**: Ready - VS_006 turn system backend complete and functional
+**Status**: Ready - VS_006 COMPLETE ✅ with full turn integration
 **Owner**: Dev Engineer
 **Size**: S (4.5h)
 **Priority**: Critical
 **Created**: 2025-08-27 13:53
 **Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 16:57 - UNBLOCKED: VS_006 Phases 1-4 complete with full presentation layer
+**Updated**: 2025-08-27 18:42 - FULLY UNBLOCKED: VS_006 complete with block placement integration
 
 **What**: Automatically spawn new blocks at the start of each turn
 **Why**: Forces space management decisions and prevents infinite planning

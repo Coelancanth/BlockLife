@@ -1,6 +1,7 @@
 using BlockLife.Core.Domain.Block;
 using BlockLife.Core.Domain.Common;
 using BlockLife.Core.Domain.Player;
+using BlockLife.Core.Domain.Turn;
 using BlockLife.Core.Features.Block.Patterns.Models;
 using BlockLife.Core.Features.Block.Patterns.Recognizers;
 using BlockLife.Core.Features.Block.Placement.Notifications;
@@ -155,6 +156,24 @@ namespace BlockLife.Core.Features.Block.Patterns.Executors
                     {
                         _logger?.LogWarning("Failed to apply match rewards: {Error}", 
                             rewardResult.Match(Succ: _ => "", Fail: e => e.Message));
+                    }
+                    else
+                    {
+                        // DEBUG: Show resource changes  
+                        var resourceList = resourceChanges.Select(kv => $"{kv.Key}:+{kv.Value}").ToList();
+                        var attributeList = attributeChanges.Select(kv => $"{kv.Key}:+{kv.Value}").ToList();
+                        
+                        var allRewards = new List<string>();
+                        allRewards.AddRange(resourceList);
+                        allRewards.AddRange(attributeList);
+
+                        if (allRewards.Any())
+                        {
+                            _logger?.LogInformation("🎯 MATCH REWARDS: {Rewards} (from {Count} {BlockType} blocks)", 
+                                string.Join(", ", allRewards), 
+                                matchPattern.Positions.Count,
+                                blocksToRemove.FirstOrDefault()?.Type.ToString() ?? "Unknown");
+                        }
                     }
                 }
 

@@ -136,6 +136,11 @@ public partial class BlockInputManager : Node
             _unifiedHandler.CycleBlockType();
             GetViewport().SetInputAsHandled();
         }
+        else if (keyEvent.Keycode == _inputMappings.UnlockMergeKey)
+        {
+            _ = _unifiedHandler.HandleUnlockMerge();
+            GetViewport().SetInputAsHandled();
+        }
     }
 
     private async Task HandleCellClick(Vector2Int position)

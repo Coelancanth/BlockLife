@@ -18,6 +18,9 @@ public partial class InputMappings : Resource
     [Export] public MouseButton SelectButton { get; set; } = MouseButton.Left;
     [Export] public MouseButton CancelButton { get; set; } = MouseButton.Right;
 
+    // Testing operations
+    [Export] public Key UnlockMergeKey { get; set; } = Key.M;
+    
     // Swap operations (for future use)
     [Export] public Key SwapBlockKey { get; set; } = Key.S;
     [Export] public float SwapMaxDistance { get; set; } = 3.0f;
@@ -66,6 +69,7 @@ Input Mappings:
   Cycle Block Type: {CycleBlockTypeKey}
   Select/Move: {SelectButton}
   Cancel: {CancelButton}
+  Unlock Merge (Testing): {UnlockMergeKey}
   Swap Blocks: {SwapBlockKey} (max distance: {SwapMaxDistance})
 ";
     }
