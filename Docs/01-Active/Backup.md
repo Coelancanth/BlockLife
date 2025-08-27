@@ -6,7 +6,7 @@
 > **Aging Reset**: 2025-08-22 (all items start fresh from today)
 
 ## 📊 Aging Statistics
-- Items in backup: 10 (VS: 4, TD: 6)
+- Items in backup: 11 (VS: 5, TD: 6)
 - Oldest item: All reset to 2025-08-22
 - Next move to deletion: 2025-09-01 (10 days from reset)
 
@@ -14,213 +14,40 @@
 
 *These items have 10 days total lifetime from reset date before automatic deletion*
 
-### VS_003B: Tier System Introduction [Score: 80/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead
-**Size**: S (4-6 hours)
-**Priority**: Important
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Depends On**: VS_003A
+### VS_008: Godot Resource-Based Rewards [Score: 70/100]
+**Status**: Ready for Dev (Deferred - prototyping phase)
+**Owner**: Dev Engineer (when needed)
+**Size**: S (4h)
+**Priority**: Ideas (infrastructure optimization)
+**Created**: 2025-08-27 13:53
+**Moved to Backup**: 2025-08-28 00:38
+**Will Delete**: 2025-09-07 (10 days from move)
 
-**What**: Add tier indicators and tier-based reward scaling
-**Why**: Introduces progression concept without transformation mechanics
+**What**: Migrate hardcoded reward values to Godot Resource files
+**Why**: Enables rapid balancing without recompiling
 
-**Core Mechanic**:
-- Blocks show tier indicator (T1, T2, T3)
-- Higher tier blocks give more resources/attributes when matched:
+**Product Owner Decision** (2025-08-28 00:38):
+- **Deferred during prototype phase** - premature optimization
+- We haven't playtested enough to know what needs balancing
+- VS_003C Transmutation adds more player value (strategic depth)
+- Resurrect VS_008 when we're doing heavy balance iteration
+- Score 70/100: Good architecture, wrong timing
 
-**Tier Bonuses** (multiplicative):
-- Tier 1: ×1.0 (base)
-- Tier 2: ×3.0 tier bonus
-- Tier 3: ×10.0 tier bonus
-- Manual tier-2/3 spawn for testing (debug command)
+**Tech Lead Notes** (preserved):
+- Complexity: 5/10 - New architectural boundary
+- Pattern: Bridge service, first of its kind
+- Risk: Medium - sets precedent for resource integration
 
-**Done When**:
-- Blocks display tier visually
-- Matching higher tiers gives proportional resources/attributes
-- Debug commands to spawn specific tiers
-- 3+ tests for tier-based calculations
+**Resurrect When**:
+- Playtesting reveals frequent balance changes needed
+- Non-programmers need to tweak values regularly
+- Core mechanics are stable and proven fun
 
-### VS_003C: Unlockable Tier-Up System [Score: 75/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead
-**Size**: M (8-10 hours)
-**Priority**: Important
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Depends On**: VS_003B
 
-**What**: Spend resources to unlock tier-up abilities
-**Why**: Creates strategic resource management and player agency
 
-**Core Mechanic**:
-- Unlock shop UI (simple buttons)
-- Spend resources to unlock tier-up abilities:
-  - "Unlock Work Tier-Up" - 100 Money (resource)
-  - "Unlock Study Tier-Up" - 100 Knowledge (attribute)
-- When unlocked: 3 same-type blocks can tier-up to 1 higher tier block
-- Player chooses: match for resources/attributes OR tier-up for progression
 
-**Done When**:
-- Unlock shop displays available unlocks
-- Can spend resources to unlock abilities
-- Unlocked tier-ups work alongside matching
-- Visual indicator for unlocked abilities
-- 5+ tests for unlock system
 
-### VS_003D: Cross-Type Transmutation System [Score: 60/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead
-**Size**: M (6-8 hours)
-**Priority**: Ideas (future)
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Depends On**: VS_003C
 
-**What**: Unlock special cross-type transmutations
-**Why**: Adds strategic depth through type conversion
-
-**Core Mechanic**:
-- Expensive unlocks for transmutation recipes:
-  - Work + Work + Study → Career (500 Money + 300 Knowledge)
-  - Health + Health + Fun → Wellness (300 Health + 200 Happiness)
-- Different from tier-up: Changes block TYPE not TIER
-- Creates special blocks with unique properties
-
-**Done When**:
-- Unlock shop displays transmutation recipes
-- Can spend resources to unlock transmutation abilities
-- Transmutation works alongside matching and tier-up
-- Visual indication of transmuted block types
-- 5+ tests for transmutation system
-
-### VS_004: Auto-Spawn System [Score: 75/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead (for breakdown)
-**Size**: S (4-6 hours - straightforward mechanic)
-**Priority**: Important
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Depends On**: VS_003A (need matching to manage spawned blocks)
-
-**What**: Automatically spawn new blocks at TURN START before player acts (Tetris-style)
-**Why**: Creates strategic planning - player must account for new block before moving
-
-**Core Mechanic** (UPDATED - Turn-Based):
-- **Spawn Trigger**: At TURN START (before player can act)
-- **Turn Flow**: Spawn → Player sees board → Player acts → Matches resolve → Turn ends
-- **Spawn Count**: 1 block per turn (adjustable for difficulty later)
-- **Spawn Position**: Random empty position
-- **Spawn Type**: Random from available block types (weighted distribution)
-- **Game Over**: When spawn fails due to no empty positions at turn start
-
-**Implementation Approach**:
-- Hook into existing command completion (after move/place/merge)
-- Find all empty positions on grid
-- If empty positions exist: spawn random block type at random position
-- If no empty positions: trigger game over state
-- Visual feedback for spawned block (appear animation/effect)
-
-**Spawn Distribution** (initial):
-- All 9 block types equally weighted (11.1% each)
-- Future: Weight based on life stage or difficulty
-
-**Done When**:
-- Block spawns after every player action
-- Spawns only on empty positions
-- Visual indication of newly spawned block
-- Game over triggers when grid is full
-- Game over screen with final resources and attributes
-- 5+ unit tests for spawn logic
-- 2+ tests for game over detection
-
-**NOT in Scope**:
-- Difficulty progression (spawn rate increase)
-- Weighted spawn probabilities
-- Special spawn patterns or rules
-- Power-ups to clear spawned blocks
-- Spawn preview/prediction
-- Multiple spawns per turn
-- Life-stage specific spawn rules
-
-**Product Owner Notes**:
-- Start with simplest version - one block per turn
-- This creates the core gameplay loop: Act → Spawn → React
-- Game over condition finally makes score meaningful
-- Must feel fair - random but not cruel
-
-### VS_005: Chain Reaction System [Score: 90/100]
-**Status**: Proposed
-**Owner**: Product Owner → Tech Lead (for breakdown)
-**Size**: M (6-8 hours - builds on VS_003A foundation)
-**Priority**: Important
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Depends On**: VS_003A (need basic matching first)
-
-**What**: Add cascading matches that trigger automatically, with exponential resource/attribute bonuses
-**Why**: Creates the addictive "YES!" moments that separate good puzzle games from great ones
-
-**Core Mechanic**:
-- **Chain Trigger**: After any match completes, check if result can trigger new match
-- **Recursive Detection**: Each chain can trigger another chain
-- **Chain Bonus**: Base × 1 → ×2 → ×4 → ×8 → ×16 (exponential)
-- **Chain Counter**: Display "Chain ×2!", "Chain ×3!" etc.
-- **Celebration**: Bigger effects for longer chains
-
-**Implementation Approach**:
-- After match completes, run match detection on result position
-- If new match detected, execute it with increased bonus
-- Continue recursively until no more matches possible
-- Track chain depth for scoring and display
-- Add brief delay between chains for visual clarity
-
-**Resource/Attribute Formula**:
-```
-Chain 1: 10 resources/attributes × 1 = 10
-Chain 2: 10 resources/attributes × 2 = 20
-Chain 3: 10 resources/attributes × 4 = 40
-Chain 4: 10 resources/attributes × 8 = 80
-Total for 4-chain: 150 resources/attributes!
-
-Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainBonus) + Rewards
-```
-
-**Done When**:
-- Matches automatically trigger follow-up matches
-- Resource/attribute bonus increases exponentially per chain
-- Chain counter displays during chains
-- Visual delay between chain steps (player can follow what happened)
-- Different sound effects for each chain level
-- 5+ unit tests for chain detection
-- 3+ tests for bonus calculation
-- 2+ tests for recursive chain limits
-
-**NOT in Scope**:
-- Special chain-only blocks
-- Chain preview/planning UI
-- Undo for chains
-- Chain-specific animations (use simple for now)
-- Maximum chain bonuses/achievements
-- Chain-triggered special events
-
-**Critical Design Decisions**:
-- **Delay Between Chains**: 0.3-0.5 seconds (fast enough to feel smooth, slow enough to see)
-- **Max Chain Depth**: Unlimited (let players find crazy combos)
-- **Bonus Cap**: No cap initially (see how high players can go)
-
-**Product Owner Notes**:
-- This is THE feature that makes match-3 games addictive
-- Must feel satisfying - sound/visual feedback crucial
-- Exponential bonuses reward elaborate setups
-- Creates skill gap between new and experienced players
-- Watch for degenerate strategies (infinite chains)
 
 ---
 
@@ -277,52 +104,7 @@ Final Formula: (BaseValue × BlockCount × TierBonus × MatchSizeBonus × ChainB
 - With only 2 tests, we need basic coverage first
 - When swap mechanics get complex (power-ups, constraints), revisit
 
-### TD_017: Create Centralized Turn Manager
-**Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer  
-**Size**: S (2-3 hours)
-**Priority**: Important
-**Created**: 2025-08-19
-**Reset**: 2025-08-22 (Aging protocol started)
-**Will Delete**: 2025-09-01 (unless rescued)
-**Markers**: [ARCHITECTURE] [ROOT-CAUSE]
 
-**What**: Centralize turn/phase management in single service
-**Why**: Scattered turn logic causes race conditions, makes replay/undo impossible
-
-**Tech Lead Decision** (2025-08-19):
-✅ **APPROVED** - Implement before VS_004 (Auto-Spawn)
-
-**Technical Approach**:
-```csharp
-public enum TurnPhase 
-{
-    SpawnPhase,      // New blocks appear
-    PlayerPhase,     // Player can act
-    ResolutionPhase, // Patterns process
-    EndPhase         // Cleanup, check game over
-}
-
-public interface ITurnManager 
-{
-    int CurrentTurn { get; }
-    TurnPhase CurrentPhase { get; }
-    bool IsPlayerActionAllowed { get; }
-    
-    Task<Fin<Unit>> StartNewTurn();
-    Task<Fin<Unit>> AdvancePhase();
-    Task<Fin<Unit>> ExecutePlayerAction(IRequest command);
-}
-```
-
-**Done When**:
-- ITurnManager interface defined
-- TurnManager implementation with phases
-- All player actions go through TurnManager
-- Turn flow: Spawn → Player → Resolve → End
-- 5+ unit tests for phase transitions
-
-**Depends On**: None - Do before VS_004
 
 ### TD_018: Add Block Unique IDs
 **Status**: Proposed

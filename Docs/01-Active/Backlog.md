@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 18:42
+**Last Updated**: 2025-08-28 00:50
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -8,8 +8,8 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
-- **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 009 (Last: VS_008 - 2025-08-27 13:53)
+- **Next TD**: 090 (Last: TD_089 - 2025-08-28 00:50)  
+- **Next VS**: 010 (Last: VS_009 - 2025-08-28 00:38)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,134 +65,139 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### TD_089: Session Analytics System
+**Status**: Proposed
+**Owner**: Tech Lead → Dev Engineer  
+**Size**: S (3-4h)
+**Priority**: Critical (blocks informed balance decisions)
+**Created**: 2025-08-28 00:50
+
+**What**: Local JSON session logging for economy analysis
+**Why**: Can't balance without data - need to see actual resource flow patterns
+
+**Implementation Approach**:
+- Create `SessionAnalyticsService` that hooks into game events
+- Log all actions with timestamps and turn numbers
+- Track resource changes and grid state
+- Save JSON files to `Analytics/Sessions/` folder
+- Include session summary for quick analysis
+
+**Data to Capture**:
+```json
+{
+  "sessionId": "uuid",
+  "startTime": "ISO-8601",
+  "events": [
+    {"turn": 1, "action": "place", "details": {...}},
+    {"turn": 1, "action": "match", "reward": {"Money": 30}}
+  ],
+  "economySnapshots": [
+    {"turn": 10, "resources": {...}, "gridDensity": 0.35}
+  ],
+  "summary": {
+    "totalTurns": 47,
+    "totalMatches": 23,
+    "totalMerges": 8,
+    "maxChain": 4,
+    "finalResources": {...}
+  }
+}
+```
+
+**Done When**:
+- Every player action logged with context
+- Resource flow tracked per turn
+- Session files auto-save to Analytics folder
+- Can aggregate data across multiple sessions
+- Test with 10+ recorded sessions
+
+**Product Owner Notes**:
+- This comes BEFORE VS_009 so we can measure transmutation's impact
+- Enables A/B testing (sessions with/without features)
+- Real data > assumptions for balance decisions
+
 ---
 
-### VS_007: Auto-Spawn System  
-**Status**: Ready - VS_006 COMPLETE ✅ with full turn integration
-**Owner**: Dev Engineer
-**Size**: S (3h) - REDUCED SCOPE
+### VS_009: Transmutation System
+**Status**: Ready for Dev (Phase 0/4)
+**Owner**: Tech Lead
+**Size**: M (4-6h)
 **Priority**: Critical
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 23:43 - Simplified: No gameover logic, no audio feedback
+**Created**: 2025-08-28 00:38
+**Reviewed**: Pending Tech Lead breakdown
 
-**What**: Automatically spawn new blocks at the start of each turn
-**Why**: Forces space management decisions and creates game pressure
+**What**: Allow players to transmute blocks of different types into strategic combinations
+**Why**: Adds critical strategic depth - transforms matching from reactive to planning gameplay
+
+**Player Experience**:
+- See 3 different block types on grid (e.g., Work + Study + Health)
+- Hold Shift and click 3 blocks to select for transmutation
+- Selected blocks highlight with pulsing outline
+- Click "Transmute" button (or press T) to execute
+- 3 blocks combine into 1 higher-tier block of player's CHOICE
+
+**Core Mechanic**:
+- Requires 3 blocks of DIFFERENT types (not same type like merge)
+- Player chooses resulting block type from the 3 inputs
+- Result is 1 tier higher than lowest input tier
+- Position: Center block of selection (like merge)
+- Cost: Small resource fee (10 Money per transmutation)
 
 **Phase Breakdown (Model-First Protocol)**:
 
-#### Phase 1: Domain Model ✅ COMPLETE (2025-08-27 23:50)
-**Acceptance**: Simple spawn logic works correctly ✅
-- ✅ Create `IAutoSpawnStrategy` interface and `RandomSpawnStrategy`
-- ✅ Weighted block type selection (Fun: 7%, Health: 22%, Work: 20%, etc.)
-- ✅ Unit tests for spawn position selection and empty space validation (20+ tests)
-- ✅ Handle case when grid is full (skip spawn, no error) - Option<T> pattern
-- ✅ Pure functional design with zero external dependencies
-**Commit**: `fdae42f feat(VS_007): auto-spawn domain model [Phase 1/4]` ✅
+#### Phase 1: Domain Model (1.5h)
+**Acceptance**: Transmutation rules work in pure C#
+- Create `TransmutationPattern` domain model
+- Validation: 3 different types required
+- Calculate result tier (min input tier + 1)
+- Unit tests for all combinations
+**Commit**: `feat(VS_009): transmutation domain model [Phase 1/4]`
 
-#### Phase 2: Application Layer ✅ COMPLETE (2025-08-27 23:55)
-**Acceptance**: Spawn triggered by turn events ✅
-- ✅ Create `AutoSpawnHandler` for `TurnStartNotification`
-- ✅ Wire spawn to use existing `PlaceBlockCommand`
-- ✅ Handler tests with mocked grid state (13 comprehensive tests)
-- ✅ Test graceful handling of full grid (skips spawn, no errors)
-- ✅ Functional error handling with Option<T> and proper logging
-**Commit**: `a84ccc2 feat(VS_007): auto-spawn command handlers [Phase 2/4]` ✅
+#### Phase 2: Application Layer (1h)
+**Acceptance**: Commands process transmutation requests
+- Create `TransmuteBlocksCommand` with 3 positions + chosen type
+- Handler validates and executes transmutation
+- Integration with existing pattern system
+- Handler tests with mock grid
+**Commit**: `feat(VS_009): transmutation commands [Phase 2/4]`
 
-#### Phase 3: Infrastructure ✅ COMPLETE (2025-08-28 00:01)
-**Acceptance**: Grid state correctly tracks spawns ✅
-- ✅ Integrate with `GridStateService` for empty position queries
-- ✅ DI registration: IAutoSpawnStrategy → RandomSpawnStrategy in GameStrapper
-- ✅ MediatR auto-discovery confirmed working (handler instantiation verified)
-- ✅ Fixed namespace: AutoSpawnHandler moved to proper .Notifications folder
-- ✅ Architecture tests passing (498/499 tests pass - infrastructure complete)
-- ✅ E2E flow ready: Block movement → Turn advance → Auto-spawn confirmed
-**Commit**: `dfd0519 feat(VS_007): auto-spawn state integration [Phase 3/4]` ✅
+#### Phase 3: Infrastructure (1h)
+**Acceptance**: State updates correctly
+- Update GridStateService for transmutation
+- Track transmutation count for stats
+- Integration tests with real grid
+**Commit**: `feat(VS_009): transmutation state [Phase 3/4]`
 
-#### Phase 4: Presentation (30min)
-**Acceptance**: Visual feedback for spawns only
-- Create simple spawn animation in Godot
-- Manual test spawn variations
-- Manual test behavior with full/near-full grid
-**Commit**: `feat(spawn): visual feedback [Phase 4/4]`
+#### Phase 4: Presentation (1.5h)
+**Acceptance**: Players can transmute via UI
+- Shift+Click selection mode (3 blocks max)
+- Visual selection feedback (pulsing outline)
+- "Transmute" button appears when valid
+- Type selection popup/dropdown
+- Success animation (convergence effect)
+**Commit**: `feat(VS_009): transmutation UI [Phase 4/4]`
 
-**Depends On**: VS_006 Phase 2+ (Turn System commands/handlers needed for TurnStartNotification)
+**Done When**:
+- Can select 3 different block types
+- Can choose resulting block type
+- Transmutation creates higher tier block
+- Visual feedback throughout process
+- 20+ tests covering domain/application/integration
 
-**Implementation Status** ✅ **PHASES 1-3 COMPLETE** (2025-08-28 00:01):
-- ✅ **E2E Flow Working**: Block movement triggers automatic spawn on turn advance
-- ✅ **Infrastructure Ready**: Complete MediatR pipeline integration verified
-- ✅ **Quality Validated**: 498/499 tests passing, architecture constraints satisfied  
-- 🎯 **Phase 4 Ready**: Only presentation layer (visual feedback) remaining
+**Depends On**: None (uses existing pattern infrastructure)
 
-**Tech Lead Decision** (2025-08-27 23:43):
-- Complexity: 2/10 - Simplified to basic auto-spawn only
-- Pattern: Strategy for spawn logic, reuse PlaceBlockCommand
-- Risk: Low - no safety-critical features, graceful degradation
-- **Scope Change**: Removed gameover detection and audio feedback
-- **Benefit**: Faster delivery, simpler testing, easier debugging
+**Product Owner Notes**:
+- This is THE strategic feature that makes the game interesting
+- Without this, players just react to RNG
+- With this, players PLAN their moves 3-4 turns ahead
+- Creates meaningful choice: "Do I match for resources or transmute for positioning?"
+
+---
+
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
-
-### VS_008: Godot Resource-Based Rewards
-**Status**: Ready for Dev (Phase 0/4) - Independent feature, no VS_006 dependencies
-**Owner**: Dev Engineer
-**Size**: S (4h)
-**Priority**: Important
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 16:57 - Ready to proceed independently
-
-**What**: Migrate hardcoded reward values to Godot Resource files
-**Why**: Enables rapid balancing and debugging without recompiling
-
-**Phase Breakdown (Model-First Protocol)**:
-
-#### Phase 1: Domain Model (1h)
-**Acceptance**: Reward calculation logic abstracted from data source
-- Create `IRewardDataProvider` interface
-- Create `RewardCalculator` with provider dependency
-- Implement tier-based scaling logic (pure functions)
-- Unit tests with mock data provider
-- Unit tests for all reward calculations
-**Commit**: `feat(rewards): domain model [Phase 1/4]`
-
-#### Phase 2: Application Layer (0.5h)
-**Acceptance**: Commands use abstracted reward system
-- Update existing reward handlers to use new calculator
-- Create `ReloadRewardsCommand` for hot reload
-- Handler tests with mocked provider
-**Commit**: `feat(rewards): command integration [Phase 2/4]`
-
-#### Phase 3: Infrastructure (1.5h)
-**Acceptance**: Bridge to Godot resources works
-- Create `GodotResourceBridge` service
-- Implement `GodotRewardDataProvider` using bridge
-- Create `.tres` resource files for each block type
-- Integration tests loading from resources
-- Verify hot reload in debug builds
-**Commit**: `feat(rewards): Godot bridge [Phase 3/4]`
-
-#### Phase 4: Presentation (1h)
-**Acceptance**: Debug overlay shows live values
-- Create F12 debug overlay UI
-- Display current reward values from resources
-- Show tier multipliers and calculations
-- Manual test hot reload changes
-- Manual test all block type rewards
-**Commit**: `feat(rewards): debug overlay [Phase 4/4]`
-
-**Depends On**: None (but more useful after VS_007)
-
-**Tech Lead Decision** (2025-08-27 14:05):
-- Complexity: 5/10 - New architectural boundary (C# ↔ Godot)
-- Pattern: Bridge service pattern, first of its kind
-- Can run parallel with VS_006 - no dependencies
-- Risk: Medium - sets precedent for resource integration
-- **Phase Gates**: Bridge pattern must be clean and reusable
-
----
 
 
 
@@ -245,32 +250,24 @@
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
 
-### VS_006: Core Turn System ⭐ MAJOR COMPLETION
-**Status**: Done ✅ (Phase 4/4 + Critical Bug Fix COMPLETE)
-**Completed**: 2025-08-27 19:33 (Final bug fix and archival)
+### VS_006: Turn System 
+**Status**: COMPLETED ✅
+**Completed**: 2025-08-27 (All 4 phases)
+**Size**: M (actual: ~4h)
 **Owner**: Dev Engineer
-**Size**: S (4h total - 3h backend + 1h integration + bug fix)
-**Priority**: Critical
 
-**What**: Implement turn counter with one-action-per-turn limitation
-**Why**: Creates time pressure that makes the game challenging and meaningful
+**What**: Full turn system with counter and proper game flow
+**Result**: Turn counter working, advances on block moves, proper spawn→action→resolve flow
 
-**🔧 CRITICAL BUG FIX**: Fixed fundamental game economy issue where block placement was incorrectly advancing turns
-- **Before**: ALL block actions consumed turns (placement, cascades, merges)
-- **After**: Only block MOVEMENT consumes turns (placement is free, cascades are free)
-- **Impact**: Restored strategic depth - placement is for positioning, movement costs turns
-- **Technical**: Replaced TurnAdvancementHandler with TurnAdvancementAfterMoveHandler
+### VS_007: Auto-Spawn System
+**Status**: COMPLETED ✅ 
+**Completed**: 2025-08-27 (Phases 1-3, UI deferred)
+**Size**: M (actual: ~3.5h)
+**Owner**: Dev Engineer
 
-**Key Achievements**:
-- ✅ Complete turn system with proper game mechanics
-- ✅ Fixed turn advancement bug that made game unplayable
-- ✅ All 450+ tests passing after DI container fixes
-- ✅ Clean logging and production-ready code
-- ✅ Model-First implementation across all 4 phases
-- ✅ **UNBLOCKS**: VS_007 Auto-Spawn, VS_008 Resource Rewards
-
-**Phase Summary**: Phase 1-2 complete, Phase 3 deferred (YAGNI), Phase 4 complete
-**Files Created**: 15+ files across domain, application, and presentation layers
+**What**: Automatic block spawning at turn start
+**Result**: Blocks spawn correctly each turn, full domain/handler/state implementation
+**Note**: Phase 4 UI polish intentionally deferred for post-prototype
 
 ### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
 **Status**: Resolved
