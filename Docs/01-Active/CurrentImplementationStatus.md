@@ -2,8 +2,8 @@
 
 *Ground truth of what's actually built and working in the codebase*
 
-**Last Verified**: 2025-08-27 13:53 (via Product Owner review)
-**Test Status**: 387 tests passing ✅
+**Last Verified**: 2025-08-29 01:00 (via Product Owner review)
+**Test Status**: 400+ tests passing ✅
 **Architecture**: Clean VSA with CQRS + LanguageExt functional patterns
 
 ---
@@ -27,13 +27,13 @@
 - **Performance profiling** - F9/F10/F11 hotkeys for developers
 
 #### ❌ Not Implemented Yet
-- **Turn System** - No turn counter or action limits (VS_006 will add)
-- **Auto-spawn system** - No automatic block generation (VS_007 will add)
-- **Transmutation** - Logic exists but no UI trigger
+- **Infant Stage** - Core onboarding experience (VS_010 priority)
+- **Dynamic Grid Sizing** - Needed for 4x4 → 5x5 growth
+- **Parent Block System** - Auto-spawning helper blocks
+- **Effect System** - Proximity-based block interactions
 - **Save/Load** - No persistence between sessions
-- **Grid expansion** - Fixed 10x10 size
-- **Life stages** - No aging or time progression
-- **Narrative events** - No story elements
+- **Life stages progression** - Only infant stage planned currently
+- **Narrative events** - No story elements yet
 
 ---
 
@@ -74,26 +74,21 @@ When T2+ Unlocked → Pattern Recognition Changes:
     ✅ Merge REPLACES match behavior when unlocked
 ```
 
-### VS_006: Core Turn System [READY FOR DEV]
-**Technical Breakdown (2025-08-27 Tech Lead):**
-- TurnManager service tracking turn number (4h estimate)
-- Integration with MoveBlockCommandHandler
-- Turn advances AFTER all chain reactions
-- Complexity: 3/10 - follows existing patterns
+### VS_006: Core Turn System [COMPLETE]
+**Implemented**: Turn counter, proper action flow, spawn→action→resolve cycle
+**Result**: Foundation for game pacing established
 
-### VS_007: Auto-Spawn System [READY FOR DEV - Depends on VS_006]
-**Technical Breakdown (2025-08-27 Tech Lead):**
-- SpawnService with IAutoSpawnStrategy (4.5h estimate)
-- Hooks into TurnStartNotification
-- Safety-critical: Game over detection
-- Complexity: 4/10 - strategy pattern
+### VS_007: Auto-Spawn System [COMPLETE]
+**Implemented**: Blocks spawn each turn, full domain/handler/state implementation
+**Note**: UI polish deferred for post-prototype
 
-### VS_008: Resource-Based Rewards [READY FOR DEV - Independent]
-**Technical Breakdown (2025-08-27 Tech Lead):**
-- GodotResourceBridge service pattern (4h estimate)
-- First Godot resource integration (sets precedent)
-- Can run parallel with VS_006
-- Complexity: 5/10 - new architectural boundary
+### VS_010: Infant Stage Foundation [PROPOSED - CRITICAL]
+**Product Owner Priority**: Natural tutorial through baby metaphor
+- 4x4 grid expanding to 5x5 (baby growing)
+- Parent blocks that help when baby struggles
+- Need/Care matching mechanic
+- No failure state - infinite exploration
+**Awaiting**: Tech Lead feasibility review
 
 ---
 
@@ -130,11 +125,11 @@ When T2+ Unlocked → Pattern Recognition Changes:
 
 ## 🎯 Next Logical Steps
 
-1. **VS_006: Turn System** (Critical) - Foundation for game pacing
-2. **VS_007: Auto-Spawn** (Critical) - Creates core gameplay loop
-3. **VS_008: Resource Config** (Important) - Enables rapid iteration
+1. **TD_089: Analytics Foundation** (Critical) - Need data before more features
+2. **VS_010: Infant Stage** (Critical) - Natural onboarding through baby metaphor
+3. **TD_081: Test Coverage** (Important) - Ensure merge system reliability
 
-These three slices will complete the core gameplay loop and enable proper playtesting.
+**Strategic Pivot**: Emotional engagement over mechanical complexity. The infant stage provides a perfect tutorial that doesn't feel like one.
 
 ---
 
@@ -148,9 +143,9 @@ These three slices will complete the core gameplay loop and enable proper playte
 
 **What Needs Attention:**
 - Player-facing UI for unlocks (debug panel only)
-- No time pressure without turns
+- Complex mechanics before proving fun (avoiding with infant stage)
 - Hardcoded values slow balancing
-- Missing core loop completion
+- Need emotional hook for player retention
 
 ---
 

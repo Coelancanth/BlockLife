@@ -853,6 +853,35 @@
 **Unblocked**: VS_003B merge system PR ready for deployment, test suite integrity restored
 [METADATA: test-failure, purchase-validation, merge-unlock-system, business-rules, test-setup, pr-blocker, debugger-expert]
 
+### 2025-08-28
+
+#### VS_006: Core Turn System ✅ COMPLETED
+**Completed**: 2025-08-28
+**Effort**: S (4h total - 3h backend + 1h integration + bug fix)
+**Outcome**: Complete turn system with proper game mechanics and critical bug fix that made game playable
+**Implementation**: Full Model-First implementation across 4 phases - turn counter with one-action-per-turn limitation creates strategic time pressure
+**Critical Bug Fix**: Fixed fundamental game economy issue where block placement incorrectly advanced turns - only block MOVEMENT now consumes turns (placement and cascades are free)
+**Technical Achievement**: Replaced TurnAdvancementHandler with TurnAdvancementAfterMoveHandler, restored strategic depth where placement is for positioning and movement costs turns
+**Quality**: All 450+ tests passing after DI container fixes, clean logging and production-ready code
+**Lessons**: Multi-phase Model-First protocol enables systematic delivery of complex features while maintaining code quality and architectural integrity
+**Unblocked**: VS_007 Auto-Spawn System, VS_008 Resource Rewards, core game mechanic foundation established
+**Impact**: Game now playable with strategic depth - players must carefully consider when to move vs place blocks
+[METADATA: turn-system, game-mechanics, strategic-gameplay, model-first-protocol, critical-bug-fix, mvp-pattern, clean-architecture, dev-engineer]
+
+#### VS_007: Auto-Spawn System ✅ COMPLETED  
+**Completed**: 2025-08-28
+**Effort**: S (3h - reduced scope)
+**Outcome**: Automatic block spawning system with complete E2E integration - forces space management decisions and creates game pressure
+**Implementation**: Phases 1-3 complete with core functionality working - weighted block type selection, functional error handling, full MediatR pipeline integration
+**Technical Achievement**: Strategy pattern for spawn logic reusing PlaceBlockCommand, Option<T> pattern for graceful full-grid handling, 498/499 tests passing
+**Architecture**: Pure functional design with zero external dependencies, proper namespace organization, comprehensive test coverage (33+ tests total)
+**E2E Flow**: Block movement triggers turn advance which triggers automatic spawn - complete integration verified
+**Phase Status**: Phases 1-3 complete (domain, application, infrastructure), Phase 4 (visual feedback) optional
+**Lessons**: Reduced scope (no gameover logic, no audio feedback) enabled faster delivery with simpler testing and easier debugging
+**Unblocked**: Core auto-spawn mechanic functional, game pressure system established, foundation for additional spawn strategies
+**Impact**: Players now face continuous space management pressure, strategic decisions required every turn
+[METADATA: auto-spawn, game-pressure, space-management, strategy-pattern, model-first-protocol, functional-programming, e2e-integration, dev-engineer]
+
 ---
 
 ## ❌ Rejected Items

@@ -9,7 +9,7 @@
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
 - **Next TD**: 090 (Last: TD_089 - 2025-08-28 00:50)  
-- **Next VS**: 010 (Last: VS_009 - 2025-08-28 00:38)
+- **Next VS**: 011 (Last: VS_010 - 2025-08-29 01:00)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,33 +65,110 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
-### TD_089: Session Analytics System
+### VS_010: Infant Stage Foundation (Natural Tutorial)
 **Status**: Proposed
-**Owner**: Tech Lead → Dev Engineer  
+**Owner**: Product Owner → Tech Lead
+**Size**: M (6-8h)
+**Priority**: Critical (defines entire game onboarding)
+**Created**: 2025-08-29 01:00
+
+**What**: Implement infant life stage with 5x5 grid, center parent block, and proximity effect system
+**Why**: Natural tutorial through baby nurturing - teaches through emotion, not instruction
+
+**Core Mechanics**:
+1. **5x5 Grid**: Fixed size with Parent Block at CENTER (2,2)
+2. **Parent Block**: Unmovable center block that spawns help based on baby's state
+3. **Need System**: Cry action creates Need blocks (red)
+4. **Care Matching**: Need + Care + Care = Comfort (3-match required)
+5. **No Energy Cost**: Babies explore freely (no turn limits)
+
+**Block Types & Rules** (Simple Same-Type Matching):
+- **Need** 😢: Match 3 = Tantrum (parent helps) | Proximity to Care = Transform to Happy
+- **Care** 🤗: Match 3 = Comfort | Proximity to Need = Healing (2 turn resolution)
+- **Love** 💕: Match 3 = Joy burst | Acts as Care in proximity effects
+- **Toy** 🧸: Match 3 = Fun | ONLY type that merges (teaching mechanic)
+- **Sleep** 😴: Match 3 = Rest | Auto-matches after 5 turns (patience lesson)
+
+**Parent Block AI** (Center Position):
+```
+Every 3 actions:
+  If stress > 2 → Spawn 2 Care blocks adjacent
+  If happy → Spawn 1 Love block adjacent
+  Default → Spawn 1 Care block adjacent
+On chain → "Proud parent" → Spawn Love
+Grid > 20 blocks → "Cleanup time" → Remove old Toys
+```
+
+**Learning Progression** (Cognitive Load Optimized):
+1. **Turns 1-10**: Basic same-type matching only
+2. **Turns 11-20**: Proximity effects visible (glowing blocks)
+3. **Turns 21-30**: Toy blocks + chains possible
+4. **Turns 31-40**: Toy merge unlocked + Sleep mechanics
+5. **Turns 41-50**: All systems active → Graduate at 50 comfort
+
+**Acceptance Criteria**:
+- 5x5 grid with Parent Block fixed at center (2,2)
+- Same-type matching only (cognitive load reduction)
+- Proximity effects: Adjacent blocks interact over 2-3 turns
+- Context-sensitive tooltips guide learning
+- Parent AI with 3 states: Happy/Worried/Calm
+- Visual feedback: Glowing = proximity active
+- No failure state (infinite play)
+- Graduate at 50 comfort ("Baby is growing up!")
+
+**Product Owner Notes**:
+- Proximity effects solve mixed-type matching complexity
+- Tooltips are THE critical UX element (parent's voice)
+- One rule (match same colors) + emergence = depth
+- Visual language teaches without reading
+
+**Tech Lead Review Needed**:
+- Proximity effect system (new architecture)
+- Parent AI state machine implementation
+- Tooltip system (context-sensitive)
+- Block transformation animations (Need → Happy)
+
+📖 **Full Design Document**: [Docs/02-Design/Game/InfantStage.md](../02-Design/Game/InfantStage.md)
+
+---
+
+### TD_089: Event Logging Foundation (Analytics + Life-Review)
+**Status**: Approved ✅
+**Owner**: Dev Engineer  
 **Size**: S (3-4h)
-**Priority**: Critical (blocks informed balance decisions)
+**Priority**: Critical (enables analytics AND future life-review)
 **Created**: 2025-08-28 00:50
+**Approved**: 2025-08-28 01:30 by Tech Lead
+**Complexity Score**: 2/10 - Simple JSON logging with dual purpose
 
-**What**: Local JSON session logging for economy analysis
-**Why**: Can't balance without data - need to see actual resource flow patterns
+**What**: Event logging system for analytics and future life-review mechanics
+**Why**: Immediate need for balance data + foundation for Vision.md life-review feature
 
-**Implementation Approach**:
-- Create `SessionAnalyticsService` that hooks into game events
-- Log all actions with timestamps and turn numbers
-- Track resource changes and grid state
-- Save JSON files to `Analytics/Sessions/` folder
-- Include session summary for quick analysis
+**Tech Lead Decision**: 
+- Recognized as lightweight event sourcing pattern
+- Serves dual purpose: analytics now, life-review later
+- Keep implementation simple, design for extensibility
 
-**Data to Capture**:
+**Implementation Approach (Simple & Extensible)**:
+- Create `SessionLogger` service that hooks into existing game events
+- Log actions with turn, timestamp, action type, details
+- Add "significance" field for future Memory Palace feature
+- **NEW FILE per session**: `Analytics/Sessions/session_YYYYMMDD_HHmmss_[guid8].json`
+- Never overwrite - every attempt matters (even rage quits provide data)
+- Auto-cleanup: Delete files >30 days old (configurable)
+- Design to support future narrative tags
+
+**Data Structure**:
 ```json
 {
   "sessionId": "uuid",
   "startTime": "ISO-8601",
   "events": [
-    {"turn": 1, "action": "place", "details": {...}},
-    {"turn": 1, "action": "match", "reward": {"Money": 30}}
+    {"turn": 1, "time": "ISO-8601", "action": "place_block", "details": {...}},
+    {"turn": 1, "time": "ISO-8601", "action": "match_3", "details": {...}, "reward": {"Money": 30}},
+    {"turn": 47, "time": "ISO-8601", "action": "first_tier4", "significance": 0.8}
   ],
-  "economySnapshots": [
+  "snapshots": [
     {"turn": 10, "resources": {...}, "gridDensity": 0.35}
   ],
   "summary": {
@@ -99,6 +176,7 @@
     "totalMatches": 23,
     "totalMerges": 8,
     "maxChain": 4,
+    "keyMoments": ["first_tier4", "biggest_chain"],
     "finalResources": {...}
   }
 }
@@ -107,90 +185,17 @@
 **Done When**:
 - Every player action logged with context
 - Resource flow tracked per turn
-- Session files auto-save to Analytics folder
-- Can aggregate data across multiple sessions
-- Test with 10+ recorded sessions
+- "Significance" scores for major events
+- Each session creates new timestamped JSON file
+- Auto-save on game exit AND every 50 turns (crash protection)
+- Old sessions auto-cleanup after 30 days
+- Can query/aggregate across multiple session files
+- Foundation ready for life-review feature
 
 **Product Owner Notes**:
-- This comes BEFORE VS_009 so we can measure transmutation's impact
-- Enables A/B testing (sessions with/without features)
-- Real data > assumptions for balance decisions
-
----
-
-### VS_009: Transmutation System
-**Status**: Ready for Dev (Phase 0/4)
-**Owner**: Tech Lead
-**Size**: M (4-6h)
-**Priority**: Critical
-**Created**: 2025-08-28 00:38
-**Reviewed**: Pending Tech Lead breakdown
-
-**What**: Allow players to transmute blocks of different types into strategic combinations
-**Why**: Adds critical strategic depth - transforms matching from reactive to planning gameplay
-
-**Player Experience**:
-- See 3 different block types on grid (e.g., Work + Study + Health)
-- Hold Shift and click 3 blocks to select for transmutation
-- Selected blocks highlight with pulsing outline
-- Click "Transmute" button (or press T) to execute
-- 3 blocks combine into 1 higher-tier block of player's CHOICE
-
-**Core Mechanic**:
-- Requires 3 blocks of DIFFERENT types (not same type like merge)
-- Player chooses resulting block type from the 3 inputs
-- Result is 1 tier higher than lowest input tier
-- Position: Center block of selection (like merge)
-- Cost: Small resource fee (10 Money per transmutation)
-
-**Phase Breakdown (Model-First Protocol)**:
-
-#### Phase 1: Domain Model (1.5h)
-**Acceptance**: Transmutation rules work in pure C#
-- Create `TransmutationPattern` domain model
-- Validation: 3 different types required
-- Calculate result tier (min input tier + 1)
-- Unit tests for all combinations
-**Commit**: `feat(VS_009): transmutation domain model [Phase 1/4]`
-
-#### Phase 2: Application Layer (1h)
-**Acceptance**: Commands process transmutation requests
-- Create `TransmuteBlocksCommand` with 3 positions + chosen type
-- Handler validates and executes transmutation
-- Integration with existing pattern system
-- Handler tests with mock grid
-**Commit**: `feat(VS_009): transmutation commands [Phase 2/4]`
-
-#### Phase 3: Infrastructure (1h)
-**Acceptance**: State updates correctly
-- Update GridStateService for transmutation
-- Track transmutation count for stats
-- Integration tests with real grid
-**Commit**: `feat(VS_009): transmutation state [Phase 3/4]`
-
-#### Phase 4: Presentation (1.5h)
-**Acceptance**: Players can transmute via UI
-- Shift+Click selection mode (3 blocks max)
-- Visual selection feedback (pulsing outline)
-- "Transmute" button appears when valid
-- Type selection popup/dropdown
-- Success animation (convergence effect)
-**Commit**: `feat(VS_009): transmutation UI [Phase 4/4]`
-
-**Done When**:
-- Can select 3 different block types
-- Can choose resulting block type
-- Transmutation creates higher tier block
-- Visual feedback throughout process
-- 20+ tests covering domain/application/integration
-
-**Depends On**: None (uses existing pattern infrastructure)
-
-**Product Owner Notes**:
-- This is THE strategic feature that makes the game interesting
-- Without this, players just react to RNG
-- With this, players PLAN their moves 3-4 turns ahead
-- Creates meaningful choice: "Do I match for resources or transmute for positioning?"
+- Enables data-driven balance decisions
+- Foundation for Vision.md Memory Palace & Life-Review
+- Start simple, evolve as needed
 
 ---
 
@@ -200,6 +205,32 @@
 *Core features for current milestone, technical debt affecting velocity*
 
 
+
+## 🗄️ Backup (Complex Features for Later)
+*Advanced mechanics postponed until core loop is proven fun*
+
+### VS_009: Transmutation System
+**Status**: Backup (Too Complex for Current Stage)
+**Owner**: TBD
+**Size**: M (7h)
+**Priority**: Future
+**Created**: 2025-08-28 00:38
+**Moved to Backup**: 2025-08-29 01:00
+**Reason**: Complexity doesn't match infant stage simplicity
+
+**What**: Transmute 3 different block types into strategic combinations
+**Why**: Adds strategic depth for experienced players
+**When to Reconsider**: After infant stage proves fun and we need depth
+
+**Original Spec Summary**:
+- Select 3 different block types
+- Choose resulting type from inputs
+- Creates higher tier block
+- Costs resources (adds economy pressure)
+
+**Product Owner Note**: Great mechanic for later, but infant stage proves we can find depth through simplicity first. Revisit after core loop validation.
+
+---
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
