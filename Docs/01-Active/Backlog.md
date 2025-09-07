@@ -1,6 +1,6 @@
 # BlockLife Development Backlog
 
-**Last Updated**: 2025-08-27 18:42
+**Last Updated**: 2025-08-28 00:50
 **Last Aging Check**: 2025-08-22
 > 📚 See BACKLOG_AGING_PROTOCOL.md for 3-10 day aging rules
 
@@ -8,8 +8,8 @@
 **CRITICAL**: Before creating new items, check and update the appropriate counter.
 
 - **Next BR**: 017 (Last: BR_016 - 2025-08-26 23:25)
-- **Next TD**: 089 (Last: TD_088 - 2025-08-26 23:25)  
-- **Next VS**: 009 (Last: VS_008 - 2025-08-27 13:53)
+- **Next TD**: 090 (Last: TD_089 - 2025-08-28 00:50)  
+- **Next VS**: 011 (Last: VS_010 - 2025-08-29 01:00)
 
 **Protocol**: Check your type's counter → Use that number → Increment the counter → Update timestamp
 
@@ -65,136 +65,172 @@
 ## 🔥 Critical (Do First)
 *Blockers preventing other work, production bugs, dependencies for other features*
 
+### VS_010: Infant Stage Foundation (Natural Tutorial)
+**Status**: Proposed
+**Owner**: Product Owner → Tech Lead
+**Size**: M (6-8h)
+**Priority**: Critical (defines entire game onboarding)
+**Created**: 2025-08-29 01:00
+
+**What**: Implement infant life stage with 5x5 grid, center parent block, and proximity effect system
+**Why**: Natural tutorial through baby nurturing - teaches through emotion, not instruction
+
+**Core Mechanics**:
+1. **5x5 Grid**: Fixed size with Parent Block at CENTER (2,2)
+2. **Parent Block**: Unmovable center block that spawns help based on baby's state
+3. **Need System**: Cry action creates Need blocks (red)
+4. **Care Matching**: Need + Care + Care = Comfort (3-match required)
+5. **No Energy Cost**: Babies explore freely (no turn limits)
+
+**Block Types & Rules** (Simple Same-Type Matching):
+- **Need** 😢: Match 3 = Tantrum (parent helps) | Proximity to Care = Transform to Happy
+- **Care** 🤗: Match 3 = Comfort | Proximity to Need = Healing (2 turn resolution)
+- **Love** 💕: Match 3 = Joy burst | Acts as Care in proximity effects
+- **Toy** 🧸: Match 3 = Fun | ONLY type that merges (teaching mechanic)
+- **Sleep** 😴: Match 3 = Rest | Auto-matches after 5 turns (patience lesson)
+
+**Parent Block AI** (Center Position):
+```
+Every 3 actions:
+  If stress > 2 → Spawn 2 Care blocks adjacent
+  If happy → Spawn 1 Love block adjacent
+  Default → Spawn 1 Care block adjacent
+On chain → "Proud parent" → Spawn Love
+Grid > 20 blocks → "Cleanup time" → Remove old Toys
+```
+
+**Learning Progression** (Cognitive Load Optimized):
+1. **Turns 1-10**: Basic same-type matching only
+2. **Turns 11-20**: Proximity effects visible (glowing blocks)
+3. **Turns 21-30**: Toy blocks + chains possible
+4. **Turns 31-40**: Toy merge unlocked + Sleep mechanics
+5. **Turns 41-50**: All systems active → Graduate at 50 comfort
+
+**Acceptance Criteria**:
+- 5x5 grid with Parent Block fixed at center (2,2)
+- Same-type matching only (cognitive load reduction)
+- Proximity effects: Adjacent blocks interact over 2-3 turns
+- Context-sensitive tooltips guide learning
+- Parent AI with 3 states: Happy/Worried/Calm
+- Visual feedback: Glowing = proximity active
+- No failure state (infinite play)
+- Graduate at 50 comfort ("Baby is growing up!")
+
+**Product Owner Notes**:
+- Proximity effects solve mixed-type matching complexity
+- Tooltips are THE critical UX element (parent's voice)
+- One rule (match same colors) + emergence = depth
+- Visual language teaches without reading
+
+**Tech Lead Review Needed**:
+- Proximity effect system (new architecture)
+- Parent AI state machine implementation
+- Tooltip system (context-sensitive)
+- Block transformation animations (Need → Happy)
+
+📖 **Full Design Document**: [Docs/02-Design/Game/InfantStage.md](../02-Design/Game/InfantStage.md)
+
 ---
 
-### VS_007: Auto-Spawn System  
-**Status**: Ready - VS_006 COMPLETE ✅ with full turn integration
-**Owner**: Dev Engineer
-**Size**: S (3h) - REDUCED SCOPE
-**Priority**: Critical
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 23:43 - Simplified: No gameover logic, no audio feedback
+### TD_089: Event Logging Foundation (Analytics + Life-Review)
+**Status**: Approved ✅
+**Owner**: Dev Engineer  
+**Size**: S (3-4h)
+**Priority**: Critical (enables analytics AND future life-review)
+**Created**: 2025-08-28 00:50
+**Approved**: 2025-08-28 01:30 by Tech Lead
+**Complexity Score**: 2/10 - Simple JSON logging with dual purpose
 
-**What**: Automatically spawn new blocks at the start of each turn
-**Why**: Forces space management decisions and creates game pressure
+**What**: Event logging system for analytics and future life-review mechanics
+**Why**: Immediate need for balance data + foundation for Vision.md life-review feature
 
-**Phase Breakdown (Model-First Protocol)**:
+**Tech Lead Decision**: 
+- Recognized as lightweight event sourcing pattern
+- Serves dual purpose: analytics now, life-review later
+- Keep implementation simple, design for extensibility
 
-#### Phase 1: Domain Model ✅ COMPLETE (2025-08-27 23:50)
-**Acceptance**: Simple spawn logic works correctly ✅
-- ✅ Create `IAutoSpawnStrategy` interface and `RandomSpawnStrategy`
-- ✅ Weighted block type selection (Fun: 7%, Health: 22%, Work: 20%, etc.)
-- ✅ Unit tests for spawn position selection and empty space validation (20+ tests)
-- ✅ Handle case when grid is full (skip spawn, no error) - Option<T> pattern
-- ✅ Pure functional design with zero external dependencies
-**Commit**: `fdae42f feat(VS_007): auto-spawn domain model [Phase 1/4]` ✅
+**Implementation Approach (Simple & Extensible)**:
+- Create `SessionLogger` service that hooks into existing game events
+- Log actions with turn, timestamp, action type, details
+- Add "significance" field for future Memory Palace feature
+- **NEW FILE per session**: `Analytics/Sessions/session_YYYYMMDD_HHmmss_[guid8].json`
+- Never overwrite - every attempt matters (even rage quits provide data)
+- Auto-cleanup: Delete files >30 days old (configurable)
+- Design to support future narrative tags
 
-#### Phase 2: Application Layer ✅ COMPLETE (2025-08-27 23:55)
-**Acceptance**: Spawn triggered by turn events ✅
-- ✅ Create `AutoSpawnHandler` for `TurnStartNotification`
-- ✅ Wire spawn to use existing `PlaceBlockCommand`
-- ✅ Handler tests with mocked grid state (13 comprehensive tests)
-- ✅ Test graceful handling of full grid (skips spawn, no errors)
-- ✅ Functional error handling with Option<T> and proper logging
-**Commit**: `a84ccc2 feat(VS_007): auto-spawn command handlers [Phase 2/4]` ✅
+**Data Structure**:
+```json
+{
+  "sessionId": "uuid",
+  "startTime": "ISO-8601",
+  "events": [
+    {"turn": 1, "time": "ISO-8601", "action": "place_block", "details": {...}},
+    {"turn": 1, "time": "ISO-8601", "action": "match_3", "details": {...}, "reward": {"Money": 30}},
+    {"turn": 47, "time": "ISO-8601", "action": "first_tier4", "significance": 0.8}
+  ],
+  "snapshots": [
+    {"turn": 10, "resources": {...}, "gridDensity": 0.35}
+  ],
+  "summary": {
+    "totalTurns": 47,
+    "totalMatches": 23,
+    "totalMerges": 8,
+    "maxChain": 4,
+    "keyMoments": ["first_tier4", "biggest_chain"],
+    "finalResources": {...}
+  }
+}
+```
 
-#### Phase 3: Infrastructure ✅ COMPLETE (2025-08-28 00:01)
-**Acceptance**: Grid state correctly tracks spawns ✅
-- ✅ Integrate with `GridStateService` for empty position queries
-- ✅ DI registration: IAutoSpawnStrategy → RandomSpawnStrategy in GameStrapper
-- ✅ MediatR auto-discovery confirmed working (handler instantiation verified)
-- ✅ Fixed namespace: AutoSpawnHandler moved to proper .Notifications folder
-- ✅ Architecture tests passing (498/499 tests pass - infrastructure complete)
-- ✅ E2E flow ready: Block movement → Turn advance → Auto-spawn confirmed
-**Commit**: `dfd0519 feat(VS_007): auto-spawn state integration [Phase 3/4]` ✅
+**Done When**:
+- Every player action logged with context
+- Resource flow tracked per turn
+- "Significance" scores for major events
+- Each session creates new timestamped JSON file
+- Auto-save on game exit AND every 50 turns (crash protection)
+- Old sessions auto-cleanup after 30 days
+- Can query/aggregate across multiple session files
+- Foundation ready for life-review feature
 
-#### Phase 4: Presentation (30min)
-**Acceptance**: Visual feedback for spawns only
-- Create simple spawn animation in Godot
-- Manual test spawn variations
-- Manual test behavior with full/near-full grid
-**Commit**: `feat(spawn): visual feedback [Phase 4/4]`
+**Product Owner Notes**:
+- Enables data-driven balance decisions
+- Foundation for Vision.md Memory Palace & Life-Review
+- Start simple, evolve as needed
 
-**Depends On**: VS_006 Phase 2+ (Turn System commands/handlers needed for TurnStartNotification)
+---
 
-**Implementation Status** ✅ **PHASES 1-3 COMPLETE** (2025-08-28 00:01):
-- ✅ **E2E Flow Working**: Block movement triggers automatic spawn on turn advance
-- ✅ **Infrastructure Ready**: Complete MediatR pipeline integration verified
-- ✅ **Quality Validated**: 498/499 tests passing, architecture constraints satisfied  
-- 🎯 **Phase 4 Ready**: Only presentation layer (visual feedback) remaining
-
-**Tech Lead Decision** (2025-08-27 23:43):
-- Complexity: 2/10 - Simplified to basic auto-spawn only
-- Pattern: Strategy for spawn logic, reuse PlaceBlockCommand
-- Risk: Low - no safety-critical features, graceful degradation
-- **Scope Change**: Removed gameover detection and audio feedback
-- **Benefit**: Faster delivery, simpler testing, easier debugging
 
 
 ## 📈 Important (Do Next)
 *Core features for current milestone, technical debt affecting velocity*
 
-### VS_008: Godot Resource-Based Rewards
-**Status**: Ready for Dev (Phase 0/4) - Independent feature, no VS_006 dependencies
-**Owner**: Dev Engineer
-**Size**: S (4h)
-**Priority**: Important
-**Created**: 2025-08-27 13:53
-**Reviewed**: 2025-08-27 14:05
-**Updated**: 2025-08-27 16:57 - Ready to proceed independently
 
-**What**: Migrate hardcoded reward values to Godot Resource files
-**Why**: Enables rapid balancing and debugging without recompiling
 
-**Phase Breakdown (Model-First Protocol)**:
+## 🗄️ Backup (Complex Features for Later)
+*Advanced mechanics postponed until core loop is proven fun*
 
-#### Phase 1: Domain Model (1h)
-**Acceptance**: Reward calculation logic abstracted from data source
-- Create `IRewardDataProvider` interface
-- Create `RewardCalculator` with provider dependency
-- Implement tier-based scaling logic (pure functions)
-- Unit tests with mock data provider
-- Unit tests for all reward calculations
-**Commit**: `feat(rewards): domain model [Phase 1/4]`
+### VS_009: Transmutation System
+**Status**: Backup (Too Complex for Current Stage)
+**Owner**: TBD
+**Size**: M (7h)
+**Priority**: Future
+**Created**: 2025-08-28 00:38
+**Moved to Backup**: 2025-08-29 01:00
+**Reason**: Complexity doesn't match infant stage simplicity
 
-#### Phase 2: Application Layer (0.5h)
-**Acceptance**: Commands use abstracted reward system
-- Update existing reward handlers to use new calculator
-- Create `ReloadRewardsCommand` for hot reload
-- Handler tests with mocked provider
-**Commit**: `feat(rewards): command integration [Phase 2/4]`
+**What**: Transmute 3 different block types into strategic combinations
+**Why**: Adds strategic depth for experienced players
+**When to Reconsider**: After infant stage proves fun and we need depth
 
-#### Phase 3: Infrastructure (1.5h)
-**Acceptance**: Bridge to Godot resources works
-- Create `GodotResourceBridge` service
-- Implement `GodotRewardDataProvider` using bridge
-- Create `.tres` resource files for each block type
-- Integration tests loading from resources
-- Verify hot reload in debug builds
-**Commit**: `feat(rewards): Godot bridge [Phase 3/4]`
+**Original Spec Summary**:
+- Select 3 different block types
+- Choose resulting type from inputs
+- Creates higher tier block
+- Costs resources (adds economy pressure)
 
-#### Phase 4: Presentation (1h)
-**Acceptance**: Debug overlay shows live values
-- Create F12 debug overlay UI
-- Display current reward values from resources
-- Show tier multipliers and calculations
-- Manual test hot reload changes
-- Manual test all block type rewards
-**Commit**: `feat(rewards): debug overlay [Phase 4/4]`
-
-**Depends On**: None (but more useful after VS_007)
-
-**Tech Lead Decision** (2025-08-27 14:05):
-- Complexity: 5/10 - New architectural boundary (C# ↔ Godot)
-- Pattern: Bridge service pattern, first of its kind
-- Can run parallel with VS_006 - no dependencies
-- Risk: Medium - sets precedent for resource integration
-- **Phase Gates**: Bridge pattern must be clean and reusable
+**Product Owner Note**: Great mechanic for later, but infant stage proves we can find depth through simplicity first. Revisit after core loop validation.
 
 ---
-
-
 
 ## 💡 Ideas (Do Later)
 *Nice-to-have features, experimental concepts, future considerations*
@@ -245,32 +281,24 @@
 ## ✅ Completed This Sprint
 *Items completed in current development cycle - will be archived monthly*
 
-### VS_006: Core Turn System ⭐ MAJOR COMPLETION
-**Status**: Done ✅ (Phase 4/4 + Critical Bug Fix COMPLETE)
-**Completed**: 2025-08-27 19:33 (Final bug fix and archival)
+### VS_006: Turn System 
+**Status**: COMPLETED ✅
+**Completed**: 2025-08-27 (All 4 phases)
+**Size**: M (actual: ~4h)
 **Owner**: Dev Engineer
-**Size**: S (4h total - 3h backend + 1h integration + bug fix)
-**Priority**: Critical
 
-**What**: Implement turn counter with one-action-per-turn limitation
-**Why**: Creates time pressure that makes the game challenging and meaningful
+**What**: Full turn system with counter and proper game flow
+**Result**: Turn counter working, advances on block moves, proper spawn→action→resolve flow
 
-**🔧 CRITICAL BUG FIX**: Fixed fundamental game economy issue where block placement was incorrectly advancing turns
-- **Before**: ALL block actions consumed turns (placement, cascades, merges)
-- **After**: Only block MOVEMENT consumes turns (placement is free, cascades are free)
-- **Impact**: Restored strategic depth - placement is for positioning, movement costs turns
-- **Technical**: Replaced TurnAdvancementHandler with TurnAdvancementAfterMoveHandler
+### VS_007: Auto-Spawn System
+**Status**: COMPLETED ✅ 
+**Completed**: 2025-08-27 (Phases 1-3, UI deferred)
+**Size**: M (actual: ~3.5h)
+**Owner**: Dev Engineer
 
-**Key Achievements**:
-- ✅ Complete turn system with proper game mechanics
-- ✅ Fixed turn advancement bug that made game unplayable
-- ✅ All 450+ tests passing after DI container fixes
-- ✅ Clean logging and production-ready code
-- ✅ Model-First implementation across all 4 phases
-- ✅ **UNBLOCKS**: VS_007 Auto-Spawn, VS_008 Resource Rewards
-
-**Phase Summary**: Phase 1-2 complete, Phase 3 deferred (YAGNI), Phase 4 complete
-**Files Created**: 15+ files across domain, application, and presentation layers
+**What**: Automatic block spawning at turn start
+**Result**: Blocks spawn correctly each turn, full domain/handler/state implementation
+**Note**: Phase 4 UI polish intentionally deferred for post-prototype
 
 ### BR_016: MergePatternExecutor Missing Error Handling for Edge Cases
 **Status**: Resolved

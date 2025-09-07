@@ -172,6 +172,10 @@ public static class GameStrapper
             BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
         
+        // Pattern processing tracker - prevents race conditions with turn advancement
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.IPatternProcessingTracker,
+            BlockLife.Core.Features.Block.Patterns.PatternProcessingTracker>();
+        
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
         
@@ -402,6 +406,10 @@ public static class GameStrapper
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.Services.IMergeUnlockService, 
             BlockLife.Core.Features.Block.Patterns.Services.MergeUnlockService>();
         services.AddSingleton<BlockLife.Core.Features.Block.Patterns.PatternExecutionResolver>();
+        
+        // Pattern processing tracker - prevents race conditions with turn advancement
+        services.AddSingleton<BlockLife.Core.Features.Block.Patterns.IPatternProcessingTracker,
+            BlockLife.Core.Features.Block.Patterns.PatternProcessingTracker>();
         
         // Pattern processing notification handler - triggers on block moves
         services.AddScoped<BlockLife.Core.Features.Block.Notifications.ProcessPatternsAfterMoveHandler>();
