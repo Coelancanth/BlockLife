@@ -53,6 +53,10 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
             services.AddSingleton<BlockLife.Core.Domain.Turn.ITurnManager, 
                 BlockLife.Core.Features.Turn.Services.TurnManager>();
 
+            // Add pattern processing tracker (required by pattern handlers)
+            services.AddSingleton<BlockLife.Core.Features.Block.Patterns.IPatternProcessingTracker,
+                BlockLife.Core.Features.Block.Patterns.PatternProcessingTracker>();
+
             _serviceProvider = services.BuildServiceProvider();
             _mediator = _serviceProvider.GetRequiredService<IMediator>();
             _gridStateService = _serviceProvider.GetRequiredService<IGridStateService>();

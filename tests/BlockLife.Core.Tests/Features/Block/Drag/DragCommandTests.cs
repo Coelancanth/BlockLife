@@ -65,6 +65,10 @@ namespace BlockLife.Core.Tests.Features.Block.Drag
             services.AddSingleton<BlockLife.Core.Application.Simulation.ISimulationManager,
                 BlockLife.Core.Application.Simulation.SimulationManager>();
 
+            // Add pattern processing tracker (required by pattern handlers)
+            services.AddSingleton<BlockLife.Core.Features.Block.Patterns.IPatternProcessingTracker,
+                BlockLife.Core.Features.Block.Patterns.PatternProcessingTracker>();
+
             // Add validation rules
             services.AddTransient<BlockLife.Core.Features.Block.Placement.Rules.IPositionIsValidRule,
                 BlockLife.Core.Features.Block.Placement.Rules.PositionIsValidRule>();
