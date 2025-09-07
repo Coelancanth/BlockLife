@@ -1,4 +1,5 @@
 using BlockLife.Core.Domain.Turn;
+using BlockLife.Core.Features.Block.Patterns;
 using BlockLife.Core.Features.Turn.Commands;
 using BlockLife.Core.Features.Turn.Effects;
 using BlockLife.Core.Tests.Utils;
@@ -28,6 +29,7 @@ namespace BlockLife.Core.Tests.Features.Turn.Commands
         private readonly Mock<ITurnManager> _mockTurnManager;
         private readonly Mock<IMediator> _mockMediator;
         private readonly Mock<ILogger> _mockLogger;
+        private readonly Mock<IPatternProcessingTracker> _mockPatternTracker;
         private readonly AdvanceTurnCommandHandler _handler;
 
         public AdvanceTurnCommandHandlerTests()
@@ -35,11 +37,21 @@ namespace BlockLife.Core.Tests.Features.Turn.Commands
             _mockTurnManager = new Mock<ITurnManager>();
             _mockMediator = new Mock<IMediator>();
             _mockLogger = new Mock<ILogger>();
+            _mockPatternTracker = new Mock<IPatternProcessingTracker>();
+            
+            // Setup pattern tracker to always return complete immediately
+            _mockPatternTracker
+                .Setup(t => t.WaitForProcessingCompleteAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+            _mockPatternTracker
+                .Setup(t => t.IsProcessing)
+                .Returns(false);
 
             _handler = new AdvanceTurnCommandHandler(
                 _mockTurnManager.Object,
                 _mockMediator.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockPatternTracker.Object
             );
         }
 

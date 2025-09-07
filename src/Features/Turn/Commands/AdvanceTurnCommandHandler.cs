@@ -1,4 +1,5 @@
 using BlockLife.Core.Domain.Turn;
+using BlockLife.Core.Features.Block.Patterns;
 using BlockLife.Core.Features.Turn.Effects;
 using BlockLife.Core.Infrastructure.Extensions;
 using LanguageExt;
@@ -20,15 +21,18 @@ namespace BlockLife.Core.Features.Turn.Commands
         private readonly ITurnManager _turnManager;
         private readonly IMediator _mediator;
         private readonly ILogger _logger;
+        private readonly IPatternProcessingTracker _patternTracker;
 
         public AdvanceTurnCommandHandler(
             ITurnManager turnManager,
             IMediator mediator,
-            ILogger logger)
+            ILogger logger,
+            IPatternProcessingTracker patternTracker)
         {
             _turnManager = turnManager;
             _mediator = mediator;
             _logger = logger;
+            _patternTracker = patternTracker;
         }
 
         public async Task<Fin<LanguageExt.Unit>> Handle(AdvanceTurnCommand request, CancellationToken cancellationToken)
@@ -55,6 +59,15 @@ namespace BlockLife.Core.Features.Turn.Commands
                 return FinFail<LanguageExt.Unit>(error);
             }
 
+            // Step 2.5: Wait for all pattern processing to complete
+            // This prevents race conditions where auto-spawn occurs during cascades
+            _logger.Debug("Waiting for pattern processing to complete before advancing turn");
+            var processingComplete = await _patternTracker.WaitForProcessingCompleteAsync(3000, cancellationToken);
+            if (!processingComplete)
+            {
+                _logger.Warning("Pattern processing did not complete within timeout, proceeding with turn advancement");
+            }
+
             // Step 3: Advance turn
             var advanceResult = _turnManager.AdvanceTurn();
             if (advanceResult.IsFail)
@@ -66,7 +79,15 @@ namespace BlockLife.Core.Features.Turn.Commands
 
             var newTurn = advanceResult.Match(Succ: t => t, Fail: _ => throw new System.InvalidOperationException());
 
-            // Step 4: Publish TurnStartNotification for new turn
+            // Step 4: Final check for any remaining pattern processing
+            // This double-check ensures no patterns started during turn advancement
+            if (_patternTracker.IsProcessing)
+            {
+                _logger.Debug("Additional pattern processing detected, waiting...");
+                await _patternTracker.WaitForProcessingCompleteAsync(1000, cancellationToken);
+            }
+            
+            // Step 5: Publish TurnStartNotification for new turn
             var turnStartResult = await PublishTurnStartNotification(newTurn, cancellationToken);
             if (turnStartResult.IsFail)
             {

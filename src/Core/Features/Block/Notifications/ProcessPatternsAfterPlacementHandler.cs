@@ -24,14 +24,17 @@ namespace BlockLife.Core.Features.Block.Notifications
         private readonly IGridStateService _gridService;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<ProcessPatternsAfterPlacementHandler>? _logger;
+        private readonly IPatternProcessingTracker _processingTracker;
 
         public ProcessPatternsAfterPlacementHandler(
             IGridStateService gridService,
             IServiceProvider serviceProvider,
+            IPatternProcessingTracker processingTracker,
             ILogger<ProcessPatternsAfterPlacementHandler>? logger = null)
         {
             _gridService = gridService;
             _serviceProvider = serviceProvider;
+            _processingTracker = processingTracker;
             _logger = logger;
         }
 
@@ -55,6 +58,9 @@ namespace BlockLife.Core.Features.Block.Notifications
 
         private async Task ProcessPatternsAtPosition(Domain.Common.Vector2Int position, CancellationToken cancellationToken)
         {
+            // Track that we're starting pattern processing
+            _processingTracker.BeginProcessing();
+            
             try
             {
                 _logger?.LogDebug("Getting pattern services from DI for position {Position}", position);
@@ -156,6 +162,11 @@ namespace BlockLife.Core.Features.Block.Notifications
             {
                 _logger?.LogError(ex, "Error in ProcessPatternsAtPosition for position {Position}", position);
                 throw;
+            }
+            finally
+            {
+                // Always mark processing as complete, even if there was an error
+                _processingTracker.EndProcessing();
             }
         }
     }
